@@ -1,5 +1,8 @@
 import { createBrowserRouter } from "react-router-dom";
 import DashboardLayout from "../Layout/DashboardLayout";
+import ManagementPage from "../Pages/ManagementPage";
+import AllStoresPage from "../Pages/AllStoresPage";
+import AddStorePage from "../Pages/AddStorePage";
 
 export const router = createBrowserRouter([
   {
@@ -11,8 +14,16 @@ export const router = createBrowserRouter([
         element: <div>hello</div>,
       },
       {
-        path: "/check2",
-        element: <div>check2</div>,
+        path: "/management",
+        element: <ManagementPage />,
+      },
+      {
+        path: "/allstores",
+        element: <AllStoresPage />,
+      },
+      {
+        path: "/addstore",
+        element: <AddStorePage />,
       },
     ],
   },
