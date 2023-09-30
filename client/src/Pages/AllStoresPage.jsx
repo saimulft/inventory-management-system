@@ -11,9 +11,9 @@ export default function AllStoresPage() {
             onClick={() => setIsActive(true)}
             className={`px-3 rounded-s-md py-2 ${
               isActive
-                ? "bg-[#8633FF]"
+                ? "bg-[#8633FF] text-white"
                 : "border-2 border-[#8633FF] text-[#8633FF]"
-            }  text-white`}
+            }  `}
           >
             Active
           </div>
@@ -21,20 +21,28 @@ export default function AllStoresPage() {
             onClick={() => setIsActive(false)}
             className={`px-3 rounded-e-md py-2 ${
               !isActive
-                ? "bg-[#8633FF]"
+                ? "bg-[#8633FF] text-white"
                 : "border-2 border-[#8633FF] text-[#8633FF]"
-            }  text-white`}
+            }  `}
           >
             Inactive
           </div>
         </div>
         <div className="w-1/2 gap-4 flex items-center">
           <div className="w-full flex gap-4 ">
-            <input
+            {/* <input
               className="border-2 border-[#8633FF] outline-none w-1/2 py-1 rounded-md px-2"
               placeholder="Store Type"
               type="text"
-            />
+            /> */}
+
+            <select className="border-2 border-[#8633FF] outline-none w-1/2 py-1 rounded-md px-2">
+              <option value="Null">Favorite Fruit</option>
+              <option value="Brooklyn">Apples</option>
+              <option value="Manhattan">Plums</option>
+              <option value="Queens">Oranges</option>
+            </select>
+
             <input
               className="border-2 border-[#8633FF] outline-none w-1/2 py-1 rounded-md px-2"
               placeholder="Search Here"
