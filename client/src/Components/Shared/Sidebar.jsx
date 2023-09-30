@@ -4,121 +4,84 @@ import { GiProgression } from "react-icons/gi";
 import { GoChecklist } from "react-icons/go";
 import { BiSupport } from "react-icons/bi";
 import { RxExit } from "react-icons/rx";
-import { MdOutlineExpandLess } from "react-icons/md";
+import { RiMenuFoldFill } from "react-icons/ri";
 import { BsHouseCheck, BsPlusCircle } from "react-icons/bs";
 import { useContext } from "react";
 import { GlobalContext } from "../../Providers/GlobalProviders";
+import { NavLink } from "react-router-dom";
 
 export default function Sidebar() {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(GlobalContext);
+
   return (
-    <div
-      className={`sticky bottom-0 top-0 pt-8 bg-[#081229] ${isSidebarOpen ? "px-8" : " px-6"
-        }  h-screen hidden md:block`}
-    >
-      <div>
-        <div
-          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          style={{
-            boxShadow: "0px 0px 10px -1px rgba(0, 0, 0, 0.1)",
-          }}
-          className={`border  w-8 h-8 rounded-full transition-all duration-500 ${isSidebarOpen ? "-rotate-90" : "rotate-90"
-            }  flex justify-center items-center absolute top-5 right-1 bg-white shadow-lg translate-x-1/2 cursor-pointer hover:shadow-none border hover:border-[#8633FF]`}
-        >
-          <MdOutlineExpandLess size={24} />
-        </div>
-        <div className=" flex flex-col justify-between w-full h-[calc(100vh-100px)] mx-auto items-center mt-10 relative">
-          {/* top part of the slider  */}
-          <div className="space-y-2 ">
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <AiOutlinePieChart size={20} />
-              {isSidebarOpen && <p>Dashboard</p>}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <PiWarehouseDuotone size={20} />
-              {isSidebarOpen && <p>Management</p>}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <BsHouseCheck size={20} />
-              {isSidebarOpen && <p>All stores</p>}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <BsPlusCircle size={16} />
-              {isSidebarOpen && <p>Add store</p>}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <GiProgression />
-              {isSidebarOpen && <p>Profit tracker</p>}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <GoChecklist size={20} />
-              {isSidebarOpen && (
-                <p className="whitespace-nowrap">Pending Arrival Form </p>
-              )}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <GoChecklist size={20} />
-              {isSidebarOpen && (
-                <p className="whitespace-nowrap">Pending Request Form </p>
-              )}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <GoChecklist size={20} />
-              {isSidebarOpen && (
-                <p className="whitespace-nowrap">Add ASIN/UPC Form </p>
-              )}
+    <div className={`sticky bottom-0 top-0 pt-5 bg-[#2e2e30] h-screen hidden md:block`}>
+      <div className="flex flex-col w-full lg:h-[calc(100vh-6%)] md:h-[calc(100vh-5%)] items-center relative px-8">
+        {/* top part of the slider  */}
+        <div className={`space-y-2`}>
+          <div className="mb-10 w-fit">
+            <div onClick={() => { setIsSidebarOpen(!isSidebarOpen); }} className={`transition-all duration-500 ${isSidebarOpen ? "rotate-0" : "rotate-180"} flex justify-center items-center cursor-pointer`}>
+              <div className={`${isSidebarOpen ? 'bg-[#8633FF]' : 'bg-[#454547]'} text-white ps-3 pe-3 py-[10px] rounded-md`} >
+                <RiMenuFoldFill size={25} />
+              </div>
             </div>
           </div>
 
-          {/* bottom part of the slider  */}
-          <div className="space-y-2 ">
-            <div
-              className={`bg-[#8633FF] text-white  ps-2 ${isSidebarOpen
-                  ? "pe-[119px] py-[6px]"
-                  : "px-3 py-2 flex justify-center items-center"
-                }  rounded-md flex items-center gap-2`}
-            >
-              <BiSupport size={20} />
-              {isSidebarOpen && <p>Support</p>}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <AiOutlineSetting size={18} />
-              {isSidebarOpen && <p>Settings</p>}
-            </div>
-            <div
-              className={`bg-[#8633FF] text-white  ${isSidebarOpen ? "ps-2 pe-4 py-[6px]" : "px-3 py-2"
-                }   rounded-md flex items-center gap-2`}
-            >
-              <RxExit />
-              {isSidebarOpen && <p>Sign Out</p>}
-            </div>
+          <NavLink to='/dashboard/home' className={({ isActive }) => isActive ? `bg-[#8633FF] text-white ps-3 pe-3 ${isSidebarOpen ? "w-56" : ""} py-[10px] rounded-md flex items-center gap-2` : `bg-[#454547] text-white ps-3 ${isSidebarOpen ? "w-56" : ""} pe-3 py-[10px] rounded-md flex items-center gap-2`}>
+            <AiOutlinePieChart size={25} />
+            {isSidebarOpen && <p>Dashboard</p>}
+          </NavLink>
+
+          <NavLink className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+            <PiWarehouseDuotone size={25} />
+            {isSidebarOpen && <p>Management</p>}
+          </NavLink>
+
+          <NavLink className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+            <BsHouseCheck size={25} />
+            {isSidebarOpen && <p>All stores</p>}
+          </NavLink>
+
+          <NavLink to='/dashboard/add-store' className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+            <BsPlusCircle size={25} />
+            {isSidebarOpen && <p>Add store</p>}
+          </NavLink>
+
+          <NavLink className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+            <GiProgression size={25} />
+            {isSidebarOpen && <p>Profit tracker</p>}
+          </NavLink>
+
+          <NavLink to='/dashboard/pending-arrival-from' className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+            <GoChecklist size={25} />
+            {isSidebarOpen && <p className="whitespace-nowrap">Pending Arrival Form </p>}
+          </NavLink>
+
+          <NavLink to='/dashboard/preparing-request-from' className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+            <GoChecklist size={25} />
+            {isSidebarOpen && <p className="whitespace-nowrap">Pending Request Form </p>}
+          </NavLink>
+
+          <NavLink to='/dashboard/add-ASIN-UPC-from' className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+            <GoChecklist size={25} />
+            {isSidebarOpen && <p className="whitespace-nowrap">Add ASIN/UPC Form </p>}
+          </NavLink>
+        </div>
+
+        {/* bottom part of the slider  */}
+        <div className="flex flex-col justify-between w-full h-[calc(100vh-100px)] items-center mt-10 relative">
+          <div className={`space-y-2 absolute bottom-0`}>
+            <NavLink className={`bg-[#8633FF] text-white ps-3 pe-3  ${isSidebarOpen ? "w-56" : ""} py-[10px] rounded-md flex items-center gap-2`}>
+              <BiSupport size={25} />
+              {isSidebarOpen && <p className="whitespace-nowrap">Support</p>}
+            </NavLink>
+            <NavLink className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+              <AiOutlineSetting size={25} />
+              {isSidebarOpen && <p className="whitespace-nowrap">Settings</p>}
+            </NavLink>
+            <NavLink className={({ isActive }) => isActive ? 'bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2' : 'bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md flex items-center gap-2'}>
+              <RxExit size={25} />
+              {isSidebarOpen && <p className="whitespace-nowrap">Sign Out</p>}
+            </NavLink>
           </div>
         </div>
       </div>

@@ -9,17 +9,18 @@ import { GlobalContext } from "../Providers/GlobalProviders";
 
 export default function DashboardLayout() {
   const { isSidebarOpen } = useContext(GlobalContext);
+
   return (
-    <div className="flex bg-[#eee8e8] ">
-      <div className={`transition-all duration-500 relative `}>
+    <div className="flex bg-[#fafbfc] ">
+      <div className={`transition-all ease-out duration-300 delay-0 ${isSidebarOpen ? 'lg:w-[18.5%] md:w-[32%]' : "lg:w-[5%] md:w-[9%]"}`}>
         <Sidebar />
       </div>
-      <div className={`${isSidebarOpen ? "w-[82%]" : "w-[93%]"} `}>
+      <div className='w-full'>
         <Container>
           <div className="sticky top-0">
             <Navbar />
           </div>
-          <div className=" mt-8  ">
+          <div>
             <Outlet />
           </div>
         </Container>
