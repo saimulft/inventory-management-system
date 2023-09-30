@@ -12,9 +12,8 @@ export default function DashboardLayout() {
   return (
     <div className="flex bg-[#F6F6F6]  ">
       <div
-        className={`${
-          isSidebarOpen ? " w-[18%]" : "w-[7%]"
-        } transition-all duration-500 relative `}
+        className={`${isSidebarOpen ? " w-[18%]" : "w-[7%]"
+          } transition-all duration-500 relative `}
       >
         <Sidebar />
       </div>

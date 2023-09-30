@@ -3,6 +3,7 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import ManagementPage from "../Pages/ManagementPage";
 import AllStoresPage from "../Pages/AllStoresPage";
 import AddStorePage from "../Pages/AddStorePage";
+import ArrivalFormPage from "../Pages/ArrivalFormPage";
 
 export const router = createBrowserRouter([
   {
@@ -18,12 +19,16 @@ export const router = createBrowserRouter([
         element: <ManagementPage />,
       },
       {
-        path: "/allstores",
+        path: "/all-stores",
         element: <AllStoresPage />,
       },
       {
-        path: "/addstore",
+        path: "/add-store",
         element: <AddStorePage />,
+      },
+      {
+        path: "/pending-arrival-from",
+        element: <ArrivalFormPage />,
       },
     ],
   },
