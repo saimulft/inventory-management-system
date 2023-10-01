@@ -36,7 +36,7 @@ export default function AddStorePage() {
             </div>
 
             <div className="flex items-center justify-center mt-8">
-              <button className="btn btn-primary text-white w-full capitalize">Next<BsArrowRightShort className="mt-[1px]" size={28} /></button>
+              <button className="bg-[#4a07da] flex py-3 justify-center items-center text-white w-full capitalize rounded-lg">Next<BsArrowRightShort className="mt-[2px]" size={28} /></button>
             </div>
 
           </form>
