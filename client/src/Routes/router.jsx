@@ -6,6 +6,7 @@ import AddStorePage from "../Pages/AddStorePage";
 import ArrivalFormPage from "../Pages/ArrivalFormPage";
 import PreparingFormPage from "../Pages/PreparingFormPage";
 import AddASINForm from "../Pages/AddASINForm";
+import AddSupplier from "../Components/AddStrorePageComponent/AddSupplier";
 
 export const router = createBrowserRouter([
   {
@@ -43,6 +44,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/add-ASIN-UPC-from",
         element: <AddASINForm />,
+      },
+      {
+        path: "/dashboard/add-store/add-supplier",
+        element: <AddSupplier />,
       }
     ],
   },
