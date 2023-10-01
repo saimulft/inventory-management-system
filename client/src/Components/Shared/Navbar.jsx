@@ -3,7 +3,7 @@ import { BsBell } from "react-icons/bs";
 
 export default function Navbar() {
   return (
-    <div className="flex items-center px-8 bg-[#081229] text-white shadow-sm py-6 rounded-lg ">
+    <div className="flex items-center px-8 bg-[#081229] text-white shadow-sm py-6 rounded-lg z-50 ">
       <div className="text-lg font-medium w-1/3 ">Dashboard</div>
       <div className="w-1/3 px-8 relative">
         <input

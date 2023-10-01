@@ -3,6 +3,7 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import ManagementPage from "../Pages/ManagementPage";
 import AllStoresPage from "../Pages/AllStoresPage";
 import AddStorePage from "../Pages/AddStorePage";
+import AddSupplier from "../Components/AddStrorePageComponent/AddSupplier";
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ export const router = createBrowserRouter([
       {
         path: "/addstore",
         element: <AddStorePage />,
+      },
+      {
+        path: "/addsupplier",
+        element: <AddSupplier />,
       },
     ],
   },
