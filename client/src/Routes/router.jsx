@@ -7,6 +7,10 @@ import ArrivalFormPage from "../Pages/ArrivalFormPage";
 import PreparingFormPage from "../Pages/PreparingFormPage";
 import AddASINForm from "../Pages/AddASINForm";
 import AddSupplier from "../Components/AddStrorePageComponent/AddSupplier";
+import SelectPayment from "../Components/AddStrorePageComponent/SelectPayment";
+import Checkout from "../Components/AddStrorePageComponent/Checkout";
+import CheckoutForm from "../Components/AddStrorePageComponent/CheckoutForm";
+import SendPaymentLink from "../Components/AddStrorePageComponent/SendPaymentLink";
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +19,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/dashboard",
-        element: <Navigate to='/dashboard/home'></Navigate>,
+        element: <Navigate to="/dashboard/home"></Navigate>,
       },
       {
         path: "/dashboard/home",
@@ -48,7 +52,23 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/add-store/add-supplier",
         element: <AddSupplier />,
-      }
+      },
+      {
+        path: "/dashboard/add-store/add-supplier/select-payment",
+        element: <SelectPayment />,
+      },
+      {
+        path: "/dashboard/add-store/add-supplier/select-payment/checkout",
+        element: <Checkout />,
+      },
+      {
+        path: "/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form",
+        element: <CheckoutForm />,
+      },
+      {
+        path: "/dashboard/add-store/add-supplier/select-payment/send-payment-link",
+        element: <SendPaymentLink />,
+      },
     ],
   },
 ]);
