@@ -1,0 +1,10 @@
+.ka {
+  display: flex;
+  justify-content: center;
+  padding: 20px 0;
+}
+.ka-thead-cell-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}

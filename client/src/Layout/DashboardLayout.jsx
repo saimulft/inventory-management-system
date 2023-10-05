@@ -14,7 +14,7 @@ export default function DashboardLayout() {
     <div className="flex bg-[#fafbfc] ">
       <div
         className={`transition-all ease-out duration-300 delay-0 ${
-          isSidebarOpen ? "lg:w-[18.5%] md:w-[32%]" : "lg:w-[5%] md:w-[9%]"
+          isSidebarOpen ? "lg:w-[18.5%] md:w-[32%]" : "lg:w-[6%] md:w-[9%]"
         }`}
       >
         <Sidebar />
