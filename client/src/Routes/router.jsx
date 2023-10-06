@@ -29,11 +29,11 @@ import DashboardPage from "../Pages/DashboardPage";
 
 export const router = createBrowserRouter([
   {
-    path: "/dashboard",
+    path: "/",
     element: <DashboardLayout />,
     children: [
       {
-        path: "/dashboard",
+        path: "/",
         element: <Navigate to="/dashboard/home"></Navigate>,
       },
       {
