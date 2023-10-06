@@ -1,214 +1,207 @@
+import { useState } from "react";
+import RowName from "../../Components/SettingsPageComponents/UserTable/RowName";
+import { FiEdit } from "react-icons/fi";
+
 export default function PendingUsersPage() {
+  const [firstNameSort, setFirstNameSort] = useState(null);
+  const [lastNameSort, setLastNameSort] = useState(null);
+  const [emailSort, setEmailSort] = useState(null);
+  const [functionDisable, setFunctionDisable] = useState(false);
+
+  // table data
+  const data = [
+    {
+      id: 1,
+      first_name: "Nabil",
+      last_name: "Newaz",
+      email: "dlldf@gmail.com",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 2,
+      first_name: "Toukir",
+      last_name: "Ahmed",
+      email: "demo.email@testdomain.net",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 3,
+      first_name: "Alice",
+      last_name: "Bohnson",
+      email: "yourname.email@example.com",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 4,
+      first_name: "Shiam",
+      last_name: "Shikder",
+      email: "test.email@example.org",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 5,
+      first_name: "ADavid",
+      last_name: "FSmith",
+      email: "random.user@emailtest.net",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 6,
+      first_name: "AEmily",
+      last_name: "aBrown",
+      email: "john.doe1234@samplemail.org",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 7,
+      first_name: "Michael",
+      last_name: "Davis",
+      email: "mynewemail@emailprovider.com",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 8,
+      first_name: "Sarah",
+      last_name: "Wilson",
+      email: "amynewemail@emailprovider.com",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 9,
+      first_name: "James",
+      last_name: "Miller",
+      email: "email.address@testdomain.org",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+    {
+      id: 10,
+      first_name: "Olivia",
+      last_name: "Taylor",
+      email: "email@gmail.com",
+      user_role: ["Store Admin", "Store Manager"],
+      favorite_color: "Blue",
+    },
+  ];
+
+  // table sorting logic
+  const sortedData = data.sort((a, b) => {
+    const nameA = a.first_name.toLowerCase();
+    const nameB = b.first_name.toLowerCase();
+
+    const lastA = a.last_name.toLowerCase();
+    const lastB = b.last_name.toLowerCase();
+
+    const emailA = a.email;
+    const emailB = b.email;
+
+    if (firstNameSort == 1 || lastNameSort == 1 || emailSort == 1) {
+      if (firstNameSort == 1) {
+        return nameA.localeCompare(nameB);
+      }
+      if (lastNameSort == 1) {
+        return lastA.localeCompare(lastB);
+      }
+      if (emailSort == 1) {
+        return emailA.localeCompare(emailB);
+      }
+    } else if (firstNameSort == 2 || lastNameSort == 2 || emailSort == 2) {
+      if (firstNameSort == 2) {
+        return nameB.localeCompare(nameA);
+      }
+      if (lastNameSort == 2) {
+        return lastB.localeCompare(lastA);
+      }
+      if (emailSort == 2) {
+        return emailB.localeCompare(emailA);
+      }
+    } else {
+      return data;
+    }
+  });
+
   return (
-    <div>
-      <div className="overflow-x-auto">
-        <table className="table table-xs">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Job</th>
-              <th>company</th>
-              <th>location</th>
-              <th>Last Login</th>
-              <th>Favorite Color</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th>1</th>
-              <td>Cy Ganderton</td>
-              <td>Quality Control Specialist</td>
-              <td>Littel, Schaden and Vandervort</td>
-              <td>Canada</td>
-              <td>12/16/2020</td>
-              <td>Blue</td>
-            </tr>
-            <tr>
-              <th>2</th>
-              <td>Hart Hagerty</td>
-              <td>Desktop Support Technician</td>
-              <td>Zemlak, Daniel and Leannon</td>
-              <td>United States</td>
-              <td>12/5/2020</td>
-              <td>Purple</td>
-            </tr>
-            <tr>
-              <th>3</th>
-              <td>Brice Swyre</td>
-              <td>Tax Accountant</td>
-              <td>Carroll Group</td>
-              <td>China</td>
-              <td>8/15/2020</td>
-              <td>Red</td>
-            </tr>
-            <tr>
-              <th>4</th>
-              <td>Marjy Ferencz</td>
-              <td>Office Assistant I</td>
-              <td>Rowe-Schoen</td>
-              <td>Russia</td>
-              <td>3/25/2021</td>
-              <td>Crimson</td>
-            </tr>
-            <tr>
-              <th>5</th>
-              <td>Yancy Tear</td>
-              <td>Community Outreach Specialist</td>
-              <td>Wyman-Ledner</td>
-              <td>Brazil</td>
-              <td>5/22/2020</td>
-              <td>Indigo</td>
-            </tr>
-            <tr>
-              <th>6</th>
-              <td>Irma Vasilik</td>
-              <td>Editor</td>
-              <td>Wiza, Bins and Emard</td>
-              <td>Venezuela</td>
-              <td>12/8/2020</td>
-              <td>Purple</td>
-            </tr>
-            <tr>
-              <th>7</th>
-              <td>Meghann Durtnal</td>
-              <td>Staff Accountant IV</td>
-              <td>Schuster-Schimmel</td>
-              <td>Philippines</td>
-              <td>2/17/2021</td>
-              <td>Yellow</td>
-            </tr>
-            <tr>
-              <th>8</th>
-              <td>Sammy Seston</td>
-              <td>Accountant I</td>
-              <td>O'Hara, Welch and Keebler</td>
-              <td>Indonesia</td>
-              <td>5/23/2020</td>
-              <td>Crimson</td>
-            </tr>
-            <tr>
-              <th>9</th>
-              <td>Lesya Tinham</td>
-              <td>Safety Technician IV</td>
-              <td>Turner-Kuhlman</td>
-              <td>Philippines</td>
-              <td>2/21/2021</td>
-              <td>Maroon</td>
-            </tr>
-            <tr>
-              <th>10</th>
-              <td>Zaneta Tewkesbury</td>
-              <td>VP Marketing</td>
-              <td>Sauer LLC</td>
-              <td>Chad</td>
-              <td>6/23/2020</td>
-              <td>Green</td>
-            </tr>
-            <tr>
-              <th>11</th>
-              <td>Andy Tipple</td>
-              <td>Librarian</td>
-              <td>Hilpert Group</td>
-              <td>Poland</td>
-              <td>7/9/2020</td>
-              <td>Indigo</td>
-            </tr>
-            <tr>
-              <th>12</th>
-              <td>Sophi Biles</td>
-              <td>Recruiting Manager</td>
-              <td>Gutmann Inc</td>
-              <td>Indonesia</td>
-              <td>2/12/2021</td>
-              <td>Maroon</td>
-            </tr>
-            <tr>
-              <th>13</th>
-              <td>Florida Garces</td>
-              <td>Web Developer IV</td>
-              <td>Gaylord, Pacocha and Baumbach</td>
-              <td>Poland</td>
-              <td>5/31/2020</td>
-              <td>Purple</td>
-            </tr>
-            <tr>
-              <th>14</th>
-              <td>Maribeth Popping</td>
-              <td>Analyst Programmer</td>
-              <td>Deckow-Pouros</td>
-              <td>Portugal</td>
-              <td>4/27/2021</td>
-              <td>Aquamarine</td>
-            </tr>
-            <tr>
-              <th>15</th>
-              <td>Moritz Dryburgh</td>
-              <td>Dental Hygienist</td>
-              <td>Schiller, Cole and Hackett</td>
-              <td>Sri Lanka</td>
-              <td>8/8/2020</td>
-              <td>Crimson</td>
-            </tr>
-            <tr>
-              <th>16</th>
-              <td>Reid Semiras</td>
-              <td>Teacher</td>
-              <td>Sporer, Sipes and Rogahn</td>
-              <td>Poland</td>
-              <td>7/30/2020</td>
-              <td>Green</td>
-            </tr>
-            <tr>
-              <th>17</th>
-              <td>Alec Lethby</td>
-              <td>Teacher</td>
-              <td>Reichel, Glover and Hamill</td>
-              <td>China</td>
-              <td>2/28/2021</td>
-              <td>Khaki</td>
-            </tr>
-            <tr>
-              <th>18</th>
-              <td>Aland Wilber</td>
-              <td>Quality Control Specialist</td>
-              <td>Kshlerin, Rogahn and Swaniawski</td>
-              <td>Czech Republic</td>
-              <td>9/29/2020</td>
-              <td>Purple</td>
-            </tr>
-            <tr>
-              <th>19</th>
-              <td>Teddie Duerden</td>
-              <td>Staff Accountant III</td>
-              <td>Pouros, Ullrich and Windler</td>
-              <td>France</td>
-              <td>10/27/2020</td>
-              <td>Aquamarine</td>
-            </tr>
-            <tr>
-              <th>20</th>
-              <td>Lorelei Blackstone</td>
-              <td>Data Coordiator</td>
-              <td>Witting, Kutch and Greenfelder</td>
-              <td>Kazakhstan</td>
-              <td>6/3/2020</td>
-              <td>Red</td>
-            </tr>
-          </tbody>
-          <tfoot>
-            <tr>
-              <th></th>
-              <th>Name</th>
-              <th>Job</th>
-              <th>company</th>
-              <th>location</th>
-              <th>Last Login</th>
-              <th>Favorite Color</th>
-            </tr>
-          </tfoot>
-        </table>
-      </div>
+    <div className="overflow-x-auto py-10">
+      <table className="table table-md">
+        <thead>
+          <tr className="bg-gray-100">
+            <th>
+              <RowName
+                name={"First Name"}
+                state={firstNameSort}
+                setState={setFirstNameSort}
+                functionDisable={functionDisable}
+                setFunctionDisable={setFunctionDisable}
+              />
+            </th>
+            <th>
+              {
+                <RowName
+                  name={"Last Name"}
+                  state={lastNameSort}
+                  setState={setLastNameSort}
+                  functionDisable={functionDisable}
+                  setFunctionDisable={setFunctionDisable}
+                />
+              }
+            </th>
+            <th>
+              {
+                <RowName
+                  name={"Email"}
+                  state={emailSort}
+                  setState={setEmailSort}
+                  functionDisable={functionDisable}
+                  setFunctionDisable={setFunctionDisable}
+                />
+              }
+            </th>
+            <th>User Role</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sortedData.map((data, index) => {
+            return (
+              <tr key={index} className={`${index % 2 == 1 && "bg-gray-100"}`}>
+                <td>{data.first_name}</td>
+                <td>{data.last_name}</td>
+                <td>{data.email}</td>
+                <td>
+                  <select
+                    style={{ borderRadius: "2px" }}
+                    className="select select-bordered w-full select-xs max-w-xs select-primary"
+                  >
+                    <option disabled selected>
+                      Select Role
+                    </option>
+                    {data.user_role.map((role, index) => (
+                      <option key={index}>{role}</option>
+                    ))}
+                  </select>
+                </td>
+                <td className="flex gap-2">
+                  <button className="flex items-center border border-gray-400 py-[2px] px-1 rounded-[2px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
+                    <FiEdit />
+                    <p>Approve</p>
+                  </button>
+                  <button className="border border-gray-400 py-[2px] px-1 rounded-[2px] hover:bg-red-500 hover:text-white transition-all duration-150">
+                    Decline
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
     </div>
   );
 }

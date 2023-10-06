@@ -25,6 +25,7 @@ import AdminVRPage from "../Pages/SettingPages/AdminVRPage";
 import StoreOwnerPage from "../Pages/SettingPages/StoreOwnerPage";
 import StoreManagerAdminPage from "../Pages/SettingPages/StoreManagerAdminPage";
 import WareHouseAdminPage from "../Pages/SettingPages/WarehouseAdminPage";
+import DashboardPage from "../Pages/DashboardPage";
 
 export const router = createBrowserRouter([
   {
@@ -37,7 +38,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/home",
-        element: <div>hello</div>,
+        element: <DashboardPage />,
       },
       {
         path: "/dashboard/management",
