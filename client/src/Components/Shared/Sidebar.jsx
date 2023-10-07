@@ -2,7 +2,7 @@ import { AiOutlinePieChart, AiOutlineSetting } from "react-icons/ai";
 import { PiWarehouseDuotone } from "react-icons/pi";
 import { GiProgression } from "react-icons/gi";
 import { GoChecklist } from "react-icons/go";
-import { BiSupport } from "react-icons/bi";
+import { BiLogIn, BiSupport } from "react-icons/bi";
 import { RxExit } from "react-icons/rx";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { BsHouseCheck, BsPlusCircle } from "react-icons/bs";
@@ -176,15 +176,15 @@ export default function Sidebar() {
               {isSidebarOpen && <p className="whitespace-nowrap">Settings</p>}
             </NavLink>
             <NavLink
-              to="/dashboard/all-stores"
+              to="/login"
               className={({ isActive }) =>
                 isActive
                   ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b "
                   : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
               }
             >
-              <RxExit size={24} />
-              {isSidebarOpen && <p className="whitespace-nowrap">Sign Out</p>}
+              <BiLogIn size={24} />
+              {isSidebarOpen && <p className="whitespace-nowrap">Login</p>}
             </NavLink>
           </div>
         </div>

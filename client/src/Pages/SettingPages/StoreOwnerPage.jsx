@@ -2,7 +2,7 @@ export default function StoreOwnerPage() {
   return (
     <div className="md:py-10 py-6">
       <h3 className="text-2xl font-bold text-center">Add New AVA</h3>
-      <div className="md:flex gap-4 w-full mt-5">
+      <div className="md:flex gap-4 w-full mt-5 ">
         <div className="md:w-1/2">
           <div className="mt-3">
             <label className="text-slate-500">Name*</label>
@@ -15,9 +15,9 @@ export default function StoreOwnerPage() {
             />
           </div>
           <div className="mt-3">
-            <label className="text-slate-500">Password</label>
+            <label className="text-slate-500">Password*</label>
             <input
-              type="text"
+              type="password"
               placeholder="Enter password"
               className="input input-bordered input-primary w-full mt-2 shadow-lg"
               id="password"
@@ -25,7 +25,7 @@ export default function StoreOwnerPage() {
             />
           </div>
           <div className="mt-3">
-            <label className="text-slate-500">Confirm password</label>
+            <label className="text-slate-500">Confirm password*</label>
             <input
               type="text"
               placeholder="confirmPassword"
@@ -37,7 +37,7 @@ export default function StoreOwnerPage() {
         </div>
         <div className="md:w-1/2">
           <div className="mt-3">
-            <label className="text-slate-500">User Id</label>
+            <label className="text-slate-500">User Id*</label>
             <input
               type="text"
               placeholder="User ID"
@@ -47,19 +47,20 @@ export default function StoreOwnerPage() {
             />
           </div>
           <div className="mt-3">
-            <label className="text-slate-500">User Role</label>
-            <input
-              type="text"
-              placeholder="User role"
-              className="input input-bordered input-primary w-full mt-2 shadow-lg"
-              id="UserRole"
-              name="UserRole"
-            />
+            <label className="text-slate-500">User Role*</label>
+            <select className="select select-primary shadow-lg w-full ">
+              <option disabled selected>
+                demo
+              </option>
+              <option>Text-1</option>
+              <option>Text-2</option>
+              <option>Text-3</option>
+            </select>
           </div>
         </div>
       </div>
       <div className="flex justify-center">
-        <button className="flex items-center justify-center bg-[#8633FF] md:px-36 w-full md:w-fit mt-8 py-2 rounded-md text-white">
+        <button className="flex items-center justify-center bg-[#8633FF] md:px-36 w-full md:w-fit mt-8 py-3 rounded-md text-white">
           <p>Create AVA</p>
         </button>
       </div>

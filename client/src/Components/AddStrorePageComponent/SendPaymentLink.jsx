@@ -20,12 +20,13 @@ export default function SendPaymentLink() {
               <label className="text-slate-700" htmlFor="">
                 What is your name?
               </label>
+
               <input
                 type="text"
-                name=""
-                id=""
-                placeholder="Enter name"
-                className="border  border-gray-400 mt-2 py-2 px-3 rounded"
+                placeholder="Your name"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="name"
+                name="name"
               />
             </div>
             <div className="flex flex-col">
@@ -34,13 +35,13 @@ export default function SendPaymentLink() {
               </label>
               <input
                 type="text"
-                name=""
-                id=""
-                placeholder="Enter email"
-                className="border  border-gray-400 mt-2 py-2 px-3 rounded"
+                placeholder="Your email"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="email"
+                name="email"
               />
             </div>
-            <button className="bg-[#8633FF] py-2 rounded text-white mt-4">
+            <button className="bg-[#8633FF] py-3 rounded text-white mt-4">
               Send
             </button>
           </div>

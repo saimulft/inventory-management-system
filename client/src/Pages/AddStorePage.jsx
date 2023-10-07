@@ -31,7 +31,7 @@ export default function AddStorePage() {
             </div>
 
             <div className="flex flex-col mt-2">
-              <label className="text-slate-500">Store name*</label>
+              <label className="text-slate-500">Store manager name*</label>
               <input
                 type="text"
                 placeholder="Enter store manager name"
@@ -58,7 +58,7 @@ export default function AddStorePage() {
             </div>
 
             <Link to="/dashboard/add-store/add-supplier">
-              <div className="flex items-center justify-center mt-8 bg-[#4a07da] rounded-lg">
+              <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
                 <button className=" flex py-3 justify-center items-center text-white w-full capitalize ">
                   Next
                   <BsArrowRightShort className="mt-[2px]" size={28} />

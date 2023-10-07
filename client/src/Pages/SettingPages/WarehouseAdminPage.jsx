@@ -18,9 +18,9 @@ export default function WareHouseAdminPage() {
               />
             </div>
             <div className="mt-3">
-              <label className="text-slate-500">Password</label>
+              <label className="text-slate-500">Password*</label>
               <input
-                type="text"
+                type="password"
                 placeholder="Enter password"
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="password"
@@ -28,7 +28,7 @@ export default function WareHouseAdminPage() {
               />
             </div>
             <div className="mt-3">
-              <label className="text-slate-500">Confirm password</label>
+              <label className="text-slate-500">Confirm password*</label>
               <input
                 type="text"
                 placeholder="confirmPassword"
@@ -40,7 +40,7 @@ export default function WareHouseAdminPage() {
           </div>
           <div className="md:w-1/2">
             <div className="mt-3">
-              <label className="text-slate-500">User Id</label>
+              <label className="text-slate-500">User Id*</label>
               <input
                 type="text"
                 placeholder="User ID"
@@ -50,17 +50,18 @@ export default function WareHouseAdminPage() {
               />
             </div>
             <div className="mt-3">
-              <label className="text-slate-500">User Role</label>
-              <input
-                type="text"
-                placeholder="User role"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="UserRole"
-                name="UserRole"
-              />
+              <label className="text-slate-500">User Role*</label>
+              <select className="select select-primary shadow-lg w-full ">
+                <option disabled selected>
+                  demo
+                </option>
+                <option>Text-1</option>
+                <option>Text-2</option>
+                <option>Text-3</option>
+              </select>
             </div>
             <div className="mt-3">
-              <label className="text-slate-500">User Role</label>
+              <label className="text-slate-500">User Role*</label>
               <input
                 type="text"
                 placeholder="User role"
@@ -71,18 +72,19 @@ export default function WareHouseAdminPage() {
             </div>
           </div>
         </div>
-        <div className="mt-3">
-          <label className="text-slate-500">Password</label>
-          <input
-            type="text"
-            placeholder="Enter password"
-            className="input input-bordered input-primary w-full mt-2 shadow-lg"
-            id="password"
-            name="password"
-          />
+        <div className="mt-3 flex flex-col">
+          <label className="text-slate-500">Country*</label>
+          <select className="select select-primary w-full mt-2 shadow-lg">
+            <option disabled selected>
+              Demo
+            </option>
+            <option>Test-1</option>
+            <option>Test-2</option>
+            <option>Test-3</option>
+          </select>
         </div>
         <div className="flex justify-center">
-          <button className="flex items-center justify-center bg-[#8633FF] md:px-32 w-full md:w-fit mt-8 py-2 rounded-md text-white">
+          <button className="flex items-center justify-center bg-[#8633FF] md:px-32 w-full md:w-fit mt-8 py-3 rounded-md text-white">
             <p>Create Warehouse Admin</p>
           </button>
         </div>
