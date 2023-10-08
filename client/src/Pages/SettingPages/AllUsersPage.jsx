@@ -188,11 +188,11 @@ export default function AllUsersPage() {
                   </select>
                 </td>
                 <td className="flex gap-2">
-                  <button className="flex items-center border border-gray-400 py-[2px] px-1 rounded-[2px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
+                  <button className="flex items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
                     <FiEdit />
                     <p>Edit</p>
                   </button>
-                  <button className="border border-gray-400 py-[2px] px-1 rounded-[2px] hover:bg-red-500 hover:text-white transition-all duration-150">
+                  <button className="border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-red-500 hover:text-white transition-all duration-150">
                     Delete
                   </button>
                 </td>

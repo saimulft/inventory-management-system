@@ -5,12 +5,25 @@ import { GoChecklist } from "react-icons/go";
 import { BiLogIn, BiSupport } from "react-icons/bi";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { BsHouseCheck, BsPlusCircle } from "react-icons/bs";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../../Providers/GlobalProviders";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 
 export default function Sidebar() {
-  const { isSidebarOpen, setIsSidebarOpen } = useContext(GlobalContext);
+  const [settingActive, setSettingActive] = useState(false);
+  const url = useLocation();
+  const route = url?.pathname?.split("/")[2];
+
+  useEffect(() => {
+    if (route.includes("settings")) {
+      setSettingActive(true);
+    } else {
+      setSettingActive(false);
+    }
+  }, [route]);
+
+  const { isSidebarOpen, setIsSidebarOpen, setIsActiveSetting } =
+    useContext(GlobalContext);
 
   return (
     <div className={`sticky bottom-0 top-0 pt-5 bg-[#2e2e30] h-screen `}>
@@ -162,12 +175,13 @@ export default function Sidebar() {
               {isSidebarOpen && <p className="whitespace-nowrap">Support</p>}
             </NavLink>
             <NavLink
+              onClick={() => setIsActiveSetting("profile")}
               to="/dashboard/settings/profile"
-              className={({ isActive }) =>
-                isActive
+              className={`${
+                settingActive
                   ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
                   : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-              }
+              }`}
             >
               <AiOutlineSetting size={24} />
               {isSidebarOpen && <p className="whitespace-nowrap">Settings</p>}

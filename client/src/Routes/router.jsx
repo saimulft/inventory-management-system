@@ -115,7 +115,7 @@ export const router = createBrowserRouter([
       },
 
       {
-        path: "/dashboard/settings/plan",
+        path: "/dashboard/settings/billing-subscription/plan",
         element: <MyPlan />,
       },
       {

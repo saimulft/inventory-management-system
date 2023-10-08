@@ -1,4 +1,5 @@
 import { AiOutlineEye, AiOutlineSearch } from "react-icons/ai";
+import { BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 
 export default function ShippedTable() {
@@ -126,7 +127,12 @@ export default function ShippedTable() {
                   <td>{d.order_ID}</td>
                   <td className="text-[#8633FF]">{d.supplier_tracking}</td>
                   <td className="cursor-pointer text-[#8633FF]">Click</td>
-                  <td>
+                  <td
+                    onClick={() =>
+                      document.getElementById("my_modal_2").showModal()
+                    }
+                    className="cursor-pointer"
+                  >
                     <AiOutlineEye size={15} />
                   </td>
                 </tr>
@@ -161,6 +167,61 @@ export default function ShippedTable() {
           </div>
         </div>
       </div>
+      {/* modal content  */}
+      <dialog id="my_modal_2" className="modal">
+        <div className="modal-box">
+          <div className="px-8 py-10">
+            <div className="flex items-center mb-4 gap-2">
+              <BiSolidEdit size={24} />
+              <h3 className="text-2xl font-medium">Details</h3>
+            </div>
+            <p className="mt-2">
+              <span className="font-medium">Data: </span>
+              <span>2023-06-26</span>
+            </p>
+            <p className="mt-2">
+              <span className="font-medium">Store Name: </span>
+              <span>SAVE_k544.LLC</span>
+            </p>
+            <p className="mt-2">
+              <span className="font-medium">ASIN: </span>
+              <span>BOHFK4522</span>
+            </p>
+            <p className="mt-2">
+              <span className="font-medium">Order Qnt: </span>
+              <span>23</span>
+            </p>
+            <p className="mt-2">
+              <span className="font-medium">Received Qnt: </span>
+              <span>23</span>
+            </p>
+            <p className="mt-2">
+              <span className="font-medium">Missing Qnt: </span>
+              <span>23</span>
+            </p>
+            <p className="mt-2">
+              <span className="font-medium">UPIN: </span>
+              <span>USAfsdfds</span>
+            </p>
+
+            <p className="mt-2">
+              <span className="font-medium">Product Name: </span>
+              <span>demo product name</span>
+            </p>
+            <p className="mt-2">
+              <span className="font-medium">EDA: </span>
+              <span>2023-06-26</span>
+            </p>
+            <p className="mt-2">
+              <span className="font-medium">Supplier Tracking: </span>
+              <span>Not Added</span>
+            </p>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 }

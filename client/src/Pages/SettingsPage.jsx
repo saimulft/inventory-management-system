@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
+import { GlobalContext } from "../Providers/GlobalProviders";
 
 export default function SettingsPage() {
-  const [isActiveSetting, setIsActiveSetting] = useState("profile");
-
+  const { setIsActiveSetting, isActiveSetting } = useContext(GlobalContext);
+  console.log(isActiveSetting);
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
@@ -28,9 +29,9 @@ export default function SettingsPage() {
 
           <Link to="/dashboard/settings/add-users">
             <button
-              onClick={() => setIsActiveSetting("add users")}
+              onClick={() => setIsActiveSetting("add-users")}
               className={`border border-r-0 border-[#8633FF] px-2 py-2 text-[#8633FF] ${
-                isActiveSetting == "add users" && "bg-[#8633FF] text-white"
+                isActiveSetting == "add-users" && "bg-[#8633FF] text-white"
               }`}
             >
               Add Users
@@ -39,9 +40,9 @@ export default function SettingsPage() {
 
           <Link to="/dashboard/settings/all-users">
             <button
-              onClick={() => setIsActiveSetting("all users")}
+              onClick={() => setIsActiveSetting("all-users")}
               className={`border border-r-0 border-[#8633FF] px-2 py-2 text-[#8633FF] ${
-                isActiveSetting == "all users" && "bg-[#8633FF] text-white"
+                isActiveSetting == "all-users" && "bg-[#8633FF] text-white"
               }`}
             >
               All Users
@@ -50,9 +51,9 @@ export default function SettingsPage() {
 
           <Link to="/dashboard/settings/pending-users">
             <button
-              onClick={() => setIsActiveSetting("pending users")}
+              onClick={() => setIsActiveSetting("pending-users")}
               className={`border border-r-0 border-[#8633FF] px-2 py-2 text-[#8633FF] ${
-                isActiveSetting == "pending users" && "bg-[#8633FF] text-white"
+                isActiveSetting == "pending-users" && "bg-[#8633FF] text-white"
               }`}
             >
               Pending Users
@@ -60,9 +61,9 @@ export default function SettingsPage() {
           </Link>
           <Link to="/dashboard/settings/billing-subscription">
             <button
-              onClick={() => setIsActiveSetting("billing and subscription")}
+              onClick={() => setIsActiveSetting("billing-subscription")}
               className={`border  border-[#8633FF] px-2 py-2 text-[#8633FF] rounded-e ${
-                isActiveSetting == "billing and subscription" &&
+                isActiveSetting == "billing-subscription" &&
                 "bg-[#8633FF] text-white"
               }`}
             >

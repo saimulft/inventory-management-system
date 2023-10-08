@@ -15,7 +15,7 @@ const AddASINForm = () => {
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Add ASIN or UPC</p>
         </div>
-        <div className="lg:py-10 lg:px-20 p-10 w-full">
+        <div className="px-20 py-10 w-full">
           <form>
             <div className="flex gap-7">
               <div className="w-full">
@@ -180,6 +180,11 @@ const AddASINForm = () => {
             </div>
 
             <div className="flex items-center justify-center mt-8"></div>
+            <div className="flex items-center justify-center mt-8">
+              <button className="bg-[#4a07da] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
+                Preparing Request
+              </button>
+            </div>
           </form>
         </div>
       </div>

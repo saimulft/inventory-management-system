@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded } from "react-icons/bi";
+import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 
 import { LiaGreaterThanSolid } from "react-icons/lia";
 
@@ -141,7 +141,12 @@ export default function MissingArrivalTable() {
                   <td>{d.missing_qnt}</td>
                   <td>{d.supplier_tracking}</td>
                   <td>{d.EDA}</td>
-                  <td>
+                  <td
+                    onClick={() =>
+                      document.getElementById("my_modal_2").showModal()
+                    }
+                    className="cursor-pointer"
+                  >
                     <BiDotsVerticalRounded />
                   </td>
                 </tr>
@@ -176,6 +181,96 @@ export default function MissingArrivalTable() {
           </div>
         </div>
       </div>
+      {/* modal content  */}
+      <dialog id="my_modal_2" className="modal">
+        <div className="modal-box">
+          <div className="flex">
+            <div className="w-1/2">
+              <div className="flex items-center mb-4 gap-2">
+                <BiSolidEdit size={24} />
+                <h3 className="text-2xl font-medium">Details</h3>
+              </div>
+              <p className="mt-2">
+                <span className="font-medium">Data: </span>
+                <span>2023-06-26</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Store Name: </span>
+                <span>SAVE_k544.LLC</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">ASIN: </span>
+                <span>BOHFK4522</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Order Qnt: </span>
+                <span>23</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Received Qnt: </span>
+                <span>23</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Missing Qnt: </span>
+                <span>23</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">UPIN: </span>
+                <span>USAfsdfds</span>
+              </p>
+
+              <p className="mt-2">
+                <span className="font-medium">Product Name: </span>
+                <span>demo product name</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">EDA: </span>
+                <span>2023-06-26</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Supplier Tracking: </span>
+                <span>Not Added</span>
+              </p>
+            </div>
+            <div className="w-1/2 px-4">
+              <h3 className="text-2xl font-medium">Update</h3>
+              <form>
+                <div className="flex flex-col mt-2">
+                  <label className="text-slate-500">Status</label>
+                  <select
+                    className="select select-primary w-full select-sm mt-2"
+                    name="country"
+                    id="country"
+                  >
+                    <option disabled selected>
+                      Status
+                    </option>
+                    <option>status-1</option>
+                    <option>status-2</option>
+                    <option>status-3</option>
+                  </select>
+                </div>
+                <div className="flex flex-col mt-4">
+                  <label className="text-slate-500">Note</label>
+                  <input
+                    type="text"
+                    placeholder="Enter store manager name"
+                    className="input input-bordered input-primary w-full input-sm mt-2"
+                    id="storeManagerName"
+                    name="storeManagerName"
+                  />
+                </div>
+              </form>
+              <button className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 }

@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 export default function BillingAndSubscription() {
   return (
     <div className="py-20 space-y-4 flex justify-center items-center flex-col">
-      <Link to="/dashboard/settings/plan">
+      <Link to="/dashboard/settings/billing-subscription/plan">
         <div className="flex items-center px-2 py-6 gap-4 border-2 border-[#8633FF] rounded-md w-64">
           <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
             <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">

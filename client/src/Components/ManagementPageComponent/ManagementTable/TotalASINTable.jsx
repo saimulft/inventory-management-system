@@ -1,5 +1,5 @@
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded } from "react-icons/bi";
+import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 
 import { LiaGreaterThanSolid } from "react-icons/lia";
 
@@ -114,7 +114,12 @@ export default function TotalASINTable() {
                   <td>{d.code_type}</td>
                   <td>{d.store_manager}</td>
                   <td>{d.product_img}</td>
-                  <td>
+                  <td
+                    onClick={() =>
+                      document.getElementById("my_modal_2").showModal()
+                    }
+                    className="cursor-pointer"
+                  >
                     <BiDotsVerticalRounded />
                   </td>
                 </tr>
@@ -149,6 +154,110 @@ export default function TotalASINTable() {
           </div>
         </div>
       </div>
+      {/* modal content  */}
+      <dialog id="my_modal_2" className="modal">
+        <div className="modal-box">
+          <div className="flex">
+            <div className="w-1/2">
+              <div className="flex items-center mb-4 gap-2">
+                <BiSolidEdit size={24} />
+                <h3 className="text-2xl font-medium">Details</h3>
+              </div>
+              <p className="mt-2">
+                <span className="font-medium">Data: </span>
+                <span>2023-06-26</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Store Name: </span>
+                <span>SAVE_k544.LLC</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">ASIN: </span>
+                <span>BOHFK4522</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Store Manager: </span>
+                <span>Saidul Basar</span>
+              </p>
+
+              <p className="mt-2">
+                <span className="font-medium">Product Name: </span>
+                <span>demo product name</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Old Min Price: </span>
+                <span>$35</span>
+              </p>
+            </div>
+            <div className="w-1/2 px-4">
+              <h3 className="text-2xl font-medium">Update</h3>
+              <form>
+                <div className="flex flex-col mt-4">
+                  <label className="text-slate-500">New Min Price</label>
+                  <input
+                    type="text"
+                    placeholder="Enter store manager name"
+                    className="input input-bordered input-primary w-full input-sm mt-2"
+                    id="storeManagerName"
+                    name="storeManagerName"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Product Image</label>
+                  <div className="flex items-center w-full mt-2">
+                    <label
+                      htmlFor="shippingLabel-dropzone"
+                      className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                    >
+                      <div className="flex items-center gap-5 py-[4px]">
+                        <svg
+                          className="w-6 h-6 text-gray-500 dark:text-gray-400"
+                          aria-hidden="true"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 20 16"
+                        >
+                          <path
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                          />
+                        </svg>
+                      </div>
+                      <input
+                        id="invoice-dropzone"
+                        name="invoice-dropzone"
+                        type="file"
+                        className="hidden"
+                      />
+                      <div className="ml-5">
+                        <button
+                          onClick={() => {
+                            document.getElementById("invoice-dropzone").click();
+                          }}
+                          type="button"
+                          className="btn btn-outline btn-primary btn-xs"
+                        >
+                          select file
+                        </button>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </form>
+              <button className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 }
