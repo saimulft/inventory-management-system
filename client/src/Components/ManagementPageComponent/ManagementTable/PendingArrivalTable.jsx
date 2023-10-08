@@ -159,47 +159,47 @@ export default function PendingArrivalTable() {
                 <BiSolidEdit size={24} />
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Data: </span>
                 <span>2023-06-26</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Store Name: </span>
                 <span>SAVE_k544.LLC</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">ASIN: </span>
                 <span>BOHFK4522</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Quantity: </span>
                 <span>23</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Received Qnt: </span>
                 <span>23</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Missing Qnt: </span>
                 <span>23</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Courier: </span>
                 <span>null</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Team Code: </span>
                 <span>SAVE_k544sdwtetr</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Product Name: </span>
                 <span>demo product name</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">EDA: </span>
                 <span>2023-06-26</span>
               </p>
-              <p>
+              <p className="mt-2">
                 <span className="font-medium">Supplier Tracking: </span>
                 <span>Not Added</span>
               </p>

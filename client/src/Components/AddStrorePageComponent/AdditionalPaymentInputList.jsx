@@ -2,6 +2,26 @@ import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
 export default function AdditionalPaymentInputList() {
+  const [open, setOpen] = useState([{ class: "collapse-open", trackNO: 0 }]);
+
+  const aco = (e, track) => {
+    console.log(e.target);
+    e.stopPropagation();
+    if (e.target.id == "aco") {
+      open.map((singleAco) => {
+        if (singleAco.trackNO == track) {
+          const withOutTargetArray = open.filter((f) => f.trackNO != track);
+          if (singleAco.class == "collapse-open") {
+            const newTargetObj = { class: "collapse-close", trackNO: track };
+            setOpen([...withOutTargetArray, newTargetObj]);
+          } else {
+            const newTargetObj = { class: "collapse-open", trackNO: track };
+            setOpen([...withOutTargetArray, newTargetObj]);
+          }
+        }
+      });
+    }
+  };
   const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([
     {
       email: "",
@@ -38,6 +58,7 @@ export default function AdditionalPaymentInputList() {
         zipCode: "",
       },
     ]);
+    setOpen([...open, { class: "collapse-open", trackNO: open.length }]);
   };
 
   const handleAdditionalPaymentRemoveField = (index) => {
@@ -51,11 +72,21 @@ export default function AdditionalPaymentInputList() {
   return (
     <>
       {additionalPaymentInputList.map((a, index) => {
+        const decideAcoIsOpenOrClose = open.find((f) => f.trackNO == index);
+
         return (
           <div key={index} className="relative w-full mt-6 ">
             <div className=" border border-[#8633FF] rounded-lg">
-              <div className="collapse  collapse-arrow bg-white ">
-                <input type="checkbox" />
+              <div
+                id="aco"
+                onClick={(e) => aco(e, index)}
+                className={`collapse ${decideAcoIsOpenOrClose.class} collapse-arrow bg-white `}
+              >
+                <input
+                  type="checkbox"
+                  id="aco"
+                  onClick={(e) => aco(e, index)}
+                />
                 <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
                   Additional payment Details
                   <span className="text-sm text-slate-400">(Optional)</span>
