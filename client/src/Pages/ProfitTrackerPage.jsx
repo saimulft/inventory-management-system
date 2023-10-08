@@ -40,7 +40,7 @@ export default function ProfitTrackerPage() {
           </div>
         </div>
         {/* store info  */}
-        <div className="grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8 mt-8">
+        <div className="grid grid-cols-4 gap-4 mb-8 mt-8">
           {allStoreData.map((singleStore, index) => {
             return (
               <Link key={index} to="/dashboard/home">

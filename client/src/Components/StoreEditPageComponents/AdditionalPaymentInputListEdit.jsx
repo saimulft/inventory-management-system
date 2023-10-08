@@ -52,15 +52,13 @@ export default function AdditionalPaymentInputListEdit() {
     <>
       {additionalPaymentInputList.map((a, index) => {
         return (
-          <div key={index} className="relative w-full md:mt-6 ">
+          <div key={index} className="relative w-full mt-6 ">
             <div className=" border border-[#8633FF] rounded-lg">
               <div className="collapse  collapse-arrow bg-white ">
                 <input type="checkbox" />
-                <div className="collapse-title text-xs md:text-xl font-medium flex items-center gap-2 ">
+                <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
                   Additional payment Details
-                  <span className="text-xs md:text-sm text-slate-400">
-                    (Optional)
-                  </span>
+                  <span className="text-sm text-slate-400">(Optional)</span>
                 </div>
                 <div className="collapse-content">
                   <form>
@@ -139,8 +137,8 @@ export default function AdditionalPaymentInputListEdit() {
                     </div>
 
                     {/* billing address and city  */}
-                    <div className="md:flex gap-2">
-                      <div className="mt-2 md:w-1/2">
+                    <div className="flex gap-2">
+                      <div className="mt-2 w-1/2">
                         <label className="text-sm text-slate-500">
                           Billing address
                         </label>
@@ -154,7 +152,7 @@ export default function AdditionalPaymentInputListEdit() {
                           }
                         />
                       </div>
-                      <div className="mt-2 md:w-1/2">
+                      <div className="mt-2 w-1/2">
                         <label className="text-sm text-slate-500">City</label>
                         <input
                           className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
@@ -169,8 +167,8 @@ export default function AdditionalPaymentInputListEdit() {
                     </div>
 
                     {/* state and zip code  */}
-                    <div className="md:flex gap-2">
-                      <div className="mt-2 md:w-1/2">
+                    <div className="flex gap-2">
+                      <div className="mt-2 w-1/2">
                         <label className="text-sm text-slate-500">State</label>
                         <input
                           className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
@@ -182,7 +180,7 @@ export default function AdditionalPaymentInputListEdit() {
                           }
                         />
                       </div>
-                      <div className="mt-2 md:w-1/2">
+                      <div className="mt-2 w-1/2">
                         <label className="text-sm text-slate-500">
                           ZIP Code
                         </label>

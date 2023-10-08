@@ -7,7 +7,7 @@ export default function Checkout() {
         style={{
           boxShadow: "0px 0px 40px 6px rgba(0, 0, 0, 0.2)",
         }}
-        className="md:border-2 md:border-[#8633FF] md:w-[80%]  rounded-lg mt-[480px] md:mt-0"
+        className="border-2 border-[#8633FF] w-[80%]  rounded-lg mt-0"
       >
         <h3 className="text-center text-3xl font-medium my-6">Checkout</h3>
         <div className="flex gap-2 justify-center">
@@ -18,7 +18,7 @@ export default function Checkout() {
           <p>Annually</p>
         </div>
 
-        <div className=" flex gap-8 space-y-4 md:space-y-0 p-4  md:p-8 mt-12">
+        <div className=" flex gap-8  mt-12">
           <div>
             <div
               style={{

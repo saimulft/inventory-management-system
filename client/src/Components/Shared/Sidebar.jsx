@@ -3,7 +3,6 @@ import { PiWarehouseDuotone } from "react-icons/pi";
 import { GiProgression } from "react-icons/gi";
 import { GoChecklist } from "react-icons/go";
 import { BiLogIn, BiSupport } from "react-icons/bi";
-import { RxExit } from "react-icons/rx";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { BsHouseCheck, BsPlusCircle } from "react-icons/bs";
 import { useContext } from "react";
@@ -14,9 +13,7 @@ export default function Sidebar() {
   const { isSidebarOpen, setIsSidebarOpen } = useContext(GlobalContext);
 
   return (
-    <div
-      className={`sticky bottom-0 top-0 pt-5 bg-[#2e2e30] h-screen hidden md:block`}
-    >
+    <div className={`sticky bottom-0 top-0 pt-5 bg-[#2e2e30] h-screen `}>
       <div className="flex flex-col w-full lg:h-[calc(100vh-6%)] md:h-[calc(100vh-5%)] items-center relative px-8">
         {/* top part of the slider  */}
         <div className={``}>

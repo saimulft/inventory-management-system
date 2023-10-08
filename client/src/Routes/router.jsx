@@ -26,7 +26,6 @@ import StoreOwnerPage from "../Pages/SettingPages/StoreOwnerPage";
 import StoreManagerAdminPage from "../Pages/SettingPages/StoreManagerAdminPage";
 import WareHouseAdminPage from "../Pages/SettingPages/WarehouseAdminPage";
 import DashboardPage from "../Pages/DashboardPage";
-import SignUpPage from "../Pages/SignupPage";
 import AllStockTable from "../Components/ManagementPageComponent/ManagementTable/AllStockTable";
 import PreparingRequestTable from "../Components/ManagementPageComponent/ManagementTable/PreparingRequestTable";
 import ReadyToShipTable from "../Components/ManagementPageComponent/ManagementTable/ReadyToShipTable";
@@ -37,6 +36,7 @@ import TotalASINTable from "../Components/ManagementPageComponent/ManagementTabl
 import PendingArrivalTable from "../Components/ManagementPageComponent/ManagementTable/PendingArrivalTable";
 import StoreEditPage from "../Pages/StoreEditPage";
 import LoginPage from "../Pages/LoginPage";
+import SignUPPage from "../Pages/SignUpPage";
 
 export const router = createBrowserRouter([
   {
@@ -207,6 +207,6 @@ export const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <SignUpPage />,
+    element: <SignUPPage />,
   },
 ]);

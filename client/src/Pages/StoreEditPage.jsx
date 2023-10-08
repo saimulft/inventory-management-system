@@ -1,9 +1,5 @@
 import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
-import { BsArrowRightShort } from "react-icons/bs";
-import { Link } from "react-router-dom";
-import SupplierInfoInputList from "../Components/AddStrorePageComponent/SupplierInfoInputList";
-import AdditionalPaymentInputList from "../Components/AddStrorePageComponent/AdditionalPaymentInputList";
 import SupplierInfoInputListEdit from "../Components/StoreEditPageComponents/SupplierInfoInputListEdit";
 import AdditionalPaymentInputListEdit from "../Components/StoreEditPageComponents/AdditionalPaymentInputListEdit";
 import { BiSolidEdit } from "react-icons/bi";
@@ -30,11 +26,9 @@ export default function StoreEditPage() {
       <div className=" border-2 border-[#8633FF]  rounded-lg">
         <div className="collapse  collapse-arrow bg-white ">
           <input type="checkbox" />
-          <div className="collapse-title text-xs md:text-xl font-medium flex items-center gap-2 ">
+          <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
             Additional payment Details
-            <span className="text-xs md:text-sm text-slate-400">
-              (Optional)
-            </span>
+            <span className="text-sm text-slate-400">(Optional)</span>
           </div>
           <div className="collapse-content">
             <p>
@@ -65,12 +59,12 @@ export default function StoreEditPage() {
             <div>
               <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">
                 {/* supplier information  */}
-                <div className="md:w-1/2 p-4 md:p-8">
+                <div className="w-1/2  p-8">
                   <SupplierInfoInputListEdit />
                 </div>
 
                 {/* add payment details  */}
-                <div className="md:w-1/2 p-4 pb-24">
+                <div className="w-1/2 p-4 pb-24">
                   <AdditionalPaymentInputListEdit />
                 </div>
               </div>

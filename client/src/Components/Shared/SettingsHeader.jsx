@@ -4,11 +4,8 @@ import { Link } from "react-router-dom";
 export default function SettingsHeader() {
   const [isActiveSetting, setIsActiveSetting] = useState("profile");
 
-  const boxShadowStyle = {
-    boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
-  };
   return (
-    <div className="flex flex-col justify-center h-full md:my-16 pt-10   ">
+    <div className="flex flex-col justify-center h-full my-16 pt-10   ">
       <div className="border-b-2 border-slate-700 w-full flex justify-center items-center">
         <div className="flex mb-6 ">
           <Link to="/dashboard/settings/profile">

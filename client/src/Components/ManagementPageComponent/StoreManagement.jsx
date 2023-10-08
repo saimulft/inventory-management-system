@@ -1,4 +1,4 @@
-import { SlSocialDropbox } from "react-icons/Sl";
+import { FaDropbox } from "react-icons/fa";
 import { AiOutlineSetting, AiOutlineShoppingCart } from "react-icons/ai";
 import { MdOutlineDiscount, MdPendingActions } from "react-icons/md";
 import { LiaShippingFastSolid } from "react-icons/lia";
@@ -9,7 +9,7 @@ export default function storeManagement() {
   const storeManagementData = [
     {
       quantity: "2,554",
-      Icon: SlSocialDropbox,
+      Icon: FaDropbox,
       title: "All Stock",
       tablePath: "all-stock",
     },
@@ -62,7 +62,7 @@ export default function storeManagement() {
       <h3 className="text-center mb-12 text-3xl font-medium">
         Store Management
       </h3>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-4 gap-4 mb-8">
         {storeManagementData.map((singleData, index) => {
           return (
             <div key={index}>

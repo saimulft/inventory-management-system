@@ -6,7 +6,7 @@ export default function SupportPage() {
     <div className="flex items-center justify-center h-screen px-4">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg max-h-[600px] max-w-[600px] m-auto rounded-xl flex justify-center items-center py-16 md:px-10 px-4"
+        className="border border-[#8633FF] shadow-lg max-h-[600px] max-w-[600px] m-auto rounded-xl flex justify-center items-center py-16 px-10 "
       >
         <form>
           <h4 className="text-xl font-bold">Create a Support Ticket</h4>

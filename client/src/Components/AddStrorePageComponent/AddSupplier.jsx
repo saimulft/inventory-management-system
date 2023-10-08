@@ -22,16 +22,14 @@ export default function AddSupplier() {
   };
 
   return (
-    <div className="p-4 md:p-10 bg-white rounded-lg">
+    <div className="p-10 bg-white rounded-lg">
       {/* option select  */}
       <div className=" border-2 border-[#8633FF]  rounded-lg">
         <div className="collapse  collapse-arrow bg-white ">
           <input type="checkbox" />
-          <div className="collapse-title text-xs md:text-xl font-medium flex items-center gap-2 ">
+          <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
             Additional payment Details
-            <span className="text-xs md:text-sm text-slate-400">
-              (Optional)
-            </span>
+            <span className="text-sm text-slate-400">(Optional)</span>
           </div>
           <div className="collapse-content">
             <p>
@@ -57,8 +55,8 @@ export default function AddSupplier() {
           <div key={index} className="relative z-10">
             <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">
               {/* supplier information  */}
-              <div className="md:w-1/2 p-4 md:p-8">
-                <h5 className="text-lg md:text-xl font-medium">
+              <div className="w-1/2 p-8">
+                <h5 className="text-xl font-medium">
                   Add Supplier Information
                 </h5>
 
@@ -66,7 +64,7 @@ export default function AddSupplier() {
               </div>
 
               {/* add payment details  */}
-              <div className="md:w-1/2 p-4 pb-10">
+              <div className="w-1/2 p-4 pb-10">
                 <AdditionalPaymentInputList />
               </div>
             </div>
@@ -96,7 +94,7 @@ export default function AddSupplier() {
       })}
       {/* next btn  */}
       <Link to="/dashboard/add-store/add-supplier/select-payment">
-        <button className="flex items-center justify-center border border-[#8633FF]  w-full md:w-80 mx-auto mt-12 py-2 rounded-md text-[#8633FF] font-medium">
+        <button className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-2 rounded-md text-[#8633FF] font-medium">
           <p>Next</p>
           <BsArrowRightShort className="mt-[1px]" size={28} />
         </button>

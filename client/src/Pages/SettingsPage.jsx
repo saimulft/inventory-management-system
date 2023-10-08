@@ -11,7 +11,7 @@ export default function SettingsPage() {
   return (
     <div
       style={boxShadowStyle}
-      className="flex flex-col justify-center h-full md:my-16 pt-10 rounded-lg  md:max-w-[80%] mx-auto md:px-20 px-4 bg-white shadow-lg"
+      className="flex flex-col justify-center h-full my-16 pt-10 rounded-lg  max-w-[80%] mx-auto px-20  bg-white shadow-lg"
     >
       <div className="border-b-2 border-slate-500 w-full flex justify-center items-center">
         <div className="flex mb-6 ">

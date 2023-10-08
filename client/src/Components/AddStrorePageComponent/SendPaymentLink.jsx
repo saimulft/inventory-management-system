@@ -4,13 +4,13 @@ import { Link } from "react-router-dom";
 export default function SendPaymentLink() {
   return (
     <div className="flex justify-center items-center h-[calc(100vh-74px)]">
-      <div className="border-2 border-[#8633FF] rounded-lg relative md:p-16">
+      <div className="border-2 border-[#8633FF] rounded-lg relative p-16">
         <Link to="/dashboard/add-store/add-supplier/select-payment">
           <button className="py-3 px-4 absolute top-1 left-0">
             <BsArrowLeftCircle size={25} />
           </button>
         </Link>
-        <div className="p-8 md:w-3/4 mx-auto mt-6 md:mt-0">
+        <div className="p-8 w-3/4 mx-auto ">
           <h3 className=" text-2xl font-medium ">Send payment link</h3>
           <p className="mt-2 text-slate-400">
             Please fill out this form to send a payment link to your client

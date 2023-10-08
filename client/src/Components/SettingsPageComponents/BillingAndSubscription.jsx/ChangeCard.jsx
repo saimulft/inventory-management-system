@@ -3,10 +3,10 @@ export default function ChangeCard() {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
   return (
-    <div className="md:w-[40%] w-full mx-auto md:flex justify-center items-center py-20">
+    <div className="w-[40%]  mx-auto flex justify-center items-center py-20">
       <form
         style={boxShadowStyle}
-        className="bg-white px-4 md:px-20 py-14 rounded-lg  md:h-fit"
+        className="bg-white  px-20 py-14 rounded-lg  h-fit"
       >
         <h5 className="text-xl font-medium mb-6 ">Change Payment Method</h5>
         {/* email address  */}
@@ -47,7 +47,7 @@ export default function ChangeCard() {
 
         {/* MM/YY and CVC  */}
         <div className="flex gap-2">
-          <div className="mt-2 md:w-1/2">
+          <div className="mt-2 w-1/2">
             <input
               type="text"
               placeholder="MM/YY"
@@ -56,7 +56,7 @@ export default function ChangeCard() {
               name="date"
             />
           </div>
-          <div className="mt-2 md:w-1/2">
+          <div className="mt-2 w-1/2">
             <input
               type="text"
               placeholder="CVC"
@@ -69,7 +69,7 @@ export default function ChangeCard() {
 
         {/* billing address and city  */}
         <div className="flex  gap-2">
-          <div className="mt-2 md:w-1/2">
+          <div className="mt-2 w-1/2">
             <label className="text-slate-500">Billing Address</label>
             <input
               type="text"
@@ -80,7 +80,7 @@ export default function ChangeCard() {
             />
           </div>
 
-          <div className="mt-2 md:w-1/2">
+          <div className="mt-2 w-1/2">
             <label className="text-slate-500">City</label>
             <input
               type="text"
@@ -93,8 +93,8 @@ export default function ChangeCard() {
         </div>
 
         {/* state and zip code  */}
-        <div className="md:flex gap-2">
-          <div className="mt-2 md:w-1/2">
+        <div className="flex gap-2">
+          <div className="mt-2 w-1/2">
             <label className="text-slate-500">State</label>
             <input
               type="text"
@@ -104,7 +104,7 @@ export default function ChangeCard() {
               name="state"
             />
           </div>
-          <div className="mt-2 md:w-1/2">
+          <div className="mt-2 w-1/2">
             <label className="text-slate-500">ZIP code</label>
             <input
               type="text"

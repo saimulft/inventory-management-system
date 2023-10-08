@@ -34,9 +34,7 @@ export default function SupplierInfoInputListEdit() {
         <BiSolidEdit />
         <p>Edit</p>
       </button>
-      <h5 className="text-lg md:text-xl font-medium">
-        Add Supplier Information
-      </h5>
+      <h5 className="text-xl font-medium">Add Supplier Information</h5>
       {supplierInfoInputList.map((i, index) => {
         return (
           <div key={index} className="flex gap-2 my-8">

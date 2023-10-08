@@ -5,7 +5,6 @@ import Navbar from "../Components/Shared/Navbar";
 import Container from "../Components/Shared/Container";
 import { useContext } from "react";
 import { GlobalContext } from "../Providers/GlobalProviders";
-// import { router } from "../Routes/router";
 
 export default function DashboardLayout() {
   const { isSidebarOpen } = useContext(GlobalContext);

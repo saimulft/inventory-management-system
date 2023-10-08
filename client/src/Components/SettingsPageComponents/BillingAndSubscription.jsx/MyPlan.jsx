@@ -49,7 +49,7 @@ export default function MyPlan() {
   return (
     <div
       style={boxShadowStyle}
-      className="flex flex-col justify-center h-full md:my-20  rounded-lg  md:max-w-[34%] mx-auto md:px-12 px-4 bg-white shadow-lg"
+      className="flex flex-col justify-center h-full my-20  rounded-lg  max-w-[34%] mx-auto px-12  bg-white shadow-lg"
     >
       <div className="pt-12">
         <div className="flex items-center gap-3 border-b-2 pb-4">
