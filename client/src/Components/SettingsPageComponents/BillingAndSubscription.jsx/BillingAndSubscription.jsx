@@ -1,4 +1,5 @@
-import { FaDropbox } from "react-icons/fa";
+import { SiMicrostrategy } from "react-icons/si";
+import { BsCreditCard2Back } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
 export default function BillingAndSubscription() {
@@ -8,7 +9,7 @@ export default function BillingAndSubscription() {
         <div className="flex items-center px-2 py-6 gap-4 border-2 border-[#8633FF] rounded-md w-64">
           <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
             <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
-              <FaDropbox size={24} />
+              <SiMicrostrategy size={24} />
             </div>
           </div>
           <div className="space-y-1">
@@ -24,7 +25,7 @@ export default function BillingAndSubscription() {
       >
         <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
           <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
-            <SlSocialDropbox size={24} />
+            <BsCreditCard2Back size={24} />
           </div>
         </div>
         <div className="space-y-1">
