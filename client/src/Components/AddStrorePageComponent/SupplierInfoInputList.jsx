@@ -34,21 +34,21 @@ export default function SupplierInfoInputList() {
           <div key={index} className="flex gap-2 mt-4">
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-2 px-2 w-1/3 "
+              className="input input-bordered input-primary shadow-lg w-1/3"
               placeholder="Supplier name"
               type="text"
               name="supplierName"
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-2 px-2 w-1/3 "
+              className="input input-bordered input-primary shadow-lg w-1/3"
               placeholder="User ID"
               type="text"
               name="userID"
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-2 px-2 w-1/3 "
+              className="input input-bordered input-primary shadow-lg w-1/3"
               placeholder="Password"
               type="text"
               name="password"
@@ -64,13 +64,7 @@ export default function SupplierInfoInputList() {
       })}
 
       <div className="mt-3 flex justify-center items-center">
-        <div
-          onClick={handleSupplierInfoIncrementField}
-          style={{
-            boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)",
-          }}
-          className="w-8 h-8 rounded-full shadow-2xl flex justify-center items-center "
-        >
+        <div onClick={handleSupplierInfoIncrementField} style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className="w-8 h-8 rounded-full shadow-2xl flex justify-center items-center">
           <button className="text-slate-500 hover:text-slate-600 transition-all duration-100">
             <AiOutlinePlusCircle size={24} />
           </button>

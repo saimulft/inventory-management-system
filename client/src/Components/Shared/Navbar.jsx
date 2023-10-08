@@ -11,8 +11,6 @@ import { BsHouseCheck, BsPlusCircle } from "react-icons/bs";
 import { NavLink } from "react-router-dom";
 
 export default function Navbar() {
-
-
   return (
     <div className="flex items-center md:px-8 ps-3 pe-3 bg-[#2e2e30] text-white shadow-sm py-3 z-50">
       <div className="flex items-center gap-2 z-50">
@@ -22,20 +20,20 @@ export default function Navbar() {
             {/* Page content here */}
             <label htmlFor="my-drawer" className={`transition-all duration-500 rotate-180 flex justify-end cursor-pointer`}>
               <div className={`bg-[#454547] text-white ps-3 pe-3 py-[10px] rounded-md`} >
-                <RiMenuFoldFill size={25} />
+                <RiMenuFoldFill size={20} />
               </div>
             </label>
           </div>
           <div className="drawer-side z-50">
             <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
             <ul className="menu pt-5 bg-[#2e2e30] text-base-content z-50">
-              <div className="flex flex-col justify-between px-3 h-screen z-50">
+              <div className="flex flex-col justify-between px-3 h-[100vh] z-50">
                 <div className={`space-y-2 z-50`}>
                   <div className="drawer-content">
                     {/* Page content here */}
                     <label htmlFor="my-drawer" className={`transition-all duration-500 rotate-0 flex justify-start cursor-pointer mb-5`}>
                       <div className={`bg-[#8633FF] text-white ps-3 pe-3 py-[10px] rounded-md`} >
-                        <RiMenuFoldFill size={25} />
+                        <RiMenuFoldFill size={20} />
                       </div>
                     </label>
                   </div>
@@ -129,12 +127,12 @@ export default function Navbar() {
         <div className="bg-[#454547] p-3 rounded relative hidden">
           <AiOutlineSearch size={20} />
         </div>
-        <div className="bg-[#454547] p-3 rounded relative">
+        <div className="bg-[#454547] p-2.5 rounded relative">
           <BsBell size={20} />
           <span className="animate-ping absolute top-1 right-1 inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
           <span className="h-1 w-1 rounded-full bg-red-500 absolute inline top-2 right-2"></span>
         </div>
-        <div className="bg-[#454547] p-3 rounded relative">
+        <div className="bg-[#454547] p-2.5 rounded relative">
           <AiOutlineMessage size={20} />
           <span className="animate-ping absolute top-1 right-1 inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
           <span className="h-1 w-1 rounded-full bg-red-500 absolute inline top-2 right-2"></span>

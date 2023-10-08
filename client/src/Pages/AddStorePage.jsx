@@ -1,4 +1,5 @@
 import { BsArrowRightShort } from "react-icons/bs";
+import { Link } from "react-router-dom";
 
 export default function AddStorePage() {
   const boxShadowStyle = {
@@ -6,7 +7,7 @@ export default function AddStorePage() {
   };
 
   return (
-    <div className="bg-white p-20 rounded-lg">
+    <div className="bg-white md:p-20 mt-5 mx-5 rounded-lg">
       <div style={boxShadowStyle} className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl flex justify-center items-center" >
         <div className="lg:py-20 lg:px-28 p-10">
           <form>
@@ -36,7 +37,7 @@ export default function AddStorePage() {
             </div>
 
             <div className="flex items-center justify-center mt-8">
-              <button className="bg-[#4a07da] flex py-3 justify-center items-center text-white w-full capitalize rounded-lg">Next<BsArrowRightShort className="mt-[2px]" size={28} /></button>
+              <Link to='/dashboard/add-store/add-supplier' className="btn btn-primary w-full capitalize rounded-lg">Next<BsArrowRightShort className="mt-[2px]" size={28} /></Link>
             </div>
 
           </form>

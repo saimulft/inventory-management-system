@@ -7,14 +7,14 @@ const AddASINForm = () => {
     };
 
     return (
-        <div className="mt-20 rounded-lg">
+        <div className="md:py-20 rounded-lg w-full mt-5 px-5 mb-5">
             <div style={boxShadowStyle} className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl" >
                 <div className="text-center mt-10">
                     <p className="text-2xl font-bold">Add ASIN or UPC</p>
                 </div>
-                <div className="lg:py-10 lg:px-20 p-10 w-full">
+                <div className="lg:py-10 lg:px-20 p-10 px-5 w-full flex justify-center items-center">
                     <form>
-                        <div className="flex gap-7">
+                        <div className="grid md:grid-cols-2 gap-7 h-full">
                             <div className="w-full">
                                 <div>
                                     <label className="text-slate-500">Date</label>
@@ -91,7 +91,7 @@ const AddASINForm = () => {
                         </div>
 
                         <div className="flex items-center justify-center mt-8">
-                            <button className="bg-[#4a07da] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 capitalize">Preparing Request</button>
+                            <button className="btn btn-primary text-white capitalize rounded-lg w-72 capitalize">Preparing Request</button>
                         </div>
 
                     </form>

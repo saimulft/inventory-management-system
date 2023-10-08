@@ -11,14 +11,14 @@ const PreparingFormPage = () => {
     }
 
     return (
-        <div className="py-20 rounded-lg">
-            <div style={boxShadowStyle} className="border border-[#8633FF] bg-white shadow-lg h-fit w-fit m-auto rounded-xl" >
-                <div className="text-center mt-10">
+        <div className="md:py-20 rounded-lg w-full mt-5 px-5 mb-5">
+            <div style={boxShadowStyle} className="border border-[#8633FF] bg-white shadow-lg w-fit m-auto rounded-xl" >
+                <div className="text-center py-10">
                     <p className="text-2xl font-bold">Preparing Request From</p>
                 </div>
-                <div className="lg:py-10 lg:px-20 w-full">
+                <div className="md:px-20 px-5 mb-10 w-full">
                     <form>
-                        <div className="flex gap-7">
+                        <div className="grid lg:grid-cols-2 gap-7 h-full">
                             <div className="w-full">
                                 <div>
                                     <label className="text-slate-500">Date</label>
@@ -52,8 +52,8 @@ const PreparingFormPage = () => {
                                 <div className="mt-4">
                                     <label className="text-slate-500">Invoice</label>
                                     <div className="flex items-center w-full mt-2">
-                                        <label htmlFor="invoice-dropzone" className="flex justify-between items-center px-4 w-max h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg">
-                                            <div className="flex items-center gap-8 py-[6.5px]">
+                                        <label htmlFor="invoice-dropzone" className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg">
+                                            <div className="flex items-center gap-5 py-[6.5px]">
                                                 <svg className="w-6 h-6 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                                                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2" />
                                                 </svg>
@@ -63,7 +63,7 @@ const PreparingFormPage = () => {
                                                 </div>
                                             </div>
                                             <input id="invoice-dropzone" name="invoice-dropzone" type="file" className="hidden" />
-                                            <div className="ml-5">
+                                            <div className="ml-5 hidden md:block">
                                                 <button onClick={() => { document.getElementById('invoice-dropzone').click() }} type="button" className="btn btn-outline btn-primary btn-xs">select file</button>
                                             </div>
                                         </label>
@@ -114,7 +114,7 @@ const PreparingFormPage = () => {
                                                 </div>
                                             </div>
                                             <input id="shippingLabel-dropzone" name="shippingLabel-dropzone" type="file" className="hidden" />
-                                            <div className="ml-5">
+                                            <div className="ml-5 hidden md:block">
                                                 <button onClick={() => { document.getElementById('shippingLabel-dropzone').click() }} type="button" className="btn btn-outline btn-primary btn-xs">select file</button>
                                             </div>
                                         </label>
@@ -130,7 +130,7 @@ const PreparingFormPage = () => {
                         </div>
 
                         <div className="flex items-center justify-center mt-8">
-                            <button className="bg-[#4a07da] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 capitalize">Preparing Request</button>
+                            <button className="btn btn-primary text-white capitalize rounded-lg w-72 capitalize">Preparing Request</button>
                         </div>
 
                     </form>

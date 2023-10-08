@@ -6,7 +6,7 @@ import AddStorePage from "../Pages/AddStorePage";
 import ArrivalFormPage from "../Pages/ArrivalFormPage";
 import PreparingFormPage from "../Pages/PreparingFormPage";
 import AddASINForm from "../Pages/AddASINForm";
-import AddSupplier from "../Components/AddStrorePageComponent/AddSupplier";
+import AddSupplier from "../Pages/AddSupplier";
 
 export const router = createBrowserRouter([
   {
