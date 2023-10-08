@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
-import SupplierInfoInputList from "./SupplierInfoInputList";
-import AdditionalPaymentInputList from "./AdditionalPaymentInputList";
-import { BsArrowRightShort } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import SupplierInfoInputListEdit from "../Components/StoreEditPageComponents/SupplierInfoInputListEdit";
+import AdditionalPaymentInputListEdit from "../Components/StoreEditPageComponents/AdditionalPaymentInputListEdit";
+import { BiSolidEdit } from "react-icons/bi";
 
-export default function AddSupplier() {
+export default function StoreEditPage() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
 
   const handleAddSupplierIncrementField = () => {
@@ -39,13 +38,17 @@ export default function AddSupplier() {
             <p>
               <span className="font-bold text-slate-600">
                 Store manager name:
-              </span>{" "}
+              </span>
               <span>Saidul Basar</span>
             </p>
             <p>
               <span className="font-bold text-slate-600">Store type:</span>{" "}
               <span>fsdklfsdkllk</span>
             </p>
+            <button className="border border-[#8633FF] px-4 py-1 flex justify-center items-center gap-2 my-4 rounded hover:bg-[#8633FF] hover:text-white transition-all w-20 ">
+              <BiSolidEdit />
+              <p>Edit</p>
+            </button>
           </div>
         </div>
       </div>
@@ -53,20 +56,21 @@ export default function AddSupplier() {
       {addSupplier.map((a, index) => {
         return (
           <div key={index} className="relative z-10">
-            <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">
-              {/* supplier information  */}
-              <div className="w-1/2 p-8">
-                <h5 className="text-xl font-medium">
-                  Add Supplier Information
-                </h5>
+            <div>
+              <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">
+                {/* supplier information  */}
+                <div className="w-1/2  p-8">
+                  <SupplierInfoInputListEdit />
+                </div>
 
-                <SupplierInfoInputList />
+                {/* add payment details  */}
+                <div className="w-1/2 p-4 pb-24">
+                  <AdditionalPaymentInputListEdit />
+                </div>
               </div>
-
-              {/* add payment details  */}
-              <div className="w-1/2 p-4 pb-10">
-                <AdditionalPaymentInputList />
-              </div>
+              <button className="absolute left-[50%] -translate-x-1/2 bottom-8 bg-[#8633FF] text-white px-32 py-2">
+                Update
+              </button>
             </div>
 
             {/* plus btn  */}
@@ -92,13 +96,6 @@ export default function AddSupplier() {
           </div>
         );
       })}
-      {/* next btn  */}
-      <Link to="/dashboard/add-store/add-supplier/select-payment">
-        <button className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-2 rounded-md text-[#8633FF] font-medium">
-          <p>Next</p>
-          <BsArrowRightShort className="mt-[1px]" size={28} />
-        </button>
-      </Link>
     </div>
   );
 }

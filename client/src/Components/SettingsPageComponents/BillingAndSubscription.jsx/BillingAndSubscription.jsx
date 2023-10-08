@@ -1,14 +1,15 @@
-import { SlSocialDropbox } from "react-icons/Sl";
+import { SiMicrostrategy } from "react-icons/si";
+import { BsCreditCard2Back } from "react-icons/bs";
 import { Link } from "react-router-dom";
 
 export default function BillingAndSubscription() {
   return (
     <div className="py-20 space-y-4 flex justify-center items-center flex-col">
-      <Link to="/dashboard/settings/plan">
+      <Link to="/dashboard/settings/billing-subscription/plan">
         <div className="flex items-center px-2 py-6 gap-4 border-2 border-[#8633FF] rounded-md w-64">
           <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
             <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
-              <SlSocialDropbox size={24} />
+              <SiMicrostrategy size={24} />
             </div>
           </div>
           <div className="space-y-1">
@@ -24,7 +25,7 @@ export default function BillingAndSubscription() {
       >
         <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
           <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
-            <SlSocialDropbox size={24} />
+            <BsCreditCard2Back size={24} />
           </div>
         </div>
         <div className="space-y-1">
@@ -36,10 +37,10 @@ export default function BillingAndSubscription() {
       {/* modal  */}
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box">
-          <div className=" w-full mx-auto md:flex justify-center items-center">
+          <div className=" w-full mx-auto flex justify-center items-center">
             <form
               // style={boxShadowStyle}
-              className="bg-white px-4 rounded-lg  md:h-fit"
+              className="bg-white px-4 rounded-lg  h-fit"
             >
               <h5 className="text-xl font-medium mb-4 ">
                 Change Payment Method
@@ -84,7 +85,7 @@ export default function BillingAndSubscription() {
 
               {/* MM/YY and CVC  */}
               <div className="flex gap-4">
-                <div className="mt-2 md:w-1/2">
+                <div className="mt-2 w-1/2">
                   <input
                     type="text"
                     placeholder="MM/YY"
@@ -93,7 +94,7 @@ export default function BillingAndSubscription() {
                     name="date"
                   />
                 </div>
-                <div className="mt-2 md:w-1/2">
+                <div className="mt-2 w-1/2">
                   <input
                     type="text"
                     placeholder="CVC"
@@ -106,7 +107,7 @@ export default function BillingAndSubscription() {
 
               {/* billing address and city  */}
               <div className="flex  gap-4">
-                <div className="mt-2 md:w-1/2">
+                <div className="mt-2 w-1/2">
                   <label className="text-slate-500 text-sm">
                     Billing Address
                   </label>
@@ -119,7 +120,7 @@ export default function BillingAndSubscription() {
                   />
                 </div>
 
-                <div className="mt-2 md:w-1/2">
+                <div className="mt-2 w-1/2">
                   <label className="text-slate-500 text-sm">City</label>
                   <input
                     type="text"
@@ -132,8 +133,8 @@ export default function BillingAndSubscription() {
               </div>
 
               {/* state and zip code  */}
-              <div className="md:flex gap-4">
-                <div className="mt-2 md:w-1/2">
+              <div className="flex gap-4">
+                <div className="mt-2 w-1/2">
                   <label className="text-slate-500 text-sm">State</label>
                   <input
                     type="text"
@@ -143,7 +144,7 @@ export default function BillingAndSubscription() {
                     name="state"
                   />
                 </div>
-                <div className="mt-2 md:w-1/2">
+                <div className="mt-2 w-1/2">
                   <label className="text-slate-500 text-sm">ZIP code</label>
                   <input
                     type="text"

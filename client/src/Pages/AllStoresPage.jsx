@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaAmazon } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 export default function AllStoresPage() {
   const [isActive, setIsActive] = useState(true);
@@ -64,23 +65,22 @@ export default function AllStoresPage() {
       </div>
 
       {/* store info  */}
-      <div className="grid grid-cols-2  md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8 mt-8">
+      <div className="grid grid-cols-4 gap-4 mb-8 mt-8">
         {allStoreData.map((singleStore, index) => {
           return (
-            <div
-              key={index}
-              className="flex items-center px-2 py-6 cursor-pointer gap-4 border-2 border-[#8633FF] rounded-md"
-            >
-              <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
-                <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
-                  <singleStore.Icon size={24} />
+            <Link to="/dashboard/all-stores/store-edit" key={index}>
+              <div className="flex items-center px-2 py-6 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-md">
+                <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
+                  <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
+                    <singleStore.Icon size={24} />
+                  </div>
+                </div>
+                <div>
+                  <p className="text-xl">{singleStore.storeName}</p>
+                  <p className="text-slate-500">{singleStore.userRole}</p>
                 </div>
               </div>
-              <div>
-                <p className="text-xl">{singleStore.storeName}</p>
-                <p className="text-slate-500">{singleStore.userRole}</p>
-              </div>
-            </div>
+            </Link>
           );
         })}
       </div>

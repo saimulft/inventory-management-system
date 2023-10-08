@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
-export default function AdditionalPaymentInputList() {
+export default function AdditionalPaymentInputListEdit() {
   const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([
     {
       email: "",

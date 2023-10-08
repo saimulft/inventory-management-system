@@ -26,6 +26,17 @@ import StoreOwnerPage from "../Pages/SettingPages/StoreOwnerPage";
 import StoreManagerAdminPage from "../Pages/SettingPages/StoreManagerAdminPage";
 import WareHouseAdminPage from "../Pages/SettingPages/WarehouseAdminPage";
 import DashboardPage from "../Pages/DashboardPage";
+import AllStockTable from "../Components/ManagementPageComponent/ManagementTable/AllStockTable";
+import PreparingRequestTable from "../Components/ManagementPageComponent/ManagementTable/PreparingRequestTable";
+import ReadyToShipTable from "../Components/ManagementPageComponent/ManagementTable/ReadyToShipTable";
+import ShippedTable from "../Components/ManagementPageComponent/ManagementTable/ShippedTable";
+import OutOfStockTable from "../Components/ManagementPageComponent/ManagementTable/OutOfStockTable";
+import MissingArrivalTable from "../Components/ManagementPageComponent/ManagementTable/MissingArrivalTable";
+import TotalASINTable from "../Components/ManagementPageComponent/ManagementTable/TotalASINTable";
+import PendingArrivalTable from "../Components/ManagementPageComponent/ManagementTable/PendingArrivalTable";
+import StoreEditPage from "../Pages/StoreEditPage";
+import LoginPage from "../Pages/LoginPage";
+import SignUPPage from "../Pages/SignUpPage";
 
 export const router = createBrowserRouter([
   {
@@ -44,9 +55,51 @@ export const router = createBrowserRouter([
         path: "/dashboard/management",
         element: <ManagementPage />,
       },
+      // management tables route
+      {
+        path: "/dashboard/management/all-stock",
+        element: <AllStockTable />,
+      },
+      {
+        path: "/dashboard/management/pending-arrival",
+        element: <PendingArrivalTable />,
+      },
+      {
+        path: "/dashboard/management/preparing-request",
+        element: <PreparingRequestTable />,
+      },
+      {
+        path: "/dashboard/management/ready-to-ship",
+        element: <ReadyToShipTable />,
+      },
+      {
+        path: "/dashboard/management/shipped",
+        element: <ShippedTable />,
+      },
+      {
+        path: "/dashboard/management/shipped",
+        element: <ShippedTable />,
+      },
+      {
+        path: "/dashboard/management/out-of-stock",
+        element: <OutOfStockTable />,
+      },
+      {
+        path: "/dashboard/management/missing-arrival",
+        element: <MissingArrivalTable />,
+      },
+      {
+        path: "/dashboard/management/total-asin",
+        element: <TotalASINTable />,
+      },
+
       {
         path: "/dashboard/all-stores",
         element: <AllStoresPage />,
+      },
+      {
+        path: "/dashboard/all-stores/store-edit",
+        element: <StoreEditPage />,
       },
       {
         path: "/dashboard/add-store",
@@ -62,7 +115,7 @@ export const router = createBrowserRouter([
       },
 
       {
-        path: "/dashboard/settings/plan",
+        path: "/dashboard/settings/billing-subscription/plan",
         element: <MyPlan />,
       },
       {
@@ -147,5 +200,13 @@ export const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: "/login",
+    element: <LoginPage />,
+  },
+  {
+    path: "/signup",
+    element: <SignUPPage />,
   },
 ]);

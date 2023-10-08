@@ -78,7 +78,7 @@ export default function ProfilePage() {
             <div className="mt-4">
               <label className="text-slate-500">Create Password*</label>
               <input
-                type="text"
+                type="password"
                 placeholder="Enter your password"
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="password"

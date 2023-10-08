@@ -1,4 +1,5 @@
 import { AiOutlineCheck } from "react-icons/ai";
+import { Link } from "react-router-dom";
 export default function Checkout() {
   return (
     <div className="flex justify-center items-center h-screen my-10   ">
@@ -6,7 +7,7 @@ export default function Checkout() {
         style={{
           boxShadow: "0px 0px 40px 6px rgba(0, 0, 0, 0.2)",
         }}
-        className="md:border-2 md:border-[#8633FF] md:w-[80%]  rounded-lg mt-[480px] md:mt-0"
+        className="border-2 border-[#8633FF] w-[80%]  rounded-lg mt-0"
       >
         <h3 className="text-center text-3xl font-medium my-6">Checkout</h3>
         <div className="flex gap-2 justify-center">
@@ -17,7 +18,7 @@ export default function Checkout() {
           <p>Annually</p>
         </div>
 
-        <div className=" md:flex gap-8 space-y-4 md:space-y-0 p-4  md:p-8 mt-12">
+        <div className=" flex gap-8  mt-12">
           <div>
             <div
               style={{
@@ -65,12 +66,14 @@ export default function Checkout() {
                   <p>All analytics feature</p>
                 </div>
               </div>
-              <button className="bg-[#8633FF] text-white w-full mt-8 py-2 rounded">
-                Get started
-              </button>
+              <Link to="/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form">
+                <button className="bg-[#8633FF] text-white w-full mt-8 py-2 rounded">
+                  Get started
+                </button>
+              </Link>
             </div>
           </div>
-          <div className="relative">
+          <div className="relative -top-8 mt-5">
             <div className="bg-[#8633FF] text-white p-8 rounded-lg">
               <div className="flex gap-4">
                 <div className="bg-purple-100 relative w-14 h-14 rounded-lg flex justify-center items-center">
@@ -115,10 +118,12 @@ export default function Checkout() {
                   <p>All analytics feature</p>
                 </div>
               </div>
-              <button className="bg-white w-full text-black mt-8 py-2 rounded">
-                Get started
-              </button>
-              <p className="absolute bg-yellow-500 text-black py-1 px-4 rounded top-4 right-4 ">
+              <Link to="/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form">
+                <button className="bg-white w-full text-black mt-8 py-2 rounded">
+                  Get started
+                </button>
+              </Link>
+              <p className="absolute bg-yellow-500 text-xs text-black py-1 px-4 rounded top-2 right-2 ">
                 Popular
               </p>
             </div>
@@ -169,9 +174,11 @@ export default function Checkout() {
                   <p>All analytics feature</p>
                 </div>
               </div>
-              <button className="bg-[#8633FF] text-white w-full mt-8 py-2 rounded">
-                Get started
-              </button>
+              <Link to="/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form">
+                <button className=" text-white bg-[#8633FF] w-full  mt-8 py-2 rounded">
+                  Get started
+                </button>
+              </Link>
             </div>
           </div>
         </div>
