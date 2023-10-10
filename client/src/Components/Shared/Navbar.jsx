@@ -10,8 +10,8 @@ export default function Navbar() {
           <div className="input-group w-full">
             <input
               type="text"
-              placeholder="Search…"
-              className="input input-bordered w-full"
+              placeholder="Search here…"
+              className="input input-bordered w-full bg-transparent border-[#454547] focus:outline-none focus:ring-1 focus:ring-[#8633FF]"
             />
             <button className="btn btn-square">
               <svg

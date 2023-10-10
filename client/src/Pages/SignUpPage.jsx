@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function SignUPPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.1)",
   };
+  const [showPassword, setShowPassword] = useState(false)
+
   return (
     <div className="bg-white py-20 rounded-lg w-full">
       <div
@@ -89,15 +92,17 @@ export default function SignUPPage() {
                     name="orderID"
                   />
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 relative">
                   <label className="text-slate-500">Create Password*</label>
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Enter your password"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="password"
                     name="password"
                   />
+
+                  <div onClick={() => setShowPassword(!showPassword)} className="absolute top-[45px] right-4 text-sm font-medium cursor-pointer">{showPassword ? 'Hide' : 'Show'}</div>
                 </div>
 
                 <div className="mt-4">
@@ -137,8 +142,8 @@ export default function SignUPPage() {
 
             <div className="w-2/4 mx-auto mt-10">
               <div className="flex items-center gap-3 mb-4">
-              <input type="checkbox" defaultChecked={true} className="w-4 h-4 bg-[#8633FF] border-gray-300 rounded-xl" />
-              <span className="label-text">I agree to terms & conditions</span>
+                <input type="checkbox" defaultChecked={true} className="w-4 h-4 bg-[#8633FF] border-gray-300 rounded-xl" />
+                <span className="label-text">I agree to terms & conditions</span>
               </div>
               <button className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-full">
                 Register Account

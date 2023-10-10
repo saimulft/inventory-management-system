@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function LoginPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.1)",
   };
+  const [showPassword, setShowPassword] = useState(false)
+
   return (
     <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
       <div
@@ -27,15 +30,17 @@ export default function LoginPage() {
                 name="email"
               />
             </div>
-            <div className="flex flex-col mt-4">
+            <div className="flex flex-col mt-4 relative">
               <label className="text-slate-500">Password*</label>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
                 className="input input-bordered input-primary w-full max-w-xs mt-2"
                 id="password"
                 name="password"
               />
+
+              <div onClick={() => setShowPassword(!showPassword)} className="absolute top-[45px] right-4 text-sm font-medium cursor-pointer">{showPassword ? 'Hide' : 'Show'}</div>
             </div>
 
             <div className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">

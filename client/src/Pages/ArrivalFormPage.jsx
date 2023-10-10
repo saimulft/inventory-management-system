@@ -35,10 +35,10 @@ const ArrivalFormPage = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500">ASIN/UPAC</label>
+                  <label className="text-slate-500">ASIN/UPC</label>
                   <input
                     type="text"
-                    placeholder="Enter ASIN/UPAC"
+                    placeholder="Enter ASIN/UPC"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="code"
                     name="code"
