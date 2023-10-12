@@ -10,6 +10,10 @@ const run = async () => {
 
     try {
         
+        router.get('/admin_users',async(req,res)=>{
+            const result = await admin_users_collection.find({}).toArray()
+            res.send(result)
+        })
         
 
     } catch (error) {
