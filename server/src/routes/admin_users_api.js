@@ -22,7 +22,7 @@ const run = async () => {
                     password: hashed_password,
                     role: req.body.role,
                     phone: req.body.phone,
-                    adress: req.body.adress,
+                    address: req.body.address,
                     city: req.body.city,
                     state: req.body.state,
                     zip: req.body.zip,
