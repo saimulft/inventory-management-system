@@ -65,7 +65,7 @@ const run = async () => {
                         res.status(401).json({ message: "authentication failed" })
                     }
                 } else {
-                    res.status(500).json({ message: 'Failed to get admin user' });
+                    res.status(500).json({ message: 'authentication failed' });
                 }
             }
             catch (error) {
