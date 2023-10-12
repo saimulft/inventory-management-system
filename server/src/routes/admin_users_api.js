@@ -12,9 +12,13 @@ const run = async () => {
         // create a new admin
         router.post('/admin_signup', async (req, res) => {
             try {
-
+                
+                const inputEmail = req.body.email
+                const isExist = await admin_users_collection.findOne({ email: inputEmail })
+                if (isExist) {
+                    return res.status(500).json({ message: "Email already exist" })
+                }
                 const hashed_password = await bcrypt.hash(req.body.password, 10)
-
                 const admin_user_data = {
                     admin_id: req.body.admin_id,
                     full_name: req.body.full_name,

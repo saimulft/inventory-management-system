@@ -5,7 +5,7 @@ const verifyJWT = (req, res, next) => {
         const token = authorization.split(' ')[1]
         const decode = jwt.verify(token, process.env.JWT_SECRET)
         const { role, id, email } = decode
-        req.role = role,
+            req.role = role,
             req.id = id,
             req.email = email
         next()
