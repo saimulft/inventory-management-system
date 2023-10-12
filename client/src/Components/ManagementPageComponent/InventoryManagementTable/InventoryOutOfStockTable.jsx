@@ -2,8 +2,12 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 
 import { LiaGreaterThanSolid } from "react-icons/lia";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { useContext } from "react";
 
-export default function OutOfStockTable() {
+export default function InventoryOutOfStockTable() {
+  const { isSidebarOpen } = useContext(GlobalContext);
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const data = [
     {
       date: "2023-06-26",
@@ -205,75 +209,73 @@ export default function OutOfStockTable() {
       </div>
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div className="modal-box">
+        <div style={{ marginLeft }} className="modal-box py-10 px-10">
           <div className="flex">
             <div className="w-1/2">
-              <div className="flex items-center mb-4 gap-2">
+              <div className="flex items-center mb-6 gap-2">
                 <BiSolidEdit size={24} />
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-medium">Data: </span>
+                <span className="font-bold">Data: </span>
                 <span>2023-06-26</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Store Name: </span>
+                <span className="font-bold">Store Name: </span>
                 <span>SAVE_k544.LLC</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">ASIN: </span>
+                <span className="font-bold">ASIN: </span>
                 <span>BOHFK4522</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Quantity: </span>
+                <span className="font-bold">Quantity: </span>
                 <span>23</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Courier: </span>
-                <span>USPC</span>
+                <span className="font-bold">Courier: </span>
+                <span>USPS</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">UPIN: </span>
+                <span>USA_Quantity5245sdfds</span>
               </p>
 
               <p className="mt-2">
-                <span className="font-medium">UPIN: </span>
-                <span>USAfsdfds</span>
-              </p>
-
-              <p className="mt-2">
-                <span className="font-medium">Product Name: </span>
+                <span className="font-bold">Product Name: </span>
                 <span>demo product name</span>
               </p>
-
               <p className="mt-2">
-                <span className="font-medium">Supplier Tracking: </span>
-                <span>Not Added</span>
+                <span className="font-bold">Supplier Tracking: </span>
+                <span className="text-[#8633FF] cursor-pointer">Click</span>
               </p>
             </div>
             <div className="w-1/2 px-4">
-              <h3 className="text-2xl font-medium">Update</h3>
+              <h3 className="text-2xl font-medium mb-6">Update</h3>
               <form>
-                <div className="flex flex-col mt-4">
-                  <label className="text-slate-500">Remark</label>
+                <div className="flex flex-col mt-2">
+                  <label className=" font-bold mb-1">Remark</label>
                   <input
                     type="text"
-                    placeholder="Enter remark here"
-                    className="input input-bordered input-primary w-full input-sm mt-2"
-                    id="storeManagerName"
-                    name="storeManagerName"
+                    placeholder="Enter Remark"
+                    className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs "
+                    id="remark"
+                    name="remark"
                   />
                 </div>
                 <div className="flex flex-col mt-2">
-                  <label className="text-slate-500">Status</label>
+                  <label className=" font-bold mb-1"> Select you gender</label>
                   <select
-                    className="select select-primary w-full select-sm mt-2"
-                    name="country"
-                    id="country"
+                    className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs "
+                    id="gender"
+                    name="gender"
                   >
-                    <option disabled selected>
-                      Status
+                    <option value="none" selected>
+                      Ready To Ship
                     </option>
-                    <option>status-1</option>
-                    <option>status-2</option>
-                    <option>status-3</option>
+                    <option value="male">Ship-1</option>
+                    <option value="female">Ship-2</option>
+                    <option value="other">Ship-3</option>
                   </select>
                 </div>
               </form>

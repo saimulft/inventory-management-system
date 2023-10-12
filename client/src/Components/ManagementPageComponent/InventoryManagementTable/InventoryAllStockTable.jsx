@@ -1,7 +1,7 @@
 import { AiOutlineSearch } from "react-icons/ai";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 
-export default function AllStockTable() {
+export default function InventoryAllStockTable() {
   const data = [
     {
       store_name: "DeveloperLook LLC",

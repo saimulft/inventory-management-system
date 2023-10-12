@@ -1,8 +1,10 @@
 import { AiOutlineSearch } from "react-icons/ai";
+import { FiCheckCircle } from "react-icons/fi";
 
 import { LiaGreaterThanSolid } from "react-icons/lia";
+import { Link } from "react-router-dom";
 
-export default function ReadyToShipTable() {
+export default function InventoryReadyToShipTable() {
   const data = [
     {
       date: "2023-06-26",
@@ -87,6 +89,7 @@ export default function ReadyToShipTable() {
               <th>Supplier Tracking</th>
               <th>Order ID</th>
               <th>Shipping label</th>
+              <th>Status </th>
             </tr>
           </thead>
           <tbody>
@@ -107,6 +110,14 @@ export default function ReadyToShipTable() {
                   <td>{d.supplier_tracking}</td>
                   <td>{d.order_ID}</td>
                   <td className="cursor-pointer text-[#8633FF]">Click</td>
+                  <td>
+                    <Link to="/dashboard/management/inventory/shipped">
+                      <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF]">
+                        <FiCheckCircle />
+                        <p>Complete Shipment</p>
+                      </button>
+                    </Link>
+                  </td>
                 </tr>
               );
             })}

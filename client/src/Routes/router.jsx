@@ -26,17 +26,25 @@ import StoreOwnerPage from "../Pages/SettingPages/StoreOwnerPage";
 import StoreManagerAdminPage from "../Pages/SettingPages/StoreManagerAdminPage";
 import WareHouseAdminPage from "../Pages/SettingPages/WarehouseAdminPage";
 import DashboardPage from "../Pages/DashboardPage";
-import AllStockTable from "../Components/ManagementPageComponent/ManagementTable/AllStockTable";
-import PreparingRequestTable from "../Components/ManagementPageComponent/ManagementTable/PreparingRequestTable";
-import ReadyToShipTable from "../Components/ManagementPageComponent/ManagementTable/ReadyToShipTable";
-import ShippedTable from "../Components/ManagementPageComponent/ManagementTable/ShippedTable";
-import OutOfStockTable from "../Components/ManagementPageComponent/ManagementTable/OutOfStockTable";
-import MissingArrivalTable from "../Components/ManagementPageComponent/ManagementTable/MissingArrivalTable";
-import TotalASINTable from "../Components/ManagementPageComponent/ManagementTable/TotalASINTable";
-import PendingArrivalTable from "../Components/ManagementPageComponent/ManagementTable/PendingArrivalTable";
 import StoreEditPage from "../Pages/StoreEditPage";
 import LoginPage from "../Pages/LoginPage";
 import SignUPPage from "../Pages/SignUpPage";
+import StoreAllStockTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreAllStockTable";
+import StorePreparingRequestTable from "../Components/ManagementPageComponent/StoreManagementTable/StorePreparingRequestTable";
+import StorePendingArrivalTable from "../Components/ManagementPageComponent/StoreManagementTable/StorePendingArrivalTable";
+import StoreReadyToShipTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreReadyToShipTable";
+import StoreShippedTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreShippedTable";
+import StoreOutOfStockTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreOutOfStockTable";
+import StoreMissingArrivalTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreMissingArrivalTable";
+import StoreTotalASINTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreTotalASINTable";
+import InventoryAllStockTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryAllStockTable";
+import InventoryPendingArrivalTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryPendingArrivalTable";
+import InventoryPreparingRequestTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryPreparingRequestTable";
+import InventoryReadyToShipTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryReadyToShipTable";
+import InventoryShippedTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryShippedTable";
+import InventoryOutOfStockTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryOutOfStockTable";
+import InventoryMissingArrivalTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryMissingArrivalTable";
+import InventoryTotalASINTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryTotalASINTable";
 
 export const router = createBrowserRouter([
   {
@@ -55,42 +63,81 @@ export const router = createBrowserRouter([
         path: "/dashboard/management",
         element: <ManagementPage />,
       },
-      // management tables route
+      //store management tables route
       {
-        path: "/dashboard/management/all-stock",
-        element: <AllStockTable />,
+        path: "/dashboard/management/store/all-stock",
+        element: <StoreAllStockTable />,
       },
       {
-        path: "/dashboard/management/pending-arrival",
-        element: <PendingArrivalTable />,
+        path: "/dashboard/management/store/pending-arrival",
+        element: <StorePendingArrivalTable />,
       },
       {
-        path: "/dashboard/management/preparing-request",
-        element: <PreparingRequestTable />,
+        path: "/dashboard/management/store/preparing-request",
+        element: <StorePreparingRequestTable />,
       },
       {
-        path: "/dashboard/management/ready-to-ship",
-        element: <ReadyToShipTable />,
+        path: "/dashboard/management/store/ready-to-ship",
+        element: <StoreReadyToShipTable />,
       },
       {
-        path: "/dashboard/management/shipped",
-        element: <ShippedTable />,
+        path: "/dashboard/management/store/shipped",
+        element: <StoreShippedTable />,
       },
       {
-        path: "/dashboard/management/shipped",
-        element: <ShippedTable />,
+        path: "/dashboard/management/store/shipped",
+        element: <StoreShippedTable />,
       },
       {
-        path: "/dashboard/management/out-of-stock",
-        element: <OutOfStockTable />,
+        path: "/dashboard/management/store/out-of-stock",
+        element: <StoreOutOfStockTable />,
       },
       {
-        path: "/dashboard/management/missing-arrival",
-        element: <MissingArrivalTable />,
+        path: "/dashboard/management/store/missing-arrival",
+        element: <StoreMissingArrivalTable />,
       },
       {
-        path: "/dashboard/management/total-asin",
-        element: <TotalASINTable />,
+        path: "/dashboard/management/store/total-asin",
+        element: <StoreTotalASINTable />,
+      },
+
+      // inventory management table
+
+      {
+        path: "/dashboard/management/inventory/all-stock",
+        element: <InventoryAllStockTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/pending-arrival",
+        element: <InventoryPendingArrivalTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/preparing-request",
+        element: <InventoryPreparingRequestTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/ready-to-ship",
+        element: <InventoryReadyToShipTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/shipped",
+        element: <InventoryShippedTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/shipped",
+        element: <InventoryShippedTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/out-of-stock",
+        element: <InventoryOutOfStockTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/missing-arrival",
+        element: <InventoryMissingArrivalTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/total-asin",
+        element: <InventoryTotalASINTable />,
       },
 
       {

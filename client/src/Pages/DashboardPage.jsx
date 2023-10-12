@@ -156,6 +156,7 @@ export default function DashboardPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
+        {/* Total Expenses Chart*/}
         <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
           <h6 className="text-lg font-medium my-4 ml-8">Total Expenses</h6>
           <ResponsiveContainer width="100%" height={300}>

@@ -1,8 +1,9 @@
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-import { LiaGreaterThanSolid } from "react-icons/lia";
+import { BiSolidEdit } from "react-icons/bi";
+import { LiaGreaterThanSolid, LiaShippingFastSolid } from "react-icons/lia";
+import { Link } from "react-router-dom";
 
-export default function PreparingRequestTable() {
+export default function InventoryPreparingRequestTable() {
   const data = [
     {
       date: "2023-06-26",
@@ -99,7 +100,7 @@ export default function PreparingRequestTable() {
               <th>Shipping label</th>
               <th>Shipping Slip</th>
               <th>Notes</th>
-              <th></th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -122,13 +123,19 @@ export default function PreparingRequestTable() {
                   <td>{d.shipping_label}</td>
                   <td>{d.shipping_slip}</td>
                   <td>{d.notes}</td>
-                  <td
-                    onClick={() =>
-                      document.getElementById("my_modal_2").showModal()
-                    }
-                    className="cursor-pointer"
-                  >
-                    <BiDotsVerticalRounded />
+                  <td className="flex gap-2">
+                    <Link to="/dashboard/management/inventory/ready-to-ship">
+                      <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white">
+                        <LiaShippingFastSolid />
+                        <p>RTS</p>
+                      </button>
+                    </Link>
+                    <Link to="/dashboard/management/inventory/out-of-stock">
+                      <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white">
+                        <LiaShippingFastSolid />
+                        <p>OOS</p>
+                      </button>
+                    </Link>
                   </td>
                 </tr>
               );

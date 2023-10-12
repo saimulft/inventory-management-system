@@ -66,7 +66,9 @@ export default function inventoryManagementData() {
         {inventoryManagementData.map((singleData, index) => {
           return (
             <div key={index}>
-              <Link to={`/dashboard/management/${singleData.tablePath}`}>
+              <Link
+                to={`/dashboard/management/inventory/${singleData.tablePath}`}
+              >
                 <div className="flex items-center px-2 py-6 gap-4 border-2 rounded cursor-pointer border-[#8633FF]">
                   <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
                     <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">

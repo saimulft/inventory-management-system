@@ -1,9 +1,13 @@
+import { useContext } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 
 import { LiaGreaterThanSolid } from "react-icons/lia";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
 
-export default function TotalASINTable() {
+export default function StoreTotalASINTable() {
+  const { isSidebarOpen } = useContext(GlobalContext);
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const data = [
     {
       date: "2023-06-26",
@@ -156,55 +160,51 @@ export default function TotalASINTable() {
       </div>
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div className="modal-box">
+        <div style={{ marginLeft }} className="modal-box py-10 px-10">
           <div className="flex">
             <div className="w-1/2">
-              <div className="flex items-center mb-4 gap-2">
+              <div className="flex items-center mb-6 gap-2">
                 <BiSolidEdit size={24} />
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-medium">Data: </span>
+                <span className="font-bold">Data: </span>
                 <span>2023-06-26</span>
               </p>
+
               <p className="mt-2">
-                <span className="font-medium">Store Name: </span>
-                <span>SAVE_k544.LLC</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-medium">ASIN: </span>
+                <span className="font-bold">ASIN: </span>
                 <span>BOHFK4522</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Store Manager: </span>
-                <span>Saidul Basar</span>
+                <span className="font-bold">Store Manager </span>
+                <span>Abdul Kaioum</span>
               </p>
 
               <p className="mt-2">
-                <span className="font-medium">Product Name: </span>
+                <span className="font-bold">Product Name: </span>
                 <span>demo product name</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Old Min Price: </span>
-                <span>$35</span>
+                <span className="font-bold">Old Min Price: </span>
+                <span className="cursor-pointer text-[#8633FF]">$35</span>
               </p>
             </div>
             <div className="w-1/2 px-4">
-              <h3 className="text-2xl font-medium">Update</h3>
+              <h3 className="text-2xl mb-6 font-medium">Update</h3>
               <form>
-                <div className="flex flex-col mt-4">
-                  <label className="text-slate-500">New Min Price</label>
+                <div className="flex flex-col mt-2">
+                  <label className=" font-bold mb-1">New Min Price</label>
                   <input
                     type="text"
-                    placeholder="Enter store manager name"
-                    className="input input-bordered input-primary w-full input-sm mt-2"
-                    id="storeManagerName"
-                    name="storeManagerName"
+                    placeholder="Enter New Min Price"
+                    className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
+                    id="minPrice"
+                    name="minPrice"
                   />
                 </div>
-
-                <div className="mt-4">
-                  <label className="text-slate-500">Product Image</label>
+                <div className="mt-2">
+                  <label className="font-bold mb-1">Product Image</label>
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="shippingLabel-dropzone"
@@ -228,15 +228,17 @@ export default function TotalASINTable() {
                         </svg>
                       </div>
                       <input
-                        id="invoice-dropzone"
-                        name="invoice-dropzone"
+                        id="product-img-dropzone"
+                        name="product-img-dropzone"
                         type="file"
                         className="hidden"
                       />
                       <div className="ml-5">
                         <button
                           onClick={() => {
-                            document.getElementById("invoice-dropzone").click();
+                            document
+                              .getElementById("product-img-dropzone")
+                              .click();
                           }}
                           type="button"
                           className="btn btn-outline btn-primary btn-xs"

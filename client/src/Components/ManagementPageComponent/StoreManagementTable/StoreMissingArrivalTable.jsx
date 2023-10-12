@@ -1,11 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 
 import { LiaGreaterThanSolid } from "react-icons/lia";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
 
-export default function MissingArrivalTable() {
+export default function StoreMissingArrivalTable() {
   const [isActive, setIsActive] = useState(true);
+  const { isSidebarOpen } = useContext(GlobalContext);
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const data = [
     {
       date: "2023-06-26",
@@ -183,81 +186,83 @@ export default function MissingArrivalTable() {
       </div>
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div className="modal-box">
+        <div style={{ marginLeft }} className="modal-box py-10 px-10">
           <div className="flex">
             <div className="w-1/2">
-              <div className="flex items-center mb-4 gap-2">
+              <div className="flex items-center mb-6 gap-2">
                 <BiSolidEdit size={24} />
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-medium">Data: </span>
+                <span className="font-bold">Data: </span>
                 <span>2023-06-26</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Store Name: </span>
+                <span className="font-bold">Store Name: </span>
                 <span>SAVE_k544.LLC</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">ASIN: </span>
+                <span className="font-bold">ASIN: </span>
                 <span>BOHFK4522</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Order Qnt: </span>
+                <span className="font-bold">Ordered Qnt: </span>
                 <span>23</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Received Qnt: </span>
+                <span className="font-bold">Receive Qnt: </span>
                 <span>23</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Missing Qnt: </span>
+                <span className="font-bold">Missing Qnt: </span>
                 <span>23</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-medium">UPIN: </span>
-                <span>USAfsdfds</span>
               </p>
 
               <p className="mt-2">
-                <span className="font-medium">Product Name: </span>
+                <span className="font-bold">UPIN: </span>
+                <span>USA_Quality_BOSX53D</span>
+              </p>
+
+              <p className="mt-2">
+                <span className="font-bold">Product Name: </span>
                 <span>demo product name</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">EDA: </span>
-                <span>2023-06-26</span>
+                <span className="font-bold">EDA: </span>
+                <span>2023/06/29</span>
               </p>
+
               <p className="mt-2">
-                <span className="font-medium">Supplier Tracking: </span>
-                <span>Not Added</span>
+                <span className="font-bold">Shipping Tracking: </span>
+                <span className="cursor-pointer text-[#8633FF]">Click</span>
               </p>
             </div>
             <div className="w-1/2 px-4">
-              <h3 className="text-2xl font-medium">Update</h3>
+              <h3 className="text-2xl mb-6 font-medium">Update</h3>
               <form>
                 <div className="flex flex-col mt-2">
-                  <label className="text-slate-500">Status</label>
+                  <label className=" font-bold mb-1">Status</label>
                   <select
-                    className="select select-primary w-full select-sm mt-2"
-                    name="country"
-                    id="country"
+                    className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
+                    id="courier"
+                    name="courier"
                   >
-                    <option disabled selected>
-                      Status
+                    <option value="none" selected>
+                      Solved
                     </option>
-                    <option>status-1</option>
-                    <option>status-2</option>
-                    <option>status-3</option>
+                    <option value="male">status-1</option>
+                    <option value="female">status-2</option>
+                    <option value="other">status-3</option>
                   </select>
                 </div>
-                <div className="flex flex-col mt-4">
-                  <label className="text-slate-500">Note</label>
+                <div className="flex flex-col mt-2">
+                  <label className=" font-bold mb-1">Note</label>
                   <input
                     type="text"
-                    placeholder="Enter store manager name"
-                    className="input input-bordered input-primary w-full input-sm mt-2"
-                    id="storeManagerName"
-                    name="storeManagerName"
+                    placeholder="Enter Note"
+                    className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
+                    id="note"
+                    name="note"
                   />
                 </div>
               </form>

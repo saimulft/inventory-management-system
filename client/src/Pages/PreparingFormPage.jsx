@@ -35,10 +35,10 @@ const PreparingFormPage = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500">ASIN/UPAC</label>
+                  <label className="text-slate-500">ASIN/UPC</label>
                   <input
                     type="text"
-                    placeholder="Enter ASIN/UPAC"
+                    placeholder="Enter ASIN/UPC"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="code"
                     name="code"
@@ -259,7 +259,7 @@ const PreparingFormPage = () => {
             </div>
 
             <div className="flex items-center justify-center mt-8">
-              <button className="bg-[#4a07da] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
+              <button className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
                 Preparing Request
               </button>
             </div>

@@ -7,10 +7,10 @@ const AddASINForm = () => {
   };
 
   return (
-    <div className="mt-20 rounded-lg">
+    <div className="mt-20 rounded-lg h-screen">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl"
+        className="border border-[#8633FF] shadow-lg  w-fit m-auto rounded-xl"
       >
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Add ASIN or UPC</p>
@@ -181,7 +181,7 @@ const AddASINForm = () => {
 
             <div className="flex items-center justify-center mt-8"></div>
             <div className="flex items-center justify-center mt-8">
-              <button className="bg-[#4a07da] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
+              <button className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
                 Preparing Request
               </button>
             </div>

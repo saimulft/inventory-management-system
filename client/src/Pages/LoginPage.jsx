@@ -1,50 +1,64 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
-import Lottie from "lottie-react";
-import lottieData from "../../public/animation.json";
 
 export default function LoginPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.1)",
   };
+  const [showPassword, setShowPassword] = useState(false)
+
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
       <div
         style={boxShadowStyle}
-        className="flex items-center w-1/2 rounded-xl"
+        className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl"
       >
-        <Lottie animationData={lottieData} loop={true} />
-        <div className="bg-white  w-[500px] text-center px-8 py-10 rounded-xl">
-          <h3 className="text-3xl font-medium mb-10">Login</h3>
+        <div className="lg:py-20 lg:px-28 p-10">
           <form>
+            <h4 className="text-xl font-bold">Login Your Account!</h4>
+            <p className="text-slate-400">
+              For the purpose of industry regulation, your <br /> details are required.
+            </p>
+            <hr className="mt-5 mb-7" />
             <div className="flex flex-col mt-4">
-              <label htmlFor="" className="text-start mb-2 text-gray-500">
-                Email
-              </label>
+              <label className="text-slate-500">Email*</label>
               <input
                 type="text"
-                placeholder="Enter your email"
-                className="input input-bordered input-primary w-full max-w-full"
+                placeholder="Enter email address"
+                className="input input-bordered input-primary w-full max-w-xs mt-2"
+                id="email"
+                name="email"
               />
             </div>
-            <div className="flex flex-col mt-4">
-              <label htmlFor="" className="text-start mb-2 text-gray-500">
-                Password
-              </label>
+            <div className="flex flex-col mt-4 relative">
+              <label className="text-slate-500">Password*</label>
               <input
-                type="password"
+                type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
-                className="input input-bordered input-primary w-full max-w-full"
+                className="input input-bordered input-primary w-full max-w-xs mt-2"
+                id="password"
+                name="password"
               />
+
+              <div onClick={() => setShowPassword(!showPassword)} className="absolute top-[45px] right-4 text-sm font-medium cursor-pointer">{showPassword ? 'Hide' : 'Show'}</div>
             </div>
 
-            <button className="bg-[#8633FF] flex py-3 justify-center items-center text-white  rounded-lg w-full mt-8 ">
-              Login
-            </button>
+            <div className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">
+              Forgot your password?
+            </div>
+
+            <Link to="/dashboard/add-store/add-supplier">
+              <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
+                <button className=" flex py-3 justify-center items-center text-white w-full capitalize ">
+                  Login
+                </button>
+              </div>
+            </Link>
             <p className="mt-4 text-start">
-              Don't have an account?
+              Don&apos;t have an account?
               <Link to="/signup">
-                <span className="cursor-pointer text-[#8633FF] ml-2">
-                  Signup
+                <span className="cursor-pointer hover:underline text-[#8633FF] ml-2">
+                  Register Now
                 </span>
               </Link>
             </p>

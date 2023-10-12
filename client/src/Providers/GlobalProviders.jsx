@@ -7,12 +7,15 @@ export const GlobalProvider = ({ children }) => {
 
   const [isActiveSetting, setIsActiveSetting] = useState("profile");
 
+  const modalMarginLeft = isSidebarOpen ? "18.5%" : "6%";
+
   // global info
   const GlobalInfo = {
     isSidebarOpen,
     setIsSidebarOpen,
     isActiveSetting,
     setIsActiveSetting,
+    modalMarginLeft,
   };
 
   return (
