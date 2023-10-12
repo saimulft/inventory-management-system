@@ -1,9 +1,8 @@
 const express = require("express")
 const router = express.Router()
-
+const jwt = require("jsonwebtoken")
 const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
-
 const run = async () => {
     const db = await connectDatabase()
     const admin_users_collection = db.collection("admin_users")
@@ -43,14 +42,28 @@ const run = async () => {
             }
         })
 
-        // get admin by id
-        router.post('/get_admin_user', async (req, res) => {
+
+        // admin login
+        router.post('/admin_user_login', async (req, res) => {
             try {
-                const admin_id = req.body.admin_id
-                const result = await admin_users_collection.findOne({ admin_id: admin_id })
-                console.log(result)
-                if (result) {
-                    res.status(201).json(result);
+                const admin_email = req.body.admin_email
+                const admin_password = req.body.admin_password
+                const data = await admin_users_collection.findOne({ email: admin_email })
+
+                if (data) {
+                    const isValidPassword = await bcrypt.compare(admin_password, data.password)
+                    if (isValidPassword) {
+                        const token = jwt.sign({
+                            role: data.role,
+                            id: data.admin_id,
+                            email: data.email
+                        }, process.env.JWT_SECRET, { expiresIn: '2d' })
+
+                        res.status(200).json({ data: data, token: token });
+
+                    } else {
+                        res.status(401).json({ message: "authentication failed" })
+                    }
                 } else {
                     res.status(500).json({ message: 'Failed to get admin user' });
                 }
