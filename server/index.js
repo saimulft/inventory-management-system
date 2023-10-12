@@ -13,8 +13,10 @@ app.use(cors({
 
 
 const admin_users_api = require("./src/routes/admin_users_api")
+const admin_va_users_api = require("./src/routes/admin_va_users_api")
 
 app.use('/admin_api',admin_users_api)
+app.use('/admin_va_api',admin_va_users_api)
 
 
 app.get('/', (req, res) => {
