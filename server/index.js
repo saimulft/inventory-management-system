@@ -4,6 +4,7 @@ const PORT = process.env.PORT || 5000
 const app = express()
 const cors = require("cors")
 
+
 app.use(express.json())
 app.use(cors({
     origin: "*",
@@ -11,13 +12,13 @@ app.use(cors({
 }))
 
 
-const admin_users_api = require("./src/routes/admin_users__api")
+const admin_users_api = require("./src/routes/admin_users_api")
 
-app.use('/admin_users',admin_users_api)
+app.use('/admin_api',admin_users_api)
 
 
 app.get('/', (req, res) => {
-    
+
     res.send('inventory Server running')
 })
 

@@ -6,7 +6,6 @@ const mongoClient = mongodb.MongoClient
 async function connectDatabase() {
     try {
         const client = await mongoClient.connect(uri)
-        // console.log('database connected')
         return client.db("inventory_management_system");
     }
     catch (error) {
