@@ -6,13 +6,11 @@ const connectDatabase = require('../config/connectDatabase')
 
 const run = async () => {
     const db = await connectDatabase()
-    const collection = db.collection("practice")
+    const admin_users_collection = db.collection("admin_users")
 
     try {
-        router.get('/user_post', async (req, res) => {
-            const data = await collection.find().toArray()
-            res.send(data)
-        })
+        
+        
 
     } catch (error) {
         console.log(error)
@@ -22,4 +20,3 @@ const run = async () => {
 run()
 module.exports = router
 
-// changes

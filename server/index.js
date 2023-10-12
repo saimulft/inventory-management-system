@@ -10,13 +10,15 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 }))
 
-const user_api = require("./src/routes/user_api")
 
-app.use('/user', user_api)
+const admin_users_api = require("./src/routes/admin_users__api")
+
+app.use('/admin_users',admin_users_api)
 
 
 app.get('/', (req, res) => {
-    res.send('Server running')
+    
+    res.send('inventory Server running')
 })
 
 app.listen(PORT, console.log(`Server is running on port: ${PORT}`))

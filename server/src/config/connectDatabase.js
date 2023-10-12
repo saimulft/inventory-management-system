@@ -1,12 +1,13 @@
 const mongodb = require("mongodb");
 
-const uri = ``
+const uri = `${process.env.MONGO_URI}`
 const mongoClient = mongodb.MongoClient
 
 async function connectDatabase() {
     try {
         const client = await mongoClient.connect(uri)
-        return client.db("practice");
+        // console.log('database connected')
+        return client.db("inventory_management_system");
     }
     catch (error) {
         
