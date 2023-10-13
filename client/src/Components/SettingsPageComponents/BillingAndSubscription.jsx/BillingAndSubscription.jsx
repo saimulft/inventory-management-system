@@ -38,10 +38,7 @@ export default function BillingAndSubscription() {
       <dialog id="my_modal_2" className="modal">
         <div className="modal-box">
           <div className=" w-full mx-auto flex justify-center items-center">
-            <form
-              // style={boxShadowStyle}
-              className="bg-white px-4 rounded-lg  h-fit"
-            >
+            <form className="bg-white px-4 rounded-lg  h-fit">
               <h5 className="text-xl font-medium mb-4 ">
                 Change Payment Method
               </h5>
@@ -64,8 +61,8 @@ export default function BillingAndSubscription() {
                   type="text"
                   placeholder="Name"
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                  id="cartName"
-                  name="cartName"
+                  id="cardName"
+                  name="cardName"
                 />
               </div>
 

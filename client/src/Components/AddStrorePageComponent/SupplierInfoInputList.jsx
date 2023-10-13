@@ -38,6 +38,7 @@ export default function SupplierInfoInputList() {
               placeholder="Supplier name"
               type="text"
               name="supplierName"
+              id="supplierName"
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
@@ -45,6 +46,7 @@ export default function SupplierInfoInputList() {
               placeholder="User ID"
               type="text"
               name="userID"
+              id="userID"
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
@@ -52,6 +54,7 @@ export default function SupplierInfoInputList() {
               placeholder="Password"
               type="text"
               name="password"
+              id="password"
             />
             <button
               onClick={() => handleSupplierInfoRemoveField(index)}

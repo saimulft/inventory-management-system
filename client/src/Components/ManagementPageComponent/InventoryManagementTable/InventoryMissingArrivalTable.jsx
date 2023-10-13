@@ -206,11 +206,11 @@ export default function InventoryMissingArrivalTable() {
                 <span>BOHFK4522</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">Order Qnt: </span>
+                <span className="font-bold">Ordered Qnt: </span>
                 <span>23</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">Received Qnt: </span>
+                <span className="font-bold">Receive Qnt: </span>
                 <span>23</span>
               </p>
               <p className="mt-2">

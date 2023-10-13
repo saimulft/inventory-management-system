@@ -2,21 +2,23 @@ import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
 export default function AdditionalPaymentInputList() {
-  const [open, setOpen] = useState([{ class: "collapse-open", trackNO: 0 }]);
+  const [isOpen, setIsOpen] = useState([
+    { class: "collapse-open", trackNO: 0 },
+  ]);
 
   const aco = (e, track) => {
     console.log(e.target);
     e.stopPropagation();
     if (e.target.id == "aco") {
-      open.map((singleAco) => {
+      isOpen.map((singleAco) => {
         if (singleAco.trackNO == track) {
-          const withOutTargetArray = open.filter((f) => f.trackNO != track);
+          const withOutTargetArray = isOpen.filter((f) => f.trackNO != track);
           if (singleAco.class == "collapse-open") {
             const newTargetObj = { class: "collapse-close", trackNO: track };
-            setOpen([...withOutTargetArray, newTargetObj]);
+            setIsOpen([...withOutTargetArray, newTargetObj]);
           } else {
             const newTargetObj = { class: "collapse-open", trackNO: track };
-            setOpen([...withOutTargetArray, newTargetObj]);
+            setIsOpen([...withOutTargetArray, newTargetObj]);
           }
         }
       });
@@ -58,7 +60,7 @@ export default function AdditionalPaymentInputList() {
         zipCode: "",
       },
     ]);
-    setOpen([...open, { class: "collapse-open", trackNO: open.length }]);
+    setIsOpen([...isOpen, { class: "collapse-open", trackNO: isOpen.length }]);
   };
 
   const handleAdditionalPaymentRemoveField = (index) => {
@@ -72,7 +74,7 @@ export default function AdditionalPaymentInputList() {
   return (
     <>
       {additionalPaymentInputList.map((a, index) => {
-        const decideAcoIsOpenOrClose = open.find((f) => f.trackNO == index);
+        const decideAcoIsOpenOrClose = isOpen.find((f) => f.trackNO == index);
 
         return (
           <div key={index} className="relative w-full mt-6 ">
@@ -116,9 +118,10 @@ export default function AdditionalPaymentInputList() {
                       </label>
                       <input
                         className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
-                        placeholder="Name"
+                        placeholder="Card Name"
                         type="text"
-                        name="cartName"
+                        name="cardName"
+                        id="cardName"
                         onChange={(e, i) =>
                           handleAdditionalPaymentInputChange(e, i)
                         }
@@ -149,6 +152,7 @@ export default function AdditionalPaymentInputList() {
                           placeholder="MM/YY"
                           type="text"
                           name="date"
+                          id="date"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
@@ -160,6 +164,7 @@ export default function AdditionalPaymentInputList() {
                           placeholder="CVC"
                           type="text"
                           name="cvc"
+                          id="cvc"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
@@ -178,6 +183,7 @@ export default function AdditionalPaymentInputList() {
                           placeholder="Billing address"
                           type="text"
                           name="billingAddress"
+                          id="billingAddress"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
@@ -190,6 +196,7 @@ export default function AdditionalPaymentInputList() {
                           placeholder="Enter your city"
                           type="text"
                           name="city"
+                          id="city"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
@@ -206,6 +213,7 @@ export default function AdditionalPaymentInputList() {
                           placeholder="Enter your state"
                           type="text"
                           name="state"
+                          id="state"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
@@ -220,6 +228,7 @@ export default function AdditionalPaymentInputList() {
                           placeholder="Enter your zip code"
                           type="text"
                           name="zipCode"
+                          id="zipCode"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }

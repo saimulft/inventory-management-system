@@ -3,7 +3,7 @@ export default function AdminVRPage() {
     <div className="py-10 ">
       <h3 className="text-2xl font-bold text-center">Add New Admin</h3>
       <div className="flex gap-4 w-full mt-5 ">
-        <div className="w-1/2">
+        <form className="w-1/2">
           <div className="mt-3">
             <label className="text-slate-500">Name*</label>
             <input
@@ -34,7 +34,7 @@ export default function AdminVRPage() {
               name="fullName"
             />
           </div>
-        </div>
+        </form>
         <div className="w-1/2">
           <div className="mt-3">
             <label className="text-slate-500">User Id*</label>

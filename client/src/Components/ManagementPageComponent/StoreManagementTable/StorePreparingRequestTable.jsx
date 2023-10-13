@@ -191,32 +191,33 @@ export default function StorePreparingRequestTable() {
                 <span className="font-bold">Quantity: </span>
                 <span>23</span>
               </p>
-              <p className="mt-2">
-                <span className="font-bold">Received Qnt: </span>
-                <span>23</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Missing Qnt: </span>
-                <span>23</span>
-              </p>
+
               <p className="mt-2">
                 <span className="font-bold">Courier: </span>
                 <span>null</span>
               </p>
+
               <p className="mt-2">
-                <span className="font-bold">Team Code: </span>
-                <span>SAVE_k544sdwtetr</span>
+                <span className="font-bold">UPIN: </span>
+                <span>SAVE_dl.LLC 45245</span>
               </p>
+
               <p className="mt-2">
                 <span className="font-bold">Product Name: </span>
                 <span>demo product name</span>
               </p>
-              <p className="mt-2">
-                <span className="font-bold">EDA: </span>
-                <span>2023-06-26</span>
-              </p>
+
               <p className="mt-2">
                 <span className="font-bold">Supplier Tracking: </span>
+                <span className="text-[#8633FF] cursor-pointer">Click</span>
+              </p>
+
+              <p className="mt-2">
+                <span className="font-bold">Shipping Label: </span>
+                <span className="text-[#8633FF] cursor-pointer">Click</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">Invoice: </span>
                 <span>Not Added</span>
               </p>
             </div>
@@ -239,13 +240,13 @@ export default function StorePreparingRequestTable() {
                   </select>
                 </div>
                 <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">Supplier Tracking</label>
+                  <label className=" font-bold mb-1">Supplier Tracker</label>
                   <input
                     type="text"
-                    placeholder="Enter Supplier Tracking"
+                    placeholder="Enter Supplier Tracker"
                     className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
-                    id="supplierTracking"
-                    name="supplierTracking"
+                    id="supplierTracker"
+                    name="supplierTracker"
                   />
                 </div>
 

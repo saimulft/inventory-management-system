@@ -187,7 +187,7 @@ export default function InventoryTotalASINTable() {
                   <label className="text-slate-500">New Min Price</label>
                   <input
                     type="text"
-                    placeholder="Enter store manager name"
+                    placeholder="Enter new min price"
                     className="input input-bordered input-primary w-full input-sm mt-2"
                     id="storeManagerName"
                     name="storeManagerName"

@@ -237,6 +237,10 @@ export default function StoreOutOfStockTable() {
                 <span className="font-bold">Courier: </span>
                 <span>null</span>
               </p>
+              <p className="mt-2">
+                <span className="font-bold">UPIN: </span>
+                <span>PT_Supply_4432</span>
+              </p>
 
               <p className="mt-2">
                 <span className="font-bold">Product Name: </span>

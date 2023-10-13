@@ -26,10 +26,10 @@ export default function ChangeCard() {
           <label className="text-slate-500">Name on card</label>
           <input
             type="text"
-            placeholder="Name"
+            placeholder="Card Name"
             className="input input-bordered input-primary w-full mt-2 shadow-lg"
-            id="cartName"
-            name="cartName"
+            id="cardName"
+            name="cardName"
           />
         </div>
 

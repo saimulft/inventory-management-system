@@ -192,9 +192,10 @@ export default function InventoryPendingArrivalTable() {
                 <span>null</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">Team Code: </span>
-                <span>SAVE_k544sdwtetr</span>
+                <span className="font-bold">UPIN: </span>
+                <span>SAVE_452561</span>
               </p>
+
               <p className="mt-2">
                 <span className="font-bold">Product Name: </span>
                 <span>demo product name</span>

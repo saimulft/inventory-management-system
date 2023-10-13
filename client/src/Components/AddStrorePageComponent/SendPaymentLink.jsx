@@ -1,7 +1,18 @@
 import { BsArrowLeftCircle } from "react-icons/bs";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 export default function SendPaymentLink() {
+  const handleSendPaymentLink = (e) => {
+    e.preventDefault();
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Your work has been saved",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
   return (
     <div className="flex justify-center items-center h-[calc(100vh-74px)]">
       <div className="border-2 border-[#8633FF] rounded-lg relative p-16">
@@ -15,7 +26,7 @@ export default function SendPaymentLink() {
           <p className="mt-2 text-slate-400">
             Please fill out this form to send a payment link to your client
           </p>
-          <div className="flex flex-col gap-3 mt-10">
+          <form className="flex flex-col gap-3 mt-10">
             <div className="flex flex-col">
               <label className="text-slate-700" htmlFor="">
                 What is your name?
@@ -41,10 +52,13 @@ export default function SendPaymentLink() {
                 name="email"
               />
             </div>
-            <button className="bg-[#8633FF] py-3 rounded text-white mt-4">
+            <button
+              onClick={(e) => handleSendPaymentLink(e)}
+              className="bg-[#8633FF] py-3 rounded text-white mt-4"
+            >
               Send
             </button>
-          </div>
+          </form>
         </div>
       </div>
     </div>

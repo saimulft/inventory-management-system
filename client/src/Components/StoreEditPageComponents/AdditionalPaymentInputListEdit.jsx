@@ -2,6 +2,28 @@ import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 
 export default function AdditionalPaymentInputListEdit() {
+  const [isOpen, setIsOpen] = useState([
+    { class: "collapse-open", trackNO: 0 },
+  ]);
+
+  const aco = (e, track) => {
+    console.log(e.target);
+    e.stopPropagation();
+    if (e.target.id == "aco") {
+      isOpen.map((singleAco) => {
+        if (singleAco.trackNO == track) {
+          const withOutTargetArray = isOpen.filter((f) => f.trackNO != track);
+          if (singleAco.class == "collapse-open") {
+            const newTargetObj = { class: "collapse-close", trackNO: track };
+            setIsOpen([...withOutTargetArray, newTargetObj]);
+          } else {
+            const newTargetObj = { class: "collapse-open", trackNO: track };
+            setIsOpen([...withOutTargetArray, newTargetObj]);
+          }
+        }
+      });
+    }
+  };
   const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([
     {
       email: "",
@@ -38,6 +60,7 @@ export default function AdditionalPaymentInputListEdit() {
         zipCode: "",
       },
     ]);
+    setIsOpen([...isOpen, { class: "collapse-open", trackNO: isOpen.length }]);
   };
 
   const handleAdditionalPaymentRemoveField = (index) => {
@@ -51,11 +74,21 @@ export default function AdditionalPaymentInputListEdit() {
   return (
     <>
       {additionalPaymentInputList.map((a, index) => {
+        const decideAcoIsOpenOrClose = isOpen.find((f) => f.trackNO == index);
+
         return (
           <div key={index} className="relative w-full mt-6 ">
             <div className=" border border-[#8633FF] rounded-lg">
-              <div className="collapse  collapse-arrow bg-white ">
-                <input type="checkbox" />
+              <div
+                id="aco"
+                onClick={(e) => aco(e, index)}
+                className={`collapse ${decideAcoIsOpenOrClose.class} collapse-arrow bg-white `}
+              >
+                <input
+                  type="checkbox"
+                  id="aco"
+                  onClick={(e) => aco(e, index)}
+                />
                 <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
                   Additional payment Details
                   <span className="text-sm text-slate-400">(Optional)</span>
@@ -85,9 +118,10 @@ export default function AdditionalPaymentInputListEdit() {
                       </label>
                       <input
                         className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
-                        placeholder="Name"
+                        placeholder="Card Name"
                         type="text"
-                        name="cartName"
+                        name="cardName"
+                        id="cardName"
                         onChange={(e, i) =>
                           handleAdditionalPaymentInputChange(e, i)
                         }
@@ -175,6 +209,7 @@ export default function AdditionalPaymentInputListEdit() {
                           placeholder="Enter your state"
                           type="text"
                           name="state"
+                          id="state"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
@@ -189,6 +224,7 @@ export default function AdditionalPaymentInputListEdit() {
                           placeholder="Enter your zip code"
                           type="text"
                           name="zipCode"
+                          id="zipCode"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }

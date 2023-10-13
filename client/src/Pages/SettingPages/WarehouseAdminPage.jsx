@@ -5,7 +5,7 @@ export default function WareHouseAdminPage() {
         <h3 className="text-2xl font-bold text-center">
           Add New Warehouse Admin
         </h3>
-        <div className="flex gap-4 w-full mt-5 ">
+        <form className="flex gap-4 w-full mt-5 ">
           <div className="w-1/2">
             <div className="mt-3">
               <label className="text-slate-500">Name*</label>
@@ -71,7 +71,7 @@ export default function WareHouseAdminPage() {
               />
             </div>
           </div>
-        </div>
+        </form>
         <div className="mt-3 flex flex-col">
           <label className="text-slate-500">Country*</label>
           <select className="select select-primary w-full mt-2 shadow-lg">

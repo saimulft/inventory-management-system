@@ -192,20 +192,16 @@ export default function StoreShippedTable() {
               <span>BOHFK4522</span>
             </p>
             <p className="mt-2">
-              <span className="font-bold">Order Qnt: </span>
+              <span className="font-bold">Sold Qnt: </span>
               <span>23</span>
             </p>
             <p className="mt-2">
-              <span className="font-bold">Received Qnt: </span>
-              <span>23</span>
-            </p>
-            <p className="mt-2">
-              <span className="font-bold">Missing Qnt: </span>
-              <span>23</span>
+              <span className="font-bold">Courier: </span>
+              <span>USPS</span>
             </p>
             <p className="mt-2">
               <span className="font-bold">UPIN: </span>
-              <span>USAfsdfds</span>
+              <span>USA_Quality_Shop_BO46436</span>
             </p>
 
             <p className="mt-2">
@@ -218,7 +214,7 @@ export default function StoreShippedTable() {
             </p>
             <p className="mt-2">
               <span className="font-bold">Supplier Tracking: </span>
-              <span>Not Added</span>
+              <span className="underline text-[#8633FF]">Click</span>
             </p>
           </div>
         </div>

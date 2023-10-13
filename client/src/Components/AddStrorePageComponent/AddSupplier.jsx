@@ -39,7 +39,7 @@ export default function AddSupplier() {
             <p>
               <span className="font-bold text-slate-600">
                 Store manager name:
-              </span>{" "}
+              </span>
               <span>Saidul Basar</span>
             </p>
             <p>

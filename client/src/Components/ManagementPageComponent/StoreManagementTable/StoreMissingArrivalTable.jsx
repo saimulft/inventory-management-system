@@ -234,7 +234,7 @@ export default function StoreMissingArrivalTable() {
 
               <p className="mt-2">
                 <span className="font-bold">Shipping Tracking: </span>
-                <span className="cursor-pointer text-[#8633FF]">Click</span>
+                <span>Not Available</span>
               </p>
             </div>
             <div className="w-1/2 px-4">

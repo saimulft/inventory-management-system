@@ -27,10 +27,10 @@ const ArrivalFormPage = () => {
                   <label className="text-slate-500">Date</label>
                   <input
                     type="date"
-                    placeholder="Enter store name"
+                    placeholder="Enter Date"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="fromDate"
-                    name="fromDate"
+                    id="formDate"
+                    name="formDate"
                   />
                 </div>
 
