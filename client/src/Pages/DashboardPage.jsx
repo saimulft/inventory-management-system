@@ -15,6 +15,7 @@ import {
   LineChart,
   Line,
 } from "recharts";
+import { useState } from "react";
 
 const data = [
   {
@@ -62,6 +63,8 @@ const data = [
 ];
 
 export default function DashboardPage() {
+  const [analyticsDays, setAnalyticsDays] = useState()
+
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
   };
@@ -75,19 +78,19 @@ export default function DashboardPage() {
             <p className="text-gray-400">All Report</p>
           </div>
           <div className="flex gap-4 text-sm">
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setAnalyticsDays(7)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 7 && 'bg-[#8633FF] text-white'}`}>
               7 Days
             </p>
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setAnalyticsDays(15)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 15 && 'bg-[#8633FF] text-white'}`}>
               15 Days
             </p>
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setAnalyticsDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 1 && 'bg-[#8633FF] text-white'}`}>
               1 Month
             </p>
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setAnalyticsDays('year')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 'year' && 'bg-[#8633FF] text-white'}`}>
               Year
             </p>
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setAnalyticsDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
               Custom
             </p>
           </div>

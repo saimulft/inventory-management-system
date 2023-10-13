@@ -7,14 +7,24 @@ export default function LoginPage() {
   };
   const [showPassword, setShowPassword] = useState(false)
 
+  const handleLogin = (event) => {
+    event.preventDefault()
+
+    const form = event.target;
+    const email = form.email.value;
+    const password = form.password.value;
+    const adminInfo = { email, password }
+    console.log(adminInfo)
+  }
+
   return (
     <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl"
+        className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl"
       >
         <div className="lg:py-20 lg:px-28 p-10">
-          <form>
+          <form onSubmit={handleLogin}>
             <h4 className="text-xl font-bold">Login Your Account!</h4>
             <p className="text-slate-400">
               For the purpose of industry regulation, your <br /> details are required.
@@ -47,13 +57,11 @@ export default function LoginPage() {
               Forgot your password?
             </div>
 
-            <Link to="/dashboard/add-store/add-supplier">
-              <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
-                <button className=" flex py-3 justify-center items-center text-white w-full capitalize ">
-                  Login
-                </button>
-              </div>
-            </Link>
+            <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
+              <button type="submit" className=" flex py-3 justify-center items-center text-white w-full capitalize ">
+                Login
+              </button>
+            </div>
             <p className="mt-4 text-start">
               Don&apos;t have an account?
               <Link to="/signup">

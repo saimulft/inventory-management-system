@@ -1,3 +1,5 @@
+import countries from "../../Utilities/countries";
+
 export default function ProfilePage() {
   return (
     <div className=" py-10 w-full">
@@ -56,10 +58,9 @@ export default function ProfilePage() {
                 id="country"
               >
                 <option disabled selected>
-                  Country
+                  Select your country
                 </option>
-                <option value="test1">Test1</option>
-                <option value="test2">Test2</option>
+                {countries}
               </select>
             </div>
           </div>
