@@ -33,11 +33,10 @@ export default function SignUPPage() {
     const whatsappNumber = form.whatsappNumber.value;
 
     const newAdmin = { admin_id: uuidv4(), full_name: fullName, email, phone, password, role: 'admin', address, state, country, city, zip: zipCode, whatsapp_number: whatsappNumber }
-    // console.log(newAdmin)
 
     try {
       const {data, status} = await mutateAsync(newAdmin)
-      if(status === 200){
+      if(status === 201){
         form.reset()
         navigate('/')
       }
@@ -187,7 +186,7 @@ export default function SignUPPage() {
                 <input type="checkbox" defaultChecked={true} className="w-4 h-4 bg-[#8633FF] border-gray-300 rounded-xl" />
                 <span className="label-text">I agree to terms & conditions</span>
               </div>
-              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-full">
+              <button type="submit" disabled={isLoading} className="bg-[#8633FF] disabled:bg-red-500 flex py-3 justify-center items-center text-white capitalize rounded-lg w-full">
                 Register Account
               </button>
               <p className="mt-4 text-start">

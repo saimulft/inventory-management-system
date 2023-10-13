@@ -2,17 +2,20 @@ import { AiOutlinePieChart, AiOutlineSetting } from "react-icons/ai";
 import { PiWarehouseDuotone } from "react-icons/pi";
 import { GiProgression } from "react-icons/gi";
 import { GoChecklist } from "react-icons/go";
-import { BiLogIn, BiSupport } from "react-icons/bi";
+import { BiLogIn, BiLogOut, BiSupport } from "react-icons/bi";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { BsHouseCheck, BsPlusCircle } from "react-icons/bs";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../../Providers/GlobalProviders";
 import { NavLink, useLocation } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+import Cookies from "js-cookie";
 
 export default function Sidebar() {
   const [settingActive, setSettingActive] = useState(false);
   const url = useLocation();
   const route = url?.pathname?.split("/")[2];
+  const { user, setUser } = useAuth()
 
   useEffect(() => {
     if (route.includes("settings")) {
@@ -22,8 +25,12 @@ export default function Sidebar() {
     }
   }, [route]);
 
-  const { isSidebarOpen, setIsSidebarOpen, setIsActiveSetting } =
-    useContext(GlobalContext);
+  const { isSidebarOpen, setIsSidebarOpen, setIsActiveSetting } = useContext(GlobalContext);
+
+  const handleLogout = () => {
+    Cookies.remove('loginToken')
+    setUser(null)
+  }
 
   return (
     <div className={`sticky bottom-0 top-0 pt-5 bg-[#2e2e30] h-screen `}>
@@ -35,14 +42,12 @@ export default function Sidebar() {
               onClick={() => {
                 setIsSidebarOpen(!isSidebarOpen);
               }}
-              className={`transition-all duration-500 ${
-                isSidebarOpen ? "rotate-0" : "rotate-180 "
-              } flex justify-center items-center cursor-pointer rounded bg-[#3f3f41] `}
+              className={`transition-all duration-500 ${isSidebarOpen ? "rotate-0" : "rotate-180 "
+                } flex justify-center items-center cursor-pointer rounded bg-[#3f3f41] `}
             >
               <div
-                className={`${
-                  isSidebarOpen ? "bg-[#8633FF]" : "text-gray-400"
-                } text-white ps-3 pe-3 py-[10px] border-b border-[#38383c] rounded`}
+                className={`${isSidebarOpen ? "bg-[#8633FF]" : "text-gray-400"
+                  } text-white ps-3 pe-3 py-[10px] border-b border-[#38383c] rounded`}
               >
                 <RiMenuFoldFill size={24} />
               </div>
@@ -53,12 +58,10 @@ export default function Sidebar() {
             to="/dashboard/home"
             className={({ isActive }) =>
               isActive
-                ? `bg-[#8633FF] text-white rounded ps-3 pe-3 ${
-                    isSidebarOpen ? "w-56" : ""
-                  } py-[10px] border-b border-[#3e3e41] flex items-center gap-2 text-sm rounded-t`
-                : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100  ps-3 ${
-                    isSidebarOpen ? "w-56" : ""
-                  } pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t`
+                ? `bg-[#8633FF] text-white rounded ps-3 pe-3 ${isSidebarOpen ? "w-56" : ""
+                } py-[10px] border-b border-[#3e3e41] flex items-center gap-2 text-sm rounded-t`
+                : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100  ps-3 ${isSidebarOpen ? "w-56" : ""
+                } pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t`
             }
           >
             <AiOutlinePieChart size={24} />
@@ -163,12 +166,10 @@ export default function Sidebar() {
               to="/dashboard/support"
               className={({ isActive }) =>
                 isActive
-                  ? `bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t ${
-                      isSidebarOpen ? "w-56" : ""
-                    }`
-                  : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t ${
-                      isSidebarOpen ? "w-56" : ""
-                    }`
+                  ? `bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t ${isSidebarOpen ? "w-56" : ""
+                  }`
+                  : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t ${isSidebarOpen ? "w-56" : ""
+                  }`
               }
             >
               <BiSupport size={24} />
@@ -177,26 +178,28 @@ export default function Sidebar() {
             <NavLink
               onClick={() => setIsActiveSetting("profile")}
               to="/dashboard/settings/profile"
-              className={`${
-                settingActive
+              className={`${settingActive
                   ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
                   : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-              }`}
+                }`}
             >
               <AiOutlineSetting size={24} />
               {isSidebarOpen && <p className="whitespace-nowrap">Settings</p>}
             </NavLink>
-            <NavLink
-              to="/login"
-              className={({ isActive }) =>
-                isActive
-                  ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b "
-                  : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
-              }
-            >
+
+            {user ? <div onClick={handleLogout} className="text-gray-400 cursor-pointer hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b">
+              <BiLogOut size={24} />
+              {isSidebarOpen && <p className="whitespace-nowrap">Logout</p>}</div>
+              : <NavLink to="/login"
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                    : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                }
+              >
               <BiLogIn size={24} />
               {isSidebarOpen && <p className="whitespace-nowrap">Login</p>}
-            </NavLink>
+            </NavLink>}
           </div>
         </div>
       </div>

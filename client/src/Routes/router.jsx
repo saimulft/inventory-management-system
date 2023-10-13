@@ -37,11 +37,12 @@ import PendingArrivalTable from "../Components/ManagementPageComponent/Managemen
 import StoreEditPage from "../Pages/StoreEditPage";
 import LoginPage from "../Pages/LoginPage";
 import SignUPPage from "../Pages/SignUpPage";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <DashboardLayout />,
+    element: <ProtectedRoute><DashboardLayout /></ProtectedRoute>,
     children: [
       {
         path: "/",

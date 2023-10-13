@@ -49,7 +49,7 @@ const run = async () => {
 
 
     // admin login
-    router.post('/admin_user_login', verifyJWT, async (req, res) => {
+    router.post('/admin_user_login', async (req, res) => {
         try {
             const admin_email = req.body.admin_email
             const admin_password = req.body.admin_password
@@ -79,14 +79,19 @@ const run = async () => {
     })
 
     // get user 
-    router.post('/get_admin_user', verifyJWT, async (req, res) => {
-        const user_email = req.body.email
+    router.get('/get_admin_user', verifyJWT, async (req, res) => {
+        const user_email = req.email
         const user = await admin_users_collection.findOne({ email: user_email })
-        if (user) {
-            res.status(200).json({ data: user })
+        try {
+            if (user) {
+                res.status(200).json({ data: user })
+            }
+            else {
+                res.status(500).json({ message: "Failed to find user by email" })
+            }
         }
-        else {
-            res.status(500).json({ message: "Failed to find user by email" })
+        catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
         }
     })
 
