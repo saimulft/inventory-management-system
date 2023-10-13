@@ -32,7 +32,7 @@ const run = async () => {
                 const result = await admin_users_collection.insertOne(admin_user_data)
 
                 if (result.acknowledged) {
-                    res.status(201).json({ message: 'Admin  user created successfully', status: "success" });
+                    res.status(200).json({ message: 'Admin  user created successfully', status: "success" });
                 } else {
                     res.status(500).json({ message: 'Failed to create admin  user' });
                 }
