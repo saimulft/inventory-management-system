@@ -112,7 +112,7 @@ export default function InventoryReadyToShipTable() {
                   <td className="cursor-pointer text-[#8633FF]">Click</td>
                   <td>
                     <Link to="/dashboard/management/inventory/shipped">
-                      <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF]">
+                      <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
                         <FiCheckCircle />
                         <p>Complete Shipment</p>
                       </button>

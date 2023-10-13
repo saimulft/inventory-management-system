@@ -101,7 +101,7 @@ export default function AdditionalPaymentInputListEdit() {
                         Email Address*
                       </label>
                       <input
-                        className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                        className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                         placeholder="Enter email address"
                         type="text"
                         name="email"
@@ -117,7 +117,7 @@ export default function AdditionalPaymentInputListEdit() {
                         Name on card
                       </label>
                       <input
-                        className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                        className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                         placeholder="Card Name"
                         type="text"
                         name="cardName"
@@ -134,7 +134,7 @@ export default function AdditionalPaymentInputListEdit() {
                         Card Information
                       </label>
                       <input
-                        className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                        className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                         placeholder="0000 0000 0000 0000"
                         type="text"
                         name="cardInfo"
@@ -148,7 +148,7 @@ export default function AdditionalPaymentInputListEdit() {
                     <div className="flex gap-2 mt-1">
                       <div className="mt-2 w-1/2">
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="MM/YY"
                           type="text"
                           name="date"
@@ -159,7 +159,7 @@ export default function AdditionalPaymentInputListEdit() {
                       </div>
                       <div className="mt-2 w-1/2">
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="CVC"
                           type="text"
                           name="cvc"
@@ -177,7 +177,7 @@ export default function AdditionalPaymentInputListEdit() {
                           Billing address
                         </label>
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="Billing address"
                           type="text"
                           name="billingAddress"
@@ -189,7 +189,7 @@ export default function AdditionalPaymentInputListEdit() {
                       <div className="mt-2 w-1/2">
                         <label className="text-sm text-slate-500">City</label>
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="Enter your city"
                           type="text"
                           name="city"
@@ -205,7 +205,7 @@ export default function AdditionalPaymentInputListEdit() {
                       <div className="mt-2 w-1/2">
                         <label className="text-sm text-slate-500">State</label>
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="Enter your state"
                           type="text"
                           name="state"
@@ -220,7 +220,7 @@ export default function AdditionalPaymentInputListEdit() {
                           ZIP Code
                         </label>
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="Enter your zip code"
                           type="text"
                           name="zipCode"

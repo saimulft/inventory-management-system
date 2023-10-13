@@ -34,7 +34,7 @@ export default function SupplierInfoInputList() {
           <div key={index} className="flex gap-2 mt-4">
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs "
+              className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="Supplier name"
               type="text"
               name="supplierName"
@@ -42,7 +42,7 @@ export default function SupplierInfoInputList() {
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs "
+              className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="User ID"
               type="text"
               name="userID"
@@ -50,7 +50,7 @@ export default function SupplierInfoInputList() {
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs"
+              className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs"
               placeholder="Password"
               type="text"
               name="password"

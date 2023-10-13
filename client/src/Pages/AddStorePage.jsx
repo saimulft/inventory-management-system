@@ -59,7 +59,7 @@ export default function AddStorePage() {
 
             <Link to="/dashboard/add-store/add-supplier">
               <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
-                <button className=" flex py-3 justify-center items-center text-white w-full capitalize ">
+                <button className=" flex py-[10px] justify-center items-center text-white w-full capitalize ">
                   Next
                   <BsArrowRightShort className="mt-[2px]" size={28} />
                 </button>

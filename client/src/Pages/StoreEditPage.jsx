@@ -68,7 +68,7 @@ export default function StoreEditPage() {
                   <AdditionalPaymentInputListEdit />
                 </div>
               </div>
-              <button className="absolute left-[50%] -translate-x-1/2 bottom-8 bg-[#8633FF] text-white px-32 py-2">
+              <button className="absolute left-[50%] -translate-x-1/2 bottom-8 bg-[#8633FF] text-white px-32 py-[10px] font-medium rounded ">
                 Update
               </button>
             </div>

@@ -1,4 +1,17 @@
+import Swal from "sweetalert2";
+
 export default function StoreManagerAdminPage() {
+  const handleStoreManagerAdmin = (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Created store manager admin successfully!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
   return (
     <div className="py-10 ">
       <h3 className="text-2xl font-bold text-center">Add New AVA</h3>
@@ -60,7 +73,10 @@ export default function StoreManagerAdminPage() {
         </div>
       </form>
       <div className="flex justify-center">
-        <button className="flex items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white">
+        <button
+          onClick={(e) => handleStoreManagerAdmin(e)}
+          className="flex items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white"
+        >
           <p>Create AVA</p>
         </button>
       </div>

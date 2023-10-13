@@ -234,7 +234,7 @@ export default function Checkout() {
                       >
                         Get started
                       </button>
-                      <p className="absolute bg-yellow-500 text-xs text-black py-1 px-4 rounded top-2 right-2 ">
+                      <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
                         Popular
                       </p>
                     </Link>
@@ -393,7 +393,7 @@ export default function Checkout() {
                       >
                         Get started
                       </button>
-                      <p className="absolute bg-yellow-500 text-xs text-black py-1 px-4 rounded top-2 right-2 ">
+                      <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
                         Popular
                       </p>
                     </Link>
