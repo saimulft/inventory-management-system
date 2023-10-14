@@ -45,7 +45,6 @@ const run = async () => {
         catch (error) {
             console.log(error)
         }
-
     }
 
     // create a new admin

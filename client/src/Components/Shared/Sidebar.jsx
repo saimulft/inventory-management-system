@@ -140,7 +140,7 @@ export default function Sidebar() {
           >
             <GoChecklist size={24} />
             {isSidebarOpen && (
-              <p className="whitespace-nowrap">Pending Request Form </p>
+              <p className="whitespace-nowrap">Preparing Request Form </p>
             )}
           </NavLink>
 

@@ -4,16 +4,18 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie"
 import useAuth from "../hooks/useAuth";
+import { FaSpinner } from "react-icons/fa";
 
 export default function LoginPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.1)",
   };
   const [showPassword, setShowPassword] = useState(false)
+  const [loginError, setLoginError] = useState('')
   const navigate = useNavigate()
-  const {setUser} = useAuth()
+  const { setUser } = useAuth()
 
-  const {mutateAsync, isLoading} = useMutation({
+  const { mutateAsync, isLoading } = useMutation({
     mutationFn: (adminInfo) => {
       return axios.post('/admin_api/admin_user_login', adminInfo)
     },
@@ -27,25 +29,28 @@ export default function LoginPage() {
     const adminInfo = { admin_email: email, admin_password: password }
 
     try {
-      const {data, status} = await mutateAsync(adminInfo)
-      if(status === 200){
+      const { data, status } = await mutateAsync(adminInfo)
+      if (status === 200) {
         form.reset()
         setUser(data.data)
+        setLoginError('')
         const token = data.token;
         Cookies.set('loginToken', token, { expires: 7 })
         navigate('/')
-      } 
+      }
     } catch (error) {
+      setLoginError('Authentication failed!')
       console.log(error)
     }
   }
-
+  console.log(loginError)
   return (
     <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
       <div
         style={boxShadowStyle}
         className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl"
       >
+        <div className="relative">{loginError && <p className="absolute left-1/2 transform -translate-x-1/2 w-[calc(100%-26px)] text-center mt-3 text-sm font-medium text-rose-500 bg-rose-100 py-2 px-4 rounded">{loginError}</p>}</div>
         <div className="lg:py-20 lg:px-28 p-10">
           <form onSubmit={handleLogin}>
             <h4 className="text-xl font-bold">Login Your Account!</h4>
@@ -83,7 +88,8 @@ export default function LoginPage() {
             </div>
 
             <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
-              <button type="submit" disabled={isLoading} className=" flex py-3 justify-center items-center text-white w-full capitalize ">
+              <button type="submit" disabled={isLoading} className="flex gap-2 py-3 justify-center items-center text-white w-full capitalize ">
+                {isLoading && <FaSpinner size={20} className="animate-spin" />}
                 Login
               </button>
             </div>

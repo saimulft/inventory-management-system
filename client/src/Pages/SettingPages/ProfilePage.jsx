@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import countries from "../../Utilities/countries";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
+import Swal from 'sweetalert2'
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth()
@@ -27,7 +28,7 @@ export default function ProfilePage() {
     const zipCode = form.zipCode.value;
     const whatsappNumber = form.whatsappNumber.value;
 
-    if(currentPassword && !newPassword){
+    if (currentPassword && !newPassword) {
       return console.log("You must provide a new password in order to change previous one!")
     }
 
@@ -51,6 +52,11 @@ export default function ProfilePage() {
       if (status === 200) {
         form.reset()
         setUser(data)
+        Swal.fire(
+          'Saved!',
+          'Your profile information has been saved.',
+          'success'
+        )
       }
     } catch (error) {
       console.log(error)
@@ -70,6 +76,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="fullName"
                 name="fullName"
+                defaultValue={user.full_name}
               />
             </div>
 
@@ -92,6 +99,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="phoneNumber"
                 name="phoneNumber"
+                defaultValue={user.phone}
               />
             </div>
 
@@ -103,6 +111,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="address"
                 name="address"
+                defaultValue={user.address}
               />
             </div>
 
@@ -114,6 +123,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="state"
                 name="state"
+                defaultValue={user.state}
               />
             </div>
 
@@ -123,6 +133,7 @@ export default function ProfilePage() {
                 className="select select-primary w-full mt-2 shadow-lg"
                 name="country"
                 id="country"
+                defaultValue={user.country}
               >
                 <option disabled selected>
                   Select your country
@@ -137,10 +148,11 @@ export default function ProfilePage() {
               <label className="text-slate-500">Email Address</label>
               <input
                 type="email"
-                placeholder="jhon@gmail.com"
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="email"
                 name="email"
+                defaultValue={user.email}
+                readOnly
               />
             </div>
             <div className="mt-4">
@@ -162,6 +174,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="city"
                 name="city"
+                defaultValue={user.city}
               />
             </div>
 
@@ -173,6 +186,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="zipCode"
                 name="zipCode"
+                defaultValue={user.zip}
               />
             </div>
 
@@ -184,6 +198,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="whatsappNumber"
                 name="whatsappNumber"
+                defaultValue={user.whatsapp_number}
               />
             </div>
           </div>
