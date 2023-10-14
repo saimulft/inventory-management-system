@@ -4,15 +4,17 @@ import { v4 as uuidv4 } from 'uuid';
 import countries from "../Utilities/countries";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { FaSpinner } from 'react-icons/fa';
 
 export default function SignUPPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.1)",
   };
   const [showPassword, setShowPassword] = useState(false)
+  const [registerError, setRegisterError] = useState('')
   const navigate = useNavigate()
-  
-  const {mutateAsync, isLoading} = useMutation({
+
+  const { mutateAsync, isLoading } = useMutation({
     mutationFn: (newAdmin) => {
       return axios.post('/admin_api/admin_signup', newAdmin)
     },
@@ -35,12 +37,14 @@ export default function SignUPPage() {
     const newAdmin = { admin_id: uuidv4(), full_name: fullName, email, phone, password, role: 'Admin', address, state, country, city, zip: zipCode, whatsapp_number: whatsappNumber }
 
     try {
-      const {status} = await mutateAsync(newAdmin)
-      if(status === 201){
+      const { status } = await mutateAsync(newAdmin)
+      if (status === 201) {
         form.reset()
         navigate('/')
+        setRegisterError('')
       }
     } catch (error) {
+      setRegisterError('Registration failed!')
       console.log(error)
     }
   }
@@ -51,6 +55,7 @@ export default function SignUPPage() {
         style={boxShadowStyle}
         className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl"
       >
+        <div className="relative">{registerError && <p className="absolute left-1/2 transform -translate-x-1/2 w-[calc(100%-26px)] text-center mt-3 text-sm font-medium text-rose-500 bg-rose-100 py-2 px-4 rounded">{registerError}</p>}</div>
         <div className="text-left mt-10 w-2/4 lg:px-10 mx-auto">
           <p className="text-2xl font-bold">Register Your Account!</p>
           <p className="text-slate-500">For the purpose of industry regulation, your details are required.</p>
@@ -171,7 +176,7 @@ export default function SignUPPage() {
                 <div className="mt-4">
                   <label className="text-slate-500">WhatsApp</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter whatsapp number"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="whatsappNumber"
@@ -186,7 +191,8 @@ export default function SignUPPage() {
                 <input type="checkbox" defaultChecked={true} className="w-4 h-4 bg-[#8633FF] border-gray-300 rounded-xl" />
                 <span className="label-text">I agree to terms & conditions</span>
               </div>
-              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-full">
+              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white capitalize rounded-lg w-full">
+                {isLoading && <FaSpinner size={20} className="animate-spin" />}
                 Register Account
               </button>
               <p className="mt-4 text-start">

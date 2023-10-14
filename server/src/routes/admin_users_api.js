@@ -38,7 +38,6 @@ const admin_users_collection = db.collection("admin_users")
         catch (error) {
             console.log(error)
         }
-
     }
 
     // create a new admin
