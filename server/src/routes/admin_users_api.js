@@ -6,8 +6,8 @@ const bcrypt = require("bcrypt")
 const verifyJWT = require("../middlewares/verifyJWT")
 const nodemailer = require("nodemailer")
 const run = async () => {
-    const db = await connectDatabase()
-    const admin_users_collection = db.collection("admin_users")
+const db = await connectDatabase()
+const admin_users_collection = db.collection("admin_users")
 
 
     // verify user email 
@@ -93,7 +93,12 @@ const run = async () => {
         try {
             const result = await admin_users_collection.findOne({ admin_id: id })
             if (result) {
-
+                console.log(result)
+            if(result.email_verified === true){
+                console.log("alread")
+                return res.status(200).json({ message: "Email verified successfully " })
+                
+            }
                 const updateEmailStatus = await admin_users_collection.updateOne(
                     { admin_id: id },
                     update
@@ -133,7 +138,7 @@ const run = async () => {
                     }
                     else {
                         res.status(403).json({ message: "Please verify your email to login" })
-                       
+
                     }
 
                 } else {
