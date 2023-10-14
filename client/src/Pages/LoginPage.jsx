@@ -3,6 +3,7 @@ import axios from "axios";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie"
+import useAuth from "../hooks/useAuth";
 
 export default function LoginPage() {
   const boxShadowStyle = {
@@ -10,6 +11,7 @@ export default function LoginPage() {
   };
   const [showPassword, setShowPassword] = useState(false)
   const navigate = useNavigate()
+  const {setUser} = useAuth()
 
   const {mutateAsync, isLoading} = useMutation({
     mutationFn: (adminInfo) => {
@@ -23,12 +25,12 @@ export default function LoginPage() {
     const email = form.email.value;
     const password = form.password.value;
     const adminInfo = { admin_email: email, admin_password: password }
-    // console.log(adminInfo)
 
     try {
       const {data, status} = await mutateAsync(adminInfo)
       if(status === 200){
         form.reset()
+        setUser(data.data)
         const token = data.token;
         Cookies.set('loginToken', token, { expires: 7 })
         navigate('/')

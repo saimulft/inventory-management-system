@@ -32,12 +32,11 @@ export default function SignUPPage() {
     const zipCode = form.zipCode.value;
     const whatsappNumber = form.whatsappNumber.value;
 
-    const newAdmin = { admin_id: uuidv4(), full_name: fullName, email, phone, password, role: 'admin', address, state, country, city, zip: zipCode, whatsapp_number: whatsappNumber }
-    // console.log(newAdmin)
+    const newAdmin = { admin_id: uuidv4(), full_name: fullName, email, phone, password, role: 'Admin', address, state, country, city, zip: zipCode, whatsapp_number: whatsappNumber }
 
     try {
-      const {data, status} = await mutateAsync(newAdmin)
-      if(status === 200){
+      const {status} = await mutateAsync(newAdmin)
+      if(status === 201){
         form.reset()
         navigate('/')
       }
