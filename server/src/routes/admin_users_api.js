@@ -127,17 +127,21 @@ const run = async () => {
             const admin_email = req.body.admin_email
             const admin_password = req.body.admin_password
             const data = await admin_users_collection.findOne({ email: admin_email })
-
             if (data) {
                 const isValidPassword = await bcrypt.compare(admin_password, data.password)
                 if (isValidPassword) {
-                    const token = jwt.sign({
-                        role: data.role,
-                        id: data.admin_id,
-                        email: data.email
-                    }, process.env.JWT_SECRET, { expiresIn: '2d' })
-
-                    res.status(200).json({ data: data, token: token });
+                    if (data.email_verified) {
+                        const token = jwt.sign({
+                            role: data.role,
+                            id: data.admin_id,
+                            email: data.email
+                        }, process.env.JWT_SECRET, { expiresIn: '2d' })
+                        res.status(200).json({ data: data, token: token });
+                    }
+                    else {
+                        res.status(403).json({ message: "Please verify your email to login" })
+                       
+                    }
 
                 } else {
                     res.status(401).json({ message: "authentication failed" })
