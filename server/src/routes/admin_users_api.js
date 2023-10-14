@@ -32,14 +32,7 @@ const run = async () => {
                 html: `<p>Hi, ${name}, Please verify your email by <a href="http://localhost:5173/verify_email?id=${id}">Click here</a></p>`
             }
 
-            transporter.sendMail(mailOption, (err, info) => {
-                if (err) {
-                    console.log(err)
-                }
-                else {
-                    console.log("mail sent", info)
-                }
-            })
+            transporter.sendMail(mailOption)
 
         }
         catch (error) {
@@ -54,7 +47,7 @@ const run = async () => {
             const inputEmail = req.body.email
             const isExist = await admin_users_collection.findOne({ email: inputEmail })
             if (isExist) {
-                return res.status(500).json({ message: "Email already exist" })
+                return res.status(200).json({ message: "Email already exist" })
             }
             const hashed_password = await bcrypt.hash(req.body.password, 10)
             const admin_user_data = {
