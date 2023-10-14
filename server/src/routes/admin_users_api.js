@@ -83,7 +83,6 @@ const admin_users_collection = db.collection("admin_users")
     // verify user email and update email status
     router.get('/verify_email', async (req, res) => {
         const id = req.query.id
-        console.log(id)
         const update = {
             $set: {
                 email_verified: true,
@@ -92,10 +91,10 @@ const admin_users_collection = db.collection("admin_users")
         try {
             const result = await admin_users_collection.findOne({ admin_id: id })
             if (result) {
-                console.log(result)
+              
             if(result.email_verified === true){
-                console.log("alread")
-                return res.status(200).json({ message: "Email verified successfully " })
+               
+                return res.status(203).json({ message: "Email already verified" })
                 
             }
                 const updateEmailStatus = await admin_users_collection.updateOne(
