@@ -1,10 +1,9 @@
-import { useContext, useState } from "react";
+import { useContext } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { GlobalContext } from "../Providers/GlobalProviders";
 
 export default function SettingsPage() {
   const { setIsActiveSetting, isActiveSetting } = useContext(GlobalContext);
-  console.log(isActiveSetting);
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };

@@ -5,13 +5,17 @@ import { Link, useNavigate } from "react-router-dom";
 import Cookies from "js-cookie"
 import useAuth from "../hooks/useAuth";
 import { FaSpinner } from "react-icons/fa";
+import { MdErrorOutline } from 'react-icons/md';
+import { BsCheck2Circle } from "react-icons/bs";
 
 export default function LoginPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.1)",
   };
+  const [email, setEmail] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loginError, setLoginError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
   const navigate = useNavigate()
   const { setUser } = useAuth()
 
@@ -39,18 +43,46 @@ export default function LoginPage() {
         navigate('/')
       }
     } catch (error) {
+      if (error.response.status === 403) {
+        return setLoginError('Please verify your email in order to login!')
+      }
+      if (error.response.status === 401) {
+        return setLoginError('Invalid email or password!')
+      }
       setLoginError('Authentication failed!')
       console.log(error)
     }
   }
-  console.log(loginError)
+
+  const handleForgotPassword = () => {
+    if(!email){
+      return console.log('You have to provide your email to reset your password.')
+    }
+
+    try {
+      axios.get(`/admin_api/send_reset_password_email?email=${email}`)
+        .then(res => {
+          console.log(res)
+          if (res.status === 200) {
+            setSuccessMessage('We sent a password reset link to your email, please check your inbox or spam folder in order to reset your password.')
+          }
+        })
+    } catch (error) {
+      if(error.response.status === 401){
+        setLoginError('Failed to send reset password email')
+      }
+      setSuccessMessage('')
+      console.log(error)
+    }
+  }
+
   return (
     <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
       <div
         style={boxShadowStyle}
         className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl"
       >
-        <div className="relative">{loginError && <p className="absolute left-1/2 transform -translate-x-1/2 w-[calc(100%-26px)] text-center mt-3 text-sm font-medium text-rose-500 bg-rose-100 py-2 px-4 rounded">{loginError}</p>}</div>
+        <div className="relative">{loginError && <p className="absolute left-1/2 transform -translate-x-1/2 w-[calc(100%-26px)] flex gap-1 items-center justify-center text-center mt-3 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {loginError}</p>}</div>
         <div className="lg:py-20 lg:px-28 p-10">
           <form onSubmit={handleLogin}>
             <h4 className="text-xl font-bold">Login Your Account!</h4>
@@ -67,6 +99,7 @@ export default function LoginPage() {
                 id="email"
                 name="email"
                 required
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="flex flex-col mt-4 relative">
@@ -83,9 +116,12 @@ export default function LoginPage() {
               <div onClick={() => setShowPassword(!showPassword)} className="absolute top-[45px] right-4 text-sm font-medium cursor-pointer">{showPassword ? 'Hide' : 'Show'}</div>
             </div>
 
-            <div className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">
+            <div onClick={handleForgotPassword} className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">
               Forgot your password?
             </div>
+
+            <div>{successMessage && <p className="w-full flex gap-2 items-center justify-center text-center text-sm mt-5 font-medium text-green-600 bg-green-100 border py-2 px-4 rounded">
+              <BsCheck2Circle size={20} /> {successMessage}</p>}</div>
 
             <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
               <button type="submit" disabled={isLoading} className="flex gap-2 py-3 justify-center items-center text-white w-full capitalize ">

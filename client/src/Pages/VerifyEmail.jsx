@@ -2,7 +2,7 @@ import axios from "axios";
 import { useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { MdErrorOutline } from 'react-icons/md';
 
 const VerifyEmail = () => {
     const location = useLocation();
@@ -20,10 +20,14 @@ const VerifyEmail = () => {
                 .then(res => {
                     setLoading(false)
                     if (res.status === 200) {
-                        return setMessage("Email verification completed!")
+                        setMessage("Email verification completed! (Redirecting..)")
+                        setTimeout(() => {
+                            navigate('/login')
+                        }, 1000)
                     }
                 })
         } catch (error) {
+            setLoading(false)
             setVerificationError('Verification failed!')
             console.log(error)
         }
@@ -32,7 +36,7 @@ const VerifyEmail = () => {
     return (
         <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
             <div className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl">
-                <div className="relative">{verificationError && <p className="absolute left-1/2 transform -translate-x-1/2 w-[calc(100%-26px)] text-center mt-3 text-sm font-medium text-rose-500 bg-rose-100 py-2 px-4 rounded">{verificationError}</p>}</div>
+                <div className="relative">{verificationError && <p className="absolute left-1/2 transform -translate-x-1/2 w-[calc(100%-26px)] flex gap-1 items-center justify-center text-center mt-3 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {verificationError}</p>}</div>
 
                 <div className="lg:py-20 lg:px-28 p-10">
                     <h1 className="text-center text-3xl mb-6">Please verify your email</h1>

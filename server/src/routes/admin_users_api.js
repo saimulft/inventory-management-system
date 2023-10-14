@@ -40,6 +40,52 @@ const run = async () => {
         }
     }
 
+    // sent forget password mail
+    const resetPassword = async (name, email, id) => {
+        try {
+            const transporter =
+                nodemailer.createTransport({
+                    host: "smtp.gmail.com",
+                    port: 587,
+                    secure: false,
+                    requireTLS: true,
+                    auth: {
+                        user: "toriqulislam142@gmail.com",
+                        pass: 'nqle nukt eqfy kcko'
+                    }
+                })
+
+            const mailOption = {
+                from: "toriqulislam142@gamil.com",
+                to: email,
+                subject: "Visit this link in order to reset your password",
+                html: `<p>Hi, ${name}, To reset your password <a href="http://localhost:5173/reset_password?id=${id}">Click here</a></p>`
+            }
+
+            transporter.sendMail(mailOption)
+        }
+        catch (error) {
+            console.log(error)
+        }
+    }
+
+    router.get('/send_reset_password_email', async (req, res) => {
+        try {
+            const email = req.query.email;
+            const data = await admin_users_collection.findOne({ email: email });
+
+            if (data){
+                resetPassword(data.full_name, data.email, data.admin_id)
+                res.status(200).json({ message: 'Email sent for resetting password' });
+            }
+            else{
+                res.status(401).json({ message: 'Unauthorized access' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
+
     // create a new admin
     router.post('/admin_signup', async (req, res) => {
         try {
@@ -132,7 +178,7 @@ const run = async () => {
                     }
                     else {
                         res.status(403).json({ message: "Please verify your email to login" })
-                       
+
                     }
 
                 } else {
