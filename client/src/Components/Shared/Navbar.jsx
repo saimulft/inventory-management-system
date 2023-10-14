@@ -1,7 +1,10 @@
 import { AiOutlineMessage, AiOutlineSearch } from "react-icons/ai";
 import { BsBell } from "react-icons/bs";
+import useAuth from "../../hooks/useAuth";
 
 export default function Navbar() {
+  const {user} = useAuth()
+
   return (
     <div className="flex items-center px-8 ps-3 pe-3 bg-[#2e2e30]  text-white shadow-sm py-3">
       <div className="text-lg font-medium w-full ">Dashboard</div>
@@ -77,8 +80,8 @@ export default function Navbar() {
             </ul>
           </div>
           <div>
-            <p>Musfiq</p>
-            <p className="text-[#767678]">Store Owner</p>
+            <p>{user?.full_name}</p>
+            <p className="text-[#767678]">{user?.role}</p>
           </div>
         </div>
       </div>
