@@ -38,6 +38,7 @@ import StoreEditPage from "../Pages/StoreEditPage";
 import LoginPage from "../Pages/LoginPage";
 import SignUPPage from "../Pages/SignUpPage";
 import ProtectedRoute from "./ProtectedRoute";
+import VerifyEmail from "../Pages/verifyEmail";
 
 export const router = createBrowserRouter([
   {
@@ -209,5 +210,9 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: <SignUPPage />,
+  },
+  {
+    path: "/verify_email",
+    element: <VerifyEmail />,
   },
 ]);
