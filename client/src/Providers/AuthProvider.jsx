@@ -19,7 +19,7 @@ const AuthProvider = ({ children }) => {
                 }
             })
                 .then(res => {
-                    // console.log(res)
+                    // console.log('inside authProvider:', res)
                     setLoading(false)
                     if (res.status === 200) {
                         setUser(res.data.data)
