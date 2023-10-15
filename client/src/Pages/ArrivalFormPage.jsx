@@ -36,13 +36,17 @@ const ArrivalFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">ASIN/UPC</label>
-                  <input
-                    type="text"
-                    placeholder="Enter ASIN/UPC"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="code"
+                  <select
+                    className="select select-primary w-full mt-2 shadow-lg"
                     name="code"
-                  />
+                    id="code"
+                  >
+                    <option disabled selected>
+                      Select ASIN or UPC
+                    </option>
+                    <option value="Test-1">Test-1</option>
+                    <option value="Test-2">Test-2</option>
+                  </select>
                 </div>
 
                 <div className="mt-4">

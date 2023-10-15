@@ -18,7 +18,7 @@ export default function Sidebar() {
   const { user, setUser } = useAuth()
 
   useEffect(() => {
-    if (route.includes("settings")) {
+    if (route?.includes("settings")) {
       setSettingActive(true);
     } else {
       setSettingActive(false);

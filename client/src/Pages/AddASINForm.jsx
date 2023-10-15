@@ -29,7 +29,7 @@ const AddASINForm = () => {
 
   const handleImage = (e) => {
     if (e.target.files[0]) {
-      const maxSizeInBytes = 1 * 1024 * 1024; // 2MB
+      const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
       if (e.target.files[0].size > maxSizeInBytes) {
         setImageError("Image file size must be less than 10 MB")
       } else {
@@ -93,7 +93,7 @@ const AddASINForm = () => {
 
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">ASIN or UPIN Code</label>
+                  <label className="text-slate-500">ASIN or UPC Code</label>
                   <input
                     type="text"
                     placeholder="Enter ASIN or UPIN"
