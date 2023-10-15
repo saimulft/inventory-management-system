@@ -59,7 +59,7 @@ export default function LoginPage() {
         className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl"
       >
         <div className="relative">{loginError && <p className="absolute left-1/2 transform -translate-x-1/2 w-[calc(100%-26px)] flex gap-1 items-center justify-center text-center mt-3 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {loginError}</p>}</div>
-        <div className="lg:py-20 lg:px-28 p-10">
+        <div className="lg:py-20 lg:px-28 p-10 max-w-[700px] w-[600px]">
           <form onSubmit={handleLogin}>
             <h4 className="text-xl font-bold">Login Your Account!</h4>
             <p className="text-slate-400">
@@ -71,7 +71,7 @@ export default function LoginPage() {
               <input
                 type="email"
                 placeholder="Enter email address"
-                className="input input-bordered input-primary w-full max-w-xs mt-2"
+                className="input input-bordered input-primary w-full mt-2"
                 id="email"
                 name="email"
                 required
@@ -83,7 +83,7 @@ export default function LoginPage() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 placeholder="Enter your password"
-                className="input input-bordered input-primary w-full max-w-xs mt-2"
+                className="input input-bordered input-primary w-full mt-2"
                 id="password"
                 name="password"
                 required
