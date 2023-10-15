@@ -57,13 +57,8 @@ const UpdatePassword = () => {
     return (
 
         <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
-            <div
-
-                className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl"
-            >
-
+            <div className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl">
                 <div className="lg:py-20 lg:px-28 p-10 max-w-[700px] w-[600px]">
-
                     <h4 className="text-xl font-bold">Enter your new passowrd</h4>
 
                     <hr className="mt-5 mb-7" />
@@ -77,16 +72,17 @@ const UpdatePassword = () => {
                             id="new_passowrd"
                             name="new_passowrd"
                             onChange={(e) => setNewPassword(e.target.value)}
-
+                            value={newPassword}
                         />
                         <label className="text-slate-500 mt-4">Confirm password<span className="font-bold text-rose-500">*</span></label>
                         <input
                             type="password"
                             placeholder="Enter email address"
-                            className="input input-bordered input-primary w-full  mt-2"
+                            className="input input-bordered input-primary w-full mt-2"
                             id="confirm_password"
                             name="confirm_password"
                             onChange={(e) => setConfirmPassword(e.target.value)}
+                            value={confirmPassword}
                         />
 
                         <div>{successMessage &&
