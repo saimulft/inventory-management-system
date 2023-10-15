@@ -15,7 +15,9 @@ export default function AllStoresPage() {
     { storeName: "Amazon", Icon: FaAmazon, userRole: "Store Manager" },
     { storeName: "Amazon", Icon: FaAmazon, userRole: "Store Manager" },
   ];
-
+  const shadowStyle = {
+    boxShadow: "0px 0px 15px -8px rgba(0,0,0,0.75)",
+  };
   return (
     <div className="bg-white p-20">
       <div className="flex justify-between">
@@ -42,7 +44,7 @@ export default function AllStoresPage() {
           </div>
         </div>
         <div className="w-1/2 gap-4 flex items-center">
-          <div className="w-full flex gap-4 ">
+          <form className="w-full flex gap-4 ">
             <select className="border bg-white shadow-md border-[#8633FF] outline-none cursor-pointer w-1/2 py-2 rounded-md px-2 text-sm">
               <option value="Null">Favorite Fruit</option>
               <option value="Brooklyn">Apples</option>
@@ -60,16 +62,20 @@ export default function AllStoresPage() {
                 <AiOutlineSearch size={20} />
               </div>
             </div>
-          </div>
+          </form>
         </div>
       </div>
 
       {/* store info  */}
-      <div className="grid grid-cols-4 gap-4 mb-8 mt-8">
+      <div className="grid grid-cols-4 gap-6 mb-8 mt-8">
         {allStoreData.map((singleStore, index) => {
           return (
-            <Link to="/dashboard/all-stores/store-edit" key={index}>
-              <div className="flex items-center px-2 py-6 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-md">
+            <Link
+              to="/dashboard/all-stores/store-edit"
+              style={shadowStyle}
+              key={index}
+            >
+              <div className="flex items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
                 <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
                   <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
                     <singleStore.Icon size={24} />

@@ -39,7 +39,7 @@ export default function AddSupplier() {
             <p>
               <span className="font-bold text-slate-600">
                 Store manager name:
-              </span>{" "}
+              </span>
               <span>Saidul Basar</span>
             </p>
             <p>
@@ -94,7 +94,7 @@ export default function AddSupplier() {
       })}
       {/* next btn  */}
       <Link to="/dashboard/add-store/add-supplier/select-payment">
-        <button className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-2 rounded-md text-[#8633FF] font-medium">
+        <button className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
           <p>Next</p>
           <BsArrowRightShort className="mt-[1px]" size={28} />
         </button>

@@ -1,11 +1,24 @@
+import Swal from "sweetalert2";
+
 export default function WareHouseAdminPage() {
+  const handleWarehouseAdmin = (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Created warehouse admin successfully!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
   return (
     <div>
       <div className="py-10 ">
         <h3 className="text-2xl font-bold text-center">
           Add New Warehouse Admin
         </h3>
-        <div className="flex gap-4 w-full mt-5 ">
+        <form className="flex gap-4 w-full mt-5 ">
           <div className="w-1/2">
             <div className="mt-3">
               <label className="text-slate-500">Name*</label>
@@ -71,7 +84,7 @@ export default function WareHouseAdminPage() {
               />
             </div>
           </div>
-        </div>
+        </form>
         <div className="mt-3 flex flex-col">
           <label className="text-slate-500">Country*</label>
           <select className="select select-primary w-full mt-2 shadow-lg">
@@ -84,7 +97,10 @@ export default function WareHouseAdminPage() {
           </select>
         </div>
         <div className="flex justify-center">
-          <button className="flex items-center justify-center bg-[#8633FF] px-32 w-full w-fit mt-8 py-3 rounded-md text-white">
+          <button
+            onClick={(e) => handleWarehouseAdmin(e)}
+            className="flex items-center justify-center bg-[#8633FF] px-32 w-full mt-8 py-3 rounded-md text-white"
+          >
             <p>Create Warehouse Admin</p>
           </button>
         </div>

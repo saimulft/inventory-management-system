@@ -1,9 +1,22 @@
+import Swal from "sweetalert2";
+
 export default function AdminVRPage() {
+  const handleAdmin = (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Created Admin Successfully!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
   return (
     <div className="py-10 ">
       <h3 className="text-2xl font-bold text-center">Add New Admin</h3>
       <div className="flex gap-4 w-full mt-5 ">
-        <div className="w-1/2">
+        <form className="w-1/2">
           <div className="mt-3">
             <label className="text-slate-500">Name*</label>
             <input
@@ -34,7 +47,7 @@ export default function AdminVRPage() {
               name="fullName"
             />
           </div>
-        </div>
+        </form>
         <div className="w-1/2">
           <div className="mt-3">
             <label className="text-slate-500">User Id*</label>
@@ -60,7 +73,10 @@ export default function AdminVRPage() {
         </div>
       </div>
       <div className="flex justify-center">
-        <button className="flex items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white">
+        <button
+          onClick={(e) => handleAdmin(e)}
+          className="flex items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white"
+        >
           <p>Create Admin</p>
         </button>
       </div>

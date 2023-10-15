@@ -37,24 +37,24 @@ export default function SupplierInfoInputListEdit() {
       <h5 className="text-xl font-medium">Add Supplier Information</h5>
       {supplierInfoInputList.map((i, index) => {
         return (
-          <div key={index} className="flex gap-2 my-8">
+          <form key={index} className="flex gap-2 my-8">
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs "
+              className="border border-gray-400 outline-[#8633FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="Supplier name"
               type="text"
               name="supplierName"
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs "
+              className="border border-gray-400 outline-[#8633FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="User ID"
               type="text"
               name="userID"
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs"
+              className="border border-gray-400 outline-[#8633FF] rounded py-3 px-2 w-1/3 text-xs"
               placeholder="Password"
               type="text"
               name="password"
@@ -65,7 +65,7 @@ export default function SupplierInfoInputListEdit() {
             >
               <AiOutlineCloseCircle size={20} />
             </button>
-          </div>
+          </form>
         );
       })}
 

@@ -1,8 +1,21 @@
+import Swal from "sweetalert2";
+
 export default function StoreOwnerPage() {
+  const handleStoreOwner = (e) => {
+    e.preventDefault();
+
+    Swal.fire({
+      position: "center",
+      icon: "success",
+      title: "Create store owner successfully!",
+      showConfirmButton: false,
+      timer: 1500,
+    });
+  };
   return (
     <div className="py-10 ">
       <h3 className="text-2xl font-bold text-center">Add New AVA</h3>
-      <div className="flex gap-4 w-full mt-5 ">
+      <form className="flex gap-4 w-full mt-5 ">
         <div className="w-1/2">
           <div className="mt-3">
             <label className="text-slate-500">Name*</label>
@@ -58,9 +71,12 @@ export default function StoreOwnerPage() {
             </select>
           </div>
         </div>
-      </div>
+      </form>
       <div className="flex justify-center">
-        <button className="flex items-center justify-center bg-[#8633FF] px-36 w-full w-fit mt-8 py-3 rounded-md text-white">
+        <button
+          onClick={(e) => handleStoreOwner(e)}
+          className="flex items-center justify-center bg-[#8633FF] px-36 w-full  mt-8 py-3 rounded-md text-white"
+        >
           <p>Create AVA</p>
         </button>
       </div>
