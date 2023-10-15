@@ -91,7 +91,7 @@ const UpdatePassword = () => {
 
                         <div>{successMessage &&
                             <p className="w-full flex gap-2 items-center justify-center text-center text-sm mt-5 font-medium text-green-600 bg-green-100 border py-2 px-4 rounded"><BsCheck2Circle size={28} /> {successMessage}</p>}
-                            {successMessage &&  <p className="text-center text-sm mt-5 font-medium text-green-600">Redirecting to login page..</p>}
+                            {successMessage && <p className="text-center text-sm mt-5 font-medium text-green-600">Redirecting to login page..</p>}
                             <div className="relative">{errorMessage && <p className="   flex gap-1 items-center justify-center text-center mt-3 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {errorMessage}</p>} </div>
 
                         </div>
