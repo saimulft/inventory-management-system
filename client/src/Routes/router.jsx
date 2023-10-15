@@ -39,6 +39,8 @@ import LoginPage from "../Pages/LoginPage";
 import SignUPPage from "../Pages/SignUpPage";
 import ProtectedRoute from "./ProtectedRoute";
 import VerifyEmail from "../Pages/verifyEmail";
+import ResetPassword from "../Pages/ResetPassword";
+import UpdatePassword from "../Pages/UpdatePassword";
 
 export const router = createBrowserRouter([
   {
@@ -214,5 +216,13 @@ export const router = createBrowserRouter([
   {
     path: "/verify_email",
     element: <VerifyEmail />,
+  },
+  {
+    path: "/reset_password",
+    element: <ResetPassword />,
+  },
+  {
+    path: "/update_password",
+    element: <UpdatePassword />,
   },
 ]);

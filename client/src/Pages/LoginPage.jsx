@@ -6,16 +6,13 @@ import Cookies from "js-cookie"
 import useAuth from "../hooks/useAuth";
 import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from 'react-icons/md';
-import { BsCheck2Circle } from "react-icons/bs";
 
 export default function LoginPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.1)",
   };
-  const [email, setEmail] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [loginError, setLoginError] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
   const navigate = useNavigate()
   const { setUser } = useAuth()
 
@@ -54,27 +51,6 @@ export default function LoginPage() {
     }
   }
 
-  const handleForgotPassword = () => {
-    if(!email){
-      return console.log('You have to provide your email to reset your password.')
-    }
-
-    try {
-      axios.get(`/admin_api/send_reset_password_email?email=${email}`)
-        .then(res => {
-          console.log(res)
-          if (res.status === 200) {
-            setSuccessMessage('We sent a password reset link to your email, please check your inbox or spam folder in order to reset your password.')
-          }
-        })
-    } catch (error) {
-      if(error.response.status === 401){
-        setLoginError('Failed to send reset password email')
-      }
-      setSuccessMessage('')
-      console.log(error)
-    }
-  }
 
   return (
     <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
@@ -99,7 +75,7 @@ export default function LoginPage() {
                 id="email"
                 name="email"
                 required
-                onChange={(e) => setEmail(e.target.value)}
+               
               />
             </div>
             <div className="flex flex-col mt-4 relative">
@@ -116,12 +92,11 @@ export default function LoginPage() {
               <div onClick={() => setShowPassword(!showPassword)} className="absolute top-[45px] right-4 text-sm font-medium cursor-pointer">{showPassword ? 'Hide' : 'Show'}</div>
             </div>
 
-            <div onClick={handleForgotPassword} className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">
+            <div onClick={()=>navigate('/reset_password')} className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">
               Forgot your password?
             </div>
 
-            <div>{successMessage && <p className="w-full flex gap-2 items-center justify-center text-center text-sm mt-5 font-medium text-green-600 bg-green-100 border py-2 px-4 rounded">
-              <BsCheck2Circle size={20} /> {successMessage}</p>}</div>
+
 
             <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
               <button type="submit" disabled={isLoading} className="flex gap-2 py-3 justify-center items-center text-white w-full capitalize ">

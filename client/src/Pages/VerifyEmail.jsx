@@ -25,6 +25,9 @@ const VerifyEmail = () => {
                             navigate('/login')
                         }, 1000)
                     }
+                    if(res.status === 203){
+                        setMessage("Email already verified")
+                    }
                 })
         } catch (error) {
             setLoading(false)
