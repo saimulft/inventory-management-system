@@ -18,7 +18,7 @@ export default function Sidebar() {
   const { user, setUser } = useAuth()
 
   useEffect(() => {
-    if (route.includes("settings")) {
+    if (route?.includes("settings")) {
       setSettingActive(true);
     } else {
       setSettingActive(false);
@@ -179,8 +179,8 @@ export default function Sidebar() {
               onClick={() => setIsActiveSetting("profile")}
               to="/dashboard/settings/profile"
               className={`${settingActive
-                  ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-                  : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
                 }`}
             >
               <AiOutlineSetting size={24} />
@@ -197,9 +197,9 @@ export default function Sidebar() {
                     : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
                 }
               >
-              <BiLogIn size={24} />
-              {isSidebarOpen && <p className="whitespace-nowrap">Login</p>}
-            </NavLink>}
+                <BiLogIn size={24} />
+                {isSidebarOpen && <p className="whitespace-nowrap">Login</p>}
+              </NavLink>}
           </div>
         </div>
       </div>

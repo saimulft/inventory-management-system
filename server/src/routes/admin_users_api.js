@@ -123,7 +123,6 @@ const run = async () => {
 
     })
 
-
     // create a new admin
     router.post('/admin_signup', async (req, res) => {
         try {
