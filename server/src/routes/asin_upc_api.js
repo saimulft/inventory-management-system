@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const multer = require("multer")
+const path = require('path')
 
 const run = async () => {
 
@@ -20,6 +21,16 @@ const run = async () => {
     });
     const upload = multer({ storage, limits: { fileSize: 5000000 } });
 
+    // asin_upc_image_upload api 
+    router.post('/asin_upc_image_upload', upload.single('image'), async (req, res) => {
+
+        const product_image = req.file.filename
+
+        if (product_image) {
+            res.status(201).json({ message: "image uploaded successful",imageURL: product_image })
+        }
+
+    })
 
 
     // insert a new asin or upc

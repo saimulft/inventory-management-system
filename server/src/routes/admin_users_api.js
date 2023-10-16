@@ -119,7 +119,6 @@ const run = async () => {
                 zip: req.body.zip,
                 country: req.body.country,
                 whatsapp_number: req.body.whatsapp_number,
-                email_verified: false
             }
             const login_data = {
                 id: req.body.admin_id,
