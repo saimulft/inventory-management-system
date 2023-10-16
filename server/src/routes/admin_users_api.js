@@ -123,6 +123,7 @@ const run = async () => {
             }
             const login_data = {
                 id: req.body.admin_id,
+                full_name: req.body.full_name,
                 email: req.body.email,
                 role: req.body.role,
                 password: hashed_password,
@@ -229,7 +230,7 @@ const run = async () => {
 
         try {
             const user_email = req.email
-            const user = await admin_users_collection.findOne({ email: user_email })
+            const user = await all_users_collection.findOne({ email: user_email })
             if (user) {
                 return res.status(200).json({ data: user })
             }

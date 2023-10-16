@@ -204,7 +204,7 @@ export default function SignUPPage() {
                 <input type="checkbox" defaultChecked={true} className="w-4 h-4 bg-[#8633FF] border-gray-300 rounded-xl" />
                 <span className="label-text">I agree to terms & conditions</span>
               </div>
-              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white capitalize rounded-lg w-full">
+              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">
                 {isLoading && <FaSpinner size={20} className="animate-spin" />}
                 Register Account
               </button>

@@ -3,21 +3,10 @@ import useAuth from "../../hooks/useAuth";
 import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
+import { FaSpinner } from "react-icons/fa";
 
 export default function AdminVRPage() {
   const { user } = useAuth();
-
-  const handleAdmin = (e) => {
-    e.preventDefault();
-
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Created Admin Successfully!",
-      showConfirmButton: false,
-      timer: 1500,
-    })
-  };
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (adminVA) => {
@@ -39,24 +28,19 @@ export default function AdminVRPage() {
       return console.log('Password and confirm password must be same!')
     }
 
-    const adminVA = { admin_id: user.admin_id, admin_va_id: uuidv4(), name, email, username, password, role: 'Admin VA' }
-    console.log(adminVA)
+    const adminVA = { admin_id: user.admin_id, admin_va_id: uuidv4(), full_name: name, email, username, password, role: 'Admin VA' }
 
     try {
       const { status } = await mutateAsync(adminVA)
       if (status === 201) {
         form.reset()
-        console.log("admin va user created successfully!")
-        // setRegisterError('')
-        // setSuccessMessage('We sent a verification link to your email, please check your inbox or spam folder in order to login to your account.')
-      }
-      else if (status === 200) {
-        // setSuccessMessage('')
-        // setRegisterError('Email already exist!')
+        Swal.fire(
+          'Created!',
+          'New admin VA created successfully!',
+          'success'
+        )
       }
     } catch (error) {
-      // setSuccessMessage('')
-      // setRegisterError('Registration failed!')
       console.log(error)
     }
   }
@@ -123,7 +107,8 @@ export default function AdminVRPage() {
           </div>
         </div>
         <div className="flex justify-center">
-          <button type="submit" className="flex items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white">
+          <button type="submit" disabled={isLoading} className="flex gap-2 items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white">
+            {isLoading && <FaSpinner size={20} className="animate-spin" />}
             <p>Create Admin</p>
           </button>
         </div>
