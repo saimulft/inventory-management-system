@@ -7,6 +7,7 @@ const bcrypt = require("bcrypt")
 const run = async () => {
     const db = await connectDatabase()
     const admin_va_users_collection = db.collection("admin_va_users")
+    const all_users_collection = db.collection("all_users")
 
     // create new admin va 
     router.post('/create_admin_va', async (req, res) => {
@@ -29,10 +30,20 @@ const run = async () => {
                 country: null,
                 whatsapp_number: null
             }
+            const login_data = {
+
+                
+
+            }
             const result = await admin_va_users_collection.insertOne(admin_va_user_data)
 
+
             if (result.acknowledged) {
-                res.status(201).json({ message: 'Admin va user created successfully', status: "success" });
+                const response = await all_users_collection.insertOne(admin_va_user_data)
+                if (response.acknowledged) {
+
+                    res.status(201).json({ message: 'Admin va user created successfully', status: "success" });
+                }
             } else {
                 res.status(500).json({ message: 'Failed to create admin va user' });
             }

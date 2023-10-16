@@ -17,8 +17,8 @@ export default function LoginPage() {
   const { setUser } = useAuth()
 
   const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (adminInfo) => {
-      return axios.post('/api/v1/admin_api/admin_user_login', adminInfo)
+    mutationFn: (userInfo) => {
+      return axios.post('/api/v1/admin_api/user_login', userInfo)
     },
   })
   const handleLogin = async (event) => {
@@ -27,16 +27,16 @@ export default function LoginPage() {
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
-    const adminInfo = { admin_email: email, admin_password: password }
+    const userInfo = { email: email,password: password }
 
     try {
-      const { data, status } = await mutateAsync(adminInfo)
+      const { data, status } = await mutateAsync(userInfo)
       if (status === 200) {
         form.reset()
         setUser(data.data)
         setLoginError('')
         const token = data.token;
-        Cookies.set('loginToken', token, { expires: 7 })
+        Cookies.set('loginToken', token)
         navigate('/')
       }
     } catch (error) {

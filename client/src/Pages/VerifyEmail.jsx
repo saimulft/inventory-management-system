@@ -20,7 +20,7 @@ const VerifyEmail = () => {
                 .then(res => {
                     setLoading(false)
                     if (res.status === 200) {
-                        setMessage("Email verification completed! (Redirecting..)")
+                        setMessage("Email verification completed! ")
                         setTimeout(() => {
                             navigate('/login')
                         }, 1000)
@@ -44,7 +44,7 @@ const VerifyEmail = () => {
                 <div className="lg:py-20 lg:px-28 p-10">
                     <h1 className="text-center text-3xl mb-6">Please verify your email</h1>
                     {message && <p className="text-center text-xl font-medium text-green-500 mb-5">{message}</p>}
-                    {message && <button onClick={() => navigate("/login")} className="bg-[#8633FF] py-2 block mx-auto text-white capitalize rounded-lg px-5">Login Now</button>}
+                    {message && <p className="text-center text-xl font-medium text-green-500 mb-5">Redirecting..</p>}
                     {message ? '' : <button disabled={loading} onClick={handleEmailVerification} className="bg-[#8633FF] flex gap-2 justify-center items-center py-2 text-white capitalize rounded-lg px-5">
                         {loading && <FaSpinner size={20} className="animate-spin" />}
                         Verify Email

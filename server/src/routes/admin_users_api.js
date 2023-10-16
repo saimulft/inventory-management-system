@@ -5,40 +5,13 @@ const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const verifyJWT = require("../middlewares/verifyJWT")
 const nodemailer = require("nodemailer")
+const sendEmail = require("../utilities/send_email")
 const run = async () => {
     const db = await connectDatabase()
     const admin_users_collection = db.collection("admin_users")
+    const all_users_collection = db.collection("all_users")
 
 
-    // verify user email 
-    const verifyEmail = async (name, email, id) => {
-        try {
-            const transporter =
-                nodemailer.createTransport({
-                    host: "smtp.gmail.com",
-                    port: 587,
-                    secure: false,
-                    requireTLS: true,
-                    auth: {
-                        user: "toriqulislam142@gmail.com",
-                        pass: 'nqle nukt eqfy kcko'
-                    }
-                })
-
-            const mailOption = {
-                from: "toriqulislam142@gamil.com",
-                to: email,
-                subject: "Verify your email",
-                html: `<p>Hi, ${name}, Please verify your email by <a href="http://localhost:5173/verify_email?id=${id}">Click here</a></p>`
-            }
-
-            transporter.sendMail(mailOption)
-
-        }
-        catch (error) {
-            console.log(error)
-        }
-    }
 
     // sent forget password mail transporter
     const resetPassword = async (name, email, id) => {
@@ -148,12 +121,30 @@ const run = async () => {
                 whatsapp_number: req.body.whatsapp_number,
                 email_verified: false
             }
+            const login_data = {
+                id: req.body.admin_id,
+                email: req.body.email,
+                role: req.body.role,
+                password: hashed_password,
+                email_verified: false
+            }
             const result = await admin_users_collection.insertOne(admin_user_data)
 
-            if (result.acknowledged) {
-                res.status(201).json({ message: 'Admin  user created successfully', status: "success" });
-                verifyEmail(req.body.full_name, req.body.email, req.body.admin_id);
 
+            if (result.acknowledged) {
+                const response = await all_users_collection.insertOne(login_data)
+
+                if (response.acknowledged) {
+                    const send_email_data = {
+                        email: req.body.email,
+                        subject: "Verify email",
+                        html: `<p>Hi, ${req.body.full_name}, Please verify your email by <a href="http://localhost:5173/verify_email?id=${req.body.admin_id}">Click here</a></p>`
+                    }
+
+                    sendEmail(send_email_data);
+                    res.status(201).json({ message: 'Admin  user created successfully', status: "success" });
+
+                }
             } else {
                 res.status(500).json({ message: 'Failed to create admin  user' });
             }
@@ -172,7 +163,7 @@ const run = async () => {
             },
         };
         try {
-            const result = await admin_users_collection.findOne({ admin_id: id })
+            const result = await all_users_collection.findOne({ id: id })
             if (result) {
 
                 if (result.email_verified === true) {
@@ -180,8 +171,8 @@ const run = async () => {
                     return res.status(203).json({ message: "Email already verified" })
 
                 }
-                const updateEmailStatus = await admin_users_collection.updateOne(
-                    { admin_id: id },
+                const updateEmailStatus = await all_users_collection.updateOne(
+                    { id: id },
                     update
                 )
                 if (updateEmailStatus.modifiedCount) {
@@ -201,20 +192,19 @@ const run = async () => {
     })
 
     // admin login
-    router.post('/admin_user_login', async (req, res) => {
+    router.post('/user_login', async (req, res) => {
         try {
-            const admin_email = req.body.admin_email
-            const admin_password = req.body.admin_password
-            const data = await admin_users_collection.findOne({ email: admin_email })
+            const email = req.body.email
+            const password = req.body.password
+            const data = await all_users_collection.findOne({ email: email })
             if (data) {
-                const isValidPassword = await bcrypt.compare(admin_password, data.password)
+                const isValidPassword = await bcrypt.compare(password, data.password)
                 if (isValidPassword) {
                     if (data.email_verified) {
                         const token = jwt.sign({
                             role: data.role,
-                            id: data.admin_id,
                             email: data.email
-                        }, process.env.JWT_SECRET, { expiresIn: '2d' })
+                        }, process.env.JWT_SECRET, { expiresIn: '7d' })
                         res.status(200).json({ data: data, token: token });
                     }
                     else {
@@ -241,10 +231,10 @@ const run = async () => {
             const user_email = req.email
             const user = await admin_users_collection.findOne({ email: user_email })
             if (user) {
-                res.status(200).json({ data: user })
+                return res.status(200).json({ data: user })
             }
             else {
-                res.status(500).json({ message: "Failed to find user by email" })
+                return res.status(404).json({ message: "Failed to find user by email" })
             }
         } catch (error) {
             res.status(500).json({ message: "Internal Server Error" })

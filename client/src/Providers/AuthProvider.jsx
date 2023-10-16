@@ -12,22 +12,24 @@ const AuthProvider = ({ children }) => {
     const token = Cookies.get('loginToken')
 
     useEffect(() => {
-        try {
-            axios.get('/api/v1/admin_api/get_admin_user', {
-                headers: {
-                    Authorization: `Bearer ${token}`
+        axios.get('/api/v1/admin_api/get_admin_user', {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        })
+            .then(res => {
+                // console.log('inside authProvider:', res)
+                setLoading(false)
+                if (res.status === 200) {
+                    setUser(res.data.data)
                 }
+            }).catch((err) => {
+                if (err.response.status === 404 || err.response.status === 403) {
+                    Cookies.remove('loginToken')
+                }
+                setLoading(false)
             })
-                .then(res => {
-                    // console.log('inside authProvider:', res)
-                    setLoading(false)
-                    if (res.status === 200) {
-                        setUser(res.data.data)
-                    }
-                })
-        } catch (error) {
-            console.log(error)
-        }
+
     }, [token])
 
     return (

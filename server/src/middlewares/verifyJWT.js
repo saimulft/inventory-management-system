@@ -7,12 +7,18 @@ const verifyJWT = (req, res, next) => {
             return res.json({ message: "Unauthorized access" })
         }
         else {
-            const decode = jwt.verify(token, process.env.JWT_SECRET)
-            const { role, id, email } = decode
-            req.role = role,
-                req.id = id,
-                req.email = email
-            next()
+            jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
+
+                if (err) {
+                    return res.status(403).send({ error: true, message: "forbidden access" });
+                }
+                const { role, id, email } = decode
+                req.role = role,
+                    req.id = id,
+                    req.email = email
+                next()
+            })
+
         }
     } catch (error) {
         next(error)
