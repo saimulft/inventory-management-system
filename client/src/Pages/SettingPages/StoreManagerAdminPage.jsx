@@ -15,7 +15,7 @@ export default function StoreManagerAdminPage() {
   return (
     <div className="py-10 ">
       <h3 className="text-2xl font-bold text-center">Add New AVA</h3>
-      <form className="flex gap-4 w-full mt-5 ">
+      <form className="flex gap-4 w-full mt-5">
         <div className="w-1/2">
           <div className="mt-3">
             <label className="text-slate-500">Name*</label>
@@ -24,7 +24,39 @@ export default function StoreManagerAdminPage() {
               placeholder="Enter name"
               className="input input-bordered input-primary w-full mt-2 shadow-lg"
               id="name"
-              name="name"
+              name="name"/>
+          </div>
+          <div className="mt-3">
+            <label className="text-slate-500">Email*</label>
+            <input
+              type="email"
+              placeholder="Enter name"
+              className="input input-bordered input-primary w-full mt-2 shadow-lg"
+              id="email"
+              name="email"
+            />
+          </div>
+          <div className="mt-3">
+            <label className="text-slate-500">Confirm password*</label>
+            <input
+              type="password"
+              placeholder="Confirm password"
+              className="input input-bordered input-primary w-full mt-2 shadow-lg"
+              id="confirmPassword"
+              name="confirmPassword"
+            />
+          </div>
+        </div>
+
+        <div className="w-1/2">
+          <div className="mt-3">
+            <label className="text-slate-500">User ID*</label>
+            <input
+              type="text"
+              placeholder="User ID"
+              className="input input-bordered input-primary w-full mt-2 shadow-lg"
+              id="userId"
+              name="userId"
             />
           </div>
           <div className="mt-3">
@@ -36,39 +68,6 @@ export default function StoreManagerAdminPage() {
               id="password"
               name="password"
             />
-          </div>
-          <div className="mt-3">
-            <label className="text-slate-500">Confirm password*</label>
-            <input
-              type="text"
-              placeholder="confirmPassword"
-              className="input input-bordered input-primary w-full mt-2 shadow-lg"
-              id="fullName"
-              name="fullName"
-            />
-          </div>
-        </div>
-        <div className="w-1/2">
-          <div className="mt-3">
-            <label className="text-slate-500">User Id*</label>
-            <input
-              type="text"
-              placeholder="User ID"
-              className="input input-bordered input-primary w-full mt-2 shadow-lg"
-              id="userID"
-              name="userID"
-            />
-          </div>
-          <div className="mt-3">
-            <label className="text-slate-500">User Role*</label>
-            <select className="select select-primary shadow-lg w-full ">
-              <option disabled selected>
-                demo
-              </option>
-              <option>Text-1</option>
-              <option>Text-2</option>
-              <option>Text-3</option>
-            </select>
           </div>
         </div>
       </form>

@@ -18,15 +18,16 @@ const run = async () => {
                 admin_va_id: req.body.admin_va_id,
                 full_name: req.body.full_name,
                 email: req.body.email,
+                username: req.body.username,
                 password: hashed_password,
                 role: req.body.role,
-                phone: req.body.phone,
-                adress: req.body.adress,
-                city: req.body.city,
-                state: req.body.state,
-                zip: req.body.zip,
-                country: req.body.country,
-                whatsapp_number: req.body.whatsapp_number
+                phone: null,
+                address: null,
+                city: null,
+                state: null,
+                zip: null,
+                country: null,
+                whatsapp_number: null
             }
             const result = await admin_va_users_collection.insertOne(admin_va_user_data)
 
@@ -70,7 +71,6 @@ const run = async () => {
         }
         catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
-
         }
 
     })

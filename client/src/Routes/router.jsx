@@ -219,7 +219,7 @@ export const router = createBrowserRouter([
           },
 
           {
-            path: "/dashboard/settings/add-users/admin-vr",
+            path: "/dashboard/settings/add-users/admin-va",
             element: <AdminVRPage />,
           },
           {
