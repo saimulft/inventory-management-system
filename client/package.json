@@ -17,6 +17,7 @@
     "axios": "^1.5.1",
     "compressorjs": "^1.2.1",
     "daisyui": "^3.8.2",
+    "date-fns": "^2.30.0",
     "js-cookie": "^3.0.5",
     "ka-table": "^8.3.2",
     "lottie-react": "^2.4.0",

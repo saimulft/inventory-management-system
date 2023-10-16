@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 import Compressor from 'compressorjs';
-import  axios  from "axios"
+import axios from "axios"
 
 const AddASINForm = () => {
   const boxShadowStyle = {
@@ -12,43 +12,68 @@ const AddASINForm = () => {
   const [imageFile, setImageFile] = useState()
   const [imageError, setImageError] = useState('')
   const [compressedImage, setCompressedImage] = useState(null)
-  const [uploadProgress, setUploadProgress] = useState(0);
+
 
   // handler function for adding ASIN or UPC
-  const handleAdd = (event) => {
+
+
+  const handleAsinUpcForm = async (event) => {
     event.preventDefault()
+    const form = event.target;
+    const date = form.date.value;
+    const isoDate = new Date(date).toISOString()
+    const asinUpc = form.upin.value;
+    const storeManagerName = form.storeManagerName.value;
+    const productName = form.productName.value;
+  
+    const minPrice = form.minPrice.value;
+    const codeType = form.codeType.value;
 
-    // const form = event.target;
-    // const date = form.date.value;
-    // const upin = form.upin.value;
-    // const storeManagerName = form.storeManagerName.value;
-    // const productName = form.productName.value;
-    // const productImage = photoUploadType == "url" ? form?.imageUrl.value : imageFile;
-    // const minPrice = form.minPrice.value;
-    // const codeType = form.codeType.value;
 
-    // const asinInfo = { date, upin, storeManagerName, productName, productImage, minPrice, codeType }
-    // // console.log(asinInfo)
+
+  
+
+    const formData = new FormData()
+
+    if (imageFile) {
+      formData.append('image', imageFile)
+    }
+
+    await axios.post('/api/v1/asin_upc_api/asin_upc_image_upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    })
+      .then(res => {
+        if (res.status === 201) {
+        
+          const productImage = photoUploadType == "url" ? form?.inputImageUrl.value : res.data.imageURL;
+          const asinInfo = { date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType }
+          console.log(asinInfo)
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+    
   }
 
   const handleImage = (e) => {
 
     if (e.target.files[0]) {
-      const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+      const maxSizeInBytes = 5 * 1024 * 1024; // 10MB
 
       if (e.target.files[0].size > maxSizeInBytes) {
-        setImageError("Image file size must be less than 10 MB")
+        setImageError("Image file size must be less than 5 MB")
 
       } else {
         setImageError('')
+        setImageSrc(URL.createObjectURL(e.target.files[0]))
 
         setImageFile(e.target.files[0])
 
-        setImageSrc(URL.createObjectURL(e.target.files[0]))
-
-
         new Compressor(e.target.files[0], {
-          quality: 0.6, // Adjust the compression quality as needed
+          quality: 0.5, // Adjust the compression quality as needed
           success: (compressed) => {
             setCompressedImage(compressed);
           },
@@ -61,26 +86,6 @@ const AddASINForm = () => {
     }
   }
 
-  const handleImageUpload = async() => {
-    const formData = new FormData();
-    formData.append('file', compressedImage);
-  
-    try {
-      const response = await axios.post('http://your-backend-url/upload', formData, {
-        onUploadProgress: (progressEvent) => {
-          const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
-          setUploadProgress(progress);
-        },
-      });
-      console.log('File uploaded:', response.data);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-    }
-
-
-
-
-  }
 
 
 
@@ -95,7 +100,7 @@ const AddASINForm = () => {
           <p className="text-2xl font-bold">Add ASIN or UPC</p>
         </div>
         <div className="px-20 py-10 w-full">
-          <form onSubmit={handleAdd}>
+          <form onSubmit={handleAsinUpcForm}>
             <div className="flex gap-7">
               <div className="w-full">
                 <div>
@@ -178,8 +183,8 @@ const AddASINForm = () => {
                   type="text"
                   placeholder="Enter your image URL link"
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                  id="imageUrl"
-                  name="imageUrl"
+                  id="inputImageUrl"
+                  name="inputImageUrl"
                 />
               </div>
             )}
@@ -200,7 +205,7 @@ const AddASINForm = () => {
                           Select a file or drag and drop
                         </p>
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          PNG or JPG file size no more than 10MB
+                          PNG or JPG file size no more than 5MB
                         </p>
                       </div>
                     </div>
@@ -228,13 +233,7 @@ const AddASINForm = () => {
                   </label>
                 </div>
                 {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
-                {imageSrc && <button
-                  onClick={handleImageUpload}
-                  type="button"
-                  className="btn btn-outline btn-primary btn-xs mt-3 block ml-0"
-                >
-                  Upload image
-                </button>}
+
               </div>
             )}
 
