@@ -6,17 +6,17 @@ const sendEmail = require("../utilities/send_email")
 
 const run = async () => {
     const db = await connectDatabase()
-    const admin_va_users_collection = db.collection("admin_va_users")
+    const store_owner_users_collection = db.collection("store_owner_users")
     const all_users_collection = db.collection("all_users")
 
     // create new admin va 
-    router.post('/create_admin_va', async (req, res) => {
+    router.post('/create_store_owner', async (req, res) => {
         try {
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
-            const admin_va_user_data = {
+            const store_owner_user_data = {
                 admin_id: req.body.admin_id,
-                admin_va_id: req.body.admin_va_id,
+                store_owner_id: req.body.store_owner_id,
                 full_name: req.body.full_name,
                 email: req.body.email,
                 username: req.body.username,
@@ -31,14 +31,14 @@ const run = async () => {
                 whatsapp_number: null
             }
             const login_data = {
-                id: req.body.admin_va_id,
+                id: req.body.store_owner_id,
                 full_name: req.body.full_name,
                 email: req.body.email,
                 password: hashed_password,
                 role: req.body.role,
                 email_verified: false,
             }
-            const result = await admin_va_users_collection.insertOne(admin_va_user_data)
+            const result = await store_owner_users_collection.insertOne(store_owner_user_data)
 
             if (result.acknowledged) {
                 const response = await all_users_collection.insertOne(login_data)
@@ -56,15 +56,15 @@ const run = async () => {
                             </div>
                             <hr />
                             <h2>Please verify your email before login to your account</h2>
-                            <p>To verify your email <a href="http://localhost:5173/verify_email?id=${req.body.admin_va_id}">Click here</a></p>
+                            <p>To verify your email <a href="http://localhost:5173/verify_email?id=${req.body.store_owner_id}">Click here</a></p>
                         </div>`
                     }
 
                     sendEmail(send_email_data);
-                    res.status(201).json({ message: 'Admin va user created successfully', status: "success" });
+                    res.status(201).json({ message: 'Store owner created successfully', status: "success" });
                 }
             } else {
-                res.status(500).json({ message: 'Failed to create admin va user' });
+                res.status(500).json({ message: 'Failed to create store owner user' });
             }
         }
         catch (error) {

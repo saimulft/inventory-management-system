@@ -23,7 +23,7 @@ const VerifyEmail = () => {
                         setMessage("Email verification completed! ")
                         setTimeout(() => {
                             navigate('/login')
-                        }, 1000)
+                        }, 2000)
                     }
                     if(res.status === 203){
                         setMessage("Email already verified")

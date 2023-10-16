@@ -1,85 +1,118 @@
 import Swal from "sweetalert2";
+import useAuth from "../../hooks/useAuth";
+import { v4 as uuidv4 } from 'uuid';
+import { useMutation } from "@tanstack/react-query";
+import { FaSpinner } from "react-icons/fa";
+import axios from "axios";
 
 export default function StoreOwnerPage() {
-  const handleStoreOwner = (e) => {
-    e.preventDefault();
+  const { user } = useAuth()
 
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Create store owner successfully!",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-  };
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: (storeOwner) => {
+      return axios.post('/api/v1/store_owner_api/create_store_owner', storeOwner)
+    },
+  })
+
+  const handleCreateStoreOwner = async (event) => {
+    event.preventDefault()
+
+    const form = event.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+    const username = form.username.value;
+
+    if (password !== confirmPassword) {
+      return console.log('Password and confirm password must be same!')
+    }
+
+    const storeOwner = { admin_id: user.admin_id, store_owner_id: uuidv4(), full_name: name, email, username, password, role: 'Store Owner' }
+
+    try {
+      const { status } = await mutateAsync(storeOwner)
+      if (status === 201) {
+        form.reset()
+        Swal.fire(
+          'Created!',
+          'New store owner created successfully!',
+          'success'
+        )
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className="py-10 ">
-      <h3 className="text-2xl font-bold text-center">Add New AVA</h3>
-      <form className="flex gap-4 w-full mt-5">
-        <div className="w-1/2">
-          <div className="mt-3">
-            <label className="text-slate-500">Name*</label>
-            <input
-              type="text"
-              placeholder="Enter name"
-              className="input input-bordered input-primary w-full mt-2 shadow-lg"
-              id="name"
-              name="name"
-            />
+      <h3 className="text-2xl font-bold text-center">Add New Store Owner</h3>
+      <form onSubmit={handleCreateStoreOwner}>
+        <div className="flex gap-4 w-full mt-5">
+          <div className="w-1/2">
+            <div className="mt-3">
+              <label className="text-slate-500">Name*</label>
+              <input
+                type="text"
+                placeholder="Enter name"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="name"
+                name="name"
+              />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Email*</label>
+              <input
+                type="email"
+                placeholder="Enter email"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="email"
+                name="email"
+              />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Confirm password*</label>
+              <input
+                type="password"
+                placeholder="Confirm password"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="confirmPassword"
+                name="confirmPassword"
+              />
+            </div>
           </div>
-          <div className="mt-3">
-            <label className="text-slate-500">Email*</label>
-            <input
-              type="email"
-              placeholder="Enter name"
-              className="input input-bordered input-primary w-full mt-2 shadow-lg"
-              id="email"
-              name="email"
-            />
-          </div>
-          <div className="mt-3">
-            <label className="text-slate-500">Confirm password*</label>
-            <input
-              type="password"
-              placeholder="Confirm password"
-              className="input input-bordered input-primary w-full mt-2 shadow-lg"
-              id="confirmPassword"
-              name="confirmPassword"
-            />
+
+          <div className="w-1/2">
+            <div className="mt-3">
+              <label className="text-slate-500">Username*</label>
+              <input
+                type="text"
+                placeholder="Enter username"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="username"
+                name="username"
+              />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Password*</label>
+              <input
+                type="password"
+                placeholder="Enter password"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="password"
+                name="password"
+              />
+            </div>
           </div>
         </div>
-
-        <div className="w-1/2">
-          <div className="mt-3">
-            <label className="text-slate-500">User ID*</label>
-            <input
-              type="text"
-              placeholder="User ID"
-              className="input input-bordered input-primary w-full mt-2 shadow-lg"
-              id="userId"
-              name="userId"
-            />
-          </div>
-          <div className="mt-3">
-            <label className="text-slate-500">Password*</label>
-            <input
-              type="password"
-              placeholder="Enter password"
-              className="input input-bordered input-primary w-full mt-2 shadow-lg"
-              id="password"
-              name="password"
-            />
-          </div>
+        <div className="flex justify-center">
+          <button type="submit" disabled={isLoading} className="flex gap-2 items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white">
+            {isLoading && <FaSpinner size={20} className="animate-spin" />}
+            <p>Create Store Owner</p>
+          </button>
         </div>
       </form>
-      <div className="flex justify-center">
-        <button
-          onClick={(e) => handleStoreOwner(e)}
-          className="flex items-center justify-center bg-[#8633FF] px-36 w-full  mt-8 py-3 rounded-md text-white"
-        >
-          <p>Create AVA</p>
-        </button>
-      </div>
     </div>
   );
 }

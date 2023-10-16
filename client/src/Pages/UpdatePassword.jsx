@@ -40,7 +40,7 @@ const UpdatePassword = () => {
                 setNewPassword("")
                 setTimeout(() => {
                     navigate('/login')
-                }, 2500)
+                }, 2000)
             }
             if (status === 203) {
                 setSuccessMessage("")
