@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
+import Compressor from 'compressorjs';
+import  axios  from "axios"
 
 const AddASINForm = () => {
   const boxShadowStyle = {
@@ -9,36 +11,79 @@ const AddASINForm = () => {
   const [imageSrc, setImageSrc] = useState()
   const [imageFile, setImageFile] = useState()
   const [imageError, setImageError] = useState('')
+  const [compressedImage, setCompressedImage] = useState(null)
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // handler function for adding ASIN or UPC
   const handleAdd = (event) => {
     event.preventDefault()
 
-    const form = event.target;
-    const date = form.date.value;
-    const upin = form.upin.value;
-    const storeManagerName = form.storeManagerName.value;
-    const productName = form.productName.value;
-    const productImage = photoUploadType == "url" ? form?.imageUrl.value : imageSrc;
-    const minPrice = form.minPrice.value;
-    const codeType = form.codeType.value;
+    // const form = event.target;
+    // const date = form.date.value;
+    // const upin = form.upin.value;
+    // const storeManagerName = form.storeManagerName.value;
+    // const productName = form.productName.value;
+    // const productImage = photoUploadType == "url" ? form?.imageUrl.value : imageFile;
+    // const minPrice = form.minPrice.value;
+    // const codeType = form.codeType.value;
 
-    const asinInfo = { date, upin, storeManagerName, productName, productImage, minPrice, codeType }
-    console.log(asinInfo)
+    // const asinInfo = { date, upin, storeManagerName, productName, productImage, minPrice, codeType }
+    // // console.log(asinInfo)
   }
 
   const handleImage = (e) => {
+
     if (e.target.files[0]) {
       const maxSizeInBytes = 10 * 1024 * 1024; // 10MB
+
       if (e.target.files[0].size > maxSizeInBytes) {
         setImageError("Image file size must be less than 10 MB")
+
       } else {
         setImageError('')
+
         setImageFile(e.target.files[0])
+
         setImageSrc(URL.createObjectURL(e.target.files[0]))
+
+
+        new Compressor(e.target.files[0], {
+          quality: 0.6, // Adjust the compression quality as needed
+          success: (compressed) => {
+            setCompressedImage(compressed);
+          },
+          error: (error) => {
+            console.error('Error compressing file:', error);
+          },
+        })
+
       }
     }
   }
+
+  const handleImageUpload = async() => {
+    const formData = new FormData();
+    formData.append('file', compressedImage);
+  
+    try {
+      const response = await axios.post('http://your-backend-url/upload', formData, {
+        onUploadProgress: (progressEvent) => {
+          const progress = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+          setUploadProgress(progress);
+        },
+      });
+      console.log('File uploaded:', response.data);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+
+
+
+
+  }
+
+
+
 
   return (
     <div className="mt-20 rounded-lg h-screen">
@@ -62,7 +107,6 @@ const AddASINForm = () => {
                     name="date"
                   />
                 </div>
-
                 <div className="mt-4">
                   <label className="text-slate-500">Store Manager Name</label>
                   <input
@@ -85,8 +129,8 @@ const AddASINForm = () => {
                     <option disabled selected>
                       Select Upload Option
                     </option>
-                    <option value="url">Add URL</option>
-                    <option value="file">File Upload</option>
+                    <option value="url"> Image URL</option>
+                    <option value="file">Upload image</option>
                   </select>
                 </div>
               </div>
@@ -129,10 +173,10 @@ const AddASINForm = () => {
 
             {photoUploadType == "url" && (
               <div className="mt-4">
-                <label className="text-slate-500">Add Photo</label>
+                <label className="text-slate-500">Image URL</label>
                 <input
                   type="text"
-                  placeholder="Enter your photo link"
+                  placeholder="Enter your image URL link"
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="imageUrl"
                   name="imageUrl"
@@ -161,6 +205,7 @@ const AddASINForm = () => {
                       </div>
                     </div>
                     <input
+
                       id="invoice-dropzone"
                       name="invoice-dropzone"
                       type="file"
@@ -176,12 +221,20 @@ const AddASINForm = () => {
                         type="button"
                         className="btn btn-outline btn-primary btn-xs"
                       >
-                        select file
+                        Select image
                       </button>
+
                     </div>
                   </label>
                 </div>
                 {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
+                {imageSrc && <button
+                  onClick={handleImageUpload}
+                  type="button"
+                  className="btn btn-outline btn-primary btn-xs mt-3 block ml-0"
+                >
+                  Upload image
+                </button>}
               </div>
             )}
 
