@@ -9,7 +9,7 @@ export default function ProfilePage() {
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (profileInfo) => {
-      return axios.put('/admin_api/update_admin_user', profileInfo)
+      return axios.put('/api/v1/admin_api/update_admin_user', profileInfo)
     },
   })
   const handleUpdateProfile = async (event) => {

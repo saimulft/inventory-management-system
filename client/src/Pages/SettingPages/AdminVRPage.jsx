@@ -21,7 +21,7 @@ export default function AdminVRPage() {
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (adminVA) => {
-      return axios.post('/admin_va_api/create_admin_va', adminVA)
+      return axios.post('/api/v1/admin_va_api/create_admin_va', adminVA)
     },
   })
 

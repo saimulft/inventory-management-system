@@ -18,7 +18,7 @@ export default function SignUPPage() {
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (newAdmin) => {
-      return axios.post('/admin_api/admin_signup', newAdmin)
+      return axios.post('/api/v1/admin_api/admin_signup', newAdmin)
     },
   })
   const handleRegister = async (event) => {

@@ -18,7 +18,7 @@ export default function LoginPage() {
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (adminInfo) => {
-      return axios.post('/admin_api/admin_user_login', adminInfo)
+      return axios.post('/api/v1/admin_api/admin_user_login', adminInfo)
     },
   })
   const handleLogin = async (event) => {
