@@ -19,9 +19,9 @@ const admin_users_api = require("./src/routes/admin_users_api")
 const admin_va_users_api = require("./src/routes/admin_va_users_api")
 const asin_upc_api = require("./src/routes/asin_upc_api")
 
-app.use('/api/v1/admin_api',admin_users_api)
-app.use('/api/v1/admin_va_api',admin_va_users_api)
-app.use('/api/v1/asin_upc_api',asin_upc_api)
+app.use('/admin_api',admin_users_api)
+app.use('/admin_va_api',admin_va_users_api)
+app.use('/asin_upc_api',asin_upc_api)
 
 
 app.get('/', (req, res) => {
