@@ -22,7 +22,7 @@ const ResetPassword = () => {
 
         try {
             setIsLoading(true)
-            axios.get(`/admin_api/send_reset_password_email?email=${email}`)
+            axios.get(`/api/v1/admin_api/send_reset_password_email?email=${email}`)
                 .then(res => {
                     if (res.status === 200) {
                         setEmail("")

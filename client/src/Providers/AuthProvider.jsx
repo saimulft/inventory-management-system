@@ -13,7 +13,7 @@ const AuthProvider = ({ children }) => {
 
     useEffect(() => {
         try {
-            axios.get('/admin_api/get_admin_user', {
+            axios.get('/api/v1/admin_api/get_admin_user', {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
