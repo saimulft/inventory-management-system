@@ -9,7 +9,7 @@ export default function ProfilePage() {
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (profileInfo) => {
-      return axios.put('/api/v1/admin_api/update_admin_user', profileInfo)
+      return axios.put('/api/v1/authentication_api/update_user_profile_data', profileInfo)
     },
   })
   const handleUpdateProfile = async (event) => {
@@ -17,7 +17,7 @@ export default function ProfilePage() {
 
     const form = event.target;
     const fullName = form.fullName.value;
-    const email = form.email.value;
+    // const email = form.email.value;
     const currentPassword = form.currentPassword.value;
     const newPassword = form.newPassword.value;
     const phone = form.phoneNumber.value;
@@ -33,9 +33,10 @@ export default function ProfilePage() {
     }
 
     const profileInfo = {
+      role: user.role,
       full_name: fullName ? fullName : user.full_name,
       current_email: user.email,
-      new_email: email ? email : user.email,
+      new_email: user.email,
       phone: phone ? phone : user.phone,
       current_password: currentPassword,
       new_password: newPassword,

@@ -1,6 +1,5 @@
 const express = require("express")
 const router = express.Router()
-const jwt = require("jsonwebtoken")
 const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const verifyJWT = require("../middlewares/verifyJWT")
@@ -76,9 +75,9 @@ const run = async () => {
 
             if (data) {
                 const send_email_data = {
-                    email: req.body.email,
+                    email: data.email,
                     subject: "Visit this link in order to reset your password",
-                    html: `<p>Hi, ${name}, To reset your password <a href="http://localhost:5173/update_password?id=${id}">Click here</a></p>`
+                    html: `<p>Hi, To reset your password <a href="http://localhost:5173/update_password?id=${data.id}">Click here</a></p>`
                 }
 
                 sendEmail(send_email_data);
@@ -99,13 +98,14 @@ const run = async () => {
         try {
 
             const id = req.body.id
+
             const new_password = req.body.newPassword
             const hash_passwrod = await bcrypt.hash(new_password, 10)
-            const user = await all_users_collection.findOne({ admin_id: id })
+            const user = await all_users_collection.findOne({ id: id })
 
             if (user) {
                 const result = await all_users_collection.updateOne(
-                    { admin_id: id },
+                    { id: id },
                     {
                         $set: {
                             password: hash_passwrod
@@ -121,7 +121,7 @@ const run = async () => {
             }
 
         } catch (error) {
-            return res.status(203).json({ message: 'User not found' });
+            return res.status(500).json({ message: 'Internal server error' });
         }
     })
 
@@ -138,7 +138,6 @@ const run = async () => {
             if (result) {
 
                 if (result.email_verified === true) {
-                    console.log("alreay")
                     return res.status(203).json({ message: "Email already verified" })
 
                 }
@@ -161,6 +160,97 @@ const run = async () => {
 
         }
     })
+
+    // update profile information by email
+    router.put('/update_user_profile_data', async (req, res) => {
+        try {
+            const current_email = req.body.current_email;
+            const current_password = req.body.current_password;
+            const role = req.body.role;
+
+            const data = await all_users_collection.findOne({email: current_email});
+
+            if (data) {
+                if (current_password) {
+                    const isValidPassword = await bcrypt.compare(current_password, data.password)
+                    const hashed_password = await bcrypt.hash(req.body.new_password, 10)
+                    if (isValidPassword) {
+                        const updatedPassword = {
+                            $set: {
+                                password: hashed_password
+                            },
+                        };
+                        const passwordUpdateResult = await all_users_collection.updateOne({ email: current_email }, updatedPassword)
+
+                        if (!passwordUpdateResult.modifiedCount) {
+                            return res.status(500).json({ message: "Internal server error while updating password" })
+                        }
+                    }
+                    else {
+                        return res.status(401).json({ message: "Invalid current password" })
+                    }
+                }
+
+                const updatedData = {
+                    full_name: req.body.full_name,
+                    email: req.body.new_email,
+                    phone: req.body.phone,
+                    address: req.body.address,
+                    city: req.body.city,
+                    state: req.body.state,
+                    zip: req.body.zip,
+                    country: req.body.country,
+                    whatsapp_number: req.body.whatsapp_number
+                }
+
+                if (role === 'Admin') {
+                    const result = await admin_users_collection.findOneAndUpdate(
+                        { email: current_email },
+                        { $set: updatedData },
+                        { returnDocument: "after" }
+                    );
+                    return res.status(200).json(result);
+                }
+                else if (role === 'Admin VA') {
+                    const result = await admin_va_users_collection.findOneAndUpdate(
+                        { email: current_email },
+                        { $set: updatedData },
+                        { returnDocument: "after" }
+                    );
+                    return res.status(200).json(result);
+                }
+                else if (role === 'Store Owner') {
+                    const result = await store_owner_users_collection.findOneAndUpdate(
+                        { email: current_email },
+                        { $set: updatedData },
+                        { returnDocument: "after" }
+                    );
+                    return res.status(200).json(result);
+                }
+                else if (role === 'Store Manager Admin') {
+                    const result = await store_manager_admin_users_collection.findOneAndUpdate(
+                        { email: current_email },
+                        { $set: updatedData },
+                        { returnDocument: "after" }
+                    );
+                    return res.status(200).json(result);
+                }
+                else if (role === 'Warehouse Admin') {
+                    const result = await warehouse_admin_users_collection.findOneAndUpdate(
+                        { email: current_email },
+                        { $set: updatedData },
+                        { returnDocument: "after" }
+                    );
+                    return res.status(200).json(result);
+                }
+            }
+            else {
+                return res.status(404).json({ message: 'User not found' });
+            }
+        } catch (error) {
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    });
 }
 run()
 module.exports = router;
