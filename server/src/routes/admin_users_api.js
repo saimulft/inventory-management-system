@@ -122,7 +122,6 @@ const run = async () => {
             }
             const login_data = {
                 id: req.body.admin_id,
-                full_name: req.body.full_name,
                 email: req.body.email,
                 role: req.body.role,
                 password: hashed_password,

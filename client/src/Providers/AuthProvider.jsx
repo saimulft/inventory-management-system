@@ -21,7 +21,32 @@ const AuthProvider = ({ children }) => {
                 // console.log('inside authProvider:', res)
                 setLoading(false)
                 if (res.status === 200) {
-                    setUser(res.data.data)
+                    const data = res.data.data;
+                    setUser(data)
+
+                    const role = data.role;
+                    
+                    if(role === 'Admin'){
+                        ''
+                    }
+                    else if(role === 'Admin VA'){
+                        ''
+                    }
+                    else if(role === 'Store Owner'){
+                        ''
+                    }
+                    else if(role === 'Store Manager Admin'){
+                        ''
+                    }
+                    else if(role === 'Store Manager VA'){
+                        ''
+                    }
+                    else if(role === 'Warehouse Admin'){
+                        ''
+                    }
+                    else if(role === 'Warehouse VA'){
+                        ''
+                    }
                 }
             }).catch((err) => {
                 if (err.response.status === 404 || err.response.status === 403) {
@@ -31,6 +56,8 @@ const AuthProvider = ({ children }) => {
             })
 
     }, [token])
+
+    console.log(user)
 
     return (
         <AuthContext.Provider value={authInfo}>
