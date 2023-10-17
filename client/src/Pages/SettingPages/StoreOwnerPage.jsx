@@ -4,9 +4,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
+import { useState } from "react";
 
 export default function StoreOwnerPage() {
   const { user } = useAuth()
+  const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (storeOwner) => {
@@ -40,7 +43,13 @@ export default function StoreOwnerPage() {
           'success'
         )
       }
+      else if (status === 200) {
+        setSuccessMessage('')
+        setErrorMessage('Email already exist!')
+      }
     } catch (error) {
+      setSuccessMessage('')
+      setErrorMessage('Failed to create new store owner!')
       console.log(error)
     }
   }
@@ -59,6 +68,7 @@ export default function StoreOwnerPage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="name"
                 name="name"
+                required
               />
             </div>
             <div className="mt-3">
@@ -69,6 +79,7 @@ export default function StoreOwnerPage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="email"
                 name="email"
+                required
               />
             </div>
             <div className="mt-3">
@@ -79,6 +90,7 @@ export default function StoreOwnerPage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="confirmPassword"
                 name="confirmPassword"
+                required
               />
             </div>
           </div>
@@ -92,6 +104,7 @@ export default function StoreOwnerPage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="username"
                 name="username"
+                required
               />
             </div>
             <div className="mt-3">
@@ -102,6 +115,7 @@ export default function StoreOwnerPage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="password"
                 name="password"
+                required
               />
             </div>
           </div>

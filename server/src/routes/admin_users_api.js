@@ -101,7 +101,7 @@ const run = async () => {
         try {
 
             const inputEmail = req.body.email
-            const isExist = await admin_users_collection.findOne({ email: inputEmail })
+            const isExist = await all_users_collection.findOne({ email: inputEmail })
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }
@@ -122,7 +122,6 @@ const run = async () => {
             }
             const login_data = {
                 id: req.body.admin_id,
-                full_name: req.body.full_name,
                 email: req.body.email,
                 role: req.body.role,
                 password: hashed_password,
