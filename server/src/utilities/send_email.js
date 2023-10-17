@@ -1,7 +1,6 @@
 const nodemailer = require('nodemailer')
 
 const sendEmail = async (transporter_data) => {
-    console.log(transporter_data)
     const { email, subject, html } = transporter_data
     try {
         const transporter =

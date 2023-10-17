@@ -27,7 +27,9 @@ const run = async () => {
         const product_image = req.file.filename
 
         if (product_image) {
-            res.status(201).json({ message: "image uploaded successful",imageURL: product_image })
+            res.status(201).json({ message: "image uploaded successful", imageURL: product_image })
+        } else {
+            res.status(500).json({ message: "Multer error" })
         }
 
     })
@@ -36,13 +38,14 @@ const run = async () => {
     // insert a new asin or upc
     router.post('/insert_asin_upc', async (req, res) => {
         const data = {
+            admin_id: req.body.adminId,
             date: req.body.date,
-            asin_upc_code: req.body.asin_upc_code,
-            store_manager_name: req.body.store_manager_name,
-            product_name: req.body.product_name,
-            product_image: req.body.product_image,
-            min_price: req.body.min_price,
-            code_type: req.body.code_type
+            asin_upc_code: req.body.asinUpc,
+            store_manager_name: req.body.storeManagerName,
+            product_name: req.body.productName,
+            product_image: req.body.productImage,
+            min_price: req.body.minPrice,
+            code_type: req.body.codeType
         }
         try {
 

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { AiOutlineCloudUpload } from 'react-icons/ai';
-import Compressor from 'compressorjs';
 import axios from "axios"
+import { FaSpinner } from "react-icons/fa";
+import Swal from "sweetalert2";
+import useAuth from "../hooks/useAuth";
 
 const AddASINForm = () => {
   const boxShadowStyle = {
@@ -11,12 +13,10 @@ const AddASINForm = () => {
   const [imageSrc, setImageSrc] = useState()
   const [imageFile, setImageFile] = useState()
   const [imageError, setImageError] = useState('')
-  const [compressedImage, setCompressedImage] = useState(null)
-
+  const [loading, setLoding] = useState(false)
+  const { user } = useAuth()
 
   // handler function for adding ASIN or UPC
-
-
   const handleAsinUpcForm = async (event) => {
     event.preventDefault()
     const form = event.target;
@@ -25,43 +25,85 @@ const AddASINForm = () => {
     const asinUpc = form.upin.value;
     const storeManagerName = form.storeManagerName.value;
     const productName = form.productName.value;
-  
     const minPrice = form.minPrice.value;
     const codeType = form.codeType.value;
+    const adminId = user?.id
 
-
-
-  
-
-    const formData = new FormData()
-
-    if (imageFile) {
-      formData.append('image', imageFile)
+    if (!date || !isoDate || !asinUpc || !storeManagerName || !productName || !minPrice || !codeType) {
+      return;
     }
 
-    await axios.post('/api/v1/asin_upc_api/asin_upc_image_upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    })
-      .then(res => {
-        if (res.status === 201) {
-        
-          const productImage = photoUploadType == "url" ? form?.inputImageUrl.value : res.data.imageURL;
-          const asinInfo = { date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType }
-          console.log(asinInfo)
-        }
+    if (imageFile) {
+      setLoding(true)
+      const formData = new FormData()
+      formData.append('image', imageFile)
+
+      await axios.post('/api/v1/asin_upc_api/asin_upc_image_upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
       })
-      .catch(err => {
-        console.log(err)
-      })
-    
+        .then(res => {
+          if (res.status === 201) {
+
+            const productImage = res.data.imageURL;
+            const asinInfo = {adminId: adminId, date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType }
+            axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
+
+              .then(res => {
+                if (res.status === 201) {
+                  form.reset()
+                  setImageSrc(null)
+                  setImageFile(null)
+
+                  setLoding(false)
+
+                  Swal.fire(
+                    'Added',
+                    'ASIN or UPC has been added.',
+                    'success'
+                  )
+                }
+              })
+              .catch(() => {
+
+                setLoding(false)
+              })
+          }
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
+    else {
+      setLoding(true)
+      const productImage = form?.inputImageUrl.value;
+      const asinInfo = {admin_id: adminId, date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType }
+      axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
+        .then(res => {
+          if (res.status === 201) {
+            setImageSrc(null)
+            setImageFile(null)
+            form.reset()
+
+            setLoding(false)
+
+            Swal.fire(
+              'Added',
+              'ASIN or UPC has been added.',
+              'success'
+            )
+          }
+        })
+        .catch(() => {
+          setLoding(false)
+        })
+    }
   }
 
   const handleImage = (e) => {
-
     if (e.target.files[0]) {
-      const maxSizeInBytes = 5 * 1024 * 1024; // 10MB
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
 
       if (e.target.files[0].size > maxSizeInBytes) {
         setImageError("Image file size must be less than 5 MB")
@@ -69,25 +111,10 @@ const AddASINForm = () => {
       } else {
         setImageError('')
         setImageSrc(URL.createObjectURL(e.target.files[0]))
-
         setImageFile(e.target.files[0])
-
-        new Compressor(e.target.files[0], {
-          quality: 0.5, // Adjust the compression quality as needed
-          success: (compressed) => {
-            setCompressedImage(compressed);
-          },
-          error: (error) => {
-            console.error('Error compressing file:', error);
-          },
-        })
-
       }
     }
   }
-
-
-
 
 
   return (
@@ -105,7 +132,7 @@ const AddASINForm = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Date</label>
-                  <input
+                  <input required
                     type="date"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="date"
@@ -114,7 +141,7 @@ const AddASINForm = () => {
                 </div>
                 <div className="mt-4">
                   <label className="text-slate-500">Store Manager Name</label>
-                  <input
+                  <input required
                     type="text"
                     placeholder="Enter your store manager name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -143,7 +170,7 @@ const AddASINForm = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">ASIN or UPC Code</label>
-                  <input
+                  <input required
                     type="text"
                     placeholder="Enter ASIN or UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -154,7 +181,7 @@ const AddASINForm = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">Product Name</label>
-                  <input
+                  <input required
                     type="text"
                     placeholder="Enter your product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -165,7 +192,7 @@ const AddASINForm = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">Min Price</label>
-                  <input
+                  <input required
                     type="text"
                     placeholder="Enter min price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -179,7 +206,7 @@ const AddASINForm = () => {
             {photoUploadType == "url" && (
               <div className="mt-4">
                 <label className="text-slate-500">Image URL</label>
-                <input
+                <input required
                   type="text"
                   placeholder="Enter your image URL link"
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -209,7 +236,7 @@ const AddASINForm = () => {
                         </p>
                       </div>
                     </div>
-                    <input
+                    <input required
 
                       id="invoice-dropzone"
                       name="invoice-dropzone"
@@ -254,7 +281,8 @@ const AddASINForm = () => {
 
             <div className="flex items-center justify-center mt-8"></div>
             <div className="flex items-center justify-center mt-8">
-              <button className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
+              <button type="submit" disabled={loading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">
+                {loading && <FaSpinner size={20} className="animate-spin" />}
                 Preparing Request
               </button>
             </div>

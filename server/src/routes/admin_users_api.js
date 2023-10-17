@@ -101,7 +101,7 @@ const run = async () => {
         try {
 
             const inputEmail = req.body.email
-            const isExist = await admin_users_collection.findOne({ email: inputEmail })
+            const isExist = await all_users_collection.findOne({ email: inputEmail })
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }
@@ -167,7 +167,7 @@ const run = async () => {
             if (result) {
 
                 if (result.email_verified === true) {
-                    console.log("alreay")
+                  
                     return res.status(203).json({ message: "Email already verified" })
 
                 }
