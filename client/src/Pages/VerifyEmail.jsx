@@ -16,7 +16,7 @@ const VerifyEmail = () => {
     const handleEmailVerification = () => {
         try {
             setLoading(true)
-            axios.get(`/api/v1/admin_api/verify_email?id=${id}`)
+            axios.get(`/api/v1/authentication_api/verify_email?id=${id}`)
                 .then(res => {
                     setLoading(false)
                     if (res.status === 200) {

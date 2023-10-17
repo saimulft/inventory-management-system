@@ -20,7 +20,7 @@ const UpdatePassword = () => {
 
     const { mutateAsync, isLoading } = useMutation({
         mutationFn: (passowrd) => {
-            return axios.post('/api/v1/admin_api/reset_password', passowrd)
+            return axios.post('/api/v1/authentication_api/reset_password', passowrd)
         },
     })
     const handleUpdatePassword = async () => {
