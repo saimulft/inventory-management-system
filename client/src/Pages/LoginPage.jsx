@@ -36,7 +36,7 @@ export default function LoginPage() {
         setUser(data.data)
         setLoginError('')
         const token = data.token;
-        Cookies.set('loginToken', token)
+        Cookies.set('loginToken', token, {expires: 7})
         navigate('/')
       }
     } catch (error) {
