@@ -57,8 +57,6 @@ const AuthProvider = ({ children }) => {
 
     }, [token])
 
-    console.log(user)
-
     return (
         <AuthContext.Provider value={authInfo}>
             {children}
