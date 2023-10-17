@@ -13,43 +13,20 @@ const run = async () => {
 
 
 
-    // sent forget password mail transporter
-    const resetPassword = async (name, email, id) => {
-        try {
-            const transporter =
-                nodemailer.createTransport({
-                    host: "smtp.gmail.com",
-                    port: 587,
-                    secure: false,
-                    requireTLS: true,
-                    auth: {
-                        user: "toriqulislam142@gmail.com",
-                        pass: 'nqle nukt eqfy kcko'
-                    }
-                })
-
-            const mailOption = {
-                from: "toriqulislam142@gamil.com",
-                to: email,
-                subject: "Visit this link in order to reset your password",
-                html: `<p>Hi, ${name}, To reset your password <a href="http://localhost:5173/update_password?id=${id}">Click here</a></p>`
-            }
-
-            transporter.sendMail(mailOption)
-        }
-        catch (error) {
-            console.log(error)
-        }
-    }
-
     // send reset pass email
     router.get('/send_reset_password_email', async (req, res) => {
         try {
             const email = req.query.email;
-            const data = await admin_users_collection.findOne({ email: email });
+            const data = await all_users_collection.findOne({ email: email });
 
             if (data) {
-                resetPassword(data.full_name, data.email, data.admin_id)
+                const send_email_data = {
+                    email: req.body.email,
+                    subject: "Visit this link in order to reset your password",
+                    html: `<p>Hi, ${name}, To reset your password <a href="http://localhost:5173/update_password?id=${id}">Click here</a></p>`
+                }
+
+                sendEmail(send_email_data);
                 return res.status(200).json({ message: 'Email sent for resetting password' });
             }
 
@@ -69,10 +46,10 @@ const run = async () => {
             const id = req.body.id
             const new_password = req.body.newPassword
             const hash_passwrod = await bcrypt.hash(new_password, 10)
-            const user = await admin_users_collection.findOne({ admin_id: id })
+            const user = await all_users_collection.findOne({ admin_id: id })
 
             if (user) {
-                const result = await admin_users_collection.updateOne(
+                const result = await all_users_collection.updateOne(
                     { admin_id: id },
                     {
                         $set: {
@@ -91,9 +68,43 @@ const run = async () => {
         } catch (error) {
             return res.status(203).json({ message: 'User not found' });
         }
+    })
 
+    // verify user email and update email status
+    router.get('/verify_email', async (req, res) => {
+        const id = req.query.id
+        const update = {
+            $set: {
+                email_verified: true,
+            },
+        };
+        try {
+            const result = await all_users_collection.findOne({ id: id })
+            if (result) {
 
+                if (result.email_verified === true) {
+                    console.log("alreay")
+                    return res.status(203).json({ message: "Email already verified" })
 
+                }
+                const updateEmailStatus = await all_users_collection.updateOne(
+                    { id: id },
+                    update
+                )
+                if (updateEmailStatus.modifiedCount) {
+
+                    res.status(200).json({ message: "Email verified successfully " })
+                }
+            }
+            else {
+                res.status(500).json({ message: "Error to verify email" })
+            }
+
+        } catch (error) {
+
+            res.status(500).json({ message: "Error to verify email" })
+
+        }
     })
 
     // create a new admin
@@ -110,7 +121,6 @@ const run = async () => {
                 admin_id: req.body.admin_id,
                 full_name: req.body.full_name,
                 email: req.body.email,
-                password: hashed_password,
                 role: req.body.role,
                 phone: req.body.phone,
                 address: req.body.address,
@@ -150,43 +160,6 @@ const run = async () => {
         }
         catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
-        }
-    })
-
-    // verify user email and update email status
-    router.get('/verify_email', async (req, res) => {
-        const id = req.query.id
-        const update = {
-            $set: {
-                email_verified: true,
-            },
-        };
-        try {
-            const result = await all_users_collection.findOne({ id: id })
-            if (result) {
-
-                if (result.email_verified === true) {
-                  
-                    return res.status(203).json({ message: "Email already verified" })
-
-                }
-                const updateEmailStatus = await all_users_collection.updateOne(
-                    { id: id },
-                    update
-                )
-                if (updateEmailStatus.modifiedCount) {
-
-                    res.status(200).json({ message: "Email verified successfully " })
-                }
-            }
-            else {
-                res.status(500).json({ message: "Error to verify email" })
-            }
-
-        } catch (error) {
-
-            res.status(500).json({ message: "Error to verify email" })
-
         }
     })
 

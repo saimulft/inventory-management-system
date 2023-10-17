@@ -193,7 +193,7 @@ export default function ProfilePage() {
             <div className="mt-4">
               <label className="text-slate-500">WhatsApp</label>
               <input
-                type="text"
+                type="number"
                 placeholder="Enter whatsapp number"
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="whatsappNumber"

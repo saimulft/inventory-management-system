@@ -26,7 +26,6 @@ const run = async () => {
                 full_name: req.body.full_name,
                 email: req.body.email,
                 username: req.body.username,
-                password: hashed_password,
                 role: req.body.role,
                 phone: null,
                 address: null,

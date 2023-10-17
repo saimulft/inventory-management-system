@@ -21,32 +21,10 @@ const AuthProvider = ({ children }) => {
                 // console.log('inside authProvider:', res)
                 setLoading(false)
                 if (res.status === 200) {
-                    const data = res.data.data;
-                    setUser(data)
+                    setUser(res.data.data)
 
-                    const role = data.role;
-                    
-                    if(role === 'Admin'){
-                        ''
-                    }
-                    else if(role === 'Admin VA'){
-                        ''
-                    }
-                    else if(role === 'Store Owner'){
-                        ''
-                    }
-                    else if(role === 'Store Manager Admin'){
-                        ''
-                    }
-                    else if(role === 'Store Manager VA'){
-                        ''
-                    }
-                    else if(role === 'Warehouse Admin'){
-                        ''
-                    }
-                    else if(role === 'Warehouse VA'){
-                        ''
-                    }
+                    const role = res.data.data.role;
+                    axios.get()
                 }
             }).catch((err) => {
                 if (err.response.status === 404 || err.response.status === 403) {

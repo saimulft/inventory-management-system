@@ -27,7 +27,6 @@ const run = async () => {
                 full_name: req.body.full_name,
                 email: req.body.email,
                 username: req.body.username,
-                password: hashed_password,
                 role: req.body.role,
                 phone: null,
                 address: null,
@@ -45,8 +44,9 @@ const run = async () => {
                 email_verified: false,
             }
             const warehouse_data = {
+                admin_id: req.body.admin_id,
+                warehouse_admin_id: req.body.warehouse_admin_id,
                 warehouse_name: req.body.warehouse_name,
-                warehouse_admin_name: req.body.full_name,
                 address: req.body.address,
                 city: req.body.city,
                 state: req.body.state,
