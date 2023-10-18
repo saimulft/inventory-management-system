@@ -1,5 +1,6 @@
 const express = require("express")
 const router = express.Router()
+const jwt = require("jsonwebtoken")
 const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const verifyJWT = require("../middlewares/verifyJWT")
@@ -14,56 +15,80 @@ const run = async () => {
     const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
 
 
-    // get user 
-    router.get('/get_user', verifyJWT, async (req, res) => {
+    // user login
+    router.post('/user_login', async (req, res) => {
+        try {
+            const email = req.body.email
+            const password = req.body.password
+            const data = await all_users_collection.findOne({ email: email })
+            if (data) {
+                const isValidPassword = await bcrypt.compare(password, data.password)
+                if (isValidPassword) {
+                    if (data.email_verified) {
+                        const token = jwt.sign({
+                            role: data.role,
+                            email: data.email
+                        }, process.env.JWT_SECRET, { expiresIn: '7d' })
+                        res.status(200).json({ data: data, token: token });
+                    }
+                    else {
+                        res.status(403).json({ message: "Please verify your email to login" })
+                    }
 
+                } else {
+                    res.status(401).json({ message: "Authentication failed" })
+                }
+            } else {
+                res.status(500).json({ message: 'Authentication failed' });
+            }
+        }
+        catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
+    
+    // get user 
+    router.get('/get_user_profile_data', verifyJWT, async (req, res) => {
         try {
             const user_email = req.email
             const user = await all_users_collection.findOne({ email: user_email })
+
             if (user) {
-                return res.status(200).json({ data: user, status: 'success' })
+                const email = user.email;
+                const role = user.role;
+
+                if (role === 'Admin') {
+                    const result = await admin_users_collection.findOne({ email: email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else if (role === 'Admin VA') {
+                    const result = await admin_va_users_collection.findOne({ email: email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else if (role === 'Store Owner') {
+                    const result = await store_owner_users_collection.findOne({ email: email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else if (role === 'Store Manager Admin') {
+                    const result = await store_manager_admin_users_collection.findOne({ email: email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else if (role === 'Warehouse Admin') {
+                    const result = await warehouse_admin_users_collection.findOne({ email: email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else if (role === 'Store Manager VA') {
+                    ''
+                }
+                else if (role === 'Warehouse VA') {
+                    ''
+                }
             }
             else {
                 return res.status(404).json({ message: "Failed to find user by email" })
             }
         } catch (error) {
             res.status(500).json({ message: "Internal Server Error" })
-        }
-    })
-
-    router.get('/get_user_profile_data', async (req, res) => {
-        try {
-            const email = req.query.email;
-            const role = req.query.role;
-
-            if (role === 'Admin') {
-                const result = await admin_users_collection.findOne({ email: email })
-                return res.status(200).json({ data: result })
-            }
-            else if (role === 'Admin VA') {
-                const result = await admin_va_users_collection.findOne({ email: email })
-                return res.status(200).json({ data: result })
-            }
-            else if (role === 'Store Owner') {
-                const result = await store_owner_users_collection.findOne({ email: email })
-                return res.status(200).json({ data: result })
-            }
-            else if (role === 'Store Manager Admin') {
-                const result = await store_manager_admin_users_collection.findOne({ email: email })
-                return res.status(200).json({ data: result })
-            }
-            else if (role === 'Warehouse Admin') {
-                const result = await warehouse_admin_users_collection.findOne({ email: email })
-                return res.status(200).json({ data: result })
-            }
-            else if (role === 'Store Manager VA') {
-                ''
-            }
-            else if (role === 'Warehouse VA') {
-                ''
-            }
-        } catch (error) {
-            res.status(500).json({ message: 'Internal server error while getting user profile info' });
         }
     })
 
