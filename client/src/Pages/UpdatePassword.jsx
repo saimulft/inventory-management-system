@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 const UpdatePassword = () => {
     const location = useLocation();
+    const navigate = useNavigate()
     const searchParams = new URLSearchParams(location.search);
     const id = searchParams.get('id');
 
@@ -53,7 +54,7 @@ const UpdatePassword = () => {
         }
 
     }
-    const navigate = useNavigate()
+
     return (
 
         <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">

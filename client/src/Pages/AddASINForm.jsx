@@ -4,6 +4,7 @@ import axios from "axios"
 import { FaSpinner } from "react-icons/fa";
 import Swal from "sweetalert2";
 import useAuth from "../hooks/useAuth";
+import { MdErrorOutline } from "react-icons/md";
 
 const AddASINForm = () => {
   const boxShadowStyle = {
@@ -14,7 +15,12 @@ const AddASINForm = () => {
   const [imageFile, setImageFile] = useState()
   const [imageError, setImageError] = useState('')
   const [loading, setLoding] = useState(false)
+  const [inputError, setInputError] = useState('')
   const { user } = useAuth()
+
+  // console.log(user)
+
+
 
   // handler function for adding ASIN or UPC
   const handleAsinUpcForm = async (event) => {
@@ -27,9 +33,20 @@ const AddASINForm = () => {
     const productName = form.productName.value;
     const minPrice = form.minPrice.value;
     const codeType = form.codeType.value;
-    const adminId = user?.id
+
+    if (photoUploadType === "Select Upload Option" || !photoUploadType) {
+      setInputError("Select image")
+      setLoding(false)
+      return;
+    }
+    if (codeType === "Pick Code Type" || !codeType) {
+      setInputError('Select code type')
+      setLoding(false)
+      return;
+    }
 
     if (!date || !isoDate || !asinUpc || !storeManagerName || !productName || !minPrice || !codeType) {
+      setLoding(false)
       return;
     }
 
@@ -47,7 +64,13 @@ const AddASINForm = () => {
           if (res.status === 201) {
 
             const productImage = res.data.imageURL;
-            const asinInfo = {adminId: adminId, date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType }
+            const asinInfo = {
+
+              adminId: user?.role === "Admin VA" || user?.role === "Store Manager Admin" ? user?.admin_id : user.id
+
+              , date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
+            }
+
             axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
 
               .then(res => {
@@ -55,9 +78,8 @@ const AddASINForm = () => {
                   form.reset()
                   setImageSrc(null)
                   setImageFile(null)
-
+                  setInputError("")
                   setLoding(false)
-
                   Swal.fire(
                     'Added',
                     'ASIN or UPC has been added.',
@@ -78,16 +100,18 @@ const AddASINForm = () => {
     else {
       setLoding(true)
       const productImage = form?.inputImageUrl.value;
-      const asinInfo = {admin_id: adminId, date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType }
+      const asinInfo = {
+        adminId: user?.role === "Admin VA" || user?.role === "Store Manager Admin" ? user?.admin_id : user.id
+        , date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
+      }
       axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
         .then(res => {
           if (res.status === 201) {
             setImageSrc(null)
             setImageFile(null)
             form.reset()
-
             setLoding(false)
-
+            setInputError("")
             Swal.fire(
               'Added',
               'ASIN or UPC has been added.',
@@ -158,9 +182,7 @@ const AddASINForm = () => {
                     }}
                     className="select select-primary w-full mt-2 shadow-lg"
                   >
-                    <option disabled selected>
-                      Select Upload Option
-                    </option>
+                    <option defaultValue="Select Upload Option"> Select Upload Option </option>
                     <option value="url"> Image URL</option>
                     <option value="file">Upload image</option>
                   </select>
@@ -271,15 +293,13 @@ const AddASINForm = () => {
                 name="codeType"
                 id="codeType"
               >
-                <option disabled selected>
-                  Pick Code Type
-                </option>
+                <option defaultValue="Pick Code Type">Pick Code Type </option>
                 <option value="ASIN">ASIN</option>
                 <option value="UPC">UPC</option>
               </select>
             </div>
+            <div className="">{inputError && <p className=" w-[100%] flex gap-1 items-center justify-center text-center mt-3 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
 
-            <div className="flex items-center justify-center mt-8"></div>
             <div className="flex items-center justify-center mt-8">
               <button type="submit" disabled={loading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">
                 {loading && <FaSpinner size={20} className="animate-spin" />}
