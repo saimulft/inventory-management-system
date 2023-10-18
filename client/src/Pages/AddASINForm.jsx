@@ -11,15 +11,12 @@ const AddASINForm = () => {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
   const [photoUploadType, setPhotoUploadType] = useState(null);
-  const [imageSrc, setImageSrc] = useState()
-  const [imageFile, setImageFile] = useState()
+  const [imageSrc, setImageSrc] = useState(null)
+  const [imageFile, setImageFile] = useState(null)
   const [imageError, setImageError] = useState('')
   const [loading, setLoding] = useState(false)
   const [inputError, setInputError] = useState('')
   const { user } = useAuth()
-
-  // console.log(user)
-
 
 
   // handler function for adding ASIN or UPC
@@ -35,10 +32,17 @@ const AddASINForm = () => {
     const codeType = form.codeType.value;
 
     if (photoUploadType === "Select Upload Option" || !photoUploadType) {
+      setInputError("Select image option")
+      setLoding(false)
+      return;
+    }
+    if (photoUploadType === "file" && !imageFile) {
+
       setInputError("Select image")
       setLoding(false)
       return;
     }
+
     if (codeType === "Pick Code Type" || !codeType) {
       setInputError('Select code type')
       setLoding(false)
@@ -62,15 +66,11 @@ const AddASINForm = () => {
       })
         .then(res => {
           if (res.status === 201) {
-
             const productImage = res.data.imageURL;
             const asinInfo = {
-
-              adminId: user?.role === "Admin VA" || user?.role === "Store Manager Admin" ? user?.admin_id : user.id
-
+              adminId: user?.admin_id
               , date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
             }
-
             axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
 
               .then(res => {
@@ -104,7 +104,6 @@ const AddASINForm = () => {
         adminId: user?.admin_id
         , date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
       }
-      console.log(user)
       axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
         .then(res => {
           if (res.status === 201) {
@@ -259,7 +258,7 @@ const AddASINForm = () => {
                         </p>
                       </div>
                     </div>
-                    <input required
+                    <input
 
                       id="invoice-dropzone"
                       name="invoice-dropzone"
