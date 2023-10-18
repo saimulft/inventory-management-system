@@ -3,9 +3,13 @@ import countries from "../../Utilities/countries";
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
 import Swal from 'sweetalert2'
+import { useState } from "react";
+import ToastMessage from "../../Components/Shared/ToastMessage";
+import { FaSpinner } from "react-icons/fa";
 
 export default function ProfilePage() {
   const { user, setUser } = useAuth()
+  const [errorMessage, setErrorMessage] = useState('')
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (profileInfo) => {
@@ -14,6 +18,7 @@ export default function ProfilePage() {
   })
   const handleUpdateProfile = async (event) => {
     event.preventDefault()
+    setErrorMessage('')
 
     const form = event.target;
     const fullName = form.fullName.value;
@@ -29,7 +34,11 @@ export default function ProfilePage() {
     const whatsappNumber = form.whatsappNumber.value;
 
     if (currentPassword && !newPassword) {
-      return console.log("You must provide a new password in order to change previous one!")
+      return setErrorMessage("You must provide a new password in order to change previous one!")
+    }
+
+    else if (currentPassword && newPassword.length < 6) {
+      return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
     const profileInfo = {
@@ -205,9 +214,12 @@ export default function ProfilePage() {
           </div>
         </div>
 
+        <ToastMessage errorMessage={errorMessage} />
+
         <div className="flex items-center justify-center mt-8">
-          <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
-            Save changes
+          <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
+            {isLoading && <FaSpinner size={20} className="animate-spin" />}
+            <p>Save Changes</p>
           </button>
         </div>
       </form>

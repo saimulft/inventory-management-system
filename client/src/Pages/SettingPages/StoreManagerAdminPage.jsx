@@ -5,6 +5,7 @@ import useAuth from "../../hooks/useAuth";
 import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
+import ToastMessage from "../../Components/Shared/ToastMessage";
 
 export default function StoreManagerAdminPage() {
   const { user } = useAuth();
@@ -19,6 +20,8 @@ export default function StoreManagerAdminPage() {
 
   const handleCreateStoreManagerAdmin = async (event) => {
     event.preventDefault()
+    setErrorMessage('')
+    setSuccessMessage('')
 
     const form = event.target;
     const name = form.name.value;
@@ -28,7 +31,11 @@ export default function StoreManagerAdminPage() {
     const username = form.username.value;
 
     if (password !== confirmPassword) {
-      return console.log('Password and confirm password must be same!')
+      return setErrorMessage('Password and confirm password must be same!')
+    }
+
+    else if (password.length < 6) {
+      return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
     const storeManagerAdmin = { admin_id: user.admin_id, store_manager_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Store Manager Admin' }
@@ -37,11 +44,7 @@ export default function StoreManagerAdminPage() {
       const { status } = await mutateAsync(storeManagerAdmin)
       if (status === 201) {
         form.reset()
-        Swal.fire(
-          'Created!',
-          'New store manager admin created successfully!',
-          'success'
-        )
+        setSuccessMessage(`Successfully created a new store manager admin and sent an invitation mail to ${email} with login credentials`)
       }
       else if (status === 200) {
         setSuccessMessage('')
@@ -120,6 +123,9 @@ export default function StoreManagerAdminPage() {
             </div>
           </div>
         </div>
+
+        <ToastMessage successMessage={successMessage} errorMessage={errorMessage} />
+
         <div className="flex justify-center">
           <button type="submit" disabled={isLoading} className="flex gap-2 items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white">
             {isLoading && <FaSpinner size={20} className="animate-spin" />}
