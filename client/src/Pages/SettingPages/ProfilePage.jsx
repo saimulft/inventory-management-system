@@ -158,7 +158,7 @@ export default function ProfilePage() {
               <label className="text-slate-500">Email Address</label>
               <input
                 type="email"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg focus:outline-none"
                 id="email"
                 name="email"
                 defaultValue={user.email}

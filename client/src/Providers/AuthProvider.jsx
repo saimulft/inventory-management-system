@@ -12,34 +12,30 @@ const AuthProvider = ({ children }) => {
     const token = Cookies.get('loginToken')
 
     useEffect(() => {
-        axios.get('/api/v1/authentication_api/get_user', {
+        axios.get('/api/v1/authentication_api/get_user_profile_data', {
             headers: {
                 Authorization: `Bearer ${token}`
             }
         })
             .then(res => {
                 if (res.data.status === 'success') {
-                    const email = res.data.data.email;
-                    const role = res.data.data.role;
-
-                    axios.get(`/api/v1/authentication_api/get_user_profile_data?email=${email}&role=${role}`)
-                        .then(res => {
-                            setUser(res.data.data)
-                            setLoading(false)
-                        })
+                    setUser(res.data.data)
+                    setLoading(false)
                 }
                 else if (res.data.status === 'failed') {
                     setLoading(false)
                     setUser(null)
                 }
             }).catch((err) => {
-                if (err.response.status === 404 || err.response.status === 403) {
+                if (err.response?.status === 404 || err.response?.status === 403) {
                     Cookies.remove('loginToken')
                 }
                 setLoading(false)
             })
 
     }, [token])
+
+    console.log(user)
 
     return (
         <AuthContext.Provider value={authInfo}>

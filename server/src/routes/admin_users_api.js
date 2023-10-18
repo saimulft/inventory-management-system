@@ -1,6 +1,5 @@
 const express = require("express")
 const router = express.Router()
-const jwt = require("jsonwebtoken")
 const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const sendEmail = require("../utilities/send_email")
@@ -59,39 +58,6 @@ const run = async () => {
                 }
             } else {
                 res.status(500).json({ message: 'Failed to create admin  user' });
-            }
-        }
-        catch (error) {
-            res.status(500).json({ message: 'Internal Server Error' });
-        }
-    })
-
-    // admin login
-    router.post('/user_login', async (req, res) => {
-        try {
-            const email = req.body.email
-            const password = req.body.password
-            const data = await all_users_collection.findOne({ email: email })
-            if (data) {
-                const isValidPassword = await bcrypt.compare(password, data.password)
-                if (isValidPassword) {
-                    if (data.email_verified) {
-                        const token = jwt.sign({
-                            role: data.role,
-                            email: data.email
-                        }, process.env.JWT_SECRET, { expiresIn: '7d' })
-                        res.status(200).json({ data: data, token: token });
-                    }
-                    else {
-                        res.status(403).json({ message: "Please verify your email to login" })
-
-                    }
-
-                } else {
-                    res.status(401).json({ message: "authentication failed" })
-                }
-            } else {
-                res.status(500).json({ message: 'authentication failed' });
             }
         }
         catch (error) {
