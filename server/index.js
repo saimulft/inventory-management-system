@@ -15,6 +15,7 @@ app.use(cors({
 }))
 
 
+const authentication_api = require("./src/routes/authentication_api")
 const admin_users_api = require("./src/routes/admin_users_api")
 const admin_va_users_api = require("./src/routes/admin_va_users_api")
 const store_owner_users_api = require("./src/routes/store_owner_users_api")
@@ -22,6 +23,7 @@ const store_manager_admin_users_api = require("./src/routes/store_manager_admin_
 const warehouse_admin_users_api = require("./src/routes/warehouse_admin_users_api")
 const asin_upc_api = require("./src/routes/asin_upc_api")
 
+app.use('/api/v1/authentication_api',authentication_api)
 app.use('/api/v1/admin_api',admin_users_api)
 app.use('/api/v1/admin_va_api',admin_va_users_api)
 app.use('/api/v1/store_owner_api',store_owner_users_api)
