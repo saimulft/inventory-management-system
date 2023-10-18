@@ -101,9 +101,10 @@ const AddASINForm = () => {
       setLoding(true)
       const productImage = form?.inputImageUrl.value;
       const asinInfo = {
-        adminId: user?.role === "Admin VA" || user?.role === "Store Manager Admin" ? user?.admin_id : user.id
+        adminId: user?.admin_id
         , date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
       }
+      console.log(user)
       axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
         .then(res => {
           if (res.status === 201) {
