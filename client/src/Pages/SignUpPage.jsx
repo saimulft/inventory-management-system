@@ -40,7 +40,7 @@ export default function SignUPPage() {
 
     if(password.length < 6){
       setSuccessMessage('')
-      return setRegisterError("Password must be at least 6 character")
+      return setRegisterError("Password must be at least 6 characters or longer")
     }
 
     try {
