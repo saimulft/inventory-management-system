@@ -176,7 +176,7 @@ const AddASINForm = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">Product Image</label>
-                  <select
+                  <select disabled={imageSrc}
                     onChange={(e) => {
                       setPhotoUploadType(e.target.value);
                     }}
@@ -268,6 +268,7 @@ const AddASINForm = () => {
                       onChange={handleImage}
                     />
                     <div>
+                    {imageSrc && <button onClick={()=>setImageSrc(null)} className="btn btn-outline btn-primary btn-xs mx-2">Cancel image</button>}
                       <button
                         onClick={() => {
                           document.getElementById("invoice-dropzone").click();
@@ -277,7 +278,6 @@ const AddASINForm = () => {
                       >
                         Select image
                       </button>
-
                     </div>
                   </label>
                 </div>
