@@ -102,7 +102,11 @@ const run = async () => {
                 const send_email_data = {
                     email: data.email,
                     subject: "Visit this link in order to reset your password",
-                    html: `<p>Hi, To reset your password <a href="http://localhost:5173/update_password?id=${data.id}">Click here</a></p>`
+                    html: `
+                    <h1 style='text-align:center'>Hi, To reset your password </h1> <br/>
+                    <button> <a style='color:red,text-decoration:none,' href="http://localhost:5173/update_password?id=${data.id}">Click here</a></button>
+                    
+                    `
                 }
 
                 sendEmail(send_email_data);

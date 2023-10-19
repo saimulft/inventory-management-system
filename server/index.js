@@ -21,6 +21,7 @@ const store_owner_users_api = require("./src/routes/store_owner_users_api")
 const store_manager_admin_users_api = require("./src/routes/store_manager_admin_users_api")
 const warehouse_admin_users_api = require("./src/routes/warehouse_admin_users_api")
 const asin_upc_api = require("./src/routes/asin_upc_api")
+const preparing_form_api = require("./src/routes/preparing_form_api")
 
 app.use('/api/v1/authentication_api',authentication_api)
 app.use('/api/v1/admin_api',admin_users_api)
@@ -29,6 +30,7 @@ app.use('/api/v1/store_owner_api',store_owner_users_api)
 app.use('/api/v1/store_manager_admin_api',store_manager_admin_users_api)
 app.use('/api/v1/warehouse_admin_api',warehouse_admin_users_api)
 app.use('/api/v1/asin_upc_api',asin_upc_api)
+app.use('/api/v1/preparing_form_api',preparing_form_api)
 
 
 app.get('/', (req, res) => {

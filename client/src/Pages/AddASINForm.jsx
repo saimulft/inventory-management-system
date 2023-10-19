@@ -131,6 +131,7 @@ const AddASINForm = () => {
 
       if (e.target.files[0].size > maxSizeInBytes) {
         setImageError("Image file size must be less than 5 MB")
+        return;
 
       } else {
         setImageError('')
@@ -268,7 +269,10 @@ const AddASINForm = () => {
                       onChange={handleImage}
                     />
                     <div>
-                    {imageSrc && <button onClick={()=>setImageSrc(null)} className="btn btn-outline btn-primary btn-xs mx-2">Cancel image</button>}
+                    {imageSrc && <button onClick={()=>{
+                      setImageSrc(null)
+                      setImageFile(null)
+                    }} className="btn btn-outline btn-primary btn-xs mx-2">Cancel image</button>}
                       <button
                         onClick={() => {
                           document.getElementById("invoice-dropzone").click();

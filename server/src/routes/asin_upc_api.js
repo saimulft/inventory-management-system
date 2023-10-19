@@ -66,38 +66,38 @@ const run = async () => {
     })
 
     // get all asin or upc
-    router.get('/get_asin_upc', async (req, res) => {
+    // router.get('/get_asin_upc', async (req, res) => {
 
-        try {
-            const result = await asin_upc_collection.find({}).toArray()
-            if (result.length) {
-                res.status(200).json({ message: "successfully get all asin_upc" })
-            }
-            else {
-                res.status(500).json({ message: "Error to geting asin_upc" })
-            }
-        } catch (error) {
-            res.status(500).json({ message: 'SInternal Server Error' });
-        }
-    })
+    //     try {
+    //         const result = await asin_upc_collection.find({}).toArray()
+    //         if (result.length) {
+    //             res.status(200).json({ message: "successfully get all asin_upc" })
+    //         }
+    //         else {
+    //             res.status(500).json({ message: "Error to geting asin_upc" })
+    //         }
+    //     } catch (error) {
+    //         res.status(500).json({ message: 'SInternal Server Error' });
+    //     }
+    // })
 
 
-    //   get asin or upc by id
-    router.get('/get_asin_upc', async (req, res) => {
+    // //   get asin or upc by id
+    // router.get('/get_asin_upc', async (req, res) => {
 
-        const asin_upc_id = req.query.asin_upc_id
-        try {
-            const result = await asin_upc_collection.findOne({ asin_upc_id: asin_upc_id }).toArray()
-            if (result) {
-                res.status(200).json({ message: "successfully get a asin_upc" })
-            }
-            else {
-                res.status(500).json({ message: "Error to geting  a asin_upc" })
-            }
-        } catch (error) {
-            res.status(500).json({ message: 'SInternal Server Error' });
-        }
-    })
+    //     const asin_upc_id = req.query.asin_upc_id
+    //     try {
+    //         const result = await asin_upc_collection.findOne({ asin_upc_id: asin_upc_id }).toArray()
+    //         if (result) {
+    //             res.status(200).json({ message: "successfully get a asin_upc" })
+    //         }
+    //         else {
+    //             res.status(500).json({ message: "Error to geting  a asin_upc" })
+    //         }
+    //     } catch (error) {
+    //         res.status(500).json({ message: 'SInternal Server Error' });
+    //     }
+    // })
 
 }
 run()
