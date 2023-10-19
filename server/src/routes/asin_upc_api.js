@@ -23,15 +23,20 @@ const run = async () => {
 
     // asin_upc_image_upload api 
     router.post('/asin_upc_image_upload', upload.single('image'), async (req, res) => {
+        
+        try {
+            const product_image = req.file.filename
+            console.log(product_image)
 
-        const product_image = req.file.filename
+            if (product_image) {
+                res.status(201).json({ message: "image uploaded successful", imageURL: product_image })
+            } else {
+                res.status(500).json({ message: "Multer error" })
+            }
 
-        if (product_image) {
-            res.status(201).json({ message: "image uploaded successful", imageURL: product_image })
-        } else {
+        } catch (error) {
             res.status(500).json({ message: "Multer error" })
         }
-
     })
 
 

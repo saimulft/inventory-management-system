@@ -5,6 +5,7 @@ import { FaSpinner } from "react-icons/fa";
 import Swal from "sweetalert2";
 import useAuth from "../hooks/useAuth";
 import { MdErrorOutline } from "react-icons/md";
+import Compressor from "compressorjs"
 
 const AddASINForm = () => {
   const boxShadowStyle = {
@@ -56,8 +57,20 @@ const AddASINForm = () => {
 
     if (imageFile) {
       setLoding(true)
+
       const formData = new FormData()
+      // new Compressor(imageFile, {
+      //   quality: 0.6,
+      //   success: (result) => {
+      //     const compressedFile =  new File([result], result.name, { type: 'image/jpeg' })
+      //     console.log(compressedFile)
+      //     formData.append('image', compressedFile)
+      //   },
+
+        
+      // })
       formData.append('image', imageFile)
+
 
       await axios.post('/api/v1/asin_upc_api/asin_upc_image_upload', formData, {
         headers: {
@@ -88,13 +101,13 @@ const AddASINForm = () => {
                 }
               })
               .catch(() => {
-
                 setLoding(false)
               })
           }
         })
         .catch(err => {
           console.log(err)
+          setLoding(false)
         })
     }
     else {
@@ -251,9 +264,10 @@ const AddASINForm = () => {
                       {imageSrc ? <img src={imageSrc} className="h-8" alt="" /> :
                         <AiOutlineCloudUpload size={26} />}
                       <div>
-                        <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
+                        {imageFile && <p className="text-md font-semibold">{imageFile.name.slice(0, 32)}</p>}
+                        {!imageFile && <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
                           Select a file or drag and drop
-                        </p>
+                        </p>}
                         <p className="text-xs text-gray-500 dark:text-gray-400">
                           PNG or JPG file size no more than 5MB
                         </p>
@@ -269,10 +283,10 @@ const AddASINForm = () => {
                       onChange={handleImage}
                     />
                     <div>
-                    {imageSrc && <button onClick={()=>{
-                      setImageSrc(null)
-                      setImageFile(null)
-                    }} className="btn btn-outline btn-primary btn-xs mx-2">Cancel image</button>}
+                      {imageSrc && <button onClick={() => {
+                        setImageSrc(null)
+                        setImageFile(null)
+                      }} className="btn btn-outline btn-primary btn-xs mx-2">Cancel image</button>}
                       <button
                         onClick={() => {
                           document.getElementById("invoice-dropzone").click();
