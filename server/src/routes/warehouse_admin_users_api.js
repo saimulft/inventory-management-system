@@ -8,7 +8,7 @@ const run = async () => {
     const db = await connectDatabase()
     const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
     const all_users_collection = db.collection("all_users")
-    const warehouses = db.collection("warehouses")
+    const warehouses_collection = db.collection("warehouses")
 
     // create new admin va 
     router.post('/create_warehouse_admin', async (req, res) => {
@@ -78,9 +78,12 @@ const run = async () => {
 
                     sendEmail(send_email_data);
                     
-                    const warehouseResult = await warehouses.insertOne(warehouse_data)
+                    const warehouseResult = await warehouses_collection.insertOne(warehouse_data)
                     if(warehouseResult.acknowledged){
                         res.status(201).json({ message: 'Warehouse admin user created successfully', status: "success" });
+                    }
+                    else{
+                        res.status(500).json({ message: 'Failed to create Warehouse' });
                     }
                 }
             } else {

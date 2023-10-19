@@ -46,7 +46,7 @@ export default function WareHouseAdminPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const warehouseAdmin = { admin_id: user.id, warehouse_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Warehouse Admin', warehouse_name: warehouseName, address, city, state, zip: zipCode, country}
+    const warehouseAdmin = { admin_id: user.admin_id, warehouse_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Warehouse Admin', warehouse_name: warehouseName, address, city, state, zip: zipCode, country}
 
     try {
       const { status } = await mutateAsync(warehouseAdmin)
@@ -64,6 +64,8 @@ export default function WareHouseAdminPage() {
       console.log(error)
     }
   }
+
+  // const isAdminOrAdminVA = user.role === "Admin" ? "admin_id" : user.role === "Admin VA" ? "admin_va_id" : ""
 
   return (
     <div>
