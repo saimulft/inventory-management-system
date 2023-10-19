@@ -64,6 +64,41 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
+
+    // get all admin users
+    router.get('/admin_users', async (req, res) => {
+        try {
+            const result = await admin_users_collection.find({}).toArray()
+            if (result.length) {
+                res.status(200).json(result);
+            }
+            else {
+                res.status(500).json({ message: 'Failed to get admin users' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
+
+    // delete admin user by admin id
+    router.delete('/admin_users', async (req, res) => {
+        try {
+            const admin_id = req.body.admin_id;
+
+            const result = await admin_users_collection.deleteOne({ admin_id: admin_id })
+            if (result.deletedCount) {
+                const response = await all_users_collection.deleteOne({ id: admin_id })
+                if (response.deletedCount) {
+                    res.status(200).json({ message: 'Admin  user deleted successfully', status: "success" });
+                }
+            }
+            else {
+                res.status(500).json({ message: 'Internal server error while deleting admin user' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
 }
 run()
 module.exports = router;

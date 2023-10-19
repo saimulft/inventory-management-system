@@ -59,6 +59,17 @@ export default function SettingsPage() {
             </button>
           </Link> */}
 
+          <Link to="/dashboard/settings/all-admin-users">
+            <button
+              onClick={() => setIsActiveSetting("all-admin-users")}
+              className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${
+                isActiveSetting == "all-admin-users" && "bg-[#8633FF] text-white"
+              }`}
+            >
+              Admin Users
+            </button>
+          </Link>
+
           <Link to="/dashboard/settings/billing-subscription">
             <button
               onClick={() => setIsActiveSetting("billing-subscription")}

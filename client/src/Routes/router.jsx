@@ -49,6 +49,7 @@ import InventoryShippedTable from "../Components/ManagementPageComponent/Invento
 import InventoryOutOfStockTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryOutOfStockTable";
 import InventoryMissingArrivalTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryMissingArrivalTable";
 import InventoryTotalASINTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryTotalASINTable";
+import AllAdminUsers from "../Pages/SettingPages/AllAdminUsers";
 
 export const router = createBrowserRouter([
   {
@@ -238,6 +239,11 @@ export const router = createBrowserRouter([
           {
             path: "/dashboard/settings/all-users",
             element: <AllUsersPage />,
+          },
+
+          {
+            path: "/dashboard/settings/all-admin-users",
+            element: <AllAdminUsers />,
           },
 
           {
