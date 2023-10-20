@@ -26,6 +26,7 @@ const run = async () => {
                 warehouse_admin_id: req.body.warehouse_admin_id,
                 full_name: req.body.full_name,
                 email: req.body.email,
+                creator_email:req.body.creator_email,
                 username: req.body.username,
                 role: req.body.role,
                 phone: null,
@@ -39,6 +40,7 @@ const run = async () => {
             const login_data = {
                 id: req.body.warehouse_admin_id,
                 email: req.body.email,
+                creator_email:req.body.creator_email,
                 password: hashed_password,
                 role: req.body.role,
                 email_verified: false,

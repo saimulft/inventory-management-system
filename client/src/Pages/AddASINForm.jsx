@@ -63,8 +63,7 @@ const AddASINForm = () => {
           quality: 0.5,
           success: (result) => {
             const compressed = new File([result], result.name, { type: 'image/jpeg' });
-            formData.append('image', compressed);
-            console.log(compressed)
+            formData.append('image', compressed);       
             resolve(compressed);
           },
           error: (error) => {

@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import countries from "../../Utilities/countries";
 import { FaSpinner } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
@@ -42,11 +41,11 @@ export default function WareHouseAdminPage() {
       return setErrorMessage('Password and confirm password must be same!')
     }
 
-    else if(password.length < 6){
+    else if (password.length < 6) {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const warehouseAdmin = { admin_id: user.admin_id, warehouse_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Warehouse Admin', warehouse_name: warehouseName, address, city, state, zip: zipCode, country}
+    const warehouseAdmin = { admin_id: user.admin_id, creator_email: user?.email, warehouse_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Warehouse Admin', warehouse_name: warehouseName, address, city, state, zip: zipCode, country }
 
     try {
       const { status } = await mutateAsync(warehouseAdmin)
@@ -167,7 +166,7 @@ export default function WareHouseAdminPage() {
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="confirmPassword"
                   name="confirmPassword"
-                  required 
+                  required
                 />
               </div>
 
