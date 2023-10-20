@@ -81,8 +81,8 @@ const AddASINForm = () => {
           if (res.status === 201) {
             const productImage = res.data.imageURL;
             const asinInfo = {
-              adminId: user?.admin_id
-              , date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
+              adminId: user?.admin_id,creatorEmail:user?.email
+              ,date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
             }
             axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
 
@@ -321,7 +321,7 @@ const AddASINForm = () => {
             <div className="flex items-center justify-center mt-8">
               <button type="submit" disabled={loading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">
                 {loading && <FaSpinner size={20} className="animate-spin" />}
-                Preparing Request
+               Add ASIN/UPC
               </button>
             </div>
           </form>

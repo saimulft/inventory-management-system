@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
@@ -17,7 +17,18 @@ const PreparingFormPage = () => {
   const [shippingImageError, setShippingImageError] = useState('')
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [asinUpcOption, setAsinUpcOption] = useState(null)
   const { user } = useAuth()
+
+  useEffect(() => {
+    axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
+      .then(res => {
+        if (res.status === 200) {
+          setAsinUpcOption(res.data.data)
+        }
+      }).catch(err => console.log(err))
+  }, [user?.email])
+
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -41,6 +52,7 @@ const PreparingFormPage = () => {
     const upin = form.upin.value
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
+
 
     let preparingFormvalue = {
       date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber
@@ -92,7 +104,7 @@ const PreparingFormPage = () => {
                 if (res.status === 201) {
                   const shippingFilename = res.data.filename
                   preparingFormvalue = {
-                    adminId: user?.admin_id, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName, shippingFilename
+                    adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName, shippingFilename
                   }
                   axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
                     .then(res => {
@@ -165,6 +177,9 @@ const PreparingFormPage = () => {
       }
     }
   }
+
+
+
   return (
     <div className="py-20 rounded-lg">
       <div
@@ -197,11 +212,13 @@ const PreparingFormPage = () => {
                     name="code"
                     id="code"
                   >
-                    <option defaultValue="Select ASIN or UPC">
-                      Select ASIN or UPC
-                    </option>
-                    <option value="ASIN">ASIN</option>
-                    <option value="UPC">UPC</option>
+                    <option defaultValue="Select ASIN or UPC">Select ASIN or UPC</option>
+                    {asinUpcOption?.map((asin, index) =>
+                      <>
+                        <option key={index} value={asin.asin_upc_code}>{asin.asin_upc_code}</option>
+                      </>
+
+                    )}
                   </select>
                 </div>
 
