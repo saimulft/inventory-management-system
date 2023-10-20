@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-import { LiaGreaterThanSolid } from "react-icons/lia";
+// import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
-import {format} from "date-fns"
+import { format } from "date-fns"
 
 export default function StorePreparingRequestTable() {
 
@@ -17,10 +17,8 @@ export default function StorePreparingRequestTable() {
       .then(res => {
         if (res.status === 200) {
           setPreparingRequestData(res.data.data)
-
         }
       }).catch(err => console.log(err))
-
   }, [])
 
   const data = preparingRequestData
@@ -55,10 +53,10 @@ export default function StorePreparingRequestTable() {
               <th>Quantity</th>
               <th>Courier</th>
               <th>Supplier Tracking</th>
-              <th>Shipping label</th>
-              <th>Shipping Slip</th>
+              <th>Invoice level</th>
+              <th>Shipping level</th>
               <th>Notes</th>
-              <th></th>
+
             </tr>
           </thead>
           <tbody>
@@ -68,7 +66,7 @@ export default function StorePreparingRequestTable() {
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{format(new Date(d.date),"dd/MM/y")}</th>
+                  <th>{format(new Date(d.date), "dd/MM/y")}</th>
                   <th className="font-normal">{d.store_name}</th>
                   <td>{d.code}</td>
                   <td>{d.code_type}</td>
@@ -82,46 +80,41 @@ export default function StorePreparingRequestTable() {
                   <td>{d.shipping_slip}</td>
                   <td>{d.notes}</td>
                   <td
-                    onClick={() =>
-                      document.getElementById("my_modal_2").showModal()
-                    }
-                    className="cursor-pointer"
+
+                    className=" relative"
                   >
-                    <BiDotsVerticalRounded />
+                    <div className="dropdown dropdown-end">
+                      <label
+                        tabIndex={0}
+                      >
+                        <BiDotsVerticalRounded cursor="pointer" />
+
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
+
+                        <li>
+                          <button onClick={() =>
+                            document.getElementById("my_modal_2").showModal()
+                          }>Edit</button>
+                        </li>
+                        <li>
+                          <a>Delete</a>
+                        </li>
+                      </ul>
+                    </div>
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-        <div className="flex justify-between mt-4">
-          <p>Showing 1 to 20 of 2,000 entries</p>
-          <div className="flex items-center gap-2">
-            <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              1
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              2
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              ...
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              9
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              10
-            </div>
-            <div className="border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-          </div>
-        </div>
+
       </div>
       {/* modal content  */}
+
       <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft }} className="modal-box py-10 px-10">
           <div className="flex">

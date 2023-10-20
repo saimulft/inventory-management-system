@@ -46,12 +46,13 @@ const PreparingFormPage = () => {
     const code = form.code.value
     const productName = form.productName.value
     const orderID = form.orderID.value
-    const courier = form.courier.value
+    const courier = form.courier.value === "Select courier" ? null : form.courier.value
     const storeName = form.storeName.value
     const codeType = form.codeType.value
     const upin = form.upin.value
     const quantity = form.quantity.value
-    const trackingNumber = form.trackingNumber.value
+    const trackingNumber = form.trackingNumber.value || null
+    const warehouse = form.warehouse.value
 
 
     let preparingFormvalue = {
@@ -61,10 +62,11 @@ const PreparingFormPage = () => {
       setFormError("Missing ASIN or UPC")
       return
     }
-    if (courier === 'Select courier' || !courier) {
-      setFormError("Missing courier")
+    if (warehouse === 'Select Warehouse' || !warehouse) {
+      setFormError("Missing warehouse")
       return
     }
+
     if (storeName === 'Pick Store Name' || !storeName) {
       setFormError("Missing  store name")
       return
@@ -73,7 +75,7 @@ const PreparingFormPage = () => {
       setFormError("Missing code type")
       return
     }
-    if (!InvoiceImageFile || !shippingImageFile || !date || !code || !orderID || !courier || !productName || !storeName || !codeType || !upin || !quantity || !trackingNumber) {
+    if (!date || !code || !orderID || !productName || !storeName || !codeType || !upin || !quantity) {
       setFormError("Missing form field detected")
       return;
     }
@@ -89,7 +91,6 @@ const PreparingFormPage = () => {
       })
         .then(res => {
           if (res.status === 201) {
-
             const invoiceFileName = res.data.filename
             const formData = new FormData()
             const fieldName = shippingImageFile.type.startsWith('image/') ? 'image' : 'file';
@@ -104,7 +105,7 @@ const PreparingFormPage = () => {
                 if (res.status === 201) {
                   const shippingFilename = res.data.filename
                   preparingFormvalue = {
-                    adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName, shippingFilename
+                    adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName, shippingFilename, warehouse, note: null
                   }
                   axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
                     .then(res => {
@@ -142,6 +143,126 @@ const PreparingFormPage = () => {
             setLoading(false)
           }
         }).catch(() => {
+          setLoading(false)
+          setFormError("Something went wrong to send preparing form request")
+        })
+    }
+
+    if (InvoiceImageFile && !shippingImageFile) {
+      const formData = new FormData()
+      const fieldName = InvoiceImageFile.type.startsWith('image/') ? 'image' : 'file';
+      formData.append(fieldName, InvoiceImageFile)
+      setLoading(true)
+      axios.post('/api/v1/preparing_form_api/preparing_form_file_upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      })
+        .then(res => {
+          if (res.status === 201) {
+            const invoiceFileName = res.data.filename
+            preparingFormvalue = {
+              adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName, shippingFilename: null, warehouse, note: null
+            }
+            axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
+              .then(res => {
+                if (res.status === 201) {
+                  Swal.fire(
+                    'Added',
+                    'Preparing form request has been added.',
+                    'success'
+                  )
+                  form.reset()
+                  setInvoiceImageFile(null)
+                  setInvoiceImageSrc(null)
+                  setShippingImageFile(null)
+                  setShippingImageSrc(null)
+                  setLoading(false)
+                }
+              })
+              .catch(() => {
+                setLoading(false)
+                setFormError("Something went wrong to send preparing form request")
+              })
+          }
+          else {
+            setFormError("Something went wrong to send preparing form request")
+            setLoading(false)
+          }
+        }).catch(() => {
+          setLoading(false)
+          setFormError("Something went wrong to send preparing form request")
+        })
+    }
+
+    if (shippingImageFile && !InvoiceImageFile) {
+      const formData = new FormData()
+      const fieldName = shippingImageFile.type.startsWith('image/') ? 'image' : 'file';
+      formData.append(fieldName, shippingImageFile)
+      setLoading(true)
+      axios.post('/api/v1/preparing_form_api/preparing_form_file_upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        }
+      })
+        .then(res => {
+          if (res.status === 201) {
+            const shippingFilename = res.data.filename
+            preparingFormvalue = {
+              adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName: null, shippingFilename, warehouse, note: null
+            }
+            axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
+              .then(res => {
+                if (res.status === 201) {
+                  Swal.fire(
+                    'Added',
+                    'Preparing form request has been added.',
+                    'success'
+                  )
+                  form.reset()
+                  setInvoiceImageFile(null)
+                  setInvoiceImageSrc(null)
+                  setShippingImageFile(null)
+                  setShippingImageSrc(null)
+                  setLoading(false)
+                }
+              })
+              .catch(() => {
+                setLoading(false)
+                setFormError("Something went wrong to send preparing form request")
+              })
+          }
+          else {
+            setFormError("Something went wrong to send preparing form request")
+            setLoading(false)
+          }
+        }).catch(() => {
+          setLoading(false)
+          setFormError("Something went wrong to send preparing form request")
+        })
+    }
+    
+    else {
+      preparingFormvalue = {
+        adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName: null, shippingFilename: null, warehouse, note: null
+      }
+      axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
+        .then(res => {
+          if (res.status === 201) {
+            Swal.fire(
+              'Added',
+              'Preparing form request has been added.',
+              'success'
+            )
+            form.reset()
+            setInvoiceImageFile(null)
+            setInvoiceImageSrc(null)
+            setShippingImageFile(null)
+            setShippingImageSrc(null)
+            setLoading(false)
+          }
+        })
+        .catch(() => {
           setLoading(false)
           setFormError("Something went wrong to send preparing form request")
         })
@@ -367,7 +488,7 @@ const PreparingFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Tracking Number</label>
                   <input
-                    required
+
                     type="text"
                     placeholder="Enter tracking number"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -423,6 +544,18 @@ const PreparingFormPage = () => {
                 </div>
 
               </div>
+            </div>
+            <div className="mt-4">
+              <label className="text-slate-500">Warehouse</label>
+              <select
+                className="select select-primary w-full mt-2 shadow-lg"
+                name="warehouse"
+                id="warehouse"
+              >
+                <option defaultValue="Select Warehouse">Select Warehouse</option>
+                <option value="Test-1">Test-1</option>
+                <option value="Test-2">Test-2</option>
+              </select>
             </div>
             <ToastMessage errorMessage={formError} />
             <div className="flex items-center justify-center mt-8">

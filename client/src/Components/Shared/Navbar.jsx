@@ -3,7 +3,7 @@ import { BsBell } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
 
 export default function Navbar() {
-  const {user} = useAuth()
+  const { user } = useAuth()
 
   return (
     <div className="flex items-center px-8 ps-3 pe-3 bg-[#2e2e30]  text-white shadow-sm py-3">

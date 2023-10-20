@@ -61,6 +61,8 @@ const run = async () => {
             tracking_number: req.body.trackingNumber,
             invoice_file: req.body.invoiceFileName,
             shipping_file: req.body.shippingFilename,
+            warehouse: req.body.warehouse,
+            note: req.body.note,
         }
         try {
             const result = await preparing_form_collection.insertOne(data)
