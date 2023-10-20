@@ -37,6 +37,7 @@ const run = async () => {
             }
             const login_data = {
                 id: req.body.warehouse_manager_va_id,
+                creator_email: user?.email,
                 email: req.body.email,
                 password: hashed_password,
                 role: req.body.role,

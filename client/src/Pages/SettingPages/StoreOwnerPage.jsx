@@ -38,7 +38,7 @@ export default function StoreOwnerPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const storeOwner = { admin_id: user.admin_id, store_owner_id: uuidv4(), full_name: name, email, username, password, role: 'Store Owner' }
+    const storeOwner = { admin_id: user.admin_id, creator_email: user?.email, store_owner_id: uuidv4(), full_name: name, email, username, password, role: 'Store Owner' }
 
     try {
       const { status } = await mutateAsync(storeOwner)

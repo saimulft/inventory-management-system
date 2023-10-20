@@ -37,7 +37,6 @@ const run = async () => {
                 whatsapp_number: null
             }
             const login_data = {
-
                 id: req.body.store_manager_admin_id,
                 email: req.body.email,
                 creator_email: req.body.creator_email,

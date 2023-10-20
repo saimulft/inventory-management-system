@@ -37,7 +37,7 @@ const StoreManagerVAPage = () => {
             return setErrorMessage("Password must be at least 6 characters or longer!")
         }
 
-        const storeManagerVA = { admin_id: user.admin_id, store_manager_va_id: uuidv4(), full_name: name, email, username, password, role: 'Store Manager VA' }
+        const storeManagerVA = { admin_id: user.admin_id, creator_email: user?.email, store_manager_va_id: uuidv4(), full_name: name, email, username, password, role: 'Store Manager VA' }
 
         try {
             const { status } = await mutateAsync(storeManagerVA)

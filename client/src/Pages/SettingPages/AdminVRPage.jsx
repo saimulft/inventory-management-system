@@ -37,7 +37,7 @@ export default function AdminVRPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const adminVA = { admin_id: user.admin_id, admin_va_id: uuidv4(), full_name: name, email, username, password, role: 'Admin VA' }
+    const adminVA = { admin_id: user.admin_id, creator_email: user?.email, admin_va_id: uuidv4(), full_name: name, email, username, password, role: 'Admin VA' }
 
     try {
       const { status } = await mutateAsync(adminVA)

@@ -69,6 +69,7 @@ const ArrivalFormPage = () => {
     const arrivalFormData = {
       admin_id: user.admin_id,
       date: isoDate,
+      creator_email: user?.email,
       store_name: storeName,
       asin_upc_code: asinUpc,
       code_type: codeType,

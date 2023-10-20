@@ -11,6 +11,7 @@ const run = async () => {
         const data = {
             admin_id: req.body.admin_id,
             date: req.body.date,
+            creator_email: req.body.creator_email,
             store_name: req.body.store_name,
             asin_upc_code: req.body.asin_upc_code,
             code_type: req.body.code_type,

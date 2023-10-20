@@ -37,6 +37,7 @@ const run = async () => {
             }
             const login_data = {
                 id: req.body.store_owner_id,
+                creator_email: req.body.creator_email,
                 email: req.body.email,
                 password: hashed_password,
                 role: req.body.role,
