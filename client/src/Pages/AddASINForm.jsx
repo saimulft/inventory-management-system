@@ -57,20 +57,21 @@ const AddASINForm = () => {
 
     if (imageFile) {
       setLoding(true)
-
       const formData = new FormData()
-      // new Compressor(imageFile, {
-      //   quality: 0.6,
-      //   success: (result) => {
-      //     const compressedFile =  new File([result], result.name, { type: 'image/jpeg' })
-      //     console.log(compressedFile)
-      //     formData.append('image', compressedFile)
-      //   },
-
-        
-      // })
-      formData.append('image', imageFile)
-
+      await new Promise((resolve, reject) => {
+        new Compressor(imageFile, {
+          quality: 0.5,
+          success: (result) => {
+            const compressed = new File([result], result.name, { type: 'image/jpeg' });
+            formData.append('image', compressed);
+            console.log(compressed)
+            resolve(compressed);
+          },
+          error: (error) => {
+            reject(error);
+          },
+        });
+      });
 
       await axios.post('/api/v1/asin_upc_api/asin_upc_image_upload', formData, {
         headers: {
