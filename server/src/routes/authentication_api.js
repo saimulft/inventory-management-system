@@ -13,6 +13,8 @@ const run = async () => {
     const store_owner_users_collection = db.collection("store_owner_users")
     const store_manager_admin_users_collection = db.collection("store_manager_admin_users")
     const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
+    const store_manager_va_users_collection = db.collection("store_manager_va_users")
+    const warehouse_manager_va_users_collection = db.collection("warehouse_manager_va_users")
 
 
     // user login
@@ -46,7 +48,7 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
-    
+
     // get user 
     router.get('/get_user_profile_data', verifyJWT, async (req, res) => {
         try {
@@ -78,10 +80,12 @@ const run = async () => {
                     return res.status(200).json({ data: result, status: 'success' })
                 }
                 else if (role === 'Store Manager VA') {
-                    ''
+                    const result = await store_manager_va_users_collection.findOne({ email: email })
+                    return res.status(200).json({ data: result, status: 'success' })
                 }
-                else if (role === 'Warehouse VA') {
-                    ''
+                else if (role === 'Warehouse Manager VA') {
+                    const result = await warehouse_manager_va_users_collection.findOne({ email: email })
+                    return res.status(200).json({ data: result, status: 'success' })
                 }
             }
             else {
@@ -197,7 +201,7 @@ const run = async () => {
             const current_password = req.body.current_password;
             const role = req.body.role;
 
-            const data = await all_users_collection.findOne({email: current_email});
+            const data = await all_users_collection.findOne({ email: current_email });
 
             if (data) {
                 if (current_password) {
@@ -266,6 +270,22 @@ const run = async () => {
                 }
                 else if (role === 'Warehouse Admin') {
                     const result = await warehouse_admin_users_collection.findOneAndUpdate(
+                        { email: current_email },
+                        { $set: updatedData },
+                        { returnDocument: "after" }
+                    );
+                    return res.status(200).json(result);
+                }
+                else if (role === 'Store Manager VA') {
+                    const result = await store_manager_va_users_collection.findOneAndUpdate(
+                        { email: current_email },
+                        { $set: updatedData },
+                        { returnDocument: "after" }
+                    );
+                    return res.status(200).json(result);
+                }
+                else if (role === 'Warehouse Manager VA') {
+                    const result = await warehouse_manager_va_users_collection.findOneAndUpdate(
                         { email: current_email },
                         { $set: updatedData },
                         { returnDocument: "after" }

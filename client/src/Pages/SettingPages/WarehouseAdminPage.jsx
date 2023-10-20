@@ -1,4 +1,3 @@
-import Swal from "sweetalert2";
 import countries from "../../Utilities/countries";
 import { FaSpinner } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
@@ -64,8 +63,6 @@ export default function WareHouseAdminPage() {
       console.log(error)
     }
   }
-
-  // const isAdminOrAdminVA = user.role === "Admin" ? "admin_id" : user.role === "Admin VA" ? "admin_va_id" : ""
 
   return (
     <div>

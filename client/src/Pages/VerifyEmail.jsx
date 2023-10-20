@@ -25,8 +25,11 @@ const VerifyEmail = () => {
                             navigate('/login')
                         }, 2000)
                     }
-                    if(res.status === 203){
+                    if (res.status === 203) {
                         setMessage("Email already verified")
+                        setTimeout(() => {
+                            navigate('/login')
+                        }, 2000)
                     }
                 })
         } catch (error) {

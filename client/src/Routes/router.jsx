@@ -50,6 +50,9 @@ import InventoryOutOfStockTable from "../Components/ManagementPageComponent/Inve
 import InventoryMissingArrivalTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryMissingArrivalTable";
 import InventoryTotalASINTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryTotalASINTable";
 import AllAdminUsers from "../Pages/SettingPages/AllAdminUsers";
+import StoreManagerVAPage from "../Pages/SettingPages/StoreManagerVAPage";
+import WarehouseManagerVAPage from "../Pages/SettingPages/WarehouseManagerVAPage";
+import AuthRoute from "./AuthRoute";
 
 export const router = createBrowserRouter([
   {
@@ -232,8 +235,16 @@ export const router = createBrowserRouter([
             element: <StoreManagerAdminPage />,
           },
           {
+            path: "/dashboard/settings/add-users/store-manager-va",
+            element: <StoreManagerVAPage />,
+          },
+          {
             path: "/dashboard/settings/add-users/warehouse-admin",
             element: <WareHouseAdminPage />,
+          },
+          {
+            path: "/dashboard/settings/add-users/warehouse-manager-va",
+            element: <WarehouseManagerVAPage />,
           },
 
           {
@@ -260,11 +271,11 @@ export const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: <AuthRoute><LoginPage /></AuthRoute>,
   },
   {
     path: "/signup",
-    element: <SignUPPage />,
+    element: <AuthRoute><SignUPPage /></AuthRoute>,
   },
   {
     path: "/verify_email",

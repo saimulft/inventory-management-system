@@ -1,6 +1,5 @@
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
-import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
 import { v4 as uuidv4 } from 'uuid';
 import { useMutation } from "@tanstack/react-query";
@@ -52,7 +51,7 @@ export default function StoreManagerAdminPage() {
       }
     } catch (error) {
       setSuccessMessage('')
-      setErrorMessage('Failed to create new store owner!')
+      setErrorMessage('Failed to create new store manager admin!')
       console.log(error)
     }
   }
