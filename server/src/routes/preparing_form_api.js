@@ -48,6 +48,7 @@ const run = async () => {
     router.post('/preparing_form_insert', async (req, res) => {
         const data = {
             admin_id: req.body.adminId,
+            creator_email: req.body.creatorEmail,
             date: req.body.date,
             code: req.body.code,
             order_id: req.body.orderID,
@@ -74,6 +75,21 @@ const run = async () => {
         }
     })
 
+    // get all preparing request data
+
+    router.get('/get_all_preparing_request_data', async (req, res) => {
+        try {
+            const data = await preparing_form_collection.find({}).toArray()
+            if (data.length) {
+                res.status(200).json({ data: data })
+            }
+            else {
+                res.status(401).json({ message: "Data not found" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: "get_all_preparing_request_data error" })
+        }
+    })
 
 
 

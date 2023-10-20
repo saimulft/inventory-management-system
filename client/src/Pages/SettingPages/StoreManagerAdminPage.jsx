@@ -10,7 +10,7 @@ export default function StoreManagerAdminPage() {
   const { user } = useAuth();
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-
+  console.log(user)
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (storeManagerAdmin) => {
       return axios.post('/api/v1/store_manager_admin_api/create_store_manager_admin', storeManagerAdmin)
@@ -37,7 +37,7 @@ export default function StoreManagerAdminPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const storeManagerAdmin = { admin_id: user.admin_id, store_manager_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Store Manager Admin' }
+    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Store Manager Admin' }
 
     try {
       const { status } = await mutateAsync(storeManagerAdmin)

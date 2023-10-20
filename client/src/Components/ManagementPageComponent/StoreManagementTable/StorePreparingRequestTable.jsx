@@ -1,74 +1,29 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import axios from "axios";
+import {format} from "date-fns"
 
 export default function StorePreparingRequestTable() {
+
   const { isSidebarOpen } = useContext(GlobalContext);
+  const [preparingRequestData, setPreparingRequestData] = useState([])
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const data = [
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-  ];
+  useEffect(() => {
+
+    axios.get('/api/v1/preparing_form_api//get_all_preparing_request_data')
+      .then(res => {
+        if (res.status === 200) {
+          setPreparingRequestData(res.data.data)
+
+        }
+      }).catch(err => console.log(err))
+
+  }, [])
+
+  const data = preparingRequestData
 
   return (
     <div className="px-8 py-12">
@@ -113,16 +68,16 @@ export default function StorePreparingRequestTable() {
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                  <th>{format(new Date(d.date),"dd/MM/y")}</th>
                   <th className="font-normal">{d.store_name}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <td>{d.code}</td>
                   <td>{d.code_type}</td>
                   <td>{d.product_name}</td>
-                  <td>{d.order_ID}</td>
-                  <td>{d.UPIN}</td>
+                  <td>{d.order_id}</td>
+                  <td>{d.upin}</td>
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
-                  <td>{d.supplier_tracking}</td>
+                  <td>{d.tracking_number}</td>
                   <td>{d.shipping_label}</td>
                   <td>{d.shipping_slip}</td>
                   <td>{d.notes}</td>
