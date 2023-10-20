@@ -7,9 +7,13 @@ const AllAdminUsers = () => {
     const { data: adminUsers = [], refetch } = useQuery({
         queryKey: ['admin_users'],
         queryFn: async () => {
-            const res = await axios.get('/api/v1/admin_api/admin_users')
-            if (res.status === 200) {
-                return res.data
+            try {
+                const res = await axios.get('/api/v1/admin_api/admin_users')
+                if (res.status === 200) {
+                    return res.data
+                }
+            } catch (error) {
+                console.log(error)
             }
         }
     })
