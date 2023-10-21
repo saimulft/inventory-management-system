@@ -7,12 +7,13 @@ import axios from "axios";
 import { format } from "date-fns"
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 
 
 export default function StorePreparingRequestTable() {
 
   const { isSidebarOpen } = useContext(GlobalContext);
-
+  const navigate = useNavigate()
   const [singleData, setSingleData] = useState()
 
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
@@ -60,6 +61,7 @@ export default function StorePreparingRequestTable() {
       }
     })
   }
+  console.log(import.meta.env.VITE_IMAGE_BASE_URL)
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
@@ -113,8 +115,8 @@ export default function StorePreparingRequestTable() {
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
-                  <td>{d.shipping_label}</td>
-                  <td>{d.shipping_slip}</td>
+                  <td>{d.invoice_file && <button  className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.shipping_file && <button  className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
                   <td>{d.notes}</td>
                   <td>
                     <div className="dropdown dropdown-end">

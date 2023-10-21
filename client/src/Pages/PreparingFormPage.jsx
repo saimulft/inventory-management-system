@@ -39,7 +39,6 @@ const PreparingFormPage = () => {
     setInvoiceImageError('')
     setShippingImageError('')
     setFormError('')
-
     event.preventDefault()
     const form = event.target
     const date = new Date(form.date.value).toISOString()
@@ -53,8 +52,6 @@ const PreparingFormPage = () => {
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value
-
-
 
     if (code === 'Select ASIN or UPC' || !code) {
       setFormError("Missing ASIN or UPC")
@@ -79,15 +76,12 @@ const PreparingFormPage = () => {
     }
 
     const formData = new FormData()
-
-
     let preparingFormvalue = {
       adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, warehouse
     }
     for (const key in preparingFormvalue) {
       formData.append(key, preparingFormvalue[key]);
     }
-
     const Invoice = InvoiceImageFile?.name.split('.').pop();
     const shipping = shippingImageFile?.name.split('.').pop();
 
@@ -141,7 +135,7 @@ const PreparingFormPage = () => {
         return;
 
       } else {
-        setInvoiceImageError('')
+        ('')
         setInvoiceImageSrc(URL.createObjectURL(e.target.files[0]))
         setInvoiceImageFile(e.target.files[0])
       }
