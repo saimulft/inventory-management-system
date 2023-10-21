@@ -3,6 +3,7 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const multer = require("multer")
 const path = require('path')
+const { ObjectId } = require("mongodb")
 
 const run = async () => {
 
@@ -35,47 +36,56 @@ const run = async () => {
     });
 
     // asin_upc_file_upload API
-    router.post('/preparing_form_file_upload', upload.any(), async (req, res) => {
-        const uploadedFile = req.files;
-        if (uploadedFile) {
-            res.status(201).json({ message: "File uploaded", filename: uploadedFile[0].filename });
-        } else {
+    router.post('/preparing_form_insert', upload.array("file", 2), async (req, res) => {
+        try {
+            const uploadedFiles = req.files;
+            let shippingFilename = null
+            let invoiceFileName = null
+            const filenames = uploadedFiles.map((file) => file.filename);
+
+            if (uploadedFiles.length === 2) {
+                invoiceFileName = filenames[0]
+                shippingFilename = filenames[1]
+            }
+            if (uploadedFiles.length === 1) {
+                if (uploadedFiles[0].originalname.startsWith("invoice")) {
+                    invoiceFileName = filenames[0]
+                }
+                else {
+                    shippingFilename = filenames[0]
+                }
+            }
+            const data = {
+                admin_id: req.body.adminId,
+                creator_email: req.body.creatorEmail,
+                date: req.body.date,
+                code: req.body.code,
+                order_id: req.body.orderID,
+                courier: req.body.courier === "Select courier" ? null : req.body.courier,
+                product_name: req.body.productName,
+                store_name: req.body.storeName,
+                code_type: req.body.codeType,
+                upin: req.body.upin,
+                quantity: req.body.quantity,
+                tracking_number: req.body.trackingNumber ? req.body.trackingNumber : null,
+                invoice_file: invoiceFileName,
+                shipping_file: shippingFilename,
+                no0tes: null,
+                warehouse: req.body.warehouse,
+            };
+
+            const result = await preparing_form_collection.insertOne(data)
+            if (result.acknowledged) {
+                res.status(201).json({ message: "Preparing form inserted" })
+            }
+            else {
+                res.status(500).json({ message: "Error to Preparing form " });
+            }
+        } catch (error) {
             res.status(500).json({ message: "Multer error" });
         }
     });
 
-    // insert a new preparingform request
-    router.post('/preparing_form_insert', async (req, res) => {
-        const data = {
-            admin_id: req.body.adminId,
-            creator_email: req.body.creatorEmail,
-            date: req.body.date,
-            code: req.body.code,
-            order_id: req.body.orderID,
-            courier: req.body.courier,
-            product_name: req.body.productName,
-            store_name: req.body.storeName,
-            code_type: req.body.codeType,
-            upin: req.body.upin,
-            quantity: req.body.quantity,
-            tracking_number: req.body.trackingNumber,
-            invoice_file: req.body.invoiceFileName,
-            shipping_file: req.body.shippingFilename,
-            warehouse: req.body.warehouse,
-            note: req.body.note,
-        }
-        try {
-            const result = await preparing_form_collection.insertOne(data)
-            if (result.acknowledged) {
-                res.status(201).json({ message: "preparing_form inserted" })
-            }
-            else {
-                res.status(500).json({ message: "Error to inserting preparing_form" })
-            }
-        } catch (error) {
-            res.status(500).json({ message: 'Internal Server Error' });
-        }
-    })
 
     // get all preparing request data
 
@@ -92,7 +102,20 @@ const run = async () => {
             res.status(500).json({ message: "get_all_preparing_request_data error" })
         }
     })
-
+    router.delete('/delete_preparing_request_data', async (req, res) => {
+        const id = req.query.id
+        try {
+            const data = await preparing_form_collection.deleteOne({ _id: new ObjectId(id) })
+            if (data.deletedCount) {
+                res.status(200).json({ message: "deleted preparing request data" })
+            }
+            else {
+                res.status(401).json({ message: "Data not found" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: "get_all_preparing_request_data error" })
+        }
+    })
 
 
 }

@@ -46,18 +46,16 @@ const PreparingFormPage = () => {
     const code = form.code.value
     const productName = form.productName.value
     const orderID = form.orderID.value
-    const courier = form.courier.value === "Select courier" ? null : form.courier.value
+    const courier = form.courier.value
     const storeName = form.storeName.value
     const codeType = form.codeType.value
     const upin = form.upin.value
     const quantity = form.quantity.value
-    const trackingNumber = form.trackingNumber.value || null
+    const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value
 
 
-    let preparingFormvalue = {
-      date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber
-    }
+
     if (code === 'Select ASIN or UPC' || !code) {
       setFormError("Missing ASIN or UPC")
       return
@@ -79,194 +77,60 @@ const PreparingFormPage = () => {
       setFormError("Missing form field detected")
       return;
     }
-    if (InvoiceImageFile && shippingImageFile) {
-      const formData = new FormData()
-      const fieldName = InvoiceImageFile.type.startsWith('image/') ? 'image' : 'file';
-      formData.append(fieldName, InvoiceImageFile)
-      setLoading(true)
-      axios.post('/api/v1/preparing_form_api/preparing_form_file_upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      })
-        .then(res => {
-          if (res.status === 201) {
-            const invoiceFileName = res.data.filename
-            const formData = new FormData()
-            const fieldName = shippingImageFile.type.startsWith('image/') ? 'image' : 'file';
-            formData.append(fieldName, shippingImageFile)
 
-            axios.post('/api/v1/preparing_form_api/preparing_form_file_upload', formData, {
-              headers: {
-                'Content-Type': 'multipart/form-data',
-              }
-            })
-              .then(res => {
-                if (res.status === 201) {
-                  const shippingFilename = res.data.filename
-                  preparingFormvalue = {
-                    adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName, shippingFilename, warehouse, note: null
-                  }
-                  axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
-                    .then(res => {
-                      if (res.status === 201) {
-                        Swal.fire(
-                          'Added',
-                          'Preparing form request has been added.',
-                          'success'
-                        )
-                        form.reset()
-                        setInvoiceImageFile(null)
-                        setInvoiceImageSrc(null)
-                        setShippingImageFile(null)
-                        setShippingImageSrc(null)
-                        setLoading(false)
-                      }
-                    })
-                    .catch(() => {
-                      setLoading(false)
-                      setFormError("Something went wrong to send preparing form request")
-                    })
-                }
-                else {
-                  setFormError("Something went wrong to send preparing form request")
-                  setLoading(false)
-                }
+    const formData = new FormData()
 
-              }).catch(() => {
-                setLoading(false)
-                setFormError("Something went wrong to send preparing form request")
-              })
-          }
-          else {
-            setFormError("Something went wrong to send preparing form request")
-            setLoading(false)
-          }
-        }).catch(() => {
-          setLoading(false)
-          setFormError("Something went wrong to send preparing form request")
-        })
+
+    let preparingFormvalue = {
+      adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, warehouse
     }
+    for (const key in preparingFormvalue) {
+      formData.append(key, preparingFormvalue[key]);
+    }
+
+    const Invoice = InvoiceImageFile?.name.split('.').pop();
+    const shipping = shippingImageFile?.name.split('.').pop();
 
     if (InvoiceImageFile && !shippingImageFile) {
-      const formData = new FormData()
-      const fieldName = InvoiceImageFile.type.startsWith('image/') ? 'image' : 'file';
-      formData.append(fieldName, InvoiceImageFile)
-      setLoading(true)
-      axios.post('/api/v1/preparing_form_api/preparing_form_file_upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        }
-      })
-        .then(res => {
-          if (res.status === 201) {
-            const invoiceFileName = res.data.filename
-            preparingFormvalue = {
-              adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName, shippingFilename: null, warehouse, note: null
-            }
-            axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
-              .then(res => {
-                if (res.status === 201) {
-                  Swal.fire(
-                    'Added',
-                    'Preparing form request has been added.',
-                    'success'
-                  )
-                  form.reset()
-                  setInvoiceImageFile(null)
-                  setInvoiceImageSrc(null)
-                  setShippingImageFile(null)
-                  setShippingImageSrc(null)
-                  setLoading(false)
-                }
-              })
-              .catch(() => {
-                setLoading(false)
-                setFormError("Something went wrong to send preparing form request")
-              })
-          }
-          else {
-            setFormError("Something went wrong to send preparing form request")
-            setLoading(false)
-          }
-        }).catch(() => {
-          setLoading(false)
-          setFormError("Something went wrong to send preparing form request")
-        })
+      formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
     }
-
     if (shippingImageFile && !InvoiceImageFile) {
-      const formData = new FormData()
-      const fieldName = shippingImageFile.type.startsWith('image/') ? 'image' : 'file';
-      formData.append(fieldName, shippingImageFile)
-      setLoading(true)
-      axios.post('/api/v1/preparing_form_api/preparing_form_file_upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
+      formData.append('file', shippingImageFile, `shipping.${shipping}`)
+    }
+    if (InvoiceImageFile && shippingImageFile) {
+      formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
+      formData.append('file', shippingImageFile, `shipping.${shipping}`)
+    }
+    setLoading(true)
+    axios.post('/api/v1/preparing_form_api/preparing_form_insert', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    })
+      .then(res => {
+        if (res.status === 201) {
+          Swal.fire(
+            'Added',
+            'Preparing form request has been added.',
+            'success'
+          )
+          form.reset()
+          setInvoiceImageFile(null)
+          setInvoiceImageSrc(null)
+          setShippingImageFile(null)
+          setShippingImageSrc(null)
+          setLoading(false)
+        }
+        else {
+          setLoading(false)
+          setFormError("Something went wrong to send preparing form request")
         }
       })
-        .then(res => {
-          if (res.status === 201) {
-            const shippingFilename = res.data.filename
-            preparingFormvalue = {
-              adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName: null, shippingFilename, warehouse, note: null
-            }
-            axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
-              .then(res => {
-                if (res.status === 201) {
-                  Swal.fire(
-                    'Added',
-                    'Preparing form request has been added.',
-                    'success'
-                  )
-                  form.reset()
-                  setInvoiceImageFile(null)
-                  setInvoiceImageSrc(null)
-                  setShippingImageFile(null)
-                  setShippingImageSrc(null)
-                  setLoading(false)
-                }
-              })
-              .catch(() => {
-                setLoading(false)
-                setFormError("Something went wrong to send preparing form request")
-              })
-          }
-          else {
-            setFormError("Something went wrong to send preparing form request")
-            setLoading(false)
-          }
-        }).catch(() => {
-          setLoading(false)
-          setFormError("Something went wrong to send preparing form request")
-        })
-    }
-    
-    else {
-      preparingFormvalue = {
-        adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, invoiceFileName: null, shippingFilename: null, warehouse, note: null
-      }
-      axios.post('/api/v1/preparing_form_api/preparing_form_insert', preparingFormvalue)
-        .then(res => {
-          if (res.status === 201) {
-            Swal.fire(
-              'Added',
-              'Preparing form request has been added.',
-              'success'
-            )
-            form.reset()
-            setInvoiceImageFile(null)
-            setInvoiceImageSrc(null)
-            setShippingImageFile(null)
-            setShippingImageSrc(null)
-            setLoading(false)
-          }
-        })
-        .catch(() => {
-          setLoading(false)
-          setFormError("Something went wrong to send preparing form request")
-        })
-    }
+      .catch(() => {
+        setLoading(false)
+        setFormError("Something went wrong to send preparing form request")
+
+      })
   }
   const handleInvoiceImage = (e) => {
     if (e.target.files[0]) {

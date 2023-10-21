@@ -1,32 +1,69 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 // import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import { format } from "date-fns"
+import Swal from "sweetalert2";
+import { useQuery } from "@tanstack/react-query";
+
 
 export default function StorePreparingRequestTable() {
 
   const { isSidebarOpen } = useContext(GlobalContext);
-  const [preparingRequestData, setPreparingRequestData] = useState([])
-  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  useEffect(() => {
 
-    axios.get('/api/v1/preparing_form_api//get_all_preparing_request_data')
-      .then(res => {
+  const [singleData, setSingleData] = useState()
+
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
+  const { data: preparingRequestData = [], refetch } = useQuery({
+    queryKey: ['preparing_request_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
         if (res.status === 200) {
-          setPreparingRequestData(res.data.data)
+          return res.data.data
         }
-      }).catch(err => console.log(err))
-  }, [])
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  })
 
   const data = preparingRequestData
+  const handleDelete = (_id) => {
 
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data?id=${_id}`)
+          .then(res => {
+            if (res.status === 200) {
+              Swal.fire(
+                'Deleted!',
+                'Data has been deleted.',
+                'success'
+              )
+              refetch()
+            }
+          }).catch(err => console.log(err))
+
+
+
+      }
+    })
+  }
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Preparing Request: 343
+        Preparing Request : {preparingRequestData?.length}
       </h3>
       <div className="relative flex justify-end">
         <input
@@ -39,8 +76,8 @@ export default function StorePreparingRequestTable() {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+      <div className="overflow-x-auto overflow-y-auto mt-8">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Date</th>
@@ -56,17 +93,17 @@ export default function StorePreparingRequestTable() {
               <th>Invoice level</th>
               <th>Shipping level</th>
               <th>Notes</th>
-
+              <th></th>
             </tr>
           </thead>
           <tbody>
             {data.map((d, index) => {
               return (
                 <tr
-                  className={`${index % 2 == 1 && "bg-gray-200"}`}
+                  className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
                   key={index}
                 >
-                  <th>{format(new Date(d.date), "dd/MM/y")}</th>
+                  <th>{format(new Date(d.date), "y/MM/d")}</th>
                   <th className="font-normal">{d.store_name}</th>
                   <td>{d.code}</td>
                   <td>{d.code_type}</td>
@@ -79,29 +116,28 @@ export default function StorePreparingRequestTable() {
                   <td>{d.shipping_label}</td>
                   <td>{d.shipping_slip}</td>
                   <td>{d.notes}</td>
-                  <td
-
-                    className=" relative"
-                  >
+                  <td>
                     <div className="dropdown dropdown-end">
                       <label
                         tabIndex={0}
                       >
-                        <BiDotsVerticalRounded cursor="pointer" />
+                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
 
                       </label>
                       <ul
                         tabIndex={0}
-                        className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
                       >
 
                         <li>
-                          <button onClick={() =>
+                          <button onClick={() => {
                             document.getElementById("my_modal_2").showModal()
+
+                          }
                           }>Edit</button>
                         </li>
                         <li>
-                          <a>Delete</a>
+                          <button onClick={() => handleDelete(d._id)}>Delete</button>
                         </li>
                       </ul>
                     </div>
@@ -118,46 +154,46 @@ export default function StorePreparingRequestTable() {
       <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft }} className="modal-box py-10 px-10">
           <div className="flex">
-            <div className="w-1/2">
+            <div className="w-100">
               <div className="flex items-center mb-6 gap-2">
                 <BiSolidEdit size={24} />
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-bold">Data: </span>
-                <span>2023-06-26</span>
+                <p className="font-bold">Date: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData && format(new Date(singleData?.date), "y/MM/d")} />
               </p>
               <p className="mt-2">
-                <span className="font-bold">Store Name: </span>
-                <span>SAVE_k544.LLC</span>
+                <p className="font-bold">Store Name: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.store_name} />
               </p>
               <p className="mt-2">
-                <span className="font-bold">ASIN: </span>
-                <span>BOHFK4522</span>
+                <p className="font-bold">ASIN: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.code_type} />
               </p>
               <p className="mt-2">
-                <span className="font-bold">Quantity: </span>
-                <span>23</span>
-              </p>
-
-              <p className="mt-2">
-                <span className="font-bold">Courier: </span>
-                <span>null</span>
+                <p className="font-bold">Quantity: </p>
+                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="number" defaultValue={singleData?.quantity} />
               </p>
 
               <p className="mt-2">
-                <span className="font-bold">UPIN: </span>
-                <span>SAVE_dl.LLC 45245</span>
+                <p className="font-bold">Courier: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.courier ? singleData?.courier : ""} />
               </p>
 
               <p className="mt-2">
-                <span className="font-bold">Product Name: </span>
-                <span>demo product name</span>
+                <p className="font-bold">UPIN: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.upin} />
               </p>
 
               <p className="mt-2">
-                <span className="font-bold">Supplier Tracking: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
+                <p className="font-bold">Product Name: </p>
+                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.product_name} />
+              </p>
+
+              <p className="mt-2">
+                <p className="font-bold">Supplier Tracking: </p>
+                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.tracking_number ? singleData?.tracking_number : ""} />
               </p>
 
               <p className="mt-2">
@@ -166,7 +202,7 @@ export default function StorePreparingRequestTable() {
               </p>
               <p className="mt-2">
                 <span className="font-bold">Invoice: </span>
-                <span>Not Added</span>
+                <span className="text-[#8633FF] cursor-pointer">Click</span>
               </p>
             </div>
             <div className="w-1/2 px-4">
@@ -229,15 +265,7 @@ export default function StorePreparingRequestTable() {
                         className="hidden"
                       />
                       <div className="ml-5">
-                        <button
-                          onClick={() => {
-                            document.getElementById("invoice-dropzone").click();
-                          }}
-                          type="button"
-                          className="btn btn-outline btn-primary btn-xs"
-                        >
-                          select file
-                        </button>
+
                       </div>
                     </label>
                   </div>
@@ -273,17 +301,7 @@ export default function StorePreparingRequestTable() {
                         className="hidden"
                       />
                       <div className="ml-5">
-                        <button
-                          onClick={() => {
-                            document
-                              .getElementById("shippingLabel-dropzone")
-                              .click();
-                          }}
-                          type="button"
-                          className="btn btn-outline btn-primary btn-xs"
-                        >
-                          select file
-                        </button>
+
                       </div>
                     </label>
                   </div>
@@ -299,10 +317,10 @@ export default function StorePreparingRequestTable() {
                     name="note"
                   />
                 </div>
+                <button type="submit" className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                  Update
+                </button>
               </form>
-              <button className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
-                Update
-              </button>
             </div>
           </div>
         </div>
@@ -310,6 +328,7 @@ export default function StorePreparingRequestTable() {
           <button>close</button>
         </form>
       </dialog>
+
     </div>
   );
 }
