@@ -7,13 +7,11 @@ import axios from "axios";
 import { format } from "date-fns"
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
 
 
 export default function StorePreparingRequestTable() {
 
   const { isSidebarOpen } = useContext(GlobalContext);
-  const navigate = useNavigate()
   const [singleData, setSingleData] = useState()
 
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
