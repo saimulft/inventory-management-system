@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
+const { ObjectId } = require("mongodb")
 
 const run = async () => {
     const db = await connectDatabase()
@@ -31,9 +32,31 @@ const run = async () => {
                 res.status(201).json({ message: "Successfully inserted pending arrival data" })
             }
             else {
-                res.status(500).json({ message: "Internal server error while inserting pending arrival data"})
+                res.status(500).json({ message: "Internal server error while inserting pending arrival data" })
             }
 
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
+
+    //get all pending arrival data
+    router.get('/get_all_pending_arrival_data', async (req, res) => {
+        try {
+            const admin_id = req.query.admin_id
+            const result = await pending_arrival_collection.find({admin_id: admin_id}).toArray()
+            res.status(200).json({data: result, message: "Successfully got pending arrival data" })
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
+    
+    //delete a pending arrival data
+    router.delete('/delete_pending_arrival_data', async (req, res) => {
+        try {
+            const id = req.query.id;
+            const result = await pending_arrival_collection.deleteOne({_id: new ObjectId(id)});
+            res.status(200).json({message: "Successfully deleted a pending arrival data" })
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
         }

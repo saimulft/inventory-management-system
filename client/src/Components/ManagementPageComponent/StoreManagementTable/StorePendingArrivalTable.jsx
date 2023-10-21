@@ -1,80 +1,66 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
+import useAuth from "../../../hooks/useAuth";
+import { format } from 'date-fns'
+import Swal from "sweetalert2";
 
 export default function StorePendingArrivalTable() {
+  const [singleData, setSingleData] = useState({})
+  const { user } = useAuth()
   const { isSidebarOpen } = useContext(GlobalContext);
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const data = [
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-  ];
+
+  const { data = [], refetch } = useQuery({
+    queryKey: ['admin_users'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/pending_arrival_api/get_all_pending_arrival_data?admin_id=${user.admin_id}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  })
+
+  const handleDelete = (_id) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`/api/v1/pending_arrival_api/delete_pending_arrival_data?id=${_id}`)
+          .then(res => {
+            console.log(res)
+            if (res.status === 200) {
+              refetch()
+              Swal.fire(
+                'Deleted!',
+                'A pending arrival entry has been deleted.',
+                'success'
+              )
+            }
+          })
+      }
+    })
+  }
 
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">Pending Arrival: 584</h3>
 
       <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Date</th>
@@ -84,48 +70,61 @@ export default function StorePendingArrivalTable() {
               <th>Product Name</th>
               <th>Order ID</th>
               <th>UPIN</th>
+              <th>Unit Price</th>
               <th>Quantity</th>
               <th>Courier</th>
               <th>Supplier Tracking</th>
-              <th>Shipping label</th>
-              <th>Shipping Slip</th>
-              <th>Notes</th>
+              <th>EDA</th>
               <th></th>
             </tr>
           </thead>
           <tbody>
-            {data.map((d, index) => {
+            {data?.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                  <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
                   <th className="font-normal">{d.store_name}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <td>{d.asin_upc_code}</td>
                   <td>{d.code_type}</td>
                   <td>{d.product_name}</td>
-                  <td>{d.order_ID}</td>
-                  <td>{d.UPIN}</td>
+                  <td>{d.order_ID ? d.order_ID : '-'}</td>
+                  <td>{d.upin}</td>
+                  <td>{d.unit_price}</td>
                   <td>{d.quantity}</td>
-                  <td>{d.courier}</td>
-                  <td>{d.supplier_tracking}</td>
-                  <td>{d.shipping_label}</td>
-                  <td>{d.shipping_slip}</td>
-                  <td>{d.notes}</td>
-                  <td
-                    onClick={() =>
-                      document.getElementById("my_modal_2").showModal()
-                    }
-                    className="cursor-pointer "
-                  >
-                    <BiDotsVerticalRounded />
+                  <td>{d.courier ? d.courier : '-'}</td>
+                  <td>{d.supplier_tracking ? d.supplier_tracking : '-'}</td>
+                  <td>{format(new Date(d.eda), 'yyyy/MM/dd')}</td>
+                  <td>
+                    <div className="dropdown dropdown-end">
+                      <label tabIndex={0}>
+                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
+                        <li>
+                          <button onClick={() => {
+                            document.getElementById("my_modal_2").showModal()
+                          }
+                          }>Edit</button>
+                        </li>
+                        <li>
+                          <button onClick={() => handleDelete(d._id)}>Delete</button>
+                        </li>
+                      </ul>
+                    </div>
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+
+        {/* pagination  */}
         <div className="flex justify-between mt-4">
           <p>Showing 1 to 20 of 2,000 entries</p>
           <div className="flex items-center gap-2">
@@ -164,48 +163,48 @@ export default function StorePendingArrivalTable() {
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-bold">Data: </span>
-                <span>2023-06-26</span>
+                <span className="font-bold">Date: </span>
+                <span>{singleData.date && format(new Date(singleData.date), 'yyyy/MM/dd')}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Store Name: </span>
-                <span>SAVE_k544.LLC</span>
+                <span>{singleData.store_name}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">ASIN: </span>
-                <span>BOHFK4522</span>
+                <span>{singleData.asin_upc_code}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Quantity: </span>
-                <span>23</span>
+                <span>{singleData.quantity}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Received Qnt: </span>
-                <span>23</span>
+                <span>{singleData.received_quantity ? singleData.received_quantity : 'null'}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Missing Qnt: </span>
-                <span>23</span>
+                <span>{singleData.missing_quantity ? singleData.missing_quantity : 'null'}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Courier: </span>
-                <span>null</span>
+                <span>{singleData.courier ? singleData.courier : 'null'}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Team Code: </span>
-                <span>SAVE_k544sdwtetr</span>
+                <span>{singleData.team_code ? singleData.team_code : 'null'}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Product Name: </span>
-                <span>demo product name</span>
+                <span>{singleData.product_name}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">EDA: </span>
-                <span>2023-06-26</span>
+                <span>{singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Supplier Tracking: </span>
-                <span>Not Added</span>
+                <span>{singleData.supplier_tracking ? singleData.supplier_tracking : 'Not Added'}</span>
               </p>
             </div>
             <div className="w-1/2 px-4">

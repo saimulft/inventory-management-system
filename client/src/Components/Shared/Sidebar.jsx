@@ -54,109 +54,202 @@ export default function Sidebar() {
             </div>
           </div>
 
-          <NavLink
-            to="/dashboard/home"
-            className={({ isActive }) =>
-              isActive
-                ? `bg-[#8633FF] text-white rounded ps-3 pe-3 ${isSidebarOpen ? "w-56" : ""
-                } py-[10px] border-b border-[#3e3e41] flex items-center gap-2 text-sm rounded-t`
-                : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100  ps-3 ${isSidebarOpen ? "w-56" : ""
-                } pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t`
-            }
-          >
-            <AiOutlinePieChart size={24} />
-            {isSidebarOpen && <p>Dashboard</p>}
-          </NavLink>
+          {
+            user?.role === 'Admin' || user?.role === 'Admin VA' ?
+              <>
+                <NavLink to="/dashboard/home"
+                  className={({ isActive }) =>
+                    isActive
+                      ? `bg-[#8633FF] text-white rounded ps-3 pe-3 ${isSidebarOpen ? "w-56" : ""
+                      } py-[10px] border-b border-[#3e3e41] flex items-center gap-2 text-sm rounded-t`
+                      : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100  ps-3 ${isSidebarOpen ? "w-56" : ""
+                      } pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t`
+                  }
+                >
+                  <AiOutlinePieChart size={24} />
+                  {isSidebarOpen && <p>Dashboard</p>}
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/management"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-            }
-          >
-            <PiWarehouseDuotone size={24} />
-            {isSidebarOpen && <p>Management</p>}
-          </NavLink>
+                <NavLink
+                  to="/dashboard/management"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <PiWarehouseDuotone size={24} />
+                  {isSidebarOpen && <p>Management</p>}
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/all-stores"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-            }
-          >
-            <BsHouseCheck size={24} />
-            {isSidebarOpen && <p>All stores</p>}
-          </NavLink>
+                <NavLink
+                  to="/dashboard/all-stores"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <BsHouseCheck size={24} />
+                  {isSidebarOpen && <p>All stores</p>}
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/add-store"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-            }
-          >
-            <BsPlusCircle size={24} />
-            {isSidebarOpen && <p>Add store</p>}
-          </NavLink>
+                <NavLink
+                  to="/dashboard/add-store"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <BsPlusCircle size={24} />
+                  {isSidebarOpen && <p>Add store</p>}
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/profit-tracker"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-            }
-          >
-            <GiProgression size={24} />
-            {isSidebarOpen && <p>Profit tracker</p>}
-          </NavLink>
+                <NavLink
+                  to="/dashboard/profit-tracker"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <GiProgression size={24} />
+                  {isSidebarOpen && <p>Profit tracker</p>}
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/pending-arrival-from"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-            }
-          >
-            <GoChecklist size={24} />
-            {isSidebarOpen && (
-              <p className="whitespace-nowrap">Pending Arrival Form </p>
-            )}
-          </NavLink>
+                <NavLink
+                  to="/dashboard/pending-arrival-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <GoChecklist size={24} />
+                  {isSidebarOpen && (
+                    <p className="whitespace-nowrap">Pending Arrival Form </p>
+                  )}
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/preparing-request-from"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
-            }
-          >
-            <GoChecklist size={24} />
-            {isSidebarOpen && (
-              <p className="whitespace-nowrap">Preparing Request Form </p>
-            )}
-          </NavLink>
+                <NavLink
+                  to="/dashboard/preparing-request-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <GoChecklist size={24} />
+                  {isSidebarOpen && (
+                    <p className="whitespace-nowrap">Preparing Request Form </p>
+                  )}
+                </NavLink>
 
-          <NavLink
-            to="/dashboard/add-ASIN-UPC-from"
-            className={({ isActive }) =>
-              isActive
-                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
-                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
-            }
-          >
-            <GoChecklist size={24} />
-            {isSidebarOpen && (
-              <p className="whitespace-nowrap">Add ASIN/UPC Form </p>
-            )}
-          </NavLink>
+                <NavLink
+                  to="/dashboard/add-ASIN-UPC-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
+                  }
+                >
+                  <GoChecklist size={24} />
+                  {isSidebarOpen && (
+                    <p className="whitespace-nowrap">Add ASIN/UPC Form </p>
+                  )}
+                </NavLink>
+              </> : ''
+          }
+
+          {
+            user?.role === 'Store Owner' &&
+            <NavLink
+              to="/dashboard/profit-tracker"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+              }
+            >
+              <GiProgression size={24} />
+              {isSidebarOpen && <p>Profit tracker</p>}
+            </NavLink>
+          }
+
+          {
+            user?.role === 'Store Manager Admin' || user?.role === 'Store Manager VA' ?
+              <>
+                <NavLink
+                  to="/dashboard/management"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <PiWarehouseDuotone size={24} />
+                  {isSidebarOpen && <p>Management</p>}
+                </NavLink>
+
+                <NavLink
+                  to="/dashboard/pending-arrival-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <GoChecklist size={24} />
+                  {isSidebarOpen && (
+                    <p className="whitespace-nowrap">Pending Arrival Form </p>
+                  )}
+                </NavLink>
+
+                <NavLink
+                  to="/dashboard/preparing-request-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <GoChecklist size={24} />
+                  {isSidebarOpen && (
+                    <p className="whitespace-nowrap">Preparing Request Form </p>
+                  )}
+                </NavLink>
+
+                <NavLink
+                  to="/dashboard/add-ASIN-UPC-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
+                  }
+                >
+                  <GoChecklist size={24} />
+                  {isSidebarOpen && (
+                    <p className="whitespace-nowrap">Add ASIN/UPC Form </p>
+                  )}
+                </NavLink>
+              </> : ''
+          }
+
+          {
+            user?.role === 'Warehouse Admin' || user?.role === 'Warehouse Manager VA' ?
+              <NavLink
+                to="/dashboard/management"
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                    : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                }
+              >
+                <PiWarehouseDuotone size={24} />
+                {isSidebarOpen && <p>Management</p>}
+              </NavLink> : ''
+          }
         </div>
 
         {/* bottom part of the slider  */}
