@@ -75,8 +75,6 @@ const run = async () => {
     //   get asin or upc by email
     router.get('/get_asin_upc_by_email', async (req, res) => {
         const creator_email = req.query.email;
-        const search = req.query.search;
-        // console.log(search);
 
         try {
             const asinUpcData = await asin_upc_collection.find({ creator_email: creator_email }).toArray()

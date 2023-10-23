@@ -189,7 +189,7 @@ const PreparingFormPage = () => {
                   <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />
                 </div>
 
-                <div className="mt-1">
+                <div className="mt-[5px]">
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
@@ -292,7 +292,7 @@ const PreparingFormPage = () => {
                     <option value="Alibaba">Alibaba</option>
                   </select>
                 </div>
-                <div className="mt-1">
+                <div className="mt-4">
                   <label className="text-slate-500">Code type</label>
                   <select
                     className="select select-primary w-full mt-2 shadow-lg"

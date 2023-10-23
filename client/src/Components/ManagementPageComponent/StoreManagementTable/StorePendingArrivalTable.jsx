@@ -206,7 +206,7 @@ export default function StorePendingArrivalTable() {
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">EDA: </label>
                 <input type={isEditable ? 'date' : 'text'} defaultValue={singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[191px] py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[161px] py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">Supplier Tracking: </label>
