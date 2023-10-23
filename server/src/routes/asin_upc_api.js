@@ -70,40 +70,29 @@ const run = async () => {
 
 
     })
+    
 
-    // get all asin or upc
-    // router.get('/get_asin_upc', async (req, res) => {
-
-    //     try {
-    //         const result = await asin_upc_collection.find({}).toArray()
-    //         if (result.length) {
-    //             res.status(200).json({ message: "successfully get all asin_upc" })
-    //         }
-    //         else {
-    //             res.status(500).json({ message: "Error to geting asin_upc" })
-    //         }
-    //     } catch (error) {
-    //         res.status(500).json({ message: 'SInternal Server Error' });
-    //     }
-    // })
-
-
-    //   get asin or upc by id
     router.get('/get_asin_upc_by_email', async (req, res) => {
-        const creator_email = req.query.email
+        const creator_email = req.query.email;
+        const search = req.query.search;
+        // console.log(search);
+
         try {
-            const result = await asin_upc_collection.find({ creator_email: creator_email }).toArray()
+            // Use a regular expression to perform a case-insensitive search
+            const regex = new RegExp(search, 'i');
+            const query = { creator_email: creator_email }
+            const queryWithSearch = { creator_email: creator_email, asin_upc_code: { $regex: regex } };
+
+            const result = await asin_upc_collection.find(search ? queryWithSearch : query).toArray();
             if (result.length) {
-                res.status(200).json({ data: result, message: "successfully get asin_upc" })
-            }
-            else {
-                res.status(500).json({ message: "Error to geting  asin_upc" })
+                res.status(200).json({ data: result, message: "Successfully get asin_upc" });
+            } else {
+                res.status(500).json({ message: "No matching asin_upc found" });
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in asin_upc' });
         }
-    })
-
+    });
 }
 run()
 

@@ -5,6 +5,7 @@ import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../Components/Shared/ToastMessage";
+import { MdArrowDropDown } from "react-icons/md";
 const PreparingFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
@@ -17,17 +18,25 @@ const PreparingFormPage = () => {
   const [shippingImageError, setShippingImageError] = useState('')
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [asinUpcOption, setAsinUpcOption] = useState(null)
   const { user } = useAuth()
 
+  const [openAsinUpcDropdown, setOpenAsinUpcDropdown] = useState(false)
+  const [asinUpc, setAsinUpc] = useState('')
+  const [asinUpcData, setAsinUpcData] = useState([])
+  const [openStoreDropdown, setOpenStoreDropdown] = useState(false)
+  const [store, setStore] = useState('')
+
   useEffect(() => {
-    axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
+    axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user.email}&search=${asinUpc}`)
       .then(res => {
         if (res.status === 200) {
-          setAsinUpcOption(res.data.data)
+          setAsinUpcData(res.data.data)
         }
-      }).catch(err => console.log(err))
-  }, [user?.email])
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }, [asinUpc, user.email])
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -183,22 +192,31 @@ const PreparingFormPage = () => {
                   />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 relative">
+                  <span onClick={() => setOpenAsinUpcDropdown(!openAsinUpcDropdown)} className="absolute right-[15px] bottom-[15px] cursor-pointer"><MdArrowDropDown /></span>
+                  {
+                    openAsinUpcDropdown && <div style={boxShadowStyle} className="absolute top-full left-0 right-0 w-full min-h-fit max-h-[300px] bg-white z-10 border border-gray-500 overflow-y-auto rounded-t shadow-xl">
+                      <p className="block px-4 py-1 hover:bg-gray-100 text-sm">Select ASIN or UPC</p>
+                      {
+                        asinUpcData?.map(singleData => <p key={singleData._id} onClick={() => {
+                          setAsinUpc(singleData.asin_upc_code)
+                          setOpenAsinUpcDropdown(false)
+                        }} className="block px-4 py-1 hover:bg-gray-100 cursor-pointer text-sm">{singleData.asin_upc_code}</p>)
+                      }
+                    </div>
+                  }
+
                   <label className="text-slate-500">ASIN/UPC</label>
-                  <select
-
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="code"
+                  <input
+                    onClick={() => setOpenAsinUpcDropdown(true)}
+                    onChange={(e) => setAsinUpc(e.target.value)}
+                    type="text"
+                    value={asinUpc}
+                    placeholder="Select ASIN or UPC"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="code"
-                  >
-                    <option defaultValue="Select ASIN or UPC">Select ASIN or UPC</option>
-                    {asinUpcOption?.map((asin, index) =>
-                      <>
-                        <option key={index} value={asin.asin_upc_code}>{asin.asin_upc_code}</option>
-                      </>
-
-                    )}
-                  </select>
+                    name="code"
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -289,20 +307,31 @@ const PreparingFormPage = () => {
               </div>
 
               <div className="w-full">
-                <div>
-                  <label className="text-slate-500">Store name</label>
-                  <select
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="storeName"
+                <div className="relative">
+                  <span onClick={() => setOpenStoreDropdown(!openStoreDropdown)} className="absolute right-[15px] bottom-[15px] cursor-pointer"><MdArrowDropDown /></span>
+                  {
+                    openStoreDropdown && <div style={boxShadowStyle} className="absolute top-full left-0 right-0 w-full min-h-fit max-h-[300px] bg-white z-10 border border-gray-500 overflow-y-auto rounded-t shadow-xl">
+                      <p className="block px-4 py-1 hover:bg-gray-100 text-sm">Pick Store Name</p>
+                      {
+                        asinUpcData?.map(singleData => <p key={singleData._id} onClick={() => {
+                          setStore(singleData.asin_upc_code)
+                          setOpenStoreDropdown(false)
+                        }} className="block px-4 py-1 hover:bg-gray-100 cursor-pointer text-sm">{singleData.asin_upc_code}</p>)
+                      }
+                    </div>
+                  }
+
+                  <label className="text-slate-500">Store Name*</label>
+                  <input
+                    onClick={() => setOpenStoreDropdown(true)}
+                    onChange={(e) => setStore(e.target.value)}
+                    type="text"
+                    value={store}
+                    placeholder="Pick Store Name"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="storeName"
-                  >
-                    <option defaultValue="Pick Store Name">
-                      Pick Store Name
-                    </option>
-                    <option value="Amazon">Amazon</option>
-                    <option value="Daraz">Daraz</option>
-                    <option value="Alibaba">Alibaba</option>
-                  </select>
+                    name="storeName"
+                  />
                 </div>
                 <div className="mt-4">
                   <label className="text-slate-500">Code type</label>
