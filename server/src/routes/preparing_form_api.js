@@ -35,7 +35,7 @@ const run = async () => {
         fileFilter,
     });
 
-    // asin_upc_file_upload API
+    // preparing form insersation
     router.post('/preparing_form_insert', upload.array("file", 2), async (req, res) => {
         try {
             const uploadedFiles = req.files;
@@ -70,7 +70,7 @@ const run = async () => {
                 tracking_number: req.body.trackingNumber ? req.body.trackingNumber : null,
                 invoice_file: invoiceFileName,
                 shipping_file: shippingFilename,
-                no0tes: null,
+                notes: req.body.notes ? req.body.notes : null,
                 warehouse: req.body.warehouse,
             };
 
@@ -87,6 +87,53 @@ const run = async () => {
     });
 
 
+    // preparing form update
+    router.put('/preparing_form_update', upload.array("file", 2), async (req, res) => {
+        try {
+            const id = req.body.id
+            const existData = await preparing_form_collection.findOne({ _id: new ObjectId(id) })
+
+            const uploadedFiles = req.files;
+            let shippingFilename = existData.shipping_file
+            let invoiceFileName = existData.invoice_file
+            const filenames = uploadedFiles.map((file) => file.filename);
+
+            if (uploadedFiles.length === 2) {
+                invoiceFileName = filenames[0]
+                shippingFilename = filenames[1]
+            }
+            if (uploadedFiles.length === 1) {
+                if (uploadedFiles[0].originalname.startsWith("invoice")) {
+                    invoiceFileName = filenames[0]
+                }
+                else {
+                    shippingFilename = filenames[0]
+                }
+            }
+            const UpdateData = {
+
+                courier: req.body.courier === "Select courier" ? existData.courier : req.body.courier,
+                tracking_number: req.body.trackingNumber ? req.body.trackingNumber : existData.tracking_number,
+                invoice_file: invoiceFileName,
+                shipping_file: shippingFilename,
+                notes: req.body.notes ? req.body.notes : existData.notes,
+            };
+
+            const result = await preparing_form_collection.updateOne({ _id: new ObjectId(id) }, { $set: UpdateData })
+
+            if (result.modifiedCount) {
+                res.status(200).json({ message: "Preparing form updated" })
+            }
+            else {
+                res.status(500).json({ message: "Error to Preparing form " });
+            }
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "Multer error" });
+        }
+    });
+
+
     // get all preparing request data
 
     router.get('/get_all_preparing_request_data', async (req, res) => {
@@ -94,6 +141,7 @@ const run = async () => {
             const data = await preparing_form_collection.find({}).toArray()
             if (data.length) {
                 res.status(200).json({ data: data })
+
             }
             else {
                 res.status(401).json({ message: "Data not found" })

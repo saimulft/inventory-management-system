@@ -30,7 +30,7 @@ const PreparingFormPage = () => {
         }
       }).catch(err => console.log(err))
   }, [user?.email])
-  console.log(asinUpcOption)
+
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -111,9 +111,7 @@ const PreparingFormPage = () => {
           )
           form.reset()
           setInvoiceImageFile(null)
-          setInvoiceImageSrc(null)
           setShippingImageFile(null)
-          setShippingImageSrc(null)
           setLoading(false)
         }
         else {
