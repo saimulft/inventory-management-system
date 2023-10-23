@@ -20,7 +20,7 @@ export default function SettingsPage() {
           <Link to="/dashboard/settings/profile">
             <button
               onClick={() => setIsActiveSetting("profile")}
-              className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-s ${isActiveSetting == "profile" && "bg-[#8633FF] text-white"
+              className={`border border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-s ${isActiveSetting == "profile" && "bg-[#8633FF] text-white"
                 }`}
             >
               Profile
@@ -32,7 +32,7 @@ export default function SettingsPage() {
               <Link to="/dashboard/settings/add-users">
                 <button
                   onClick={() => setIsActiveSetting("add-users")}
-                  className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "add-users" && "bg-[#8633FF] text-white"
+                  className={`border border-l-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "add-users" && "bg-[#8633FF] text-white"
                     }`}
                 >
                   Add Users
@@ -45,7 +45,7 @@ export default function SettingsPage() {
               <Link to="/dashboard/settings/all-users">
                 <button
                   onClick={() => setIsActiveSetting("all-users")}
-                  className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "all-users" && "bg-[#8633FF] text-white"
+                  className={`border border-l-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "all-users" && "bg-[#8633FF] text-white"
                     }`}
                 >
                   All Users
@@ -82,7 +82,7 @@ export default function SettingsPage() {
               <Link to="/dashboard/settings/billing-subscription">
                 <button
                   onClick={() => setIsActiveSetting("billing-subscription")}
-                  className={`border  border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-e ${isActiveSetting == "billing-subscription" &&
+                  className={`border border-l-0  border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-e ${isActiveSetting == "billing-subscription" &&
                     "bg-[#8633FF] text-white"
                     }`}
                 >

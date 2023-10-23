@@ -1,18 +1,29 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from "react-icons/md";
 import Swal from "sweetalert2";
+import AsinSearchDropdown from "../Utilities/AsinSearchDropdown";
 
 const ArrivalFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
-
   const { user } = useAuth();
   const [inputError, setInputError] = useState('')
+  const [asinUpcOption, setAsinUpcOption] = useState(null)
+  const [asinUpcData, setAsinUpcData] = useState([])
+
+  useEffect(() => {
+    axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
+      .then(res => {
+        if (res.status === 200) {
+          setAsinUpcData(res.data.data)
+        }
+      }).catch(err => console.log(err))
+  }, [user?.email])
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -123,18 +134,10 @@ const ArrivalFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">ASIN/UPC</label>
-                  <select
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="code"
-                    id="code"
-                  >
-                    <option defaultValue="Select ASIN or UPC">Select ASIN or UPC</option>
-                    <option value="Test-1">Test-1</option>
-                    <option value="Test-2">Test-2</option>
-                  </select>
+                  <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-[5px]">
                   <label className="text-slate-500">Supplier ID</label>
                   <input
                     type="text"
@@ -170,18 +173,21 @@ const ArrivalFormPage = () => {
 
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">Store name*</label>
+                  <label className="text-slate-500">Store name</label>
                   <select
                     className="select select-primary w-full mt-2 shadow-lg"
                     name="storeName"
                     id="storeName"
                   >
-                    <option defaultValue="Pick Store Name">Pick Store Name</option>
+                    <option defaultValue="Pick Store Name">
+                      Pick Store Name
+                    </option>
                     <option value="Amazon">Amazon</option>
                     <option value="Daraz">Daraz</option>
                     <option value="Alibaba">Alibaba</option>
                   </select>
                 </div>
+
                 <div className="mt-4">
                   <label className="text-slate-500">Code type</label>
                   <select

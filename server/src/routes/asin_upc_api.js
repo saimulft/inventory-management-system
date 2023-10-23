@@ -70,11 +70,12 @@ const run = async () => {
 
 
     })
+    
 
-
-    //   get asin or upc by id
+    //   get asin or upc by email
     router.get('/get_asin_upc_by_email', async (req, res) => {
-        const creator_email = req.query.email
+        const creator_email = req.query.email;
+
         try {
             const asinUpcData = await asin_upc_collection.find({ creator_email: creator_email }).toArray()
             if (asinUpcData.length) {
@@ -90,8 +91,7 @@ const run = async () => {
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in asin_upc' });
         }
-    })
-
+    });
 }
 run()
 

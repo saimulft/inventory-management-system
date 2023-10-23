@@ -1,4 +1,3 @@
-
 import { Dropdown } from 'semantic-ui-react'
 import 'semantic-ui-css/semantic.min.css';
 
@@ -9,21 +8,17 @@ const AsinSearchDropdown = ({ setAsinUpcOption, asinUpcOption, asinUpcData }) =>
     };
 
     return (
-
         <Dropdown
-
             className='custom_css_sui'
             clearable
             fluid
             search
             selection
             options={asinUpcData}
-            placeholder='Select Country'
+            placeholder='Select ASIN or UPC'
             value={asinUpcOption}
             onChange={handleDropdownChange}
-
         />
-
     )
 }
 

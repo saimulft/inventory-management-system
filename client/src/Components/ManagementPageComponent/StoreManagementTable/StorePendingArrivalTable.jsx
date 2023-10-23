@@ -10,6 +10,7 @@ import Swal from "sweetalert2";
 
 export default function StorePendingArrivalTable() {
   const [singleData, setSingleData] = useState({})
+  const [isEditable, setIsEditable] = useState(false)
   const { user } = useAuth()
   const { isSidebarOpen } = useContext(GlobalContext);
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
@@ -155,59 +156,65 @@ export default function StorePendingArrivalTable() {
 
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft }} className="modal-box py-10 px-10">
-          <div className="flex">
+        <div style={{ marginLeft, maxWidth: '750px'}} className="modal-box py-10 px-10">
+          <div className="flex gap-5">
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
-                <BiSolidEdit size={24} />
+                {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
-              <p className="mt-2">
-                <span className="font-bold">Date: </span>
-                <span>{singleData.date && format(new Date(singleData.date), 'yyyy/MM/dd')}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Store Name: </span>
-                <span>{singleData.store_name}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">ASIN: </span>
-                <span>{singleData.asin_upc_code}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Quantity: </span>
-                <span>{singleData.quantity}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Received Qnt: </span>
-                <span>{singleData.received_quantity ? singleData.received_quantity : 'null'}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Missing Qnt: </span>
-                <span>{singleData.missing_quantity ? singleData.missing_quantity : 'null'}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Courier: </span>
-                <span>{singleData.courier ? singleData.courier : 'null'}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Team Code: </span>
-                <span>{singleData.team_code ? singleData.team_code : 'null'}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Product Name: </span>
-                <span>{singleData.product_name}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">EDA: </span>
-                <span>{singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Supplier Tracking: </span>
-                <span>{singleData.supplier_tracking ? singleData.supplier_tracking : 'Not Added'}</span>
-              </p>
+              <div className="flex items-center">
+                <label className="font-bold">Date: </label>
+                <input type='text' value={singleData.date && format(new Date(singleData.date), 'yyyy/MM/dd')}
+                  className="outline-none w-[191px] py-1 pl-2 rounded" id="date" name="date" readOnly />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">Store Name: </label>
+                <input type="text" defaultValue={singleData.store_name}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">ASIN: </label>
+                <input type="text" defaultValue={singleData.asin_upc_code}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">Quantity: </label>
+                <input type="text" defaultValue={singleData.quantity}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">Received Qnt: </label>
+                <input type="text" defaultValue={singleData.received_quantity ? singleData.received_quantity : 'null'}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">Missing Qnt: </label>
+                <input type="text" defaultValue={singleData.missing_quantity ? singleData.missing_quantity : 'null'}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">Courier: </label>
+                <input type="text" defaultValue={singleData.courier ? singleData.courier : 'null'}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">Team Code: </label>
+                <input type="text" defaultValue={singleData.team_code ? singleData.team_code : 'null'}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">EDA: </label>
+                <input type={isEditable ? 'date' : 'text'} defaultValue={singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[161px] py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold">Supplier Tracking: </label>
+                <input type="text" defaultValue={singleData.supplier_tracking ? singleData.supplier_tracking : 'Not Added'}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
             </div>
-            <div className="w-1/2 px-4">
+            <div className="w-1/2">
               <h3 className="text-2xl font-medium mb-6">Update</h3>
               <form>
                 <div className="flex flex-col mt-2">
@@ -226,7 +233,7 @@ export default function StorePendingArrivalTable() {
                   </select>
                 </div>
                 <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">Supplier Tracking</label>
+                  <label className="font-bold mb-1">Supplier Tracking</label>
                   <input
                     type="text"
                     placeholder="Supplier Tracking"
