@@ -5,6 +5,7 @@ import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../Components/Shared/ToastMessage";
+import AsinSearchDropdown from "../Utilities/AsinSearchDropdown";
 const PreparingFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
@@ -18,17 +19,18 @@ const PreparingFormPage = () => {
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
   const [asinUpcOption, setAsinUpcOption] = useState(null)
+  const [asinUpcData, setAsinUpcData] = useState([])
   const { user } = useAuth()
 
   useEffect(() => {
     axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
       .then(res => {
         if (res.status === 200) {
-          setAsinUpcOption(res.data.data)
+          setAsinUpcData(res.data.data)
         }
       }).catch(err => console.log(err))
   }, [user?.email])
-
+  console.log(asinUpcOption)
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -42,7 +44,6 @@ const PreparingFormPage = () => {
     event.preventDefault()
     const form = event.target
     const date = new Date(form.date.value).toISOString()
-    const code = form.code.value
     const productName = form.productName.value
     const orderID = form.orderID.value
     const courier = form.courier.value
@@ -52,8 +53,8 @@ const PreparingFormPage = () => {
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value
-
-    if (code === 'Select ASIN or UPC' || !code) {
+    console.log(asinUpcOption)
+    if (!asinUpcOption) {
       setFormError("Missing ASIN or UPC")
       return
     }
@@ -70,14 +71,14 @@ const PreparingFormPage = () => {
       setFormError("Missing code type")
       return
     }
-    if (!date || !code || !orderID || !productName || !storeName || !codeType || !upin || !quantity) {
+    if (!date || !asinUpcOption || !orderID || !productName || !storeName || !codeType || !upin || !quantity) {
       setFormError("Missing form field detected")
       return;
     }
 
     const formData = new FormData()
     let preparingFormvalue = {
-      adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, warehouse
+      adminId: user?.admin_id, creatorEmail: user?.email, date, code: asinUpcOption, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, warehouse
     }
     for (const key in preparingFormvalue) {
       formData.append(key, preparingFormvalue[key]);
@@ -185,23 +186,10 @@ const PreparingFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">ASIN/UPC</label>
-                  <select
-
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="code"
-                    id="code"
-                  >
-                    <option defaultValue="Select ASIN or UPC">Select ASIN or UPC</option>
-                    {asinUpcOption?.map((asin, index) =>
-                      <>
-                        <option key={index} value={asin.asin_upc_code}>{asin.asin_upc_code}</option>
-                      </>
-
-                    )}
-                  </select>
+                  <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-1">
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
@@ -304,7 +292,7 @@ const PreparingFormPage = () => {
                     <option value="Alibaba">Alibaba</option>
                   </select>
                 </div>
-                <div className="mt-4">
+                <div className="mt-1">
                   <label className="text-slate-500">Code type</label>
                   <select
                     className="select select-primary w-full mt-2 shadow-lg"
