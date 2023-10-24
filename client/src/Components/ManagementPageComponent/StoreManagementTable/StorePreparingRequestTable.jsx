@@ -30,24 +30,37 @@ export default function StorePreparingRequestTable() {
   const { user } = useAuth()
   const [asinUpcOption, setAsinUpcOption] = useState('')
   const [asinUpcData, setAsinUpcData] = useState([])
+  // const [preparingRequestData, setPreparingRequestData] = useState([])
+  // const [refetch, setRefetch] = useState(false)
+
   const { data: preparingRequestData = [], refetch } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
+        console.log("hello")
         const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
         if (res.status === 200) {
           return res.data.data;
         }
-
-        return [];
       } catch (error) {
         console.log(error);
-        return [];
+
       }
     }
   })
 
+  // useEffect(() => {
+  //   console.log("hello")
+  //   axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         setPreparingRequestData(res.data.data)
+  //       }
+  //     })
+  // }, [refetch])
+
   useEffect(() => {
+
     axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
       .then(res => {
         if (res.status === 200) {
@@ -81,6 +94,8 @@ export default function StorePreparingRequestTable() {
                 'Data has been deleted.',
                 'success'
               )
+
+              // setRefetch(!refetch)
               refetch()
             }
           }).catch(err => console.log(err))

@@ -42,7 +42,6 @@ const run = async () => {
             let shippingFilename = null
             let invoiceFileName = null
             const filenames = uploadedFiles.map((file) => file.filename);
-            console.log(filenames)
             if (uploadedFiles.length === 2) {
                 invoiceFileName = filenames[0]
                 shippingFilename = filenames[1]
@@ -148,6 +147,7 @@ const run = async () => {
                 res.status(200).json({ data: data })
 
             }
+           
 
         } catch (error) {
             res.status(500).json({ message: "get_all_preparing_request_data error" })

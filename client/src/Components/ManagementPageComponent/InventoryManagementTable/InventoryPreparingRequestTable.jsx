@@ -4,10 +4,13 @@ import axios from "axios";
 import { format } from "date-fns"
 import { useQuery } from "@tanstack/react-query";
 import { LiaShippingFastSolid } from "react-icons/lia";
+import Swal from "sweetalert2";
+import { useState } from "react";
 
 export default function StorePreparingRequestTable() {
+  // const [RTSdata ,setRTSdata] = useState({})
 
-  const { data: preparingRequestData = [] } = useQuery({
+  const { data: preparingRequestData = [],refetch } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
@@ -25,9 +28,62 @@ export default function StorePreparingRequestTable() {
   })
 
   const data = preparingRequestData
-   const handleRTS = ()=>{
-    console.log('hello')
-   }
+  const handleRTS = (RTSdata) => {
+    console.log(RTSdata)
+    
+    Swal.fire({
+      title: 'Confirm ready to ship?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post(`/api/v1/ready_to_ship_api/ready_to_ship`, RTSdata)
+          .then(res => {
+            if (res.status === 201) {
+              Swal.fire(
+                'Shipped!',
+                'Product has been Shipped.',
+                'success'
+              )
+                refetch()
+            }
+          }).catch(err => console.log(err))
+
+
+
+      }
+    })
+  }
+  const handleOOS = () => {
+    Swal.fire({
+      title: 'Confirm out of stock?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post(`/api/v1/preparing_form_api/delete_preparing_request_data`,)
+          .then(res => {
+            if (res.status === 200) {
+              Swal.fire(
+                'Added to stock!',
+                'Product has been Added to stock.',
+                'success'
+              )
+
+            }
+          }).catch(err => console.log(err))
+
+
+
+      }
+    })
+  }
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
@@ -86,13 +142,16 @@ export default function StorePreparingRequestTable() {
                   <td>{d.notes}</td>
                   <td className="flex gap-2">
 
-                    <button onClick={handleRTS} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
+                    <button onClick={() => {
+                      handleRTS(d)
+                     
+                    }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                       <LiaShippingFastSolid />
                       <p>RTS</p>
                     </button>
 
 
-                    <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
+                    <button onClick={handleOOS} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                       <LiaShippingFastSolid />
                       <p>OOS</p>
                     </button>

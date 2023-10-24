@@ -1,68 +1,95 @@
+
 import { AiOutlineSearch } from "react-icons/ai";
+import axios from "axios";
+import { format } from "date-fns"
+import { useQuery } from "@tanstack/react-query";
+import { LiaShippingFastSolid } from "react-icons/lia";
+import Swal from "sweetalert2";
 import { FiCheckCircle } from "react-icons/fi";
 
-import { LiaGreaterThanSolid } from "react-icons/lia";
-import { Link } from "react-router-dom";
 
-export default function InventoryReadyToShipTable() {
-  const data = [
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-  ];
+export default function StorePreparingRequestTable() {
+  // const [RTSdata ,setRTSdata] = useState({})
 
+  const { data: preparingRequestData = [],refetch } = useQuery({
+    queryKey: ['preparing_request_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/api/v1/ready_to_ship_api/get_all_RTS_data')
+        if (res.status === 200) {
+          return res.data.data;
+        }
+
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
+  const data = preparingRequestData
+  const handleRTS = (RTSdata) => {
+    console.log(RTSdata)
+    
+    Swal.fire({
+      title: 'Confirm ready to ship?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post(`/api/v1/ready_to_ship_api/ready_to_ship`, RTSdata)
+          .then(res => {
+            if (res.status === 201) {
+              Swal.fire(
+                'Shipped!',
+                'Product has been Shipped.',
+                'success'
+              )
+                refetch()
+            }
+          }).catch(err => console.log(err))
+
+
+
+      }
+    })
+  }
+  const handleOOS = () => {
+    Swal.fire({
+      title: 'Confirm out of stock?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post(`/api/v1/preparing_form_api/delete_preparing_request_data`,)
+          .then(res => {
+            if (res.status === 200) {
+              Swal.fire(
+                'Added to stock!',
+                'Product has been Added to stock.',
+                'success'
+              )
+
+            }
+          }).catch(err => console.log(err))
+
+
+
+      }
+    })
+  }
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">Ready To Ship: 3,452</h3>
+      <h3 className="text-center text-2xl font-medium">
+       Ready to ship : {preparingRequestData?.length}
+      </h3>
       <div className="relative flex justify-end">
         <input
           className="border bg-white shadow-md border-[#8633FF] outline-none w-1/4 cursor-pointer  py-2 rounded-md px-2 text-sm"
@@ -74,8 +101,8 @@ export default function InventoryReadyToShipTable() {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+      <div className="overflow-x-auto overflow-y-auto mt-8">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Date</th>
@@ -83,72 +110,51 @@ export default function InventoryReadyToShipTable() {
               <th>ASIN/UPC</th>
               <th>Code Type</th>
               <th>Product Name</th>
+              <th>Order ID</th>
               <th>UPIN</th>
               <th>Quantity</th>
               <th>Courier</th>
               <th>Supplier Tracking</th>
-              <th>Order ID</th>
-              <th>Shipping label</th>
-              <th>Status </th>
+              <th>Invoice level</th>
+              <th>Shipping level</th>
+              <th>Notes</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
             {data.map((d, index) => {
               return (
                 <tr
-                  className={`${index % 2 == 1 && "bg-gray-200"}`}
+                  className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                  <th>{format(new Date(d.date), "y/MM/d")}</th>
                   <th className="font-normal">{d.store_name}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <td>{d.code}</td>
                   <td>{d.code_type}</td>
                   <td>{d.product_name}</td>
-                  <td>{d.UPIN}</td>
+                  <td>{d.order_id}</td>
+                  <td>{d.upin}</td>
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
-                  <td>{d.supplier_tracking}</td>
-                  <td>{d.order_ID}</td>
-                  <td className="cursor-pointer text-[#8633FF]">Click</td>
-                  <td>
-                    <Link to="/dashboard/management/inventory/shipped">
-                      <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
+                  <td>{d.tracking_number}</td>
+                  <td>{d.invoice_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.notes}</td>
+                  <td className="flex gap-2">
+
+                  <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
                         <FiCheckCircle />
                         <p>Complete Shipment</p>
                       </button>
-                    </Link>
+
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-        <div className="flex justify-between mt-4">
-          <p>Showing 1 to 20 of 2,000 entries</p>
-          <div className="flex items-center gap-2">
-            <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              1
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              2
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              ...
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              9
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              10
-            </div>
-            <div className="border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
   );
