@@ -57,8 +57,11 @@ export default function StorePreparingRequestTable() {
   }, [user?.email])
 
   const data = preparingRequestData
-  const handleDelete = (_id) => {
+  const handleDelete = (_id, invoice_file, shipping_file) => {
 
+    const deleteData = {
+      id: _id, invoice_file, shipping_file
+    }
 
     Swal.fire({
       title: 'Are you sure?',
@@ -70,7 +73,7 @@ export default function StorePreparingRequestTable() {
       confirmButtonText: 'Delete'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data?id=${_id}`)
+        axios.post(`/api/v1/preparing_form_api/delete_preparing_request_data`, deleteData)
           .then(res => {
             if (res.status === 200) {
               Swal.fire(
@@ -232,8 +235,9 @@ export default function StorePreparingRequestTable() {
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
-                  <td>{d.invoice_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
-                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.invoice_file && <a download href={`http://localhost:5000/uploads/${d.invoice_file}`} className="cursor-pointer p-1 hover:text-white bg-[#8633FF] w-full rounded text-white font-medium">Download</a>}</td>
+
+                  <td>{d.shipping_file && <a download href="./pdf logo.png" className="cursor-pointer p-1 hover:text-white bg-[#8633FF] w-full rounded text-white font-medium">Download</a>}</td>
                   <td>{d.notes}</td>
                   <td>
                     <div className="dropdown dropdown-end">
@@ -256,7 +260,7 @@ export default function StorePreparingRequestTable() {
                           }>Edit</button>
                         </li>
                         <li>
-                          <button onClick={() => handleDelete(d._id)}>Delete</button>
+                          <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
                         </li>
                       </ul>
                     </div>

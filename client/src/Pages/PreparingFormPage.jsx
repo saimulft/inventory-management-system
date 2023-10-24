@@ -115,6 +115,8 @@ const PreparingFormPage = () => {
           form.reset()
           setInvoiceImageFile(null)
           setShippingImageFile(null)
+          setInvoiceImageSrc(null)
+          setShippingImageSrc(null)
           setLoading(false)
         }
         else {

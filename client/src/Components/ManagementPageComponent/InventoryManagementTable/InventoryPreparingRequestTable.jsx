@@ -25,7 +25,9 @@ export default function StorePreparingRequestTable() {
   })
 
   const data = preparingRequestData
-
+   const handleRTS = ()=>{
+    console.log('hello')
+   }
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
@@ -83,18 +85,18 @@ export default function StorePreparingRequestTable() {
                   <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
                   <td>{d.notes}</td>
                   <td className="flex gap-2">
-                    <button >
-                      <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
-                        <LiaShippingFastSolid />
-                        <p>RTS</p>
-                      </button>
+
+                    <button onClick={handleRTS} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
+                      <LiaShippingFastSolid />
+                      <p>RTS</p>
                     </button>
-                    <button>
-                      <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
-                        <LiaShippingFastSolid />
-                        <p>OOS</p>
-                      </button>
+
+
+                    <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
+                      <LiaShippingFastSolid />
+                      <p>OOS</p>
                     </button>
+
                   </td>
                 </tr>
               );
