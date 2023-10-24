@@ -156,7 +156,7 @@ export default function StorePendingArrivalTable() {
 
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px'}} className="modal-box py-10 px-10">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
           <div className="flex gap-5">
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">

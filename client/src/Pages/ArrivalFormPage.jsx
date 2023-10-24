@@ -44,7 +44,6 @@ const ArrivalFormPage = () => {
 
     const form = event.target;
     const date = form.date.value;
-    const asinUpc = form.code.value;
     const storeName = form.storeName.value;
     const supplierId = form.supplierId.value;
     const upin = form.upin.value;
@@ -59,7 +58,7 @@ const ArrivalFormPage = () => {
       setInputError('Select a store name')
       return;
     }
-    if (asinUpc === "Select ASIN or UPC" || !asinUpc) {
+    if (!asinUpcOption) {
       setInputError('Select ASIN or UPC')
       return;
     }
@@ -71,7 +70,7 @@ const ArrivalFormPage = () => {
       setInputError('Select a warehouse')
       return;
     }
-    if (!date || !asinUpc || !storeName || !supplierId || !upin || !unitPrice || !codeType || !productName || !quantity || !eda || !warehouse) {
+    if (!date || !storeName || !supplierId || !upin || !unitPrice || !codeType || !productName || !quantity || !eda || !warehouse) {
       setInputError('Please fill out all the inputs in order to submit the form')
       return;
     }
@@ -82,7 +81,7 @@ const ArrivalFormPage = () => {
       date: isoDate,
       creator_email: user?.email,
       store_name: storeName,
-      asin_upc_code: asinUpc,
+      asin_upc_code: asinUpcOption,
       code_type: codeType,
       supplier_id: supplierId,
       product_name: productName,

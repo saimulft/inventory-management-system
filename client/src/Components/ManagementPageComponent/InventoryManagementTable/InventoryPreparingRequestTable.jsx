@@ -1,79 +1,35 @@
-import { useContext } from "react";
+
 import { AiOutlineSearch } from "react-icons/ai";
+import axios from "axios";
+import { format } from "date-fns"
+import { useQuery } from "@tanstack/react-query";
+import { LiaShippingFastSolid } from "react-icons/lia";
 
-import { LiaGreaterThanSolid, LiaShippingFastSolid } from "react-icons/lia";
-import { Link } from "react-router-dom";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
+export default function StorePreparingRequestTable() {
 
-export default function InventoryPreparingRequestTable() {
-  const { isSidebarOpen } = useContext(GlobalContext);
-  const data = [
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "-",
-      supplier_tracking: "-",
-      shipping_label: "Not Added",
-      shipping_slip: "Not Added",
-      notes: "-",
-    },
-  ];
+  const { data: preparingRequestData = [] } = useQuery({
+    queryKey: ['preparing_request_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
+        if (res.status === 200) {
+          return res.data.data;
+        }
+
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
+  const data = preparingRequestData
 
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Preparing Request: 343
+        Preparing Request : {preparingRequestData?.length}
       </h3>
       <div className="relative flex justify-end">
         <input
@@ -86,8 +42,8 @@ export default function InventoryPreparingRequestTable() {
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+      <div className="overflow-x-auto overflow-y-auto mt-8">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Date</th>
@@ -100,8 +56,8 @@ export default function InventoryPreparingRequestTable() {
               <th>Quantity</th>
               <th>Courier</th>
               <th>Supplier Tracking</th>
-              <th>Shipping label</th>
-              <th>Shipping Slip</th>
+              <th>Invoice level</th>
+              <th>Shipping level</th>
               <th>Notes</th>
               <th>Status</th>
             </tr>
@@ -110,71 +66,42 @@ export default function InventoryPreparingRequestTable() {
             {data.map((d, index) => {
               return (
                 <tr
-                  className={`${index % 2 == 1 && "bg-gray-200"}`}
+                  className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                  <th>{format(new Date(d.date), "y/MM/d")}</th>
                   <th className="font-normal">{d.store_name}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <td>{d.code}</td>
                   <td>{d.code_type}</td>
                   <td>{d.product_name}</td>
-                  <td>{d.order_ID}</td>
-                  <td>{d.UPIN}</td>
+                  <td>{d.order_id}</td>
+                  <td>{d.upin}</td>
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
-                  <td>{d.supplier_tracking}</td>
-                  <td>{d.shipping_label}</td>
-                  <td>{d.shipping_slip}</td>
+                  <td>{d.tracking_number}</td>
+                  <td>{d.invoice_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
                   <td>{d.notes}</td>
                   <td className="flex gap-2">
-                    <Link to="/dashboard/management/inventory/ready-to-ship">
+                    <button >
                       <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                         <LiaShippingFastSolid />
                         <p>RTS</p>
                       </button>
-                    </Link>
-                    <Link to="/dashboard/management/inventory/out-of-stock">
+                    </button>
+                    <button>
                       <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                         <LiaShippingFastSolid />
                         <p>OOS</p>
                       </button>
-                    </Link>
+                    </button>
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-        <div
-          className={`flex justify-between  fixed ${
-            isSidebarOpen ? "w-[77%] mt-8" : "w-[89.5%] mt-4"
-          } `}
-        >
-          <p>Showing 1 to 20 of 2,000 entries</p>
-          <div className="flex items-center gap-2">
-            <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              1
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              2
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              ...
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              9
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              10
-            </div>
-            <div className="border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
   );

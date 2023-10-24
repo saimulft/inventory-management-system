@@ -1,13 +1,15 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-// import { LiaGreaterThanSolid } from "react-icons/lia";
+import useAuth from "../../../hooks/useAuth";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import { format } from "date-fns"
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
 import ToastMessage from "../../Shared/ToastMessage";
+import { FaSpinner } from "react-icons/fa";
+import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
+import AsinSearchDropdown from "../../../Utilities/AsinSearchDropdown";
 
 
 export default function StorePreparingRequestTable() {
@@ -21,8 +23,13 @@ export default function StorePreparingRequestTable() {
   const [InvoiceImageError, setInvoiceImageError] = useState('')
   const [shippingImageError, setShippingImageError] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-
-
+  const [isEditable, setIsEditable] = useState(false)
+  const [quantity, setQuantity] = useState('')
+  const [productName, setProductName] = useState('')
+  const [codeType, setCodeType] = useState('')
+  const { user } = useAuth()
+  const [asinUpcOption, setAsinUpcOption] = useState('')
+  const [asinUpcData, setAsinUpcData] = useState([])
   const { data: preparingRequestData = [], refetch } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
@@ -39,6 +46,15 @@ export default function StorePreparingRequestTable() {
       }
     }
   })
+
+  useEffect(() => {
+    axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
+      .then(res => {
+        if (res.status === 200) {
+          setAsinUpcData(res.data.data)
+        }
+      }).catch(err => console.log(err))
+  }, [user?.email])
 
   const data = preparingRequestData
   const handleDelete = (_id) => {
@@ -73,17 +89,14 @@ export default function StorePreparingRequestTable() {
   }
 
   const handleInvoiceImage = (e) => {
-
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
 
       if (e.target.files[0].size > maxSizeInBytes) {
         setInvoiceImageError("Max 5 MB")
         return;
-
       } else {
         setInvoiceImageError('')
-
         setInvoiceImageFile(e.target.files[0])
       }
     }
@@ -92,11 +105,9 @@ export default function StorePreparingRequestTable() {
 
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
-
       if (e.target.files[0].size > maxSizeInBytes) {
         setShippingImageError("Max 5 MB")
         return;
-
       } else {
         setShippingImageError('')
         setShippingImageFile(e.target.files[0])
@@ -104,6 +115,7 @@ export default function StorePreparingRequestTable() {
     }
   }
   const handleUpdateRequestForm = (event) => {
+    setSuccessMessage('')
     event.preventDefault()
     const form = event.target
     const courier = form.courier.value
@@ -112,7 +124,7 @@ export default function StorePreparingRequestTable() {
 
     let preparingFormvalue = {
 
-      courier, trackingNumber: supplierTracker, notes: note, id: singleData._id
+      courier, trackingNumber: supplierTracker, notes: note, id: singleData._id, quantity, productName, code: asinUpcOption, codeType
     }
 
     const formData = new FormData()
@@ -132,7 +144,7 @@ export default function StorePreparingRequestTable() {
       formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
       formData.append('file', shippingImageFile, `shipping.${shipping}`)
     }
-
+    setLoading(true)
     axios.put('/api/v1/preparing_form_api/preparing_form_update', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
@@ -146,15 +158,18 @@ export default function StorePreparingRequestTable() {
           setShippingImageFile(null)
           setLoading(false)
           setSuccessMessage("Data Updated")
+          setTimeout(() => {
+            setSuccessMessage("")
+          }, 1000);
         }
         else {
           setLoading(false)
-          setFormError("Something went wrong to send preparing form request")
+          setFormError("Something went wrong")
         }
       })
       .catch(() => {
         setLoading(false)
-        setFormError("Something went wrong to send preparing form request")
+        setFormError("Something went wrong")
 
       })
   }
@@ -251,58 +266,42 @@ export default function StorePreparingRequestTable() {
       {/* modal content  */}
 
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft }} className="modal-box py-10 px-10">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
           <div className="flex">
-            <div className="w-100">
+            <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
-                <BiSolidEdit size={24} />
+                {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
-              <p className="mt-2">
-                <label className="font-bold">Date: </label>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData && format(new Date(singleData?.date), "y/MM/d")} />
-              </p>
-              <p className="mt-2">
-                <label className="font-bold">Store Name: </label>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.store_name} />
-              </p>
-              <p className="mt-2">
-                <label className="font-bold">ASIN: </label>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.code_type} />
-              </p>
-              <p className="mt-2">
-                <label className="font-bold">Quantity: </label>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="number" defaultValue={singleData?.quantity} />
-              </p>
 
-              <p className="mt-2">
-                <label className="font-bold">Courier: </label>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.courier ? singleData?.courier : ""} />
-              </p>
 
-              <p className="mt-2">
-                <label className="font-bold">UPIN: </label>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.upin} />
-              </p>
 
-              <p className="mt-2">
-                <label className="font-bold">Product Name: </label>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.product_name} />
-              </p>
+              <div className="mb-2">
+                <label className="font-bold ">Quantity : </label>
+                <input onChange={(e) => setQuantity(e.target.value)} type="number" defaultValue={singleData?.quantity}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className="mb-2">
+                <label className="font-bold ">Product name : </label>
+                <input onChange={(e) => setProductName(e.target.value)} type="text" defaultValue={singleData?.product_name}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className="mb-2">
+                <label className="font-bold ">Code Type : </label>
+                {!isEditable && <span>{singleData?.code_type}</span>}
+                {isEditable && <select onChange={(e) => setCodeType(e.target.value)} name="codeType" id="codeType">
+                  <option value="Select type">Select type</option>
+                  <option value="ASIN">ASIN</option>
+                  <option value="UPC">UPC</option>
+                </select>}
+              </div>
+              <div className="mt-2">
+                <label className="font-bold">ASIN/UPC : </label>
+                {!isEditable && <span>{singleData?.code}</span>}
+                {isEditable && <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />}
+              </div>
 
-              <p className="mt-2">
-                <label className="font-bold">Supplier Tracking: </label>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.tracking_number ? singleData?.tracking_number : ""} />
-              </p>
 
-              <p className="mt-2">
-                <span className="font-bold">Shipping Label: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Invoice: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
-              </p>
             </div>
             <div className="w-1/2 px-4">
               <h3 className="text-2xl mb-6 font-medium">Update</h3>
@@ -366,11 +365,13 @@ export default function StorePreparingRequestTable() {
                         className="hidden"
                       />
                       <div className="ml-5">
-
+                        {InvoiceImageFile && <p className="font-bold text-lg">{InvoiceImageFile.name}</p>}
+                        {!InvoiceImageFile && <p className=" text-sm">Select PNG , JPEG or PDF</p>}
                       </div>
                     </label>
                   </div>
                   {InvoiceImageError && <p className="text-xs mt-2 font-medium text-rose-500">{InvoiceImageError}</p>}
+
                 </div>
                 <div className="mt-2">
                   <label className="font-bold mb-1">Shipping Label</label>
@@ -405,14 +406,15 @@ export default function StorePreparingRequestTable() {
                         className="hidden"
                       />
                       <div className="ml-5">
-
+                        {shippingImageFile && <p className="font-bold text-lg">{shippingImageFile.name}</p>}
+                        {!shippingImageFile && <p className=" text-sm">Select PNG , JPEG or PDF</p>}
                       </div>
                     </label>
                   </div>
                   {shippingImageError && <p className="text-xs mt-2 font-medium text-rose-500">{shippingImageError}</p>}
                 </div>
 
-                <div className="flex flex-col mt-2">
+                <div className="flex flex-col mt-2 mb-2">
                   <label className=" font-bold mb-1">Note</label>
                   <input
                     type="text"
@@ -422,8 +424,9 @@ export default function StorePreparingRequestTable() {
                     name="note"
                   />
                 </div>
-                <ToastMessage successMessage={successMessage} />
-                <button type="submit" className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                <ToastMessage errorMessage={formError} successMessage={successMessage} />
+                <button type="submit" disabled={loading} className="bg-[#8633FF] mt-4 flex gap-2 py-2 justify-center items-center text-white rounded-lg w-full">
+                  {loading && <FaSpinner size={20} className="animate-spin" />}
                   Update
                 </button>
               </form>

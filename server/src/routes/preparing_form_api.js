@@ -92,7 +92,6 @@ const run = async () => {
         try {
             const id = req.body.id
             const existData = await preparing_form_collection.findOne({ _id: new ObjectId(id) })
-
             const uploadedFiles = req.files;
             let shippingFilename = existData.shipping_file
             let invoiceFileName = existData.invoice_file
@@ -113,10 +112,16 @@ const run = async () => {
             const UpdateData = {
 
                 courier: req.body.courier === "Select courier" ? existData.courier : req.body.courier,
+                code_type: req.body.codeType === "Select type" || !req.body.codeType ? existData.code_type : req.body.codeType,
                 tracking_number: req.body.trackingNumber ? req.body.trackingNumber : existData.tracking_number,
                 invoice_file: invoiceFileName,
                 shipping_file: shippingFilename,
+                shipping_file: shippingFilename,
                 notes: req.body.notes ? req.body.notes : existData.notes,
+                quantity: req.body.quantity ? req.body.quantity : existData.quantity,
+                product_name: req.body.productName ? req.body.productName : existData.product_name,
+                code: req.body.code ? req.body.code : existData.code,
+
             };
 
             const result = await preparing_form_collection.updateOne({ _id: new ObjectId(id) }, { $set: UpdateData })
