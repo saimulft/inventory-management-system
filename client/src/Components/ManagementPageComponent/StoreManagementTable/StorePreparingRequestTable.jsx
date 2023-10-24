@@ -164,13 +164,18 @@ export default function StorePreparingRequestTable() {
         }
         else {
           setLoading(false)
-          setFormError("Something went wrong")
+          setFormError("Already up to date")
+          setTimeout(() => {
+            setFormError("A")
+          }, 1000);
         }
       })
       .catch(() => {
         setLoading(false)
-        setFormError("Something went wrong")
-
+        setFormError("Already up to date")
+        setTimeout(() => {
+          setFormError("")
+        }, 1000);
       })
   }
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
