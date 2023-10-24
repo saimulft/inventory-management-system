@@ -1,69 +1,26 @@
 import { AiOutlineSearch } from "react-icons/ai";
 import { LiaGreaterThanSolid } from "react-icons/lia";
+import useAuth from "../../../hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function StoreAllStockTable() {
-  const data = [
-    {
-      store_name: "DeveloperLook LLC",
-      UPIN: "SAVE973_LLC_B010SI56F",
-      product_name:
-        "Diversfield Brand kry500 Krylon Triple Thick Glaze Artist Spray",
-      total_received: 23,
-      total_sold: 23,
-      stock: 23,
-      purchase_price: 23,
-      sold_price: 23,
-      remaining_price: 23,
-    },
-    {
-      store_name: "DeveloperLook LLC",
-      UPIN: "SAVE973_LLC_B010SI56F",
-      product_name:
-        "Diversfield Brand kry500 Krylon Triple Thick Glaze Artist Spray",
-      total_received: 23,
-      total_sold: 23,
-      stock: 23,
-      purchase_price: 23,
-      sold_price: 23,
-      remaining_price: 23,
-    },
-    {
-      store_name: "DeveloperLook LLC",
-      UPIN: "SAVE973_LLC_B010SI56F",
-      product_name:
-        "Diversfield Brand kry500 Krylon Triple Thick Glaze Artist Spray",
-      total_received: 23,
-      total_sold: 23,
-      stock: 23,
-      purchase_price: 23,
-      sold_price: 23,
-      remaining_price: 23,
-    },
-    {
-      store_name: "DeveloperLook LLC",
-      UPIN: "SAVE973_LLC_B010SI56F",
-      product_name:
-        "Diversfield Brand kry500 Krylon Triple Thick Glaze Artist Spray",
-      total_received: 23,
-      total_sold: 23,
-      stock: 23,
-      purchase_price: 23,
-      sold_price: 23,
-      remaining_price: 23,
-    },
-    {
-      store_name: "DeveloperLook LLC",
-      UPIN: "SAVE973_LLC_B010SI56F",
-      product_name:
-        "Diversfield Brand kry500 Krylon Triple Thick Glaze Artist Spray",
-      total_received: 23,
-      total_sold: 23,
-      stock: 23,
-      purchase_price: 23,
-      sold_price: 23,
-      remaining_price: 23,
-    },
-  ];
+  const {user} = useAuth()
+
+  const { data = [] } = useQuery({
+    queryKey: ['all_stock_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/all_stock_api/get_all_stock_data?admin_id=${user.admin_id}`)
+        console.log(res)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+  })
 
   return (
     <div className="px-8 py-12">
@@ -79,7 +36,7 @@ export default function StoreAllStockTable() {
         </div>
       </div>
       <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Store Name</th>
@@ -101,14 +58,14 @@ export default function StoreAllStockTable() {
                   key={index}
                 >
                   <th>{d.store_name}</th>
-                  <td>{d.UPIN}</td>
+                  <td>{d.upin}</td>
                   <td>{d.product_name}</td>
-                  <td>{d.total_received}</td>
-                  <td>{d.total_sold}</td>
+                  <td>{d.received_quantity}</td>
+                  <td>{d.total_sold ? `$${d.total_sold}` : '-'}</td>
                   <td>{d.stock}</td>
                   <td>${d.purchase_price}</td>
-                  <td>${d.sold_price}</td>
-                  <td>${d.remaining_price}</td>
+                  <td>{d.sold_price ? `$${d.sold_price}` : '-'}</td>
+                  <td>{d.remaining_price ? `$${d.remaining_price}` : '-'}</td>
                 </tr>
               );
             })}

@@ -7,16 +7,22 @@ import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import { format } from 'date-fns'
 import Swal from "sweetalert2";
+import { BsCheck2Circle } from "react-icons/bs";
+import { MdErrorOutline } from "react-icons/md";
+import { FaSpinner } from "react-icons/fa";
 
 export default function StorePendingArrivalTable() {
   const [singleData, setSingleData] = useState({})
   const [isEditable, setIsEditable] = useState(false)
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [loading, setLoading] = useState()
   const { user } = useAuth()
   const { isSidebarOpen } = useContext(GlobalContext);
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
 
   const { data = [], refetch } = useQuery({
-    queryKey: ['admin_users'],
+    queryKey: ['pending_arrival_data'],
     queryFn: async () => {
       try {
         const res = await axios.get(`/api/v1/pending_arrival_api/get_all_pending_arrival_data?admin_id=${user.admin_id}`)
@@ -42,7 +48,6 @@ export default function StorePendingArrivalTable() {
       if (result.isConfirmed) {
         axios.delete(`/api/v1/pending_arrival_api/delete_pending_arrival_data?id=${_id}`)
           .then(res => {
-            console.log(res)
             if (res.status === 200) {
               refetch()
               Swal.fire(
@@ -56,9 +61,64 @@ export default function StorePendingArrivalTable() {
     })
   }
 
+  const handleUpdate = (event, _id) => {
+    event.preventDefault()
+    setLoading(true)
+    setSuccessMessage('')
+    setErrorMessage('')
+
+    const form = event.target;
+    const productName = form.productName.value;
+    const quantity = form.quantity.value;
+    const upin = form.upin.value;
+    const eda = form.eda.value;
+    const courier = form.courier.value;
+    const supplierTracking = form.supplierTracking.value;
+
+
+    const updatedData = {
+      product_name: productName,
+      quantity: quantity,
+      upin: upin,
+      eda: eda ? new Date(eda).toISOString() : '',
+      courier: courier,
+      supplier_tracking: supplierTracking
+    }
+
+    if (!productName && !quantity && !upin && !eda && !courier && !supplierTracking){
+      return setErrorMessage('Nothing')
+    }
+
+      axios.put(`/api/v1/pending_arrival_api/update_store_pending_arrival_data?id=${_id}`, updatedData)
+        .then(res => {          
+          if (res.status === 200) {
+            setLoading(false)
+            form.reset()
+            refetch()
+            setSuccessMessage('Data update successful!')
+            setTimeout(() => {
+              setSuccessMessage('')
+            }, 2000);
+          }
+          
+          if(res.status === 203){
+            setLoading(false)
+          }
+        })
+        .catch(error => {
+          setLoading(false)
+          setErrorMessage('Something went wrong while updating data!')
+
+          setTimeout(() => {
+            setErrorMessage('')
+          }, 2000);
+          console.log(error)
+        })
+  }
+
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">Pending Arrival: 584</h3>
+      <h3 className="text-center text-2xl font-medium">Pending Arrival: {data.length}</h3>
 
       <div className="overflow-x-auto mt-8">
         <table className="table table-sm">
@@ -156,80 +216,51 @@ export default function StorePendingArrivalTable() {
 
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px'}} className="modal-box py-10 px-10">
-          <div className="flex gap-5">
+        <div style={{ marginLeft, maxWidth: '700px' }} className="modal-box py-10 px-10">
+          <form onSubmit={(event) => handleUpdate(event, singleData._id)} className="flex gap-10">
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
                 {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
-              <div className="flex items-center">
-                <label className="font-bold">Date: </label>
-                <input type='text' value={singleData.date && format(new Date(singleData.date), 'yyyy/MM/dd')}
-                  className="outline-none w-[191px] py-1 pl-2 rounded" id="date" name="date" readOnly />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">Store Name: </label>
-                <input type="text" defaultValue={singleData.store_name}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">ASIN: </label>
-                <input type="text" defaultValue={singleData.asin_upc_code}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              <div className={`flex items-center ${isEditable && 'justify-between'}`}>
+                <label className="font-bold">Product Name: </label>
+                <input type="text" defaultValue={singleData.product_name}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="productName" name="productName" readOnly={!isEditable} />
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">Quantity: </label>
                 <input type="text" defaultValue={singleData.quantity}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="quantity" name="quantity" readOnly={!isEditable} />
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">Received Qnt: </label>
-                <input type="text" defaultValue={singleData.received_quantity ? singleData.received_quantity : 'null'}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">Missing Qnt: </label>
-                <input type="text" defaultValue={singleData.missing_quantity ? singleData.missing_quantity : 'null'}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">Courier: </label>
-                <input type="text" defaultValue={singleData.courier ? singleData.courier : 'null'}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">Team Code: </label>
-                <input type="text" defaultValue={singleData.team_code ? singleData.team_code : 'null'}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+                <label className="font-bold">UPIN: </label>
+                <input type="text" defaultValue={singleData.upin}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="upin" name="upin" readOnly={!isEditable} />
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">EDA: </label>
-                <input type={isEditable ? 'date' : 'text'} defaultValue={singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[161px] py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">Supplier Tracking: </label>
-                <input type="text" defaultValue={singleData.supplier_tracking ? singleData.supplier_tracking : 'Not Added'}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+                <input type={isEditable ? 'date' : 'text'} defaultValue={isEditable ? '' : singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[161px] py-1 pl-2 rounded`} id="eda" name="eda" readOnly={!isEditable} />
               </div>
             </div>
+
             <div className="w-1/2">
               <h3 className="text-2xl font-medium mb-6">Update</h3>
-              <form>
+              <div>
                 <div className="flex flex-col mt-2">
                   <label className=" font-bold mb-1">Courier</label>
                   <select
                     className="border border-[#8633FF] outline-[#8633FF] py-1 pl-2 rounded"
-                    id="gender"
-                    name="gender"
+                    id="courier"
+                    name="courier"
                   >
-                    <option value="none" selected>
-                      Courier
+                    <option defaultValue="Select Courier">
+                      Select Courier
                     </option>
-                    <option value="male">Courier-1</option>
-                    <option value="female">Courier-2</option>
-                    <option value="other">Courier-3</option>
+                    <option value="Courier-1">Courier-1</option>
+                    <option value="Courier-2">Courier-2</option>
+                    <option value="Courier-3">Courier-3</option>
                   </select>
                 </div>
                 <div className="flex flex-col mt-2">
@@ -242,12 +273,20 @@ export default function StorePendingArrivalTable() {
                     name="supplierTracking"
                   />
                 </div>
-              </form>
-              <button className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
-                Update
-              </button>
+
+                <div className="mt-3">
+                  {successMessage && <p className="w-full flex gap-2 items-center justify-center text-center text-sm font-medium text-green-600 bg-green-100 border py-1 px-4 rounded"><BsCheck2Circle size={20} /> {successMessage}</p>}
+
+                  {errorMessage && <p className="w-full flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-1 px-4 rounded"><MdErrorOutline size={20} /> {errorMessage}</p>}
+                </div>
+
+                <button type="submit" className="bg-[#8633FF] flex gap-2 items-center justify-center mt-5 w-full py-[6px] rounded text-white font-medium">
+                  {loading && <FaSpinner size={20} className="animate-spin" />}
+                  Update
+                </button>
+              </div>
             </div>
-          </div>
+          </form>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

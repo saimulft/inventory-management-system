@@ -26,6 +26,7 @@ const asin_upc_api = require("./src/routes/asin_upc_api")
 const pending_arrival_api = require("./src/routes/pending_arrival_api")
 const dropdown_data_api = require("./src/routes/dropdown_data_api")
 const preparing_form_api = require("./src/routes/preparing_form_api")
+const all_stock_api = require("./src/routes/all_stock_api")
 
 app.use('/api/v1/authentication_api',authentication_api)
 app.use('/api/v1/admin_api',admin_users_api)
@@ -39,6 +40,7 @@ app.use('/api/v1/asin_upc_api',asin_upc_api)
 app.use('/api/v1/pending_arrival_api',pending_arrival_api)
 app.use('/api/v1/dropdown_data_api',dropdown_data_api)
 app.use('/api/v1/preparing_form_api',preparing_form_api)
+app.use('/api/v1/all_stock_api',all_stock_api)
 
 
 app.get('/', (req, res) => {

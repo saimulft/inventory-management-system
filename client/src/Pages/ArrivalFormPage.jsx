@@ -15,6 +15,7 @@ const ArrivalFormPage = () => {
   const [inputError, setInputError] = useState('')
   const [asinUpcOption, setAsinUpcOption] = useState(null)
   const [asinUpcData, setAsinUpcData] = useState([])
+  const [storeName, setStoreName] = useState('')
 
   useEffect(() => {
     axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
@@ -43,8 +44,7 @@ const ArrivalFormPage = () => {
     setInputError('')
 
     const form = event.target;
-    const date = form.date.value;
-    const asinUpc = form.code.value;
+    const date = new Date().toISOString();
     const storeName = form.storeName.value;
     const supplierId = form.supplierId.value;
     const upin = form.upin.value;
@@ -55,11 +55,15 @@ const ArrivalFormPage = () => {
     const eda = form.eda.value;          // estimated date of arrival
     const warehouse = form.warehouse.value;
 
+    if (warehouse === "Select Warehouse" || !warehouse) {
+      setInputError('Select a warehouse')
+      return;
+    }
     if (storeName === "Pick Store Name" || !storeName) {
       setInputError('Select a store name')
       return;
     }
-    if (asinUpc === "Select ASIN or UPC" || !asinUpc) {
+    if (!asinUpcOption) {
       setInputError('Select ASIN or UPC')
       return;
     }
@@ -67,22 +71,18 @@ const ArrivalFormPage = () => {
       setInputError('Select code type')
       return;
     }
-    if (warehouse === "Select Warehouse" || !warehouse) {
-      setInputError('Select a warehouse')
-      return;
-    }
-    if (!date || !asinUpc || !storeName || !supplierId || !upin || !unitPrice || !codeType || !productName || !quantity || !eda || !warehouse) {
+    if (!date || !asinUpcOption || !storeName || !supplierId || !upin || !unitPrice || !codeType || !productName || !quantity || !eda || !warehouse) {
       setInputError('Please fill out all the inputs in order to submit the form')
       return;
     }
-    const isoDate = new Date(date).toISOString();
+
     const isoEda = new Date(eda).toISOString();
     const arrivalFormData = {
       admin_id: user.admin_id,
-      date: isoDate,
+      date: date,
       creator_email: user?.email,
       store_name: storeName,
-      asin_upc_code: asinUpc,
+      asin_upc_code: asinUpcOption,
       code_type: codeType,
       supplier_id: supplierId,
       product_name: productName,
@@ -97,6 +97,7 @@ const ArrivalFormPage = () => {
       const { status } = await mutateAsync(arrivalFormData)
       if (status === 201) {
         form.reset()
+        setAsinUpcOption('')
         Swal.fire(
           'Submitted',
           'Pending arrival data has been submitted.',
@@ -122,14 +123,16 @@ const ArrivalFormPage = () => {
             <div className="flex gap-7">
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">Date</label>
-                  <input
-                    type="date"
-                    placeholder="Enter store name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="date"
-                    name="date"
-                  />
+                  <label className="text-slate-500">Warehouse</label>
+                  <select
+                    className="select select-primary w-full mt-2 shadow-lg"
+                    name="warehouse"
+                    id="warehouse"
+                  >
+                    <option defaultValue="Select Warehouse">Select Warehouse</option>
+                    <option value="Test-1">Test-1</option>
+                    <option value="Test-2">Test-2</option>
+                  </select>
                 </div>
 
                 <div className="mt-4">
@@ -151,11 +154,13 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">UPIN</label>
                   <input
+                    value={asinUpcOption && storeName && storeName !== 'Pick Store Name' ? `${asinUpcOption}_${storeName}` : ''}
                     type="text"
                     placeholder="Enter UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="upin"
                     name="upin"
+                    readOnly
                   />
                 </div>
 
@@ -178,6 +183,7 @@ const ArrivalFormPage = () => {
                     className="select select-primary w-full mt-2 shadow-lg"
                     name="storeName"
                     id="storeName"
+                    onChange={(e) => setStoreName(e.target.value)}
                   >
                     <option defaultValue="Pick Store Name">
                       Pick Store Name
@@ -237,20 +243,7 @@ const ArrivalFormPage = () => {
               </div>
             </div>
 
-            <div className="mt-4">
-              <label className="text-slate-500">Warehouse</label>
-              <select
-                className="select select-primary w-full mt-2 shadow-lg"
-                name="warehouse"
-                id="warehouse"
-              >
-                <option defaultValue="Select Warehouse">Select Warehouse</option>
-                <option value="Test-1">Test-1</option>
-                <option value="Test-2">Test-2</option>
-              </select>
-            </div>
-
-            <div>{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center mt-5 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
+            <div className="mt-5">{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
 
             <div className="flex items-center justify-center mt-8">
               <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-72 capitalize">
