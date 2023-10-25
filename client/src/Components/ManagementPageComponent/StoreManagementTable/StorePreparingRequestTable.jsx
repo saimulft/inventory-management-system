@@ -1,36 +1,80 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-// import { LiaGreaterThanSolid } from "react-icons/lia";
+import useAuth from "../../../hooks/useAuth";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import { format } from "date-fns"
 import Swal from "sweetalert2";
 import { useQuery } from "@tanstack/react-query";
+import ToastMessage from "../../Shared/ToastMessage";
+import { FaSpinner } from "react-icons/fa";
+import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
+import AsinSearchDropdown from "../../../Utilities/AsinSearchDropdown";
 
 
 export default function StorePreparingRequestTable() {
 
   const { isSidebarOpen } = useContext(GlobalContext);
   const [singleData, setSingleData] = useState()
+  const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState('')
+  const [InvoiceImageFile, setInvoiceImageFile] = useState(null)
+  const [shippingImageFile, setShippingImageFile] = useState(null)
+  const [InvoiceImageError, setInvoiceImageError] = useState('')
+  const [shippingImageError, setShippingImageError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  const [isEditable, setIsEditable] = useState(false)
+  const [quantity, setQuantity] = useState('')
+  const [productName, setProductName] = useState('')
+  const [codeType, setCodeType] = useState('')
+  const { user } = useAuth()
+  const [asinUpcOption, setAsinUpcOption] = useState('')
+  const [asinUpcData, setAsinUpcData] = useState([])
+  // const [preparingRequestData, setPreparingRequestData] = useState([])
+  // const [refetch, setRefetch] = useState(false)
 
-  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const { data: preparingRequestData = [], refetch } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
+        console.log("hello")
         const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
         if (res.status === 200) {
-          return res.data.data
+          return res.data.data;
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
+
       }
     }
   })
 
+  // useEffect(() => {
+  //   console.log("hello")
+  //   axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         setPreparingRequestData(res.data.data)
+  //       }
+  //     })
+  // }, [refetch])
+
+  useEffect(() => {
+
+    axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
+      .then(res => {
+        if (res.status === 200) {
+          setAsinUpcData(res.data.data)
+        }
+      }).catch(err => console.log(err))
+  }, [user?.email])
+
   const data = preparingRequestData
-  const handleDelete = (_id) => {
+  const handleDelete = (_id, invoice_file, shipping_file) => {
+
+    const deleteData = {
+      id: _id, invoice_file, shipping_file
+    }
 
     Swal.fire({
       title: 'Are you sure?',
@@ -42,7 +86,7 @@ export default function StorePreparingRequestTable() {
       confirmButtonText: 'Delete'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data?id=${_id}`)
+        axios.post(`/api/v1/preparing_form_api/delete_preparing_request_data`, deleteData)
           .then(res => {
             if (res.status === 200) {
               Swal.fire(
@@ -50,6 +94,8 @@ export default function StorePreparingRequestTable() {
                 'Data has been deleted.',
                 'success'
               )
+
+              // setRefetch(!refetch)
               refetch()
             }
           }).catch(err => console.log(err))
@@ -59,7 +105,98 @@ export default function StorePreparingRequestTable() {
       }
     })
   }
-  console.log(import.meta.env.VITE_IMAGE_BASE_URL)
+
+  const handleInvoiceImage = (e) => {
+    if (e.target.files[0]) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+      if (e.target.files[0].size > maxSizeInBytes) {
+        setInvoiceImageError("Max 5 MB")
+        return;
+      } else {
+        setInvoiceImageError('')
+        setInvoiceImageFile(e.target.files[0])
+      }
+    }
+  }
+  const handleShippingImage = (e) => {
+
+    if (e.target.files[0]) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+      if (e.target.files[0].size > maxSizeInBytes) {
+        setShippingImageError("Max 5 MB")
+        return;
+      } else {
+        setShippingImageError('')
+        setShippingImageFile(e.target.files[0])
+      }
+    }
+  }
+  const handleUpdateRequestForm = (event) => {
+    setSuccessMessage('')
+    event.preventDefault()
+    const form = event.target
+    const courier = form.courier.value
+    const supplierTracker = form.supplierTracker.value
+    const note = form.note.value
+
+    let preparingFormvalue = {
+
+      courier, trackingNumber: supplierTracker, notes: note, id: singleData._id, quantity, productName, code: asinUpcOption, codeType
+    }
+
+    const formData = new FormData()
+    for (const key in preparingFormvalue) {
+      formData.append(key, preparingFormvalue[key]);
+    }
+    const Invoice = InvoiceImageFile?.name.split('.').pop();
+    const shipping = shippingImageFile?.name.split('.').pop();
+
+    if (InvoiceImageFile && !shippingImageFile) {
+      formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
+    }
+    if (shippingImageFile && !InvoiceImageFile) {
+      formData.append('file', shippingImageFile, `shipping.${shipping}`)
+    }
+    if (InvoiceImageFile && shippingImageFile) {
+      formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
+      formData.append('file', shippingImageFile, `shipping.${shipping}`)
+    }
+    setLoading(true)
+    axios.put('/api/v1/preparing_form_api/preparing_form_update', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    })
+      .then(res => {
+        if (res.status === 200) {
+          refetch()
+          form.reset()
+          setInvoiceImageFile(null)
+          setShippingImageFile(null)
+          setLoading(false)
+          setSuccessMessage("Data Updated")
+          setTimeout(() => {
+            setSuccessMessage("")
+          }, 1000);
+        }
+        else {
+          setLoading(false)
+          setFormError("Already up to date")
+          setTimeout(() => {
+            setFormError("A")
+          }, 1000);
+        }
+      })
+      .catch(() => {
+        setLoading(false)
+        setFormError("Already up to date")
+        setTimeout(() => {
+          setFormError("")
+        }, 1000);
+      })
+  }
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
@@ -113,8 +250,9 @@ export default function StorePreparingRequestTable() {
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
-                  <td>{d.invoice_file && <button  className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
-                  <td>{d.shipping_file && <button  className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.invoice_file && <a download href={`http://localhost:5000/uploads/${d.invoice_file}`} className="cursor-pointer p-1 hover:text-white bg-[#8633FF] w-full rounded text-white font-medium">Download</a>}</td>
+
+                  <td>{d.shipping_file && <a download href="./pdf logo.png" className="cursor-pointer p-1 hover:text-white bg-[#8633FF] w-full rounded text-white font-medium">Download</a>}</td>
                   <td>{d.notes}</td>
                   <td>
                     <div className="dropdown dropdown-end">
@@ -137,7 +275,7 @@ export default function StorePreparingRequestTable() {
                           }>Edit</button>
                         </li>
                         <li>
-                          <button onClick={() => handleDelete(d._id)}>Delete</button>
+                          <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
                         </li>
                       </ul>
                     </div>
@@ -152,62 +290,46 @@ export default function StorePreparingRequestTable() {
       {/* modal content  */}
 
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft }} className="modal-box py-10 px-10">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
           <div className="flex">
-            <div className="w-100">
+            <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
-                <BiSolidEdit size={24} />
+                {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
-              <p className="mt-2">
-                <p className="font-bold">Date: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData && format(new Date(singleData?.date), "y/MM/d")} />
-              </p>
-              <p className="mt-2">
-                <p className="font-bold">Store Name: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.store_name} />
-              </p>
-              <p className="mt-2">
-                <p className="font-bold">ASIN: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.code_type} />
-              </p>
-              <p className="mt-2">
-                <p className="font-bold">Quantity: </p>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="number" defaultValue={singleData?.quantity} />
-              </p>
 
-              <p className="mt-2">
-                <p className="font-bold">Courier: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.courier ? singleData?.courier : ""} />
-              </p>
 
-              <p className="mt-2">
-                <p className="font-bold">UPIN: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.upin} />
-              </p>
 
-              <p className="mt-2">
-                <p className="font-bold">Product Name: </p>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.product_name} />
-              </p>
+              <div className="mb-2">
+                <label className="font-bold ">Quantity : </label>
+                <input onChange={(e) => setQuantity(e.target.value)} type="number" defaultValue={singleData?.quantity}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className="mb-2">
+                <label className="font-bold ">Product name : </label>
+                <input onChange={(e) => setProductName(e.target.value)} type="text" defaultValue={singleData?.product_name}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className="mb-2">
+                <label className="font-bold ">Code Type : </label>
+                {!isEditable && <span>{singleData?.code_type}</span>}
+                {isEditable && <select onChange={(e) => setCodeType(e.target.value)} name="codeType" id="codeType">
+                  <option value="Select type">Select type</option>
+                  <option value="ASIN">ASIN</option>
+                  <option value="UPC">UPC</option>
+                </select>}
+              </div>
+              <div className="mt-2">
+                <label className="font-bold">ASIN/UPC : </label>
+                {!isEditable && <span>{singleData?.code}</span>}
+                {isEditable && <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />}
+              </div>
 
-              <p className="mt-2">
-                <p className="font-bold">Supplier Tracking: </p>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.tracking_number ? singleData?.tracking_number : ""} />
-              </p>
 
-              <p className="mt-2">
-                <span className="font-bold">Shipping Label: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Invoice: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
-              </p>
             </div>
             <div className="w-1/2 px-4">
               <h3 className="text-2xl mb-6 font-medium">Update</h3>
-              <form>
+              <form onSubmit={handleUpdateRequestForm}>
                 <div className="flex flex-col mt-2">
                   <label className=" font-bold mb-1">Courier</label>
                   <select
@@ -215,12 +337,12 @@ export default function StorePreparingRequestTable() {
                     id="courier"
                     name="courier"
                   >
-                    <option value="none" selected>
-                      USPS
+                    <option value="Select courier">
+                      Select courier
                     </option>
-                    <option value="male">Courier-1</option>
-                    <option value="female">Courier-2</option>
-                    <option value="other">Courier-3</option>
+                    <option value="Courier-1">Courier-1</option>
+                    <option value="Courier-2">Courier-2</option>
+                    <option value="Courier-3">Courier-3</option>
                   </select>
                 </div>
                 <div className="flex flex-col mt-2">
@@ -238,7 +360,7 @@ export default function StorePreparingRequestTable() {
                   <label className="font-bold mb-1">Invoice </label>
                   <div className="flex items-center w-full mt-2">
                     <label
-                      htmlFor="shippingLabel-dropzone"
+                      htmlFor="invoice-dropzone"
                       className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[4px]">
@@ -261,14 +383,19 @@ export default function StorePreparingRequestTable() {
                       <input
                         id="invoice-dropzone"
                         name="invoice-dropzone"
+                        accept="image/*,application/pdf"
                         type="file"
+                        onChange={handleInvoiceImage}
                         className="hidden"
                       />
                       <div className="ml-5">
-
+                        {InvoiceImageFile && <p className="font-bold text-lg">{InvoiceImageFile.name}</p>}
+                        {!InvoiceImageFile && <p className=" text-sm">Select PNG , JPEG or PDF</p>}
                       </div>
                     </label>
                   </div>
+                  {InvoiceImageError && <p className="text-xs mt-2 font-medium text-rose-500">{InvoiceImageError}</p>}
+
                 </div>
                 <div className="mt-2">
                   <label className="font-bold mb-1">Shipping Label</label>
@@ -298,16 +425,20 @@ export default function StorePreparingRequestTable() {
                         id="shippingLabel-dropzone"
                         name="shippingLabel-dropzone"
                         type="file"
+                        accept="image/*,application/pdf"
+                        onChange={handleShippingImage}
                         className="hidden"
                       />
                       <div className="ml-5">
-
+                        {shippingImageFile && <p className="font-bold text-lg">{shippingImageFile.name}</p>}
+                        {!shippingImageFile && <p className=" text-sm">Select PNG , JPEG or PDF</p>}
                       </div>
                     </label>
                   </div>
+                  {shippingImageError && <p className="text-xs mt-2 font-medium text-rose-500">{shippingImageError}</p>}
                 </div>
 
-                <div className="flex flex-col mt-2">
+                <div className="flex flex-col mt-2 mb-2">
                   <label className=" font-bold mb-1">Note</label>
                   <input
                     type="text"
@@ -317,7 +448,9 @@ export default function StorePreparingRequestTable() {
                     name="note"
                   />
                 </div>
-                <button type="submit" className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                <ToastMessage errorMessage={formError} successMessage={successMessage} />
+                <button type="submit" disabled={loading} className="bg-[#8633FF] mt-4 flex gap-2 py-2 justify-center items-center text-white rounded-lg w-full">
+                  {loading && <FaSpinner size={20} className="animate-spin" />}
                   Update
                 </button>
               </form>

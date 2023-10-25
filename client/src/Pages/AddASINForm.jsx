@@ -24,7 +24,7 @@ const AddASINForm = () => {
   const handleAsinUpcForm = async (event) => {
     event.preventDefault()
     const form = event.target;
-    const date = form.date.value;
+    const date =new Date().toISOString()
     const isoDate = new Date(date).toISOString()
     const asinUpc = form.upin.value;
     const storeManagerName = form.storeManagerName.value;
@@ -166,15 +166,21 @@ const AddASINForm = () => {
           <form onSubmit={handleAsinUpcForm}>
             <div className="flex gap-7">
               <div className="w-full">
-                <div>
-                  <label className="text-slate-500">Date</label>
-                  <input required
-                    type="date"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="date"
-                    name="date"
-                  />
-                </div>
+               
+              <div>
+              <label className="text-slate-500">Code type</label>
+              <select
+                className="select select-primary w-full mt-2 shadow-lg"
+                name="codeType"
+                id="codeType"
+              >
+                <option defaultValue="Pick Code Type">Pick Code Type </option>
+                <option value="ASIN">ASIN</option>
+                <option value="UPC">UPC</option>
+              </select>
+            </div>
+
+
                 <div className="mt-4">
                   <label className="text-slate-500">Store Manager Name</label>
                   <input required
@@ -302,18 +308,7 @@ const AddASINForm = () => {
               </div>
             )}
 
-            <div className="mt-4">
-              <label className="text-slate-500">Code type</label>
-              <select
-                className="select select-primary w-full mt-2 shadow-lg"
-                name="codeType"
-                id="codeType"
-              >
-                <option defaultValue="Pick Code Type">Pick Code Type </option>
-                <option value="ASIN">ASIN</option>
-                <option value="UPC">UPC</option>
-              </select>
-            </div>
+           
             <div>{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center mt-5 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
 
             <div className="flex items-center justify-center mt-8">

@@ -154,7 +154,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">UPIN</label>
                   <input
-                    value={asinUpcOption && storeName && storeName !== 'Pick Store Name' ? `${asinUpcOption}_${storeName}` : ''}
+                    value={asinUpcOption && storeName && storeName !== 'Pick Store Name' ? `${storeName}_${asinUpcOption}` : ''}
                     type="text"
                     placeholder="Enter UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
