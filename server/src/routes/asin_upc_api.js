@@ -78,7 +78,7 @@ const run = async () => {
 
         try {
             const asinUpcData = await asin_upc_collection.find({ creator_email: creator_email }).toArray()
-            if (asinUpcData.length) {
+            if (asinUpcData) {
 
                 const data = asinUpcData.map(item => {
                     return { key: item.asin_upc_code, value: item.asin_upc_code, text: item.asin_upc_code }
@@ -90,6 +90,21 @@ const run = async () => {
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in asin_upc' });
+        }
+    });
+    router.get('/get_all_asin_upc', async (req, res) => {
+    
+
+        try {
+            const asinUpcData = await asin_upc_collection.find({}).toArray()
+            if (asinUpcData) {
+                res.status(200).json({ data: asinUpcData, message: "successfully all get asin_upc" })
+            }
+            else {
+                res.status(500).json({ message: "Error to geting all asin_upc" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
         }
     });
 }
