@@ -29,7 +29,7 @@ export default function StorePreparingRequestTable() {
 
   const data = preparingRequestData
   const handleRTS = (RTSdata) => {
-    console.log(RTSdata)
+  
     
     Swal.fire({
       title: 'Confirm ready to ship?',
