@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+}
+
+/* hide notification box scroll bar  */
+.notifications_box::-webkit-scrollbar{
+    display: none;
+    }
+
+/* hide chat box scroll bar  */
+.add_chat_box::-webkit-scrollbar{
+display: none;
+}

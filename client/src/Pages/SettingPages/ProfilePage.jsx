@@ -1,19 +1,81 @@
-import Swal from "sweetalert2";
+import { useMutation } from "@tanstack/react-query";
+import countries from "../../Utilities/countries";
+import useAuth from "../../hooks/useAuth";
+import axios from "axios";
+import Swal from 'sweetalert2'
+import { useState } from "react";
+import ToastMessage from "../../Components/Shared/ToastMessage";
+import { FaSpinner } from "react-icons/fa";
 
 export default function ProfilePage() {
-  const handleProfile = (e) => {
-    e.preventDefault();
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Changes successfully",
-      showConfirmButton: false,
-      timer: 1500,
-    });
-  };
+  const { user, setUser } = useAuth()
+  const [errorMessage, setErrorMessage] = useState('')
+
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: (profileInfo) => {
+      return axios.put('/api/v1/authentication_api/update_user_profile_data', profileInfo)
+    },
+  })
+  const handleUpdateProfile = async (event) => {
+    event.preventDefault()
+    setErrorMessage('')
+
+    const form = event.target;
+    const fullName = form.fullName.value;
+    // const email = form.email.value;
+    const currentPassword = form.currentPassword.value;
+    const newPassword = form.newPassword.value;
+    const phone = form.phoneNumber.value;
+    const address = form.address.value;
+    const city = form.city.value;
+    const state = form.state.value;
+    const country = form.country.value;
+    const zipCode = form.zipCode.value;
+    const whatsappNumber = form.whatsappNumber.value;
+
+    if (currentPassword && !newPassword) {
+      return setErrorMessage("You must provide a new password in order to change previous one!")
+    }
+
+    else if (currentPassword && newPassword.length < 6) {
+      return setErrorMessage("Password must be at least 6 characters or longer!")
+    }
+
+    const profileInfo = {
+      role: user.role,
+      full_name: fullName ? fullName : user.full_name,
+      current_email: user.email,
+      new_email: user.email,
+      phone: phone ? phone : user.phone,
+      current_password: currentPassword,
+      new_password: newPassword,
+      address: address ? address : user.address,
+      state: state ? state : user.state,
+      country: country && country !== 'Select your country' ? country : user.country,
+      city: city ? city : user.city,
+      zip: zipCode ? zipCode : user.zip,
+      whatsapp_number: whatsappNumber ? whatsappNumber : user.whatsapp_number
+    }
+
+    try {
+      const { data, status } = await mutateAsync(profileInfo)
+      if (status === 200) {
+        form.reset()
+        setUser(data)
+        Swal.fire(
+          'Saved!',
+          'Your profile information has been saved.',
+          'success'
+        )
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <div className=" py-10 w-full">
-      <form>
+      <form onSubmit={handleUpdateProfile}>
         <div className="flex gap-7">
           <div className="w-full">
             <div>
@@ -24,6 +86,18 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="fullName"
                 name="fullName"
+                defaultValue={user.full_name}
+              />
+            </div>
+
+            <div className="mt-4">
+              <label className="text-slate-500">Current Password</label>
+              <input
+                type="password"
+                placeholder="Enter your current password"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="currentPassword"
+                name="currentPassword"
               />
             </div>
 
@@ -35,6 +109,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="phoneNumber"
                 name="phoneNumber"
+                defaultValue={user.phone}
               />
             </div>
 
@@ -46,6 +121,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="address"
                 name="address"
+                defaultValue={user.address}
               />
             </div>
 
@@ -57,6 +133,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="state"
                 name="state"
+                defaultValue={user.state}
               />
             </div>
 
@@ -66,35 +143,36 @@ export default function ProfilePage() {
                 className="select select-primary w-full mt-2 shadow-lg"
                 name="country"
                 id="country"
+                defaultValue={user.country}
               >
                 <option disabled selected>
-                  Country
+                  Select your country
                 </option>
-                <option value="test1">Test1</option>
-                <option value="test2">Test2</option>
+                {countries}
               </select>
             </div>
           </div>
 
           <div className="w-full">
             <div>
-              <label className="text-slate-500">Email Address*</label>
+              <label className="text-slate-500">Email Address</label>
               <input
-                type="text"
-                placeholder="jhon@gmail.com"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="orderId"
-                name="orderID"
+                type="email"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg focus:outline-none"
+                id="email"
+                name="email"
+                defaultValue={user.email}
+                readOnly
               />
             </div>
             <div className="mt-4">
-              <label className="text-slate-500">Create Password*</label>
+              <label className="text-slate-500">New Password</label>
               <input
                 type="password"
-                placeholder="Enter your password"
+                placeholder="Enter your new password"
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="password"
-                name="password"
+                id="newPassword"
+                name="newPassword"
               />
             </div>
 
@@ -106,6 +184,7 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="city"
                 name="city"
+                defaultValue={user.city}
               />
             </div>
 
@@ -117,28 +196,30 @@ export default function ProfilePage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="zipCode"
                 name="zipCode"
+                defaultValue={user.zip}
               />
             </div>
 
             <div className="mt-4">
               <label className="text-slate-500">WhatsApp</label>
               <input
-                type="text"
+                type="number"
                 placeholder="Enter whatsapp number"
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="whatsappNumber"
                 name="whatsappNumber"
+                defaultValue={user.whatsapp_number}
               />
             </div>
           </div>
         </div>
 
+        <ToastMessage errorMessage={errorMessage} />
+
         <div className="flex items-center justify-center mt-8">
-          <button
-            onClick={(e) => handleProfile(e)}
-            className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 "
-          >
-            Save changes
+          <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
+            {isLoading && <FaSpinner size={20} className="animate-spin" />}
+            <p>Save Changes</p>
           </button>
         </div>
       </form>

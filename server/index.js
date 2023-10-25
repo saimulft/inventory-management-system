@@ -1,43 +1,49 @@
-import express from 'express';
-import cors from 'cors';
-import 'dotenv/config'
-import { MongoClient, ServerApiVersion } from 'mongodb';
+const express = require("express")
+require("dotenv").config()
+const PORT = process.env.PORT || 5000
+const app = express()
+const cors = require("cors")
 
-const app = express();
-const port = process.env.PORT || 5000;
-
-//middleware
-app.use(cors())
 app.use(express.json())
+app.use(express.static('public'))
+app.use(express.urlencoded({extended:true,limit:'5mb'}))
 
-const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@nabil-database-test-k132-481a4602.mongo.ondigitalocean.com/admin?authSource=admin&replicaSet=nabil-database-test-k132&tls=true`;
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-    serverApi: {
-        version: ServerApiVersion.v1,
-        strict: true,
-        deprecationErrors: true,
-    }
-});
-
-async function run() {
-    try {
-        // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
-        // Send a ping to confirm a successful connection
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
-    } finally {
-        // Ensures that the client will close when you finish/error
-        // await client.close();
-    }
-}
-run().catch(console.dir);
+app.use(cors({
+    origin: "*",
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+}))
 
 
+const authentication_api = require("./src/routes/authentication_api")
+const admin_users_api = require("./src/routes/admin_users_api")
+const admin_va_users_api = require("./src/routes/admin_va_users_api")
+const store_owner_users_api = require("./src/routes/store_owner_users_api")
+const store_manager_admin_users_api = require("./src/routes/store_manager_admin_users_api")
+const store_manager_va_users_api = require("./src/routes/store_manager_va_users_api")
+const warehouse_admin_users_api = require("./src/routes/warehouse_admin_users_api")
+const warehouse_manager_va_users_api = require("./src/routes/warehouse_manager_va_users_api")
+const asin_upc_api = require("./src/routes/asin_upc_api")
+const pending_arrival_api = require("./src/routes/pending_arrival_api")
+const dropdown_data_api = require("./src/routes/dropdown_data_api")
+const preparing_form_api = require("./src/routes/preparing_form_api")
+
+app.use('/api/v1/authentication_api',authentication_api)
+app.use('/api/v1/admin_api',admin_users_api)
+app.use('/api/v1/admin_va_api',admin_va_users_api)
+app.use('/api/v1/store_owner_api',store_owner_users_api)
+app.use('/api/v1/store_manager_admin_api',store_manager_admin_users_api)
+app.use('/api/v1/store_manager_va_api',store_manager_va_users_api)
+app.use('/api/v1/warehouse_admin_api',warehouse_admin_users_api)
+app.use('/api/v1/warehouse_manager_va_api',warehouse_manager_va_users_api)
+app.use('/api/v1/asin_upc_api',asin_upc_api)
+app.use('/api/v1/pending_arrival_api',pending_arrival_api)
+app.use('/api/v1/dropdown_data_api',dropdown_data_api)
+app.use('/api/v1/preparing_form_api',preparing_form_api)
 
 
-app.listen(port, () => {
-    console.log('listen to port, ', port);
+app.get('/', (req, res) => {
+
+    res.send('inventory Server running')
 })
+
+app.listen(PORT, console.log(`Server is running on port: ${PORT}`))

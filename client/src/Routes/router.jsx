@@ -29,6 +29,10 @@ import DashboardPage from "../Pages/DashboardPage";
 import StoreEditPage from "../Pages/StoreEditPage";
 import LoginPage from "../Pages/LoginPage";
 import SignUPPage from "../Pages/SignUpPage";
+import ProtectedRoute from "./ProtectedRoute";
+import VerifyEmail from "../Pages/verifyEmail";
+import ResetPassword from "../Pages/ResetPassword";
+import UpdatePassword from "../Pages/UpdatePassword";
 import StoreAllStockTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreAllStockTable";
 import StorePreparingRequestTable from "../Components/ManagementPageComponent/StoreManagementTable/StorePreparingRequestTable";
 import StorePendingArrivalTable from "../Components/ManagementPageComponent/StoreManagementTable/StorePendingArrivalTable";
@@ -45,11 +49,15 @@ import InventoryShippedTable from "../Components/ManagementPageComponent/Invento
 import InventoryOutOfStockTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryOutOfStockTable";
 import InventoryMissingArrivalTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryMissingArrivalTable";
 import InventoryTotalASINTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryTotalASINTable";
+import AllAdminUsers from "../Pages/SettingPages/AllAdminUsers";
+import StoreManagerVAPage from "../Pages/SettingPages/StoreManagerVAPage";
+import WarehouseManagerVAPage from "../Pages/SettingPages/WarehouseManagerVAPage";
+import AuthRoute from "./AuthRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <DashboardLayout />,
+    element: <ProtectedRoute><DashboardLayout /></ProtectedRoute>,
     children: [
       {
         path: "/",
@@ -215,7 +223,7 @@ export const router = createBrowserRouter([
           },
 
           {
-            path: "/dashboard/settings/add-users/admin-vr",
+            path: "/dashboard/settings/add-users/admin-va",
             element: <AdminVRPage />,
           },
           {
@@ -227,13 +235,26 @@ export const router = createBrowserRouter([
             element: <StoreManagerAdminPage />,
           },
           {
+            path: "/dashboard/settings/add-users/store-manager-va",
+            element: <StoreManagerVAPage />,
+          },
+          {
             path: "/dashboard/settings/add-users/warehouse-admin",
             element: <WareHouseAdminPage />,
+          },
+          {
+            path: "/dashboard/settings/add-users/warehouse-manager-va",
+            element: <WarehouseManagerVAPage />,
           },
 
           {
             path: "/dashboard/settings/all-users",
             element: <AllUsersPage />,
+          },
+
+          {
+            path: "/dashboard/settings/all-admin-users",
+            element: <AllAdminUsers />,
           },
 
           {
@@ -250,10 +271,22 @@ export const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: <AuthRoute><LoginPage /></AuthRoute>,
   },
   {
     path: "/signup",
-    element: <SignUPPage />,
+    element: <AuthRoute><SignUPPage /></AuthRoute>,
+  },
+  {
+    path: "/verify_email",
+    element: <VerifyEmail />,
+  },
+  {
+    path: "/reset_password",
+    element: <ResetPassword />,
+  },
+  {
+    path: "/update_password",
+    element: <UpdatePassword />,
   },
 ]);
