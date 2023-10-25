@@ -36,8 +36,10 @@ export default function InventoryPendingArrivalTable() {
         if (res.status === 200) {
           return res.data.data;
         }
+        return []
       } catch (error) {
         console.log(error)
+        return []
       }
     }
   })

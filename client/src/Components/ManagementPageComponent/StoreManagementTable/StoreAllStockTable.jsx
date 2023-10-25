@@ -12,12 +12,13 @@ export default function StoreAllStockTable() {
     queryFn: async () => {
       try {
         const res = await axios.get(`/api/v1/all_stock_api/get_all_stock_data?admin_id=${user.admin_id}`)
-        console.log(res)
         if (res.status === 200) {
           return res.data.data;
         }
+        return []
       } catch (error) {
         console.log(error)
+        return[]
       }
     }
   })
