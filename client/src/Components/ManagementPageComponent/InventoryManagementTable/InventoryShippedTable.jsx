@@ -5,6 +5,7 @@ import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { format } from "date-fns";
 
 export default function InventoryShippedTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
@@ -85,7 +86,7 @@ export default function InventoryShippedTable() {
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                  <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                   <th className="font-normal">{d.store_name}</th>
                   <td>{d.code}</td>
                   <td>{d.code_type}</td>

@@ -70,7 +70,7 @@ const run = async () => {
 
 
     })
-    
+
 
     //   get asin or upc by email
     router.get('/get_asin_upc_by_email', async (req, res) => {
@@ -93,10 +93,10 @@ const run = async () => {
         }
     });
     router.get('/get_all_asin_upc', async (req, res) => {
-    
 
+        const id = req.query.id
         try {
-            const asinUpcData = await asin_upc_collection.find({}).toArray()
+            const asinUpcData = await asin_upc_collection.find({ admin_id: id }).toArray()
             if (asinUpcData) {
                 res.status(200).json({ data: asinUpcData, message: "successfully all get asin_upc" })
             }

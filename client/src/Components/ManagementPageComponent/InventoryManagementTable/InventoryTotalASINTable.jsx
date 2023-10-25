@@ -1,16 +1,18 @@
 import axios from "axios";
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
+import useAuth from "../../../hooks/useAuth";
 
 
 export default function InventoryTotalASINTable() {
   const [asinUpcData, setAsinUpcData] = useState([])
+  const {user} = useAuth()
 
-  console.log(asinUpcData)
   useEffect(() => {
-    axios.get(`/api/v1/asin_upc_api/get_all_asin_upc`)
+    axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`)
       .then(res => {
         if (res.status === 200) {
           setAsinUpcData(res.data.data)
@@ -55,7 +57,7 @@ export default function InventoryTotalASINTable() {
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                      <th>{format(new Date(d.date), "y/MM/d")}</th>
                   <td>{d.asin_upc_code}</td>
                   <td className="text-[#8633FF]">{d.product_name}</td>
                   <td>{d.min_price}</td>

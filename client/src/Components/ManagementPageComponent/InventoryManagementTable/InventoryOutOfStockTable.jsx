@@ -6,6 +6,7 @@ import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { format } from "date-fns";
 
 export default function StoreOutOfStockTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
@@ -58,7 +59,7 @@ export default function StoreOutOfStockTable() {
               <th>Shipping label</th>
               <th>Notes</th>
               <th></th>
-            
+
             </tr>
           </thead>
           <tbody>
@@ -68,7 +69,7 @@ export default function StoreOutOfStockTable() {
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                  <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                   <th>{d.store_name}</th>
                   <td>{d.code}</td>
                   <td>{d.code_type}</td>

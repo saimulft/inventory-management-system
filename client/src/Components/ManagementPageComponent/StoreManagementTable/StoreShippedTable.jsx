@@ -5,6 +5,7 @@ import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { format } from "date-fns";
 
 export default function InventoryShippedTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
@@ -85,7 +86,7 @@ export default function InventoryShippedTable() {
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                 <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                   <th className="font-normal">{d.store_name}</th>
                   <td>{d.code}</td>
                   <td>{d.code_type}</td>
@@ -187,34 +188,7 @@ export default function InventoryShippedTable() {
                 <span className="text-[#8633FF] cursor-pointer">Click</span>
               </p>
             </div>
-            <div className="w-1/2 px-4">
-              <h3 className="text-2xl font-medium mb-6">Update</h3>
-              <form>
-                <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">ReSellable Qnt</label>
-                  <input
-                    type="text"
-                    placeholder="Enter ReSellable Qnt"
-                    className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs"
-                    id="receivedQnt"
-                    name="receivedQnt"
-                  />
-                </div>
-                <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">Remark</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Remark"
-                    className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs "
-                    id="remark"
-                    name="remark"
-                  />
-                </div>
-              </form>
-              <button className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
-                Update
-              </button>
-            </div>
+
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">
