@@ -2,15 +2,15 @@ import axios from "axios";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiSolidEdit } from "react-icons/bi";
+import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import useAuth from "../../../hooks/useAuth";
 
 
 export default function InventoryTotalASINTable() {
   const [asinUpcData, setAsinUpcData] = useState([])
-
-  const {user} = useAuth()
+  const [singleData, setSingleData] = useState()
+  const { user } = useAuth()
 
   useEffect(() => {
     axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`)
@@ -20,8 +20,10 @@ export default function InventoryTotalASINTable() {
         }
       }).catch(err => console.log(err))
   }, [])
- 
 
+const handleDelete = ()=>{
+  
+}
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
@@ -49,6 +51,7 @@ export default function InventoryTotalASINTable() {
               <th>Code Type</th>
               <th>Store Manager</th>
               <th>Product Image</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -58,13 +61,37 @@ export default function InventoryTotalASINTable() {
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                      <th>{format(new Date(d.date), "y/MM/d")}</th>
+                  <th>{format(new Date(d.date), "y/MM/d")}</th>
                   <td>{d.asin_upc_code}</td>
                   <td className="text-[#8633FF]">{d.product_name}</td>
                   <td>{d.min_price}</td>
                   <td>{d.code_type}</td>
                   <td>{d.store_manager_name}</td>
                   <td>{d.product_image && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Download</button>}</td>
+                  <td><div className="dropdown dropdown-end">
+                      <label
+                        tabIndex={0}
+                      >
+                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
+
+                        <li>
+                          <button onClick={() => {
+                            document.getElementById("my_modal_2").showModal()
+
+                          }
+                          }>Edit</button>
+                        </li>
+                        <li>
+                          <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
+                        </li>
+                      </ul>
+                    </div></td>
                 </tr>
               );
             })}
