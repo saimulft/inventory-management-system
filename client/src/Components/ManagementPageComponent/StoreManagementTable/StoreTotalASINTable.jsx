@@ -1,83 +1,33 @@
-import { useContext } from "react";
+import axios from "axios";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-
 import { LiaGreaterThanSolid } from "react-icons/lia";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
+import useAuth from "../../../hooks/useAuth";
 
-export default function StoreTotalASINTable() {
-  const { isSidebarOpen } = useContext(GlobalContext);
-  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const data = [
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-  ];
 
+export default function InventoryTotalASINTable() {
+  const [asinUpcData, setAsinUpcData] = useState([])
+  const [singleData, setSingleData] = useState()
+  const { user } = useAuth()
+
+  useEffect(() => {
+    axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`)
+      .then(res => {
+        if (res.status === 200) {
+          setAsinUpcData(res.data.data)
+        }
+      }).catch(err => console.log(err))
+  }, [])
+
+const handleDelete = ()=>{
+  
+}
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Total ASIN/UPC: 8,451
+        Total ASIN/UPC: {asinUpcData?.length}
       </h3>
       <div className="relative flex justify-end">
         <input
@@ -91,7 +41,7 @@ export default function StoreTotalASINTable() {
       </div>
 
       <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Date</th>
@@ -105,27 +55,43 @@ export default function StoreTotalASINTable() {
             </tr>
           </thead>
           <tbody>
-            {data.map((d, index) => {
+            {asinUpcData?.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <th>{format(new Date(d.date), "y/MM/d")}</th>
+                  <td>{d.asin_upc_code}</td>
                   <td className="text-[#8633FF]">{d.product_name}</td>
                   <td>{d.min_price}</td>
                   <td>{d.code_type}</td>
-                  <td>{d.store_manager}</td>
-                  <td>{d.product_img}</td>
-                  <td
-                    onClick={() =>
-                      document.getElementById("my_modal_2").showModal()
-                    }
-                    className="cursor-pointer"
-                  >
-                    <BiDotsVerticalRounded />
-                  </td>
+                  <td>{d.store_manager_name}</td>
+                  <td>{d.product_image && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Download</button>}</td>
+                  <td><div className="dropdown dropdown-end">
+                      <label
+                        tabIndex={0}
+                      >
+                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
+
+                        <li>
+                          <button onClick={() => {
+                            document.getElementById("my_modal_2").showModal()
+
+                          }
+                          }>Edit</button>
+                        </li>
+                        <li>
+                          <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
+                        </li>
+                      </ul>
+                    </div></td>
                 </tr>
               );
             })}
@@ -160,51 +126,55 @@ export default function StoreTotalASINTable() {
       </div>
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft }} className="modal-box py-10 px-10">
+        <div className="modal-box">
           <div className="flex">
             <div className="w-1/2">
-              <div className="flex items-center mb-6 gap-2">
+              <div className="flex items-center mb-4 gap-2">
                 <BiSolidEdit size={24} />
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-bold">Data: </span>
+                <span className="font-medium">Data: </span>
                 <span>2023-06-26</span>
               </p>
-
               <p className="mt-2">
-                <span className="font-bold">ASIN: </span>
+                <span className="font-medium">Store Name: </span>
+                <span>SAVE_k544.LLC</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">ASIN: </span>
                 <span>BOHFK4522</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">Store Manager </span>
-                <span>Abdul Kaioum</span>
+                <span className="font-medium">Store Manager: </span>
+                <span>Saidul Basar</span>
               </p>
 
               <p className="mt-2">
-                <span className="font-bold">Product Name: </span>
+                <span className="font-medium">Product Name: </span>
                 <span>demo product name</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">Old Min Price: </span>
-                <span className="cursor-pointer text-[#8633FF]">$35</span>
+                <span className="font-medium">Old Min Price: </span>
+                <span>$35</span>
               </p>
             </div>
             <div className="w-1/2 px-4">
-              <h3 className="text-2xl mb-6 font-medium">Update</h3>
+              <h3 className="text-2xl font-medium">Update</h3>
               <form>
-                <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">New Min Price</label>
+                <div className="flex flex-col mt-4">
+                  <label className="text-slate-500">New Min Price</label>
                   <input
                     type="text"
-                    placeholder="Enter New Min Price"
-                    className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
-                    id="minPrice"
-                    name="minPrice"
+                    placeholder="Enter new min price"
+                    className="input input-bordered input-primary w-full input-sm mt-2"
+                    id="storeManagerName"
+                    name="storeManagerName"
                   />
                 </div>
-                <div className="mt-2">
-                  <label className="font-bold mb-1">Product Image</label>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Product Image</label>
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="shippingLabel-dropzone"
@@ -228,17 +198,15 @@ export default function StoreTotalASINTable() {
                         </svg>
                       </div>
                       <input
-                        id="product-img-dropzone"
-                        name="product-img-dropzone"
+                        id="invoice-dropzone"
+                        name="invoice-dropzone"
                         type="file"
                         className="hidden"
                       />
                       <div className="ml-5">
                         <button
                           onClick={() => {
-                            document
-                              .getElementById("product-img-dropzone")
-                              .click();
+                            document.getElementById("invoice-dropzone").click();
                           }}
                           type="button"
                           className="btn btn-outline btn-primary btn-xs"

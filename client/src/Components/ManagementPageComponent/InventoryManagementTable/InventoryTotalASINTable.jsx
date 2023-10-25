@@ -1,79 +1,30 @@
+import axios from "axios";
+import { format } from "date-fns";
+import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-
+import { BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
+import useAuth from "../../../hooks/useAuth";
+
 
 export default function InventoryTotalASINTable() {
-  const data = [
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-    {
-      date: "2023-06-26",
-      ASIN_UPC: "B015KJKHH123",
-      product_name: "Thick Glaze Artist Spray",
-      min_price: 35,
-      code_type: "ASIN",
-      store_manager: "Saidul Basar",
-      product_img: "https://test.img",
-    },
-  ];
+  const [asinUpcData, setAsinUpcData] = useState([])
+  const {user} = useAuth()
+
+  useEffect(() => {
+    axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`)
+      .then(res => {
+        if (res.status === 200) {
+          setAsinUpcData(res.data.data)
+        }
+      }).catch(err => console.log(err))
+  }, [])
+ 
 
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Total ASIN/UPC: 8,451
+        Total ASIN/UPC: {asinUpcData?.length}
       </h3>
       <div className="relative flex justify-end">
         <input
@@ -87,7 +38,7 @@ export default function InventoryTotalASINTable() {
       </div>
 
       <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Date</th>
@@ -100,19 +51,19 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody>
-            {data.map((d, index) => {
+            {asinUpcData?.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
-                  <td>{d.ASIN_UPC}</td>
+                      <th>{format(new Date(d.date), "y/MM/d")}</th>
+                  <td>{d.asin_upc_code}</td>
                   <td className="text-[#8633FF]">{d.product_name}</td>
                   <td>{d.min_price}</td>
                   <td>{d.code_type}</td>
-                  <td>{d.store_manager}</td>
-                  <td>{d.product_img}</td>
+                  <td>{d.store_manager_name}</td>
+                  <td>{d.product_image && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Download</button>}</td>
                 </tr>
               );
             })}

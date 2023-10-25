@@ -5,20 +5,20 @@ import { format } from "date-fns"
 import { useQuery } from "@tanstack/react-query";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import Swal from "sweetalert2";
-import { useState } from "react";
+import useAuth from "../../../hooks/useAuth";
+
 
 export default function StorePreparingRequestTable() {
   // const [RTSdata ,setRTSdata] = useState({})
-
-  const { data: preparingRequestData = [],refetch } = useQuery({
+  const { user } = useAuth()
+  const { data = [], refetch } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
+        const res = await axios.get(`http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data?id=${user?.admin_id}`)
         if (res.status === 200) {
           return res.data.data;
         }
-
         return [];
       } catch (error) {
         console.log(error);
@@ -27,10 +27,8 @@ export default function StorePreparingRequestTable() {
     }
   })
 
-  const data = preparingRequestData
+
   const handleRTS = (RTSdata) => {
-  
-    
     Swal.fire({
       title: 'Confirm ready to ship?',
       icon: 'warning',
@@ -48,16 +46,14 @@ export default function StorePreparingRequestTable() {
                 'Product has been Shipped.',
                 'success'
               )
-                refetch()
+              refetch()
             }
           }).catch(err => console.log(err))
-
-
-
       }
     })
   }
-  const handleOOS = () => {
+  const handleOOS = (OOSdata) => {
+
     Swal.fire({
       title: 'Confirm out of stock?',
       icon: 'warning',
@@ -67,15 +63,16 @@ export default function StorePreparingRequestTable() {
       confirmButtonText: 'Yes'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.post(`/api/v1/preparing_form_api/delete_preparing_request_data`,)
+        axios.post(`/api/v1/out_of_stock_api/out_of_stock`, OOSdata)
           .then(res => {
-            if (res.status === 200) {
+            console.log(res)
+            if (res.status === 201) {
               Swal.fire(
-                'Added to stock!',
-                'Product has been Added to stock.',
+                'Added to out of stock!',
+                'Product has been Added to out of stock.',
                 'success'
               )
-
+              refetch()
             }
           }).catch(err => console.log(err))
 
@@ -87,7 +84,7 @@ export default function StorePreparingRequestTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Preparing Request : {preparingRequestData?.length}
+        Preparing Request : {data?.length}
       </h3>
       <div className="relative flex justify-end">
         <input
@@ -144,14 +141,16 @@ export default function StorePreparingRequestTable() {
 
                     <button onClick={() => {
                       handleRTS(d)
-                     
+
                     }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                       <LiaShippingFastSolid />
                       <p>RTS</p>
                     </button>
 
 
-                    <button onClick={handleOOS} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
+                    <button onClick={() => {
+                      handleOOS(d)
+                    }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                       <LiaShippingFastSolid />
                       <p>OOS</p>
                     </button>

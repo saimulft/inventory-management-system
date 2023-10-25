@@ -10,6 +10,7 @@ import ToastMessage from "../../Shared/ToastMessage";
 import { FaSpinner } from "react-icons/fa";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import AsinSearchDropdown from "../../../Utilities/AsinSearchDropdown";
+import { useQuery } from "@tanstack/react-query";
 
 
 export default function StorePreparingRequestTable() {
@@ -30,16 +31,21 @@ export default function StorePreparingRequestTable() {
   const { user } = useAuth()
   const [asinUpcOption, setAsinUpcOption] = useState('')
   const [asinUpcData, setAsinUpcData] = useState([])
-  const [preparingRequestData, setPreparingRequestData] = useState([])
-  const [refetch, setRefetch] = useState(false)
 
-  useEffect(() => {
-    axios.get(`http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data?id=${user?.admin_id}`)
-      .then(data => setPreparingRequestData(data.data.data))
-  }, [refetch])
-
-
-
+  const { data: preparingRequestData = [], refetch } = useQuery({
+    queryKey: ['preparing_request_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data?id=${user?.admin_id}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        return [];
+      }
+    }
+  })
   useEffect(() => {
     axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
       .then(res => {
@@ -73,7 +79,7 @@ export default function StorePreparingRequestTable() {
                 'Data has been deleted.',
                 'success'
               )
-              setRefetch(!refetch)
+              refetch()
             }
           }).catch(err => console.log(err))
       }
@@ -124,7 +130,7 @@ export default function StorePreparingRequestTable() {
           setShippingImageFile(null)
           setLoading(false)
           setSuccessMessage("Data Updated")
-          setRefetch(!refetch)
+          refetch()
           setTimeout(() => {
             setSuccessMessage("")
           }, 1000);

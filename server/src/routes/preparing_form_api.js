@@ -8,7 +8,7 @@ const fs = require('fs')
 const run = async () => {
 
     const db = await connectDatabase()
-    const preparing_form_collection = db.collection("preparing_form_collection")
+    const preparing_form_collection = db.collection("preparing_form_data")
 
     // upload asin upc image 
     const storage = multer.diskStorage({

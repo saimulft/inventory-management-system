@@ -6,7 +6,7 @@ const cors = require("cors")
 
 app.use(express.json())
 app.use(express.static('public'))
-app.use(express.urlencoded({extended:true,limit:'5mb'}))
+app.use(express.urlencoded({ extended: true, limit: '5mb' }))
 
 app.use(cors({
     origin: "*",
