@@ -4,94 +4,57 @@ import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import useAuth from "../../../hooks/useAuth";
+import { format } from "date-fns";
 
 export default function StoreMissingArrivalTable() {
   const [isActive, setIsActive] = useState(true);
   const { isSidebarOpen } = useContext(GlobalContext);
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const data = [
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      expected_qnt: 23,
-      receive_qnt: 23,
-      missing_qnt: 23,
-      supplier_tracking: "sfsad52112sdf",
-      EDA: "2023-06-26",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      expected_qnt: 23,
-      receive_qnt: 23,
-      missing_qnt: 23,
-      supplier_tracking: "sfsad52112sdf",
-      EDA: "2023-06-26",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      expected_qnt: 23,
-      receive_qnt: 23,
-      missing_qnt: 23,
-      supplier_tracking: "sfsad52112sdf",
-      EDA: "2023-06-26",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      order_ID: "20000004245",
-      UPIN: "SAVE973_LLC_B010S",
-      expected_qnt: 23,
-      receive_qnt: 23,
-      missing_qnt: 23,
-      supplier_tracking: "sfsad52112sdf",
-      EDA: "2023-06-26",
-    },
-  ];
+  const {user} = useAuth()
+
+  const { data = [] } = useQuery({
+    queryKey: ['pending_arrival_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/missing_arrival_api/get_all_missing_arrival_data?admin_id=${user.admin_id}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return []
+      } catch (error) {
+        console.log(error)
+        return []
+      }
+    }
+  })
+
+  console.log(user)
 
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Missing Arrival Item: 149
+        Missing Arrival Item: {data.length}
       </h3>
       <div className="relative flex justify-between items-center">
         <div className="flex text-center w-1/2 ">
           <div
             onClick={() => setIsActive(true)}
-            className={`px-3 rounded-s-md py-2 cursor-pointer ${
-              isActive
+            className={`px-3 rounded-s-md py-2 cursor-pointer ${isActive
                 ? "bg-[#8633FF] text-white"
                 : "border-2 border-[#8633FF] text-[#8633FF]"
-            }  `}
+              }  `}
           >
             Active
           </div>
           <div
             onClick={() => setIsActive(false)}
-            className={`px-3 rounded-e-md py-2 cursor-pointer ${
-              !isActive
+            className={`px-3 rounded-e-md py-2 cursor-pointer ${!isActive
                 ? "bg-[#8633FF] text-white"
                 : "border-2 border-[#8633FF] text-[#8633FF]"
-            }  `}
+              }  `}
           >
             Solved
           </div>
@@ -107,7 +70,7 @@ export default function StoreMissingArrivalTable() {
       </div>
 
       <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Date</th>
@@ -132,18 +95,18 @@ export default function StoreMissingArrivalTable() {
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{d.date}</th>
+                  <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
                   <th className="font-normal">{d.store_name}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <td>{d.asin_upc_code}</td>
                   <td>{d.code_type}</td>
                   <td>{d.product_name}</td>
-                  <td>{d.order_ID}</td>
-                  <td>{d.UPIN}</td>
-                  <td>{d.expected_qnt}</td>
-                  <td>{d.receive_qnt}</td>
-                  <td>{d.missing_qnt}</td>
-                  <td>{d.supplier_tracking}</td>
-                  <td>{d.EDA}</td>
+                  <td>{d.order_id ? d.order_id : '-'}</td>
+                  <td>{d.upin}</td>
+                  <td>{d.quantity}</td>
+                  <td>{d.received_quantity}</td>
+                  <td>{d.missing_quantity}</td>
+                  <td>{d.supplier_tracking ? d.supplier_tracking : '-'}</td>
+                  <td>{format(new Date(d.eda), 'yyyy/MM/dd')}</td>
                   <td
                     onClick={() =>
                       document.getElementById("my_modal_2").showModal()

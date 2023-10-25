@@ -143,7 +143,8 @@ const run = async () => {
                     if (missingQuantity) {
                         const missingArrivalData = {
                             ...result,
-                            missing_quantity: missingQuantity
+                            missing_quantity: missingQuantity,
+                            missing_status: 'Active'
                         }
                         const insertResult = await missing_arrival_collection.insertOne(missingArrivalData);
 
@@ -152,7 +153,7 @@ const run = async () => {
                         }
                     }
 
-                    //TODO: it would be update in future
+                    //TODO: it could be update in future
                     const allStockData = {
                         ...result,
                         purchase_price: parseInt(result.received_quantity) * parseInt(result.unit_price),

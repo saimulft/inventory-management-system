@@ -169,7 +169,7 @@ export default function InventoryPendingArrivalTable() {
                   <td>{d.asin_upc_code}</td>
                   <td>{d.code_type}</td>
                   <td>{d.product_name}</td>
-                  <td>{d.order_ID ? d.order_ID : '-'}</td>
+                  <td>{d.order_Id ? d.order_Id : '-'}</td>
                   <td>{d.upin}</td>
                   <td>{d.unit_price}</td>
                   <td>{d.quantity}</td>
