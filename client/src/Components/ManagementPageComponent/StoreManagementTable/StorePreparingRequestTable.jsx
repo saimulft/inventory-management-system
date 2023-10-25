@@ -5,7 +5,7 @@ import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import { format } from "date-fns"
 import Swal from "sweetalert2";
-import { useQuery } from "@tanstack/react-query";
+
 import ToastMessage from "../../Shared/ToastMessage";
 import { FaSpinner } from "react-icons/fa";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
@@ -30,37 +30,17 @@ export default function StorePreparingRequestTable() {
   const { user } = useAuth()
   const [asinUpcOption, setAsinUpcOption] = useState('')
   const [asinUpcData, setAsinUpcData] = useState([])
-  // const [preparingRequestData, setPreparingRequestData] = useState([])
-  // const [refetch, setRefetch] = useState(false)
-
-  const { data: preparingRequestData = [], refetch } = useQuery({
-    queryKey: ['preparing_request_data'],
-    queryFn: async () => {
-      try {
-        console.log("hello")
-        const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
-        if (res.status === 200) {
-          return res.data.data;
-        }
-      } catch (error) {
-        console.log(error);
-
-      }
-    }
-  })
-
-  // useEffect(() => {
-  //   console.log("hello")
-  //   axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
-  //     .then(res => {
-  //       if (res.status === 200) {
-  //         setPreparingRequestData(res.data.data)
-  //       }
-  //     })
-  // }, [refetch])
+  const [preparingRequestData, setPreparingRequestData] = useState([])
+  const [refetch, setRefetch] = useState(false)
 
   useEffect(() => {
+    axios.get(`http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data?id=${user?.admin_id}`)
+      .then(data => setPreparingRequestData(data.data.data))
+  }, [refetch])
 
+
+
+  useEffect(() => {
     axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
       .then(res => {
         if (res.status === 200) {
@@ -69,7 +49,6 @@ export default function StorePreparingRequestTable() {
       }).catch(err => console.log(err))
   }, [user?.email])
 
-  const data = preparingRequestData
   const handleDelete = (_id, invoice_file, shipping_file) => {
 
     const deleteData = {
@@ -86,7 +65,7 @@ export default function StorePreparingRequestTable() {
       confirmButtonText: 'Delete'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.post(`/api/v1/preparing_form_api/delete_preparing_request_data`, deleteData)
+        axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data`, { data: deleteData })
           .then(res => {
             if (res.status === 200) {
               Swal.fire(
@@ -94,44 +73,14 @@ export default function StorePreparingRequestTable() {
                 'Data has been deleted.',
                 'success'
               )
-
-              // setRefetch(!refetch)
-              refetch()
+              setRefetch(!refetch)
             }
           }).catch(err => console.log(err))
-
-
-
       }
     })
   }
 
-  const handleInvoiceImage = (e) => {
-    if (e.target.files[0]) {
-      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
 
-      if (e.target.files[0].size > maxSizeInBytes) {
-        setInvoiceImageError("Max 5 MB")
-        return;
-      } else {
-        setInvoiceImageError('')
-        setInvoiceImageFile(e.target.files[0])
-      }
-    }
-  }
-  const handleShippingImage = (e) => {
-
-    if (e.target.files[0]) {
-      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
-      if (e.target.files[0].size > maxSizeInBytes) {
-        setShippingImageError("Max 5 MB")
-        return;
-      } else {
-        setShippingImageError('')
-        setShippingImageFile(e.target.files[0])
-      }
-    }
-  }
   const handleUpdateRequestForm = (event) => {
     setSuccessMessage('')
     event.preventDefault()
@@ -170,12 +119,12 @@ export default function StorePreparingRequestTable() {
     })
       .then(res => {
         if (res.status === 200) {
-          refetch()
           form.reset()
           setInvoiceImageFile(null)
           setShippingImageFile(null)
           setLoading(false)
           setSuccessMessage("Data Updated")
+          setRefetch(!refetch)
           setTimeout(() => {
             setSuccessMessage("")
           }, 1000);
@@ -188,13 +137,40 @@ export default function StorePreparingRequestTable() {
           }, 1000);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err)
         setLoading(false)
         setFormError("Already up to date")
         setTimeout(() => {
           setFormError("")
         }, 1000);
       })
+  }
+  const handleInvoiceImage = (e) => {
+    if (e.target.files[0]) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+      if (e.target.files[0].size > maxSizeInBytes) {
+        setInvoiceImageError("Max 5 MB")
+        return;
+      } else {
+        setInvoiceImageError('')
+        setInvoiceImageFile(e.target.files[0])
+      }
+    }
+  }
+  const handleShippingImage = (e) => {
+
+    if (e.target.files[0]) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+      if (e.target.files[0].size > maxSizeInBytes) {
+        setShippingImageError("Max 5 MB")
+        return;
+      } else {
+        setShippingImageError('')
+        setShippingImageFile(e.target.files[0])
+      }
+    }
   }
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   return (
@@ -234,7 +210,7 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {data.map((d, index) => {
+            {preparingRequestData.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"} py-2`}

@@ -141,11 +141,13 @@ const run = async () => {
     // get all preparing request data
 
     router.get('/get_all_preparing_request_data', async (req, res) => {
-        try {
-            const data = await preparing_form_collection.find({}).toArray()
-            if (data.length) {
-                res.status(200).json({ data: data })
+        const id = req.query.id
 
+        try {
+            const data = await preparing_form_collection.find({ admin_id: id }).toArray()
+
+            if (data) {
+                res.status(200).json({ data: data })
             }
            
 
@@ -155,11 +157,11 @@ const run = async () => {
     })
 
 
-    router.post('/delete_preparing_request_data', async (req, res) => {
+    router.delete('/delete_preparing_request_data', async (req, res) => {
+     
         const id = req.body.id;
         const invoice_file = req.body.invoice_file;
         const shipping_file = req.body.shipping_file;
-
         try {
             const data = await preparing_form_collection.deleteOne({ _id: new ObjectId(id) });
 
