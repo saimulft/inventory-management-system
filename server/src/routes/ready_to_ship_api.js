@@ -9,7 +9,7 @@ const run = async () => {
 
     const db = await connectDatabase()
     const ready_to_ship_collection = db.collection("ready_to_ship_data")
-    const preparing_form_collection = db.collection("preparing_form_collection")
+    const preparing_form_collection = db.collection("preparing_form_data")
 
     router.post("/ready_to_ship", async (req, res) => {
 

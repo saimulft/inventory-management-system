@@ -12,7 +12,7 @@ export default function StorePreparingRequestTable() {
   // const [RTSdata ,setRTSdata] = useState({})
 
   const { data: preparingRequestData = [],refetch } = useQuery({
-    queryKey: ['preparing_request_data'],
+    queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
         const res = await axios.get('/api/v1/ready_to_ship_api/get_all_RTS_data')

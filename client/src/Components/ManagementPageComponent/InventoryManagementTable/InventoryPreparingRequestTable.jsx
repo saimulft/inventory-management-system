@@ -5,16 +5,17 @@ import { format } from "date-fns"
 import { useQuery } from "@tanstack/react-query";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import Swal from "sweetalert2";
-import { useState } from "react";
+import useAuth from "../../../hooks/useAuth";
+
 
 export default function StorePreparingRequestTable() {
   // const [RTSdata ,setRTSdata] = useState({})
-
+  const { user } = useAuth()
   const { data: preparingRequestData = [],refetch } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
+        const res = await axios.get(`http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data?id=${user?.admin_id}`)
         if (res.status === 200) {
           return res.data.data;
         }
