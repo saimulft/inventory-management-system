@@ -3,9 +3,9 @@ import { AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
 import { format } from "date-fns"
 import { useQuery } from "@tanstack/react-query";
-import { LiaShippingFastSolid } from "react-icons/lia";
-import Swal from "sweetalert2";
+
 import { FiCheckCircle } from "react-icons/fi";
+import Swal from "sweetalert2";
 
 
 export default function StorePreparingRequestTable() {
@@ -28,67 +28,40 @@ export default function StorePreparingRequestTable() {
     }
   })
 
-  const data = preparingRequestData
-  const handleRTS = (RTSdata) => {
-    console.log(RTSdata)
-    
-    Swal.fire({
-      title: 'Confirm ready to ship?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#8633FF',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios.post(`/api/v1/ready_to_ship_api/ready_to_ship`, RTSdata)
-          .then(res => {
-            if (res.status === 201) {
-              Swal.fire(
-                'Shipped!',
-                'Product has been Shipped.',
-                'success'
-              )
-                refetch()
-            }
-          }).catch(err => console.log(err))
+
+const handleShipment = ()=>{
+     
+  Swal.fire({
+    title: 'Confirm complete shipment?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#8633FF',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Yes'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      axios.post(`/api/v1/ready_to_ship_api/ready_to_ship`,)
+        .then(res => {
+          if (res.status === 201) {
+            Swal.fire(
+              'Shipped!',
+              'Completed shipment.',
+              'success'
+            )
+              refetch()
+          }
+        }).catch(err => console.log(err))
 
 
 
-      }
-    })
-  }
-  const handleOOS = () => {
-    Swal.fire({
-      title: 'Confirm out of stock?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#8633FF',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios.post(`/api/v1/preparing_form_api/delete_preparing_request_data`,)
-          .then(res => {
-            if (res.status === 200) {
-              Swal.fire(
-                'Added to stock!',
-                'Product has been Added to stock.',
-                'success'
-              )
+    }
+  })
+}
 
-            }
-          }).catch(err => console.log(err))
-
-
-
-      }
-    })
-  }
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-       Ready to ship : {preparingRequestData?.length}
+        Ready to ship : {preparingRequestData?.length}
       </h3>
       <div className="relative flex justify-end">
         <input
@@ -115,14 +88,14 @@ export default function StorePreparingRequestTable() {
               <th>Quantity</th>
               <th>Courier</th>
               <th>Supplier Tracking</th>
-              <th>Invoice level</th>
+             
               <th>Shipping level</th>
-              <th>Notes</th>
+              
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((d, index) => {
+            {preparingRequestData.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
@@ -138,16 +111,12 @@ export default function StorePreparingRequestTable() {
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
-                  <td>{d.invoice_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
-                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
-                  <td>{d.notes}</td>
+                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>   
                   <td className="flex gap-2">
-
-                  <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
-                        <FiCheckCircle />
-                        <p>Complete Shipment</p>
-                      </button>
-
+                    <button onClick={handleShipment} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
+                      <FiCheckCircle />
+                      <p>Complete Shipment</p>
+                    </button>
                   </td>
                 </tr>
               );
