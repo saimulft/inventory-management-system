@@ -52,7 +52,7 @@ export default function InventoryPendingArrivalTable() {
       showCancelButton: true,
       confirmButtonColor: '#8633FF',
       cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonText: 'Delete'
     }).then((result) => {
       if (result.isConfirmed) {
         axios.delete(`/api/v1/pending_arrival_api/delete_pending_arrival_data?id=${_id}`)
@@ -66,6 +66,7 @@ export default function InventoryPendingArrivalTable() {
               )
             }
           })
+          .catch(error => console.log(error))
       }
     })
   }

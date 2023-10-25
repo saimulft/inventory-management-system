@@ -144,7 +144,7 @@ const run = async () => {
                         const missingArrivalData = {
                             ...result,
                             missing_quantity: missingQuantity,
-                            missing_status: 'Active'
+                            missing_status: 'active'
                         }
                         const insertResult = await missing_arrival_collection.insertOne(missingArrivalData);
 

@@ -14,6 +14,7 @@ app.use(cors({
 }))
 
 
+const global_api = require("./src/routes/global_api")
 const authentication_api = require("./src/routes/authentication_api")
 const admin_users_api = require("./src/routes/admin_users_api")
 const admin_va_users_api = require("./src/routes/admin_va_users_api")
@@ -30,6 +31,7 @@ const all_stock_api = require("./src/routes/all_stock_api")
 const ready_to_ship_api = require("./src/routes/ready_to_ship_api")
 const missing_arrival_api = require("./src/routes/missing_arrival_api")
 
+app.use('/api/v1/global_api',global_api)
 app.use('/api/v1/authentication_api',authentication_api)
 app.use('/api/v1/admin_api',admin_users_api)
 app.use('/api/v1/admin_va_api',admin_va_users_api)
