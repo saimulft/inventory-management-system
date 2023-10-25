@@ -4,120 +4,32 @@ import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useContext } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function StoreOutOfStockTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
+  const { data = [], refetch } = useQuery({
+    queryKey: ['ready_to_ship_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/api/v1/out_of_stock_api/get_all_OOS_data')
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const data = [
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      order_ID: "20000004245",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      order_ID: "20000004245",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      order_ID: "20000004245",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      order_ID: "20000004245",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      order_ID: "20000004245",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      order_ID: "20000004245",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      order_ID: "20000004245",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      notes: "-",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      order_ID: "20000004245",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      notes: "-",
-    },
-  ];
+
 
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">Out Of Stock: 46</h3>
+      <h3 className="text-center text-2xl font-medium">Out Of Stock: {data?.length}</h3>
       <div className="relative flex justify-end">
         <input
           className="border bg-white shadow-md border-[#8633FF] outline-none w-1/4 cursor-pointer  py-2 rounded-md px-2 text-sm"
@@ -146,6 +58,7 @@ export default function StoreOutOfStockTable() {
               <th>Shipping label</th>
               <th>Notes</th>
               <th></th>
+            
             </tr>
           </thead>
           <tbody>
@@ -156,16 +69,16 @@ export default function StoreOutOfStockTable() {
                   key={index}
                 >
                   <th>{d.date}</th>
-                  <th className="font-normal">{d.store_name}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <th>{d.store_name}</th>
+                  <td>{d.code}</td>
                   <td>{d.code_type}</td>
-                  <td>{d.order_ID}</td>
-                  <td className=" text-[#8633FF]">{d.product_name}</td>
-                  <td>{d.UPIN}</td>
+                  <td>{d.order_id}</td>
+                  <td>{d.product_name}</td>
+                  <td>{d.upin}</td>
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
-                  <td className=" text-[#8633FF]">{d.supplier_tracking}</td>
-                  <td className="cursor-pointer text-[#8633FF]">Click</td>
+                  <td >{d.tracking_number}</td>
+                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
                   <td>{d.notes}</td>
                   <td
                     onClick={() =>

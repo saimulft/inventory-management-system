@@ -9,9 +9,8 @@ import Swal from "sweetalert2";
 
 
 export default function StorePreparingRequestTable() {
-  // const [RTSdata ,setRTSdata] = useState({})
 
-  const { data: preparingRequestData = [],refetch } = useQuery({
+  const { data: preparingRequestData = [], refetch } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
@@ -19,7 +18,6 @@ export default function StorePreparingRequestTable() {
         if (res.status === 200) {
           return res.data.data;
         }
-
         return [];
       } catch (error) {
         console.log(error);
@@ -29,34 +27,38 @@ export default function StorePreparingRequestTable() {
   })
 
 
-const handleShipment = ()=>{
-     
-  Swal.fire({
-    title: 'Confirm complete shipment?',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#8633FF',
-    cancelButtonColor: '#d33',
-    confirmButtonText: 'Yes'
-  }).then((result) => {
-    if (result.isConfirmed) {
-      axios.post(`/api/v1/ready_to_ship_api/ready_to_ship`,)
-        .then(res => {
-          if (res.status === 201) {
-            Swal.fire(
-              'Shipped!',
-              'Completed shipment.',
-              'success'
-            )
+  const handleShipment = (shippedData) => {
+    Swal.fire({
+      title: 'Confirm complete shipment?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post(`/api/v1/shipped_api/shipped`, shippedData)
+          .then(res => {
+            if (res.status === 200) {
+              Swal.fire(
+                'Shipped!',
+                'Completed shipment.',
+                'success'
+              )
               refetch()
-          }
-        }).catch(err => console.log(err))
+            }
+          }).catch(err => console.log(err))
 
 
 
-    }
-  })
-}
+      }
+    })
+  }
+
+
+
+
+
 
   return (
     <div className="px-8 py-12">
@@ -88,9 +90,9 @@ const handleShipment = ()=>{
               <th>Quantity</th>
               <th>Courier</th>
               <th>Supplier Tracking</th>
-             
+
               <th>Shipping level</th>
-              
+
               <th>Status</th>
             </tr>
           </thead>
@@ -111,9 +113,11 @@ const handleShipment = ()=>{
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
-                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>   
+                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
                   <td className="flex gap-2">
-                    <button onClick={handleShipment} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
+                    <button onClick={() => {
+                      handleShipment(d)
+                    }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
                       <FiCheckCircle />
                       <p>Complete Shipment</p>
                     </button>

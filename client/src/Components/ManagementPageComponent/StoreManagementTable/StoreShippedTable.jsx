@@ -1,66 +1,31 @@
 import { useContext } from "react";
 import { AiOutlineEye, AiOutlineSearch } from "react-icons/ai";
-import { BiSolidEdit } from "react-icons/bi";
+import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
-export default function StoreShippedTable() {
+export default function InventoryShippedTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
-  const marginLeft = isSidebarOpen ? "12%" : "6%";
-  const data = [
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      order_ID: "20000004245",
-      supplier_tracking: "sfsad52112sdf",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-  ];
+
+  const { data = [], refetch } = useQuery({
+    queryKey: ['ready_to_ship_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/api/v1/shipped_api/get_all_shipped_data')
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
+
 
   return (
     <div className="px-8 py-12">
@@ -122,15 +87,15 @@ export default function StoreShippedTable() {
                 >
                   <th>{d.date}</th>
                   <th className="font-normal">{d.store_name}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <td>{d.code}</td>
                   <td>{d.code_type}</td>
-                  <td className="text-[#8633FF]">{d.product_name}</td>
-                  <td>{d.UPIN}</td>
+                  <td>{d.product_name}</td>
+                  <td>{d.upin}</td>
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
-                  <td>{d.order_ID}</td>
-                  <td className="text-[#8633FF]">{d.supplier_tracking}</td>
-                  <td className="cursor-pointer text-[#8633FF]">Click</td>
+                  <td>{d.order_id}</td>
+                  <td className="text-[#8633FF]">{d.tracking_number}</td>
+                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
                   <td
                     onClick={() =>
                       document.getElementById("my_modal_2").showModal()
@@ -172,50 +137,84 @@ export default function StoreShippedTable() {
         </div>
       </div>
       {/* modal content  */}
-      <dialog style={{ marginLeft }} id="my_modal_2" className="modal">
-        <div className="modal-box">
-          <div className="px-8 py-10">
-            <div className="flex items-center mb-4 gap-2">
-              <BiSolidEdit size={24} />
-              <h3 className="text-2xl font-medium">Details</h3>
-            </div>
-            <p className="mt-2">
-              <span className="font-bold">Data: </span>
-              <span>2023-06-26</span>
-            </p>
-            <p className="mt-2">
-              <span className="font-bold">Store Name: </span>
-              <span>SAVE_k544.LLC</span>
-            </p>
-            <p className="mt-2">
-              <span className="font-bold">ASIN: </span>
-              <span>BOHFK4522</span>
-            </p>
-            <p className="mt-2">
-              <span className="font-bold">Sold Qnt: </span>
-              <span>23</span>
-            </p>
-            <p className="mt-2">
-              <span className="font-bold">Courier: </span>
-              <span>USPS</span>
-            </p>
-            <p className="mt-2">
-              <span className="font-bold">UPIN: </span>
-              <span>USA_Quality_Shop_BO46436</span>
-            </p>
+      <dialog id="my_modal_2" className="modal">
+        <div style={{ marginLeft }} className="modal-box py-10 px-10">
+          <div className="flex">
+            <div className="w-1/2">
+              <div className="flex items-center mb-6 gap-2">
+                <BiSolidEdit size={24} />
+                <h3 className="text-2xl font-medium">Details</h3>
+              </div>
+              <p className="mt-2">
+                <span className="font-bold">Data: </span>
+                <span>2023-06-26</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">Store Name: </span>
+                <span>SAVE_k544.LLC</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">ASIN: </span>
+                <span>BOHFK4522</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">Ordered Qnt: </span>
+                <span>23</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">Received Qnt: </span>
+                <span>23</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">Missing Qnt: </span>
+                <span>23</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">UPIN: </span>
+                <span>USA_Quantity5245sdfds</span>
+              </p>
 
-            <p className="mt-2">
-              <span className="font-bold">Product Name: </span>
-              <span>demo product name</span>
-            </p>
-            <p className="mt-2">
-              <span className="font-bold">EDA: </span>
-              <span>2023-06-26</span>
-            </p>
-            <p className="mt-2">
-              <span className="font-bold">Supplier Tracking: </span>
-              <span className="underline text-[#8633FF]">Click</span>
-            </p>
+              <p className="mt-2">
+                <span className="font-bold">Product Name: </span>
+                <span>demo product name</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">EDA: </span>
+                <span>2023-06-26</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">Shipping Tracking: </span>
+                <span className="text-[#8633FF] cursor-pointer">Click</span>
+              </p>
+            </div>
+            <div className="w-1/2 px-4">
+              <h3 className="text-2xl font-medium mb-6">Update</h3>
+              <form>
+                <div className="flex flex-col mt-2">
+                  <label className=" font-bold mb-1">ReSellable Qnt</label>
+                  <input
+                    type="text"
+                    placeholder="Enter ReSellable Qnt"
+                    className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs"
+                    id="receivedQnt"
+                    name="receivedQnt"
+                  />
+                </div>
+                <div className="flex flex-col mt-2">
+                  <label className=" font-bold mb-1">Remark</label>
+                  <input
+                    type="text"
+                    placeholder="Enter Remark"
+                    className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs "
+                    id="remark"
+                    name="remark"
+                  />
+                </div>
+              </form>
+              <button className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                Update
+              </button>
+            </div>
           </div>
         </div>
         <form method="dialog" className="modal-backdrop">

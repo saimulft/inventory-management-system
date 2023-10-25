@@ -3,64 +3,29 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function InventoryShippedTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
+
+  const { data = [], refetch } = useQuery({
+    queryKey: ['ready_to_ship_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/api/v1/shipped_api/get_all_shipped_data')
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const data = [
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      order_ID: "20000004245",
-      supplier_tracking: "sfsad52112sdf",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-    {
-      date: "2023-06-26",
-      store_name: "DeveloperLook`",
-      ASIN_UPC: "B015KJKHH123",
-      code_type: "ASIN",
-      product_name: "Thick Glaze Artist Spray",
-      UPIN: "SAVE973_LLC_B010S",
-      quantity: 23,
-      courier: "UPS",
-      supplier_tracking: "sfsad52112sdf",
-      order_ID: "20000004245",
-      shipping_label: "Not Added",
-    },
-  ];
+
 
   return (
     <div className="px-8 py-12">
@@ -122,15 +87,15 @@ export default function InventoryShippedTable() {
                 >
                   <th>{d.date}</th>
                   <th className="font-normal">{d.store_name}</th>
-                  <td>{d.ASIN_UPC}</td>
+                  <td>{d.code}</td>
                   <td>{d.code_type}</td>
-                  <td className="text-[#8633FF]">{d.product_name}</td>
-                  <td>{d.UPIN}</td>
+                  <td>{d.product_name}</td>
+                  <td>{d.upin}</td>
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
-                  <td>{d.order_ID}</td>
-                  <td className="text-[#8633FF]">{d.supplier_tracking}</td>
-                  <td className="cursor-pointer text-[#8633FF]">Click</td>
+                  <td>{d.order_id}</td>
+                  <td className="text-[#8633FF]">{d.tracking_number}</td>
+                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
                   <td
                     onClick={() =>
                       document.getElementById("my_modal_2").showModal()

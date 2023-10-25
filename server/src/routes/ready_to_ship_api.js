@@ -1,8 +1,6 @@
 const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
-const multer = require("multer")
-const path = require('path')
 const { ObjectId } = require("mongodb")
 
 const run = async () => {
@@ -15,7 +13,6 @@ const run = async () => {
 
         try {
             const RTSdata = req.body
-            console.log(RTSdata)
             const result = await ready_to_ship_collection.insertOne(RTSdata)
             if (result.acknowledged) {
 
@@ -34,12 +31,11 @@ const run = async () => {
     router.get('/get_all_RTS_data', async (req, res) => {
         try {
             const data = await ready_to_ship_collection.find({}).toArray()
-            console.log(data)
-            if (data.length) {
-                res.status(200).json({ data: data })
 
+            if (data) {
+                res.status(200).json({ data: data })
             }
-           
+
 
         } catch (error) {
             res.status(500).json({ message: "get_all_RTS_data_ error" })
