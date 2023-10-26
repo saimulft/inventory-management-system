@@ -27,8 +27,6 @@ const run = async () => {
 
         try {
             const product_image = req.file.filename
-
-
             if (product_image) {
                 res.status(201).json({ message: "image uploaded successful", imageURL: product_image })
             } else {
@@ -37,6 +35,29 @@ const run = async () => {
 
         } catch (error) {
             res.status(500).json({ message: "Multer error" })
+        }
+    })
+    router.put('/update_asin_upc', upload.single('file'), async (req, res) => {
+
+        const id = req.query.id
+        const product_image = req.body.productImage
+        const minPrice = req.body.minPrice
+        const updateData = {
+            product_image: product_image,
+            min_price: minPrice
+        }
+        try {
+            const result = await asin_upc_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData })
+
+            if (result.modifiedCount) {
+                res.status(200).json({ message: "asin upc updated" })
+            } else {
+                res.status(500).json({ message: "asin upc error" })
+            }
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "asin upc error" })
         }
     })
 

@@ -1,5 +1,5 @@
 import { Dropdown } from 'semantic-ui-react'
-import 'semantic-ui-css/semantic.min.css';
+
 
 const AsinSearchDropdown = ({ setAsinUpcOption, asinUpcOption, asinUpcData }) => {
 

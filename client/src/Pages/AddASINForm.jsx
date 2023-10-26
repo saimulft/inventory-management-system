@@ -19,7 +19,6 @@ const AddASINForm = () => {
   const [inputError, setInputError] = useState('')
 
   const { user } = useAuth()
-console.log(imageError)
 
   // handler function for adding ASIN or UPC
   const handleAsinUpcForm = async (event) => {

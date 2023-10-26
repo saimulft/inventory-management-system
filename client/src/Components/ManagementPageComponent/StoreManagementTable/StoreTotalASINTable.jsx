@@ -1,20 +1,28 @@
 import axios from "axios";
-import { format } from "date-fns";
-import {useState } from "react";
-import { AiOutlineSearch } from "react-icons/ai";
+import { format, min } from "date-fns";
+import { useState } from "react";
+import { AiOutlineCloudUpload, AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import FileDownload from "../../Shared/FileDownload";
 import Swal from "sweetalert2";
+import Compressor from "compressorjs";
+import { FaSpinner } from "react-icons/fa";
+import ToastMessage from "../../Shared/ToastMessage";
 
 
 export default function InventoryTotalASINTable() {
+  const [photoUploadType, setPhotoUploadType] = useState(null);
+  const [imageSrc, setImageSrc] = useState(null)
+  const [imageFile, setImageFile] = useState(null)
+  const [imageError, setImageError] = useState('')
   const [singleData, setSingleData] = useState()
+  const [loading, setLoding] = useState(false)
+  const [success, setSuccess] = useState()
   const { user } = useAuth()
-
-  const { data = [],refetch } = useQuery({
+  const { data = [], refetch } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
       try {
@@ -30,7 +38,7 @@ export default function InventoryTotalASINTable() {
     }
   })
   const handleDelete = (id) => {
-    
+
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -55,8 +63,125 @@ export default function InventoryTotalASINTable() {
       }
     })
   }
-  const handleAsinUpcUpdate = () => {
 
+  const handleAsinUpcUpdate = async (event) => {
+    event.preventDefault()
+    setImageError("")
+    const form = event.target;
+    const minPrice = form.minPrice.value
+
+
+    async function checkImageUrlValidity(url) {
+      try {
+        setLoding(true)
+        const response = await fetch(url, { method: 'HEAD' });
+        if (response.ok) {
+          const contentType = response.headers.get('Content-Type');
+          if (contentType && contentType.startsWith('image/')) {
+            const asinInfo = {
+              productImage: url, minPrice
+            }
+            axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData._id}`, asinInfo)
+              .then(res => {
+                if (res.status === 200) {
+                  setImageSrc(null)
+                  setImageFile(null)
+                  form.reset()
+                  setLoding(false)
+                  refetch()
+                  setSuccess("updated")
+                  setTimeout(() => {
+                    setSuccess("")
+                  }, 2000);
+                }
+              })
+              .catch(() => {
+                setLoding(false)
+              })
+            return; // It's a valid image URL
+          }
+        }
+        setImageError("Image url is not valid")
+        setLoding(false)
+        return
+      } catch (error) {
+        setLoding(false)
+        setImageError("Image url is not valid")
+      }
+    }
+    if (form?.inputImageUrl?.value) {
+
+      checkImageUrlValidity(form?.inputImageUrl.value)
+    }
+    if (imageFile) {
+      setLoding(true)
+      const formData = new FormData()
+      await new Promise((resolve, reject) => {
+        new Compressor(imageFile, {
+          quality: 0.5,
+          success: (result) => {
+            const compressed = new File([result], result.name, { type: 'image/jpeg' });
+            formData.append('file', compressed);
+            resolve(compressed);
+          },
+          error: (error) => {
+            reject(error);
+          },
+        });
+      });
+
+      await axios.post('/api/v1/asin_upc_api/asin_upc_image_upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(res => {
+          if (res.status === 201) {
+            const productImage = res.data.imageURL;
+            const asinInfo = {
+              productImage: productImage, minPrice
+            }
+            console.log(asinInfo)
+            axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData._id}`, asinInfo)
+
+              .then(res => {
+                if (res.status === 200) {
+                  form.reset()
+                  setImageSrc(null)
+                  setImageFile(null)
+                  refetch()
+                  setLoding(false)
+                  setSuccess("Updated")
+                  setTimeout(() => {
+                    setSuccess("")
+                  }, 2000);
+                }
+              })
+              .catch(() => {
+                setLoding(false)
+              })
+          }
+        })
+        .catch(() => {
+
+          setLoding(false)
+        })
+    }
+
+  }
+  const handleImage = (e) => {
+    if (e.target.files[0]) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+      if (e.target.files[0].size > maxSizeInBytes) {
+        setImageError("Image file size must be less than 5 MB")
+        return;
+
+      } else {
+        setImageError('')
+        setImageSrc(URL.createObjectURL(e.target.files[0]))
+        setImageFile(e.target.files[0])
+      }
+    }
   }
   return (
     <div className="px-8 py-12">
@@ -158,7 +283,7 @@ export default function InventoryTotalASINTable() {
       </div>
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div className="modal-box">
+        <div style={{ maxWidth: '700px' }} className="modal-box">
           <div className="flex">
             <div className="w-1/2">
               <div className="flex items-center mb-4 gap-2">
@@ -194,62 +319,90 @@ export default function InventoryTotalASINTable() {
                 <div className="flex flex-col mt-4">
                   <label className="text-slate-500">New Min Price</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter new min price"
                     className="input input-bordered input-primary w-full input-sm mt-2"
-                    id="storeManagerName"
-                    name="storeManagerName"
+                    id="minPrice"
+                    name="minPrice"
                   />
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500">Product Image</label>
-                  <div className="flex items-center w-full mt-2">
-                    <label
-                      htmlFor="shippingLabel-dropzone"
-                      className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                  <div className="mt-4">
+                    <label className="text-slate-500">Product Image</label>
+                    <select disabled={imageSrc}
+                      onChange={(e) => {
+                        setPhotoUploadType(e.target.value);
+                      }}
+                      className="select select-primary w-full mt-2 shadow-lg"
                     >
-                      <div className="flex items-center gap-5 py-[4px]">
-                        <svg
-                          className="w-6 h-6 text-gray-500 dark:text-gray-400"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 16"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                          />
-                        </svg>
-                      </div>
-                      <input
-                        id="invoice-dropzone"
-                        name="invoice-dropzone"
-                        type="file"
-                        className="hidden"
-                      />
-                      <div className="ml-5">
-                        <button
-                          onClick={() => {
-                            document.getElementById("invoice-dropzone").click();
-                          }}
-                          type="button"
-                          className="btn btn-outline btn-primary btn-xs"
-                        >
-                          select file
-                        </button>
-                      </div>
-                    </label>
+                      <option defaultValue="Select Upload Option"> Select Upload Option </option>
+                      <option value="url"> Image URL</option>
+                      <option value="file">Upload image</option>
+                    </select>
                   </div>
+
+                  {photoUploadType == "url" && (
+                    <div className="mt-4">
+                      <label className="text-slate-500">Image URL</label>
+                      <input required
+                        type="text"
+                        placeholder="Enter your image URL link"
+                        className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                        id="inputImageUrl"
+                        name="inputImageUrl"
+                      />
+                      {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
+                    </div>
+
+                  )}
+
+                  {photoUploadType == "file" && (
+                    <div className="mt-4">
+                      <label className="text-slate-500">Add Photo</label>
+                      <div className="flex items-center w-full mt-2">
+                        <label
+                          htmlFor="invoice-dropzone"
+                          className="flex justify-between items-center px-5 w-full h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                        >
+                          <div className="flex items-center gap-5 py-[6.5px]">
+                            {imageSrc ? <img src={imageSrc} className="h-8" alt="" /> :
+                              <AiOutlineCloudUpload size={26} />}
+                            <div>
+                              {imageFile && <p className="text-md font-semibold">{imageFile.name.slice(0, 32)}</p>}
+
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                PNG or JPG file size no more than 5MB
+                              </p>
+                            </div>
+                          </div>
+                          <input
+
+                            id="invoice-dropzone"
+                            name="invoice-dropzone"
+                            type="file"
+                            className="hidden"
+                            accept='image/*'
+                            onChange={handleImage}
+                          />
+
+                        </label>
+                      </div>
+                      {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
+                      {imageSrc && <button onClick={() => {
+                        setImageSrc(null)
+                        setImageFile(null)
+                      }} className="btn btn-outline btn-primary btn-xs mx-2 mt-2">Cancel image</button>}
+
+                    </div>
+                  )}
+                  <ToastMessage successMessage={success} errorMessage={imageError} />
                 </div>
+                <button type="submit" className="flex gap-2 justify-center items-cente bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                  {loading && <FaSpinner size={20} className="animate-spin" />}
+                  Update
+                </button>
               </form>
-              <button className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
-                Update
-              </button>
             </div>
           </div>
         </div>
