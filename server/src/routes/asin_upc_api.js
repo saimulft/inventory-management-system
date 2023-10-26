@@ -3,6 +3,7 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const multer = require("multer")
 const path = require('path')
+const { ObjectId } = require("mongodb")
 
 const run = async () => {
 
@@ -26,7 +27,7 @@ const run = async () => {
 
         try {
             const product_image = req.file.filename
-            
+
 
             if (product_image) {
                 res.status(201).json({ message: "image uploaded successful", imageURL: product_image })
@@ -107,6 +108,23 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
         }
     });
+
+
+    router.delete('/delete_asin_upc', async (req, res) => {
+        try {
+            const id = req.query.id
+
+            const result = await asin_upc_collection.deleteOne({ _id: new ObjectId(id) })
+            if (result.deletedCount) {
+                res.status(200).json({ message: 'deleted asin upc' });
+            }
+            else {
+                res.status(500).json({ message: 'error to delete asin upc' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'error to delete asin upc' });
+        }
+    })
 }
 run()
 

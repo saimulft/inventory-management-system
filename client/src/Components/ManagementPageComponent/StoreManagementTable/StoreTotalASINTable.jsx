@@ -1,19 +1,20 @@
 import axios from "axios";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import {useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import FileDownload from "../../Shared/FileDownload";
+import Swal from "sweetalert2";
 
 
 export default function InventoryTotalASINTable() {
   const [singleData, setSingleData] = useState()
   const { user } = useAuth()
 
-  const { data = [] } = useQuery({
+  const { data = [],refetch } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
       try {
@@ -28,7 +29,33 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
-  const handleDelete = () => {
+  const handleDelete = (id) => {
+    
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`/api/v1/asin_upc_api/delete_asin_upc?id=${id}`,)
+          .then(res => {
+            if (res.status === 200) {
+              Swal.fire(
+                'Deleted!',
+                'Data has been deleted.',
+                'success'
+              )
+              refetch()
+            }
+          }).catch(err => console.log(err))
+      }
+    })
+  }
+  const handleAsinUpcUpdate = () => {
 
   }
   return (
@@ -65,9 +92,7 @@ export default function InventoryTotalASINTable() {
             {data?.map((d, index) => {
               return (
                 <tr
-                  className={`${index % 2 == 1 && "bg-gray-200"}`}
-                  key={index}
-                >
+                  className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
                   <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                   <td>{d.asin_upc_code}</td>
                   <td className="text-[#8633FF]">{d.product_name}</td>
@@ -95,7 +120,7 @@ export default function InventoryTotalASINTable() {
                         }>Edit</button>
                       </li>
                       <li>
-                        <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
+                        <button onClick={() => handleDelete(d._id,)}>Delete</button>
                       </li>
                     </ul>
                   </div></td>
@@ -147,25 +172,25 @@ export default function InventoryTotalASINTable() {
 
               <p className="mt-2">
                 <span className="font-medium">Product Name : </span>
-                <span>{singleData.product_name}</span>
+                <span>{singleData?.product_name}</span>
               </p>
               <p className="mt-2">
                 <span className="font-medium">ASIN : </span>
-                <span>{singleData.asin_upc_code}</span>
+                <span>{singleData?.asin_upc_code}</span>
               </p>
               <p className="mt-2">
                 <span className="font-medium">Store Manager: </span>
-                <span>{singleData.store_manager_name}</span>
+                <span>{singleData?.store_manager_name}</span>
               </p>
 
               <p className="mt-2">
                 <span className="font-medium">Old Min Price : </span>
-                <span>$ {singleData.min_price}</span>
+                <span>$ {singleData?.min_price}</span>
               </p>
             </div>
             <div className="w-1/2 px-4">
               <h3 className="text-2xl font-medium">Update</h3>
-              <form>
+              <form onSubmit={handleAsinUpcUpdate}>
                 <div className="flex flex-col mt-4">
                   <label className="text-slate-500">New Min Price</label>
                   <input
