@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import Swal from "sweetalert2";
 import useAuth from "../../../hooks/useAuth";
+import FileDownload from "../../Shared/FileDownload";
 
 
 export default function StorePreparingRequestTable() {
@@ -65,7 +66,6 @@ export default function StorePreparingRequestTable() {
       if (result.isConfirmed) {
         axios.post(`/api/v1/out_of_stock_api/out_of_stock`, OOSdata)
           .then(res => {
-            console.log(res)
             if (res.status === 201) {
               Swal.fire(
                 'Added to out of stock!',
@@ -134,8 +134,8 @@ export default function StorePreparingRequestTable() {
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
-                  <td>{d.invoice_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
-                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.invoice_file && <FileDownload fileName={d.invoice_file} />}</td>
+                  <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                   <td>{d.notes}</td>
                   <td className="flex gap-2">
 

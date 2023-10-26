@@ -17,20 +17,69 @@ const AddASINForm = () => {
   const [imageError, setImageError] = useState('')
   const [loading, setLoding] = useState(false)
   const [inputError, setInputError] = useState('')
-  const { user } = useAuth()
 
+  const { user } = useAuth()
 
   // handler function for adding ASIN or UPC
   const handleAsinUpcForm = async (event) => {
+    setImageError("")
+    setInputError("")
     event.preventDefault()
     const form = event.target;
-    const date =new Date().toISOString()
-    const isoDate = new Date(date).toISOString()
+    const date = new Date().toISOString()
     const asinUpc = form.upin.value;
     const storeManagerName = form.storeManagerName.value;
     const productName = form.productName.value;
     const minPrice = form.minPrice.value;
     const codeType = form.codeType.value;
+
+    async function checkImageUrlValidity(url) {
+      try {
+        setLoding(true)
+        const response = await fetch(url, { method: 'HEAD' });
+        if (response.ok) {
+          const contentType = response.headers.get('Content-Type');
+          if (contentType && contentType.startsWith('image/')) {
+
+
+            const asinInfo = {
+              adminId: user?.admin_id, creatorEmail: user?.email, date, asinUpc, storeManagerName, productName, productImage: url, minPrice, codeType
+            }
+            axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
+              .then(res => {
+                if (res.status === 201) {
+                  setImageSrc(null)
+                  setImageFile(null)
+                  form.reset()
+                  setLoding(false)
+                  setInputError("")
+                  Swal.fire(
+                    'Added',
+                    'ASIN or UPC has been added.',
+                    'success'
+                  )
+                }
+              })
+              .catch(() => {
+                setLoding(false)
+              })
+            return; // It's a valid image URL
+          }
+        }
+        setImageError("Image url is not valid")
+        setLoding(false)
+       
+        return
+      } catch (error) {
+        setLoding(false)
+        setImageError("Image url is not valid")
+       
+      }
+    }
+    if (form?.inputImageUrl?.value) {
+
+      checkImageUrlValidity(form?.inputImageUrl.value)
+    }
 
     if (photoUploadType === "Select Upload Option" || !photoUploadType) {
       setInputError("Select image option")
@@ -50,7 +99,7 @@ const AddASINForm = () => {
       return;
     }
 
-    if (!date || !isoDate || !asinUpc || !storeManagerName || !productName || !minPrice || !codeType) {
+    if (!date || !asinUpc || !storeManagerName || !productName || !minPrice || !codeType) {
       setLoding(false)
       return;
     }
@@ -63,7 +112,7 @@ const AddASINForm = () => {
           quality: 0.5,
           success: (result) => {
             const compressed = new File([result], result.name, { type: 'image/jpeg' });
-            formData.append('image', compressed);       
+            formData.append('file', compressed);
             resolve(compressed);
           },
           error: (error) => {
@@ -81,7 +130,7 @@ const AddASINForm = () => {
           if (res.status === 201) {
             const productImage = res.data.imageURL;
             const asinInfo = {
-              adminId: user?.admin_id,creatorEmail:user?.email, date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
+              adminId: user?.admin_id, creatorEmail: user?.email, date, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
             }
             axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
 
@@ -106,31 +155,6 @@ const AddASINForm = () => {
         })
         .catch(err => {
           console.log(err)
-          setLoding(false)
-        })
-    }
-    else {
-      setLoding(true)
-      const productImage = form?.inputImageUrl.value;
-      const asinInfo = {
-        adminId: user?.admin_id, creatorEmail:user?.email, date: isoDate, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
-      }
-      axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
-        .then(res => {
-          if (res.status === 201) {
-            setImageSrc(null)
-            setImageFile(null)
-            form.reset()
-            setLoding(false)
-            setInputError("")
-            Swal.fire(
-              'Added',
-              'ASIN or UPC has been added.',
-              'success'
-            )
-          }
-        })
-        .catch(() => {
           setLoding(false)
         })
     }
@@ -166,19 +190,19 @@ const AddASINForm = () => {
           <form onSubmit={handleAsinUpcForm}>
             <div className="flex gap-7">
               <div className="w-full">
-               
-              <div>
-              <label className="text-slate-500">Code type</label>
-              <select
-                className="select select-primary w-full mt-2 shadow-lg"
-                name="codeType"
-                id="codeType"
-              >
-                <option defaultValue="Pick Code Type">Pick Code Type </option>
-                <option value="ASIN">ASIN</option>
-                <option value="UPC">UPC</option>
-              </select>
-            </div>
+
+                <div>
+                  <label className="text-slate-500">Code type</label>
+                  <select
+                    className="select select-primary w-full mt-2 shadow-lg"
+                    name="codeType"
+                    id="codeType"
+                  >
+                    <option defaultValue="Pick Code Type">Pick Code Type </option>
+                    <option value="ASIN">ASIN</option>
+                    <option value="UPC">UPC</option>
+                  </select>
+                </div>
 
 
                 <div className="mt-4">
@@ -253,7 +277,9 @@ const AddASINForm = () => {
                   id="inputImageUrl"
                   name="inputImageUrl"
                 />
+                 {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
               </div>
+              
             )}
 
             {photoUploadType == "file" && (
@@ -308,13 +334,13 @@ const AddASINForm = () => {
               </div>
             )}
 
-           
+
             <div>{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center mt-5 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
 
             <div className="flex items-center justify-center mt-8">
               <button type="submit" disabled={loading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">
                 {loading && <FaSpinner size={20} className="animate-spin" />}
-               Add ASIN/UPC
+                Add ASIN/UPC
               </button>
             </div>
           </form>

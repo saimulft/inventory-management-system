@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import axios from 'axios'
 import AuthProvider from "./Providers/AuthProvider.jsx";
 
-
 const queryClient = new QueryClient()
 
 axios.defaults.baseURL = "http://localhost:5000"

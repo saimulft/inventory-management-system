@@ -3,6 +3,7 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const multer = require("multer")
 const path = require('path')
+const { ObjectId } = require("mongodb")
 
 const run = async () => {
 
@@ -12,22 +13,20 @@ const run = async () => {
     // upload asin upc image 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, 'public/product_images'); // Destination folder for uploaded files
+            cb(null, 'public/uploads'); // Destination folder for uploaded files
         },
         filename: (req, file, cb) => {
-            const uniqueSuffix = Date.now() + path.extname(file.originalname);
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
             cb(null, file.fieldname + '-' + uniqueSuffix);
         },
     });
     const upload = multer({ storage, limits: { fileSize: 5000000 } });
 
     // asin_upc_image_upload api 
-    router.post('/asin_upc_image_upload', upload.single('image'), async (req, res) => {
+    router.post('/asin_upc_image_upload', upload.single('file'), async (req, res) => {
 
         try {
             const product_image = req.file.filename
-            console.log(product_image)
-
             if (product_image) {
                 res.status(201).json({ message: "image uploaded successful", imageURL: product_image })
             } else {
@@ -36,6 +35,29 @@ const run = async () => {
 
         } catch (error) {
             res.status(500).json({ message: "Multer error" })
+        }
+    })
+    router.put('/update_asin_upc', upload.single('file'), async (req, res) => {
+
+        const id = req.query.id
+        const product_image = req.body.productImage
+        const minPrice = req.body.minPrice
+        const updateData = {
+            product_image: product_image,
+            min_price: minPrice
+        }
+        try {
+            const result = await asin_upc_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData })
+
+            if (result.modifiedCount) {
+                res.status(200).json({ message: "asin upc updated" })
+            } else {
+                res.status(500).json({ message: "asin upc error" })
+            }
+
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({ message: "asin upc error" })
         }
     })
 
@@ -107,6 +129,23 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
         }
     });
+
+
+    router.delete('/delete_asin_upc', async (req, res) => {
+        try {
+            const id = req.query.id
+
+            const result = await asin_upc_collection.deleteOne({ _id: new ObjectId(id) })
+            if (result.deletedCount) {
+                res.status(200).json({ message: 'deleted asin upc' });
+            }
+            else {
+                res.status(500).json({ message: 'error to delete asin upc' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'error to delete asin upc' });
+        }
+    })
 }
 run()
 

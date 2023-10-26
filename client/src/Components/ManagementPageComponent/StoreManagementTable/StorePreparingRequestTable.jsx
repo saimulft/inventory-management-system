@@ -11,6 +11,7 @@ import { FaSpinner } from "react-icons/fa";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import AsinSearchDropdown from "../../../Utilities/AsinSearchDropdown";
 import { useQuery } from "@tanstack/react-query";
+import FileDownload from "../../Shared/FileDownload";
 
 
 export default function StorePreparingRequestTable() {
@@ -232,9 +233,8 @@ export default function StorePreparingRequestTable() {
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
-                  <td>{d.invoice_file && <a download href={`http://localhost:5000/uploads/${d.invoice_file}`} className="cursor-pointer p-1 hover:text-white bg-[#8633FF] w-full rounded text-white font-medium">Download</a>}</td>
-
-                  <td>{d.shipping_file && <a download href="./pdf logo.png" className="cursor-pointer p-1 hover:text-white bg-[#8633FF] w-full rounded text-white font-medium">Download</a>}</td>
+                  <td>{d.invoice_file && <FileDownload fileName={d.invoice_file} />}</td>
+                  <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                   <td>{d.notes}</td>
                   <td>
                     <div className="dropdown dropdown-end">
