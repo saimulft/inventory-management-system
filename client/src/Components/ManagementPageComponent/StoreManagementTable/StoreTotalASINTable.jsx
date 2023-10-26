@@ -13,7 +13,7 @@ export default function InventoryTotalASINTable() {
   const { user } = useAuth()
 
   useEffect(() => {
-    axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`)
+    axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user?.admin_id}`)
       .then(res => {
         if (res.status === 200) {
           setAsinUpcData(res.data.data)

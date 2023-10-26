@@ -6,15 +6,17 @@ import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
+import useAuth from "../../../hooks/useAuth";
 
 export default function InventoryShippedTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
+  const {user} = useAuth()
 
-  const { data = [], refetch } = useQuery({
+  const { data = [] } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/api/v1/shipped_api/get_all_shipped_data')
+        const res = await axios.get(`/api/v1/shipped_api/get_all_shipped_data?admin_id=${user?.admin_id}`)
         if (res.status === 200) {
           return res.data.data;
         }
@@ -30,7 +32,7 @@ export default function InventoryShippedTable() {
 
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">Shipped: 16,245</h3>
+      <h3 className="text-center text-2xl font-medium">Shipped: {data.length}</h3>
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
@@ -96,7 +98,7 @@ export default function InventoryShippedTable() {
                   <td>{d.courier}</td>
                   <td>{d.order_id}</td>
                   <td className="text-[#8633FF]">{d.tracking_number}</td>
-                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.shipping_file ? <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button> : '_'}</td>
                   <td
                     onClick={() =>
                       document.getElementById("my_modal_2").showModal()

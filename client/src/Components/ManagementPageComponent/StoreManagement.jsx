@@ -5,7 +5,7 @@ import { LiaShippingFastSolid } from "react-icons/lia";
 import { RiCalendarCloseFill, RiFileCloseLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
 
-export default function storeManagement({documentCounts}) {
+export default function StoreManagement({documentCounts}) {
   const shadowStyle = {
     boxShadow: "0px 0px 15px -8px rgba(0,0,0,0.75)",
   };

@@ -1,19 +1,21 @@
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import useAuth from "../../../hooks/useAuth";
 
 export default function StoreOutOfStockTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
-  const { data = [], refetch } = useQuery({
+  const {user} = useAuth()
+
+  const { data = [] } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/api/v1/out_of_stock_api/get_all_OOS_data')
+        const res = await axios.get(`/api/v1/out_of_stock_api/get_all_OOS_data?admin_id=${user?.admin_id}`)
         if (res.status === 200) {
           return res.data.data;
         }

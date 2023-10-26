@@ -15,11 +15,11 @@ axios.defaults.baseURL = "http://localhost:5000"
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <GlobalProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <GlobalProvider>
           <App />
-        </AuthProvider>
-      </GlobalProvider>
+        </GlobalProvider>
+      </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );

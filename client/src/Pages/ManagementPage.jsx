@@ -8,7 +8,7 @@ export default function ManagementPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.2)",
   };
-  const {user} = useAuth()
+  const { user } = useAuth()
 
   const { data = {} } = useQuery({
     queryKey: ['collections-docs-counts'],
@@ -26,21 +26,23 @@ export default function ManagementPage() {
     }
   })
 
+  console.log(user)
+
   return (
     <div className="space-y-8 my-10 mx-8">
       {
         user?.role === 'Admin' || user?.role === 'Admin VA' || user?.role === 'Store Manager Admin' || user?.role === 'Store Manager VA' ?
-        <div style={boxShadowStyle} className="p-16 bg-white rounded-lg">
-          <StoreManagement documentCounts={data} />
-        </div> : ''
+          <div style={boxShadowStyle} className="p-16 bg-white rounded-lg">
+            <StoreManagement documentCounts={data} />
+          </div> : ''
       }
 
       {
         user?.role === 'Admin' || user?.role === 'Admin VA' || user?.role === 'Warehouse Admin' || user?.role === 'Warehouse Manager VA' ?
-        <div style={boxShadowStyle} className="p-16 bg-white rounded-lg">
-          <InventoryManagement documentCounts={data} />
-        </div> : ''
+          <div style={boxShadowStyle} className="p-16 bg-white rounded-lg">
+            <InventoryManagement documentCounts={data} />
+          </div> : ''
       }
-    </div>
+    </div >
   );
 }
