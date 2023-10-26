@@ -5,26 +5,33 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import useAuth from "../../../hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 
 
 export default function InventoryTotalASINTable() {
-  const [asinUpcData, setAsinUpcData] = useState([])
-  const {user} = useAuth()
 
-  useEffect(() => {
-    axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`)
-      .then(res => {
+  const { user } = useAuth()
+  const { data = [] } = useQuery({
+    queryKey: ['get_all_asin_upc'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`)
         if (res.status === 200) {
-          setAsinUpcData(res.data.data)
+          return res.data.data;
         }
-      }).catch(err => console.log(err))
-  }, [])
- 
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
 
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Total ASIN/UPC: {asinUpcData?.length}
+        Total ASIN/UPC: {data?.length}
       </h3>
       <div className="relative flex justify-end">
         <input
@@ -51,13 +58,13 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody>
-            {asinUpcData?.map((d, index) => {
+            {data?.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                      <th>{format(new Date(d.date), "y/MM/d")}</th>
+                  <th>{format(new Date(d.date), "y/MM/d")}</th>
                   <td>{d.asin_upc_code}</td>
                   <td className="text-[#8633FF]">{d.product_name}</td>
                   <td>{d.min_price}</td>

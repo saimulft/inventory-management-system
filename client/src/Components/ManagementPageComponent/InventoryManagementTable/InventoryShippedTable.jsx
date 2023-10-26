@@ -10,7 +10,7 @@ import { format } from "date-fns";
 export default function InventoryShippedTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
 
-  const { data = [], refetch } = useQuery({
+  const { data = [] } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {

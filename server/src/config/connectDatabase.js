@@ -9,7 +9,7 @@ async function connectDatabase() {
         return client.db("inventory_management_system");
     }
     catch (error) {
-        
+
         console.log(error)
     }
 }
