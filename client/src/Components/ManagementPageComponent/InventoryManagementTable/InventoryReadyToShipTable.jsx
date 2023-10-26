@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { FiCheckCircle } from "react-icons/fi";
 import Swal from "sweetalert2";
+import FileDownload from "../../Shared/FileDownload";
 
 
 export default function StorePreparingRequestTable() {
@@ -113,7 +114,7 @@ export default function StorePreparingRequestTable() {
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
-                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                   <td className="flex gap-2">
                     <button onClick={() => {
                       handleShipment(d)

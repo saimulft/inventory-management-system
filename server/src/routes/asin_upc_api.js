@@ -12,10 +12,10 @@ const run = async () => {
     // upload asin upc image 
     const storage = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, 'public/product_images'); // Destination folder for uploaded files
+            cb(null, 'public/uploads'); // Destination folder for uploaded files
         },
         filename: (req, file, cb) => {
-            const uniqueSuffix = Date.now() + path.extname(file.originalname);
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
             cb(null, file.fieldname + '-' + uniqueSuffix);
         },
     });
@@ -26,7 +26,7 @@ const run = async () => {
 
         try {
             const product_image = req.file.filename
-            console.log(product_image)
+            
 
             if (product_image) {
                 res.status(201).json({ message: "image uploaded successful", imageURL: product_image })

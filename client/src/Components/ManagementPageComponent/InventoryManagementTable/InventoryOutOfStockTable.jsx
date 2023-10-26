@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
+import FileDownload from "../../Shared/FileDownload";
 
 export default function StoreOutOfStockTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
@@ -79,7 +80,7 @@ export default function StoreOutOfStockTable() {
                   <td>{d.quantity}</td>
                   <td>{d.courier}</td>
                   <td >{d.tracking_number}</td>
-                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                   <td>{d.notes}</td>
                   <td
                     onClick={() =>

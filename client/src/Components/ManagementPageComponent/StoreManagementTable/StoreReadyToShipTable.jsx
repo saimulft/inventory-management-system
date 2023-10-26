@@ -3,6 +3,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
 import { format } from "date-fns"
 import { useQuery } from "@tanstack/react-query";
+import FileDownload from "../../Shared/FileDownload";
 export default function StorePreparingRequestTable() {
   // const [RTSdata ,setRTSdata] = useState({})
 
@@ -55,7 +56,7 @@ export default function StorePreparingRequestTable() {
               <th>Courier</th>
               <th>Supplier Tracking</th>
               <th>Shipping level</th>
-              
+
             </tr>
           </thead>
           <tbody>
@@ -76,10 +77,7 @@ export default function StorePreparingRequestTable() {
                   <td>{d.courier}</td>
                   <td>{d.tracking_number}</td>
                   <td className="flex gap-2">
-                    <button className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
-                      
-                      <p>Download</p>
-                    </button>
+                    {d.shipping_file && <FileDownload fileName={d.shipping_file} />}
 
                   </td>
                 </tr>

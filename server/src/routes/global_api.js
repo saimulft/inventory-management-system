@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
-
+const path = require("path")
 const run = async () => {
     const db = await connectDatabase()
 
@@ -25,11 +25,11 @@ const run = async () => {
 
             let query;
 
-            if(role === 'Admin' || role === 'Admin VA'){
-                query = {admin_id: admin_id}
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: admin_id }
             }
-            else{
-                query = {creator_email: creator_email}
+            else {
+                query = { creator_email: creator_email }
             }
 
             const counts = {};
@@ -40,12 +40,24 @@ const run = async () => {
                 counts[collectionName] = count;
             }
 
-            res.status(200).json({data: counts});
+            res.status(200).json({ data: counts });
         } catch (error) {
             console.error(error);
             res.status(500).json({ error: 'Internal Server Error' });
         }
     });
+
+    router.get('/download/:fileName', (req, res) => {
+        const fileName = req.params.fileName;
+        const uploadsDirectory = path.join(__dirname, '..', '..', 'public', 'uploads');
+        const filePath = path.join(uploadsDirectory, fileName);
+        res.download(filePath, fileName, (err) => {
+            if (err) {
+                res.status(404).json({ message: 'File not found' });
+            }
+        });
+    });
+
 }
 run()
 

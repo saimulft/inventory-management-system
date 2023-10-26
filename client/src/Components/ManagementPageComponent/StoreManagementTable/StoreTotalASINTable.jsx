@@ -6,6 +6,7 @@ import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
+import FileDownload from "../../Shared/FileDownload";
 
 
 export default function InventoryTotalASINTable() {
@@ -73,7 +74,7 @@ const handleDelete = ()=>{
                   <td>{d.min_price}</td>
                   <td>{d.code_type}</td>
                   <td>{d.store_manager_name}</td>
-                  <td>{d.product_image && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Download</button>}</td>
+                  <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
                   <td><div className="dropdown dropdown-end">
                       <label
                         tabIndex={0}

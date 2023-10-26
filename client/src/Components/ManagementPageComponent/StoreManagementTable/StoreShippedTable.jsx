@@ -1,16 +1,17 @@
 import { useContext } from "react";
 import { AiOutlineEye, AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
+import { BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
+import FileDownload from "../../Shared/FileDownload";
 
 export default function InventoryShippedTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
 
-  const { data = [], refetch } = useQuery({
+  const { data = [] } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
@@ -96,7 +97,7 @@ export default function InventoryShippedTable() {
                   <td>{d.courier}</td>
                   <td>{d.order_id}</td>
                   <td className="text-[#8633FF]">{d.tracking_number}</td>
-                  <td>{d.shipping_file && <button className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                   <td
                     onClick={() =>
                       document.getElementById("my_modal_2").showModal()
