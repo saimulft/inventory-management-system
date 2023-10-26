@@ -1,13 +1,30 @@
 import { AiOutlineMessage, AiOutlineSearch, AiOutlinePlus } from "react-icons/ai";
-import { BsBell } from "react-icons/bs";
+import { BsBell, BsCheckLg } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+
 
 export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, handleCurrentReciver }) {
   const [isChatBoxOpen, setIsChatBoxOpen] = useState(false)
   const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false)
   const [isAddChatOpen, setIsAddChatOpen] = useState(false)
-  const [isInputFocused, setInputFocused] = useState(false);
+  const [isInputFocused, setInputFocused] = useState(false)
+
+  const { user } = useAuth()
+  const [allUsersData, setAllUsersData] = useState([])
+
+
+  useEffect(() => {
+fetch('http://localhost:5000/api/v1/user_api//all_users') 
+.then(res => res.json())
+.then(data => setAllUsersData(data))
+  }, []); 
+
+  const allUsers = allUsersData.filter((singleUser) => singleUser.email != user.email && singleUser.email_verified)
+console.log(allUsers)
+
 
   const handleInputFocus = () => {
     setInputFocused(true);
@@ -17,8 +34,6 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
     setInputFocused(false);
   };
 
-  const { user } = useAuth()
-  console.log(user)
 
 
   return (
@@ -132,7 +147,6 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
                   <div className="relative">
                     <button onClick={() => {
                       setIsAddChatOpen(!isAddChatOpen)
-                      setIsMessageBoxOpen(!isMessageBoxOpen)
                       document.getElementById('my_modal_3').showModal()
                     }} className={`flex items-center gap-1 ${isAddChatOpen ? "bg-purple-100 " : "bg-gray-100"} transition  shadow hover:shadow  px-3 text-sm py-1 rounded-full`} ><p>Add</p><AiOutlinePlus /></button>
 

@@ -16,6 +16,7 @@ app.use(cors({
 
 const authentication_api = require("./src/routes/authentication_api")
 const admin_users_api = require("./src/routes/admin_users_api")
+const all_users_api = require("./src/routes/all_users_api")
 const admin_va_users_api = require("./src/routes/admin_va_users_api")
 const store_owner_users_api = require("./src/routes/store_owner_users_api")
 const store_manager_admin_users_api = require("./src/routes/store_manager_admin_users_api")
@@ -29,6 +30,7 @@ const preparing_form_api = require("./src/routes/preparing_form_api")
 
 app.use('/api/v1/authentication_api',authentication_api)
 app.use('/api/v1/admin_api',admin_users_api)
+app.use('/api/v1/user_api',all_users_api)
 app.use('/api/v1/admin_va_api',admin_va_users_api)
 app.use('/api/v1/store_owner_api',store_owner_users_api)
 app.use('/api/v1/store_manager_admin_api',store_manager_admin_users_api)

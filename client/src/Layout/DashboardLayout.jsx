@@ -25,77 +25,77 @@ export default function DashboardLayout() {
 
   const data = [
     {
-      id:1,
+      id: 1,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:2,
+      id: 2,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Nabil Newaz",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:3,
+      id: 3,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Torikul Islam",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:4,
+      id: 4,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:5,
+      id: 5,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:6,
+      id: 6,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:7,
+      id: 7,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:8,
+      id: 8,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:9,
+      id: 9,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:10,
+      id: 10,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
       time: "31m"
     },
     {
-      id:11,
+      id: 11,
       img: "https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no",
       name: "Toukir Ahmed",
       last_message: "how are you?",
@@ -132,7 +132,7 @@ export default function DashboardLayout() {
                 <div style={{ boxShadow: "0px 2px 20px 0px rgba(0,0,0,0.1)" }} className="flex justify-between items-center  px-3">
                   <div className="py-3">
                     <div className="flex items-center gap-2 font-medium">
-                    <img className="w-10 h-10 rounded-full" src={currentReciver.img} alt="" />
+                      <img className="w-10 h-10 rounded-full" src={currentReciver.img} alt="" />
                       <p>{currentReciver.name}</p>
                     </div>
                   </div>
