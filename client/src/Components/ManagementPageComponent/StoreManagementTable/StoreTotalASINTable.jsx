@@ -28,9 +28,9 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
-const handleDelete = ()=>{
-  
-}
+  const handleDelete = () => {
+
+  }
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
@@ -68,7 +68,7 @@ const handleDelete = ()=>{
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
                   key={index}
                 >
-                  <th>{format(new Date(d.date), "y/MM/d")}</th>
+                  <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                   <td>{d.asin_upc_code}</td>
                   <td className="text-[#8633FF]">{d.product_name}</td>
                   <td>{d.min_price}</td>
@@ -76,29 +76,29 @@ const handleDelete = ()=>{
                   <td>{d.store_manager_name}</td>
                   <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
                   <td><div className="dropdown dropdown-end">
-                      <label
-                        tabIndex={0}
-                      >
-                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+                    <label
+                      tabIndex={0}
+                    >
+                      <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
 
-                      </label>
-                      <ul
-                        tabIndex={0}
-                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                      >
+                    </label>
+                    <ul
+                      tabIndex={0}
+                      className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                    >
 
-                        <li>
-                          <button onClick={() => {
-                            document.getElementById("my_modal_2").showModal()
+                      <li>
+                        <button onClick={() => {
+                          document.getElementById("my_modal_2").showModal()
 
-                          }
-                          }>Edit</button>
-                        </li>
-                        <li>
-                          <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
-                        </li>
-                      </ul>
-                    </div></td>
+                        }
+                        }>Edit</button>
+                      </li>
+                      <li>
+                        <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
+                      </li>
+                    </ul>
+                  </div></td>
                 </tr>
               );
             })}
@@ -141,29 +141,26 @@ const handleDelete = ()=>{
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-medium">Data: </span>
-                <span>2023-06-26</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-medium">Store Name: </span>
-                <span>SAVE_k544.LLC</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-medium">ASIN: </span>
-                <span>BOHFK4522</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-medium">Store Manager: </span>
-                <span>Saidul Basar</span>
+                <span className="font-medium">Data : </span>
+                <span>{singleData?.date && format(new Date(singleData.date), "y/MM/d")}</span>
               </p>
 
               <p className="mt-2">
-                <span className="font-medium">Product Name: </span>
-                <span>demo product name</span>
+                <span className="font-medium">Product Name : </span>
+                <span>{singleData.product_name}</span>
               </p>
               <p className="mt-2">
-                <span className="font-medium">Old Min Price: </span>
-                <span>$35</span>
+                <span className="font-medium">ASIN : </span>
+                <span>{singleData.asin_upc_code}</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-medium">Store Manager: </span>
+                <span>{singleData.store_manager_name}</span>
+              </p>
+
+              <p className="mt-2">
+                <span className="font-medium">Old Min Price : </span>
+                <span>$ {singleData.min_price}</span>
               </p>
             </div>
             <div className="w-1/2 px-4">

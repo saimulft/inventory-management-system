@@ -66,7 +66,6 @@ export default function StorePreparingRequestTable() {
       if (result.isConfirmed) {
         axios.post(`/api/v1/out_of_stock_api/out_of_stock`, OOSdata)
           .then(res => {
-            console.log(res)
             if (res.status === 201) {
               Swal.fire(
                 'Added to out of stock!',

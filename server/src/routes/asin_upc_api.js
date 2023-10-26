@@ -22,7 +22,7 @@ const run = async () => {
     const upload = multer({ storage, limits: { fileSize: 5000000 } });
 
     // asin_upc_image_upload api 
-    router.post('/asin_upc_image_upload', upload.single('image'), async (req, res) => {
+    router.post('/asin_upc_image_upload', upload.single('file'), async (req, res) => {
 
         try {
             const product_image = req.file.filename
