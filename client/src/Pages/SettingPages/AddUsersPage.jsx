@@ -3,7 +3,6 @@ import useAuth from "../../hooks/useAuth";
 
 export default function AddUsersPage() {
   const { user } = useAuth()
-  console.log(user)
   return (
     <div className="py-10">
       <div className="flex flex-col items-center gap-2">

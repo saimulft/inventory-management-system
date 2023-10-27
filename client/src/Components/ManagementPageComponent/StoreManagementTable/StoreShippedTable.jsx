@@ -30,6 +30,8 @@ export default function InventoryShippedTable() {
   })
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
 
+  console.log(singleData)
+
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">Shipped: {data.length}</h3>
@@ -187,10 +189,6 @@ export default function InventoryShippedTable() {
               <p className="mt-2">
                 <span className="font-bold">Supplier Tracking: </span>
                 <span>{singleData.tracking_number ? singleData.tracking_number : 'Note added'}</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Shipping Label: </span>
-                <span>{singleData.shipping_file ? <button className="text-[#8633FF] cursor-pointer">Image</button> : 'Not added'}</span>
               </p>
             </div>
 

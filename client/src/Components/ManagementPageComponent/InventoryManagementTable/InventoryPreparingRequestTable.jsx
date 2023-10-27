@@ -29,7 +29,7 @@ export default function StorePreparingRequestTable() {
   })
 
 
-  const handleRTS = (RTSdata) => {
+  const handleRTS = (_id) => {
     Swal.fire({
       title: 'Confirm ready to ship?',
       icon: 'warning',
@@ -39,7 +39,7 @@ export default function StorePreparingRequestTable() {
       confirmButtonText: 'Yes'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.post(`/api/v1/ready_to_ship_api/ready_to_ship`, RTSdata)
+        axios.post(`/api/v1/ready_to_ship_api/ready_to_ship?id=${_id}`)
           .then(res => {
             if (res.status === 201) {
               Swal.fire(
@@ -53,7 +53,8 @@ export default function StorePreparingRequestTable() {
       }
     })
   }
-  const handleOOS = (OOSdata) => {
+
+  const handleOOS = (_id) => {
 
     Swal.fire({
       title: 'Confirm out of stock?',
@@ -64,7 +65,7 @@ export default function StorePreparingRequestTable() {
       confirmButtonText: 'Yes'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.post(`/api/v1/out_of_stock_api/out_of_stock`, OOSdata)
+        axios.post(`/api/v1/out_of_stock_api/out_of_stock?id=${_id}`)
           .then(res => {
             if (res.status === 201) {
               Swal.fire(
@@ -75,9 +76,6 @@ export default function StorePreparingRequestTable() {
               refetch()
             }
           }).catch(err => console.log(err))
-
-
-
       }
     })
   }
@@ -140,7 +138,7 @@ export default function StorePreparingRequestTable() {
                   <td className="flex gap-2">
 
                     <button onClick={() => {
-                      handleRTS(d)
+                      handleRTS(d._id)
 
                     }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                       <LiaShippingFastSolid />
@@ -149,7 +147,7 @@ export default function StorePreparingRequestTable() {
 
 
                     <button onClick={() => {
-                      handleOOS(d)
+                      handleOOS(d._id)
                     }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                       <LiaShippingFastSolid />
                       <p>OOS</p>

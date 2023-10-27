@@ -26,8 +26,6 @@ export default function ManagementPage() {
     }
   })
 
-  console.log(user)
-
   return (
     <div className="space-y-8 my-10 mx-8">
       {
