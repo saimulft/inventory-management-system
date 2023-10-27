@@ -18,10 +18,14 @@ const PreparingFormPage = () => {
   const [shippingImageError, setShippingImageError] = useState('')
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [asinUpcOption, setAsinUpcOption] = useState('')
+  const [asinUpcOption, setAsinUpcOption] = useState()
   const [storeName, setStoreName] = useState('')
   const [asinUpcData, setAsinUpcData] = useState([])
   const { user } = useAuth()
+
+  const singleAsinUpc = asinUpcOption?.data.filter(asin => asin._id === asinUpcOption.value)
+
+
 
   useEffect(() => {
     axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
@@ -189,14 +193,16 @@ const PreparingFormPage = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500">ASIN/UPC</label>
+                  <label className="text-slate-500 mb-2">ASIN/UPC</label>
                   <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />
                 </div>
 
-                <div className="mt-[5px]">
+                <div className="mt-4">
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
+                    readOnly
+                    defaultValue={singleAsinUpc && singleAsinUpc[0]?.product_name}
                     required
                     placeholder="Enter product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"

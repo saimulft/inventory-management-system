@@ -37,8 +37,8 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
-  const handleDelete = (id) => {
-
+  const handleDelete = (id,product_image) => {
+      console.log(product_image)
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -49,7 +49,7 @@ export default function InventoryTotalASINTable() {
       confirmButtonText: 'Delete'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`/api/v1/asin_upc_api/delete_asin_upc?id=${id}`,)
+        axios.delete(`/api/v1/asin_upc_api/delete_asin_upc?id=${id}&product_image=${product_image}`,)
           .then(res => {
             if (res.status === 200) {
               Swal.fire(
@@ -245,7 +245,7 @@ export default function InventoryTotalASINTable() {
                         }>Edit</button>
                       </li>
                       <li>
-                        <button onClick={() => handleDelete(d._id,)}>Delete</button>
+                        <button onClick={() => handleDelete(d._id,d.product_image)}>Delete</button>
                       </li>
                     </ul>
                   </div></td>

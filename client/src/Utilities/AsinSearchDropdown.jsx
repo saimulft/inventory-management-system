@@ -1,26 +1,18 @@
-import { Dropdown } from 'semantic-ui-react'
 
+import Select from 'react-select'
 
 const AsinSearchDropdown = ({ setAsinUpcOption, asinUpcOption, asinUpcData }) => {
 
-    const handleDropdownChange = (e, { value }) => {
-        setAsinUpcOption(value);
-    };
+  
 
     return (
-        <Dropdown
-            className='custom_css_sui'
-            clearable
-            fluid
-            search
-            selection
+        <Select
             options={asinUpcData}
-            placeholder='Select ASIN or UPC'
             value={asinUpcOption}
-            onChange={handleDropdownChange}
+            onChange={setAsinUpcOption}
+          
         />
     )
 }
-
 
 export default AsinSearchDropdown
