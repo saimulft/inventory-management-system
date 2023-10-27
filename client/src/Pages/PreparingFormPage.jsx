@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../Components/Shared/ToastMessage";
 import AsinSearchDropdown from "../Utilities/AsinSearchDropdown";
+import { useQuery } from "@tanstack/react-query";
 const PreparingFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
@@ -20,21 +21,36 @@ const PreparingFormPage = () => {
   const [loading, setLoading] = useState(false)
   const [asinUpcOption, setAsinUpcOption] = useState()
   const [storeName, setStoreName] = useState('')
-  const [asinUpcData, setAsinUpcData] = useState([])
   const { user } = useAuth()
 
-  const singleAsinUpc = asinUpcOption?.data.filter(asin => asin._id === asinUpcOption.value)
-
-
-
   useEffect(() => {
-    axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
-      .then(res => {
+    if (storeName && asinUpcOption) {
+      const upin = (`${storeName}_${asinUpcOption.label}`);
+
+      axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
+        .then(res => {
+          if (res.status === 200) {
+            console.log(res.data.data)
+          }
+        }).catch(err => console.log(err))
+    }
+  }, [storeName, asinUpcOption]);
+
+  const { data: asinUpcData = [] } = useQuery({
+    queryKey: ['asin_upc_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
         if (res.status === 200) {
-          setAsinUpcData(res.data.data)
+          return res.data.data;
         }
-      }).catch(err => console.log(err))
-  }, [user?.email])
+        return []
+      } catch (error) {
+        console.log(error)
+        return []
+      }
+    }
+  })
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -56,7 +72,7 @@ const PreparingFormPage = () => {
     const courier = form.courier.value
     const storeName = form.storeName.value
     const codeType = form.codeType.value
-    const upin = `${productName}_${asinUpcOption}`
+    const upin = `${productName}_${asinUpcOption?.label}`
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value
@@ -85,7 +101,7 @@ const PreparingFormPage = () => {
 
     const formData = new FormData()
     let preparingFormvalue = {
-      adminId: user?.admin_id, creatorEmail: user?.email, date, code: asinUpcOption, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, warehouse
+      adminId: user?.admin_id, creatorEmail: user?.email, date, asin_upc_code: asinUpcOption?.label, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, warehouse
     }
     for (const key in preparingFormvalue) {
       formData.append(key, preparingFormvalue[key]);
@@ -201,8 +217,7 @@ const PreparingFormPage = () => {
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
-                    readOnly
-                    defaultValue={singleAsinUpc && singleAsinUpc[0]?.product_name}
+              
                     required
                     placeholder="Enter product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -330,7 +345,7 @@ const PreparingFormPage = () => {
                   <input
                     required
                     readOnly
-                    value={storeName && asinUpcOption && `${storeName}_${asinUpcOption}`}
+                    value={storeName && asinUpcOption && `${storeName}_${asinUpcOption.label}`}
                     type="text"
                     placeholder="Enter UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"

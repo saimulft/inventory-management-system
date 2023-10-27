@@ -46,7 +46,7 @@ export default function StoreAllStockTable() {
               <th>Total Received</th>
               <th>Total Sold</th>
               <th>Stock</th>
-              <th>Purchase Price</th>
+              <th>Unit Price</th>
               <th>Sold Price</th>
               <th>Remaining Price</th>
             </tr>
@@ -64,7 +64,7 @@ export default function StoreAllStockTable() {
                   <td>{d.received_quantity}</td>
                   <td>{d.total_sold ? `$${d.total_sold}` : '-'}</td>
                   <td>{d.stock}</td>
-                  <td>${d.purchase_price}</td>
+                  <td>${d.unit_price}</td>
                   <td>{d.sold_price ? `$${d.sold_price}` : '-'}</td>
                   <td>{d.remaining_price ? `$${d.remaining_price}` : '-'}</td>
                 </tr>

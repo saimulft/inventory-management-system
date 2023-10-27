@@ -58,7 +58,7 @@ const run = async () => {
                 admin_id: req.body.adminId,
                 creator_email: req.body.creatorEmail,
                 date: req.body.date,
-                code: req.body.code,
+                asin_upc_code: req.body.asin_upc_code,
                 order_id: req.body.orderID,
                 courier: req.body.courier === "Select courier" ? null : req.body.courier,
                 product_name: req.body.productName,
@@ -119,7 +119,7 @@ const run = async () => {
                 notes: req.body.notes ? req.body.notes : existData.notes,
                 quantity: req.body.quantity ? req.body.quantity : existData.quantity,
                 product_name: req.body.productName ? req.body.productName : existData.product_name,
-                code: req.body.code ? req.body.code : existData.code,
+                asin_upc_code: req.body.code ? req.body.code : existData.asin_upc_code,
 
             };
 
@@ -149,7 +149,7 @@ const run = async () => {
             if (data) {
                 res.status(200).json({ data: data })
             }
-           
+
 
         } catch (error) {
             res.status(500).json({ message: "get_all_preparing_request_data error" })
@@ -158,7 +158,7 @@ const run = async () => {
 
 
     router.delete('/delete_preparing_request_data', async (req, res) => {
-     
+
         const id = req.body.id;
         const invoice_file = req.body.invoice_file;
         const shipping_file = req.body.shipping_file;

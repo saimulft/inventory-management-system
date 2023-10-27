@@ -153,21 +153,43 @@ const run = async () => {
                         }
                     }
 
-                    //TODO: it could be update in future
-                    const allStockData = {
-                        ...result,
-                        purchase_price: parseInt(result.received_quantity) * parseInt(result.unit_price),
-                        stock: result.received_quantity,
-                        total_sold: null,
-                        sold_price: null,
-                        remaining_price: null
+                    const existInStock = await all_stock_collection.findOne({ upin: result.upin })
+                    if (existInStock) {
+                        const quantity = parseInt(result.received_quantity) + parseInt(existInStock.quantity)
+                        const stock = parseInt(result.received_quantity) + parseInt(existInStock.stock)
+                        const oldPrice = parseFloat(existInStock.unit_price)
+                        const newPrice = parseFloat(result.unit_price)
+                        const avgUnitPrice = (oldPrice + newPrice) / 2;
+                        const updateStockdata = {
+                            received_quantity: quantity,
+                            unit_price: avgUnitPrice,
+                            stock: stock
+                        }
+                        const id = existInStock._id
+                        const updateStockResult = await all_stock_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateStockdata })
+                        if (updateStockResult.modifiedCount) {
+                            return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
+                        }
+                        else {
+                            return res.status(500).json({ message: 'Error to insert all stock data' });
+                        }
                     }
-                    const allStockIntertResult = await all_stock_collection.insertOne(allStockData)
-                    if (allStockIntertResult.insertedId) {
-                        return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
-                    }
+
                     else {
-                        return res.status(500).json({ message: 'Error to insert all stock data' });
+                        const allStockData = {
+                            ...result,
+                            stock: result.received_quantity,
+                            total_sold: 0,
+                            sold_price: 0,
+                            remaining_price: 0
+                        }
+                        const allStockIntertResult = await all_stock_collection.insertOne(allStockData)
+                        if (allStockIntertResult.insertedId) {
+                            return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
+                        }
+                        else {
+                            return res.status(500).json({ message: 'Error to insert all stock data' });
+                        }
                     }
                 }
                 else {

@@ -137,7 +137,7 @@ export default function InventoryPendingArrivalTable() {
 
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">Pending Arrival: {data.length}</h3>
+      <h3 className="text-center text-2xl font-medium">Pending Arrival: {data?.length}</h3>
 
       <div className="overflow-x-auto mt-8">
         <table className="table table-sm">

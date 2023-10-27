@@ -71,7 +71,7 @@ export default function StoreOutOfStockTable() {
                 >
                   <th>{d.date}</th>
                   <th>{d.store_name}</th>
-                  <td>{d.code}</td>
+                  <td>{d.asin_upc_code}</td>
                   <td>{d.code_type}</td>
                   <td>{d.order_id}</td>
                   <td>{d.product_name}</td>
