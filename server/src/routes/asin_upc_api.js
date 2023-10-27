@@ -4,7 +4,7 @@ const connectDatabase = require('../config/connectDatabase')
 const multer = require("multer")
 const path = require('path')
 const { ObjectId } = require("mongodb")
-
+const fs = require('fs')
 const run = async () => {
 
     const db = await connectDatabase()
@@ -97,15 +97,29 @@ const run = async () => {
     //   get asin or upc by email
     router.get('/get_asin_upc_by_email', async (req, res) => {
         const creator_email = req.query.email;
-
         try {
             const asinUpcData = await asin_upc_collection.find({ creator_email: creator_email }).toArray()
             if (asinUpcData) {
-
                 const data = asinUpcData.map(item => {
-                    return { key: item.asin_upc_code, value: item.asin_upc_code, text: item.asin_upc_code }
+                    return { data: asinUpcData, value: item._id, label: item.asin_upc_code }
                 })
                 res.status(200).json({ data: data, message: "successfully get asin_upc" })
+            }
+            else {
+                res.status(500).json({ message: "Error to geting  asin_upc" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in asin_upc' });
+        }
+    });
+    //   get asin or upc by email
+    router.get('/get_asin_upc_by_id', async (req, res) => {
+        const id = req.query.id;
+        try {
+            const asinUpcData = await asin_upc_collection.findOne({ _id: new ObjectId(id) })
+            if (asinUpcData) {
+
+                res.status(200).json({ data: asinUpcData, message: "successfully get asin_upc" })
             }
             else {
                 res.status(500).json({ message: "Error to geting  asin_upc" })
@@ -134,13 +148,28 @@ const run = async () => {
     router.delete('/delete_asin_upc', async (req, res) => {
         try {
             const id = req.query.id
+            const product_image = req.query.product_image
+
 
             const result = await asin_upc_collection.deleteOne({ _id: new ObjectId(id) })
             if (result.deletedCount) {
-                res.status(200).json({ message: 'deleted asin upc' });
+
+                if (product_image.startsWith('file')) {
+
+                    const filePath = 'public/uploads/' + product_image;
+                    fs.unlink(filePath, (err) => {
+                        if (err) {
+                            console.log(err)
+                            return res.status(500).json({ message: 'error to delete asin upc' });
+                        }
+                    });
+                    return res.status(200).json({ message: 'deleted asin upc' });
+
+                }
+                return res.status(200).json({ message: 'deleted asin upc' });
             }
             else {
-                res.status(500).json({ message: 'error to delete asin upc' });
+                return res.status(500).json({ message: 'error to delete asin upc' });
             }
         } catch (error) {
             res.status(500).json({ message: 'error to delete asin upc' });
