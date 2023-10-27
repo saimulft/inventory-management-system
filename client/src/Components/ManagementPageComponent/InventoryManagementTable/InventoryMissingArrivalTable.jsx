@@ -28,7 +28,7 @@ export default function InventoryMissingArrivalTable() {
     queryKey: ['missing_arrival_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/missing_arrival_api/get_all_missing_arrival_data?admin_id=${user.admin_id}&status=${activeTab}`)
+        const res = await axios.get(`/api/v1/missing_arrival_api/get_all_missing_arrival_data?admin_id=${user?.admin_id}&status=${activeTab}`)
         if (res.status === 200) {
           return res.data.data;
         }

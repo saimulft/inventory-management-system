@@ -7,7 +7,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import axios from 'axios'
 import AuthProvider from "./Providers/AuthProvider.jsx";
 
-
 const queryClient = new QueryClient()
 
 axios.defaults.baseURL = "http://localhost:5000"
@@ -15,11 +14,11 @@ axios.defaults.baseURL = "http://localhost:5000"
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <GlobalProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <GlobalProvider>
           <App />
-        </AuthProvider>
-      </GlobalProvider>
+        </GlobalProvider>
+      </AuthProvider>
     </QueryClientProvider>
   </React.StrictMode>
 );

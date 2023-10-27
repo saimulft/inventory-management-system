@@ -1,21 +1,23 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AiOutlineEye, AiOutlineSearch } from "react-icons/ai";
-import { BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
+import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
 
 export default function InventoryShippedTable() {
+  const [singleData, setSingleData] = useState({})
   const { isSidebarOpen } = useContext(GlobalContext);
+  const {user} = useAuth()
 
   const { data = [] } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/api/v1/shipped_api/get_all_shipped_data')
+        const res = await axios.get(`/api/v1/shipped_api/get_all_shipped_data?admin_id=${user?.admin_id}`)
         if (res.status === 200) {
           return res.data.data;
         }
@@ -28,10 +30,11 @@ export default function InventoryShippedTable() {
   })
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
 
+  console.log(singleData)
 
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">Shipped: 16,245</h3>
+      <h3 className="text-center text-2xl font-medium">Shipped: {data.length}</h3>
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
@@ -104,13 +107,15 @@ export default function InventoryShippedTable() {
                     }
                     className="cursor-pointer"
                   >
-                    <AiOutlineEye size={15} />
+                    <AiOutlineEye onClick={() => setSingleData(d)} size={15} />
                   </td>
                 </tr>
               );
             })}
           </tbody>
         </table>
+
+        {/* pagination */}
         <div className="flex justify-between mt-4">
           <p>Showing 1 to 20 of 2,000 entries</p>
           <div className="flex items-center gap-2">
@@ -138,55 +143,52 @@ export default function InventoryShippedTable() {
           </div>
         </div>
       </div>
+
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft }} className="modal-box py-10 px-10">
           <div className="flex">
-            <div className="w-1/2">
+            <div>
               <div className="flex items-center mb-6 gap-2">
-                <BiSolidEdit size={24} />
+                {/* <BiSolidEdit size={24} /> */}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-bold">Data: </span>
-                <span>2023-06-26</span>
+                <span className="font-bold">Date: </span>
+                <span>{singleData.date && format(new Date(singleData.date), "y/MM/d")}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Store Name: </span>
-                <span>SAVE_k544.LLC</span>
+                <span>{singleData.store_name}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">ASIN: </span>
-                <span>BOHFK4522</span>
+                <span>{singleData.code}</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">Ordered Qnt: </span>
-                <span>23</span>
+                <span className="font-bold">Sold Qnt: </span>
+                <span>{singleData.quantity}</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">Received Qnt: </span>
-                <span>23</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Missing Qnt: </span>
-                <span>23</span>
+                <span className="font-bold">Courier: </span>
+                <span>{singleData.courier}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">UPIN: </span>
-                <span>USA_Quantity5245sdfds</span>
+                <span>{singleData.upin}</span>
               </p>
 
               <p className="mt-2">
                 <span className="font-bold">Product Name: </span>
-                <span>demo product name</span>
+                <span>{singleData.product_name}</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">EDA: </span>
-                <span>2023-06-26</span>
+                <span className="font-bold">Order ID: </span>
+                <span>{singleData.order_id}</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">Shipping Tracking: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
+                <span className="font-bold">Supplier Tracking: </span>
+                <span>{singleData.tracking_number ? singleData.tracking_number : 'Note added'}</span>
               </p>
             </div>
 

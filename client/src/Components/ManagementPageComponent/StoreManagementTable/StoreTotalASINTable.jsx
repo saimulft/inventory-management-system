@@ -1,5 +1,5 @@
 import axios from "axios";
-import { format, min } from "date-fns";
+import { format } from "date-fns";
 import { useState } from "react";
 import { AiOutlineCloudUpload, AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
@@ -22,6 +22,7 @@ export default function InventoryTotalASINTable() {
   const [loading, setLoding] = useState(false)
   const [success, setSuccess] = useState()
   const { user } = useAuth()
+
   const { data = [], refetch } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {

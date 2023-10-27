@@ -3,15 +3,18 @@ import { AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
 import { format } from "date-fns"
 import { useQuery } from "@tanstack/react-query";
+import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
+
 export default function StorePreparingRequestTable() {
   // const [RTSdata ,setRTSdata] = useState({})
+  const {user} = useAuth()
 
-  const { data: preparingRequestData = [], } = useQuery({
+  const { data = [], } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/api/v1/ready_to_ship_api/get_all_RTS_data')
+        const res = await axios.get(`/api/v1/ready_to_ship_api/get_all_RTS_data?admin_id=${user?.admin_id}`)
         if (res.status === 200) {
           return res.data.data;
         }
@@ -28,7 +31,7 @@ export default function StorePreparingRequestTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Ready to ship : {preparingRequestData?.length}
+        Ready to ship : {data?.length}
       </h3>
       <div className="relative flex justify-end">
         <input
@@ -60,7 +63,7 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {preparingRequestData.map((d, index) => {
+            {data.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"} py-2`}

@@ -11,6 +11,10 @@
     }
 }
 
+input, select{
+    outline: none !important;
+}
+
 .css-13cymwt-control {
     margin-top: 10px !important;
     cursor: pointer !important;
@@ -20,7 +24,7 @@
     padding: 5px !important;
 }
 
-.css-t3ipsp-control {
+.css-t3ipsp-control{
     border: 0.6px solid #8633FF !important;
-
+    margin-top: 10px !important;
 }

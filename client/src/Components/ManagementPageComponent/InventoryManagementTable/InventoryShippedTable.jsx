@@ -6,16 +6,18 @@ import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
+import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
 
 export default function InventoryShippedTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
+  const {user} = useAuth()
 
   const { data = [] } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/api/v1/shipped_api/get_all_shipped_data')
+        const res = await axios.get(`/api/v1/shipped_api/get_all_shipped_data?admin_id=${user?.admin_id}`)
         if (res.status === 200) {
           return res.data.data;
         }
@@ -31,7 +33,7 @@ export default function InventoryShippedTable() {
 
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">Shipped: 16,245</h3>
+      <h3 className="text-center text-2xl font-medium">Shipped: {data.length}</h3>
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">

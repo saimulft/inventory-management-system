@@ -1,6 +1,5 @@
 import axios from "axios";
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
