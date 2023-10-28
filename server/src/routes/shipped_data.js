@@ -66,7 +66,7 @@ const run = async () => {
         }
     })
 
-    // update pending arrival data from inventory management
+    // update shipped data and added to stock
     router.put('/update_shipped_data', async (req, res) => {
         try {
             const id = req.query.id;
