@@ -56,19 +56,34 @@ const run = async () => {
                     upin: req.body.upin ? req.body.upin : existData.upin,
                     eda: req.body.eda ? req.body.eda : existData.eda,
                     missing_status: req.body.missing_status !== 'Select Status' ? req.body.missing_status : existData.missing_status,
-                    notes: req.body.notes ? req.body.notes : existData.notes
+                    remark: req.body.notes ? req.body.notes : existData.remark
                 }
-                const result = await missing_arrival_collection.updateOne(
+                const result = await missing_arrival_collection.findOneAndUpdate(
                     { _id: new ObjectId(id) },
-                    { $set: updatedData }
+                    { $set: updatedData },
+                    { returnDocument: "after" }
                 );
 
-                if (result.modifiedCount) {
-                    const updatedResult = await all_stock_collection.updateOne(
-                        { _id: new ObjectId(id) },
-                        { $set: {received_quantity: existData.quantity, stock: existData.quantity} }
-                    );
+                if (result) {
+                    const existInStock = await all_stock_collection.findOne({ upin: result.upin })
+                    const quantity = parseInt(result.missing_quantity) + parseInt(existInStock.received_quantity)
+                    const stock = parseInt(result.missing_quantity) + parseInt(existInStock.stock)
+                    const oldPrice = parseFloat(existInStock.unit_price)
+                    const newPrice = parseFloat(result.unit_price)
+                    const avgUnitPrice = (oldPrice + newPrice) / 2;
 
+                    const updateStockdata = {
+                        received_quantity: quantity,
+                        unit_price: avgUnitPrice.toFixed(2),
+                        stock: stock,
+                        remark: result.remark
+                    }
+
+                    const updatedResult = await all_stock_collection.updateOne(
+                        { _id: new ObjectId(existInStock._id) },
+                        { $set: updateStockdata }
+                    );
+                    
                     if (updatedResult.modifiedCount) {
                         return res.status(200).json({ status: 'success', message: 'Data modified successful' });
                     }
