@@ -24,9 +24,9 @@ const PreparingFormPage = () => {
   const [productName, setProductName] = useState('')
   const { user } = useAuth()
 
-  const asinId = asinUpcOption?.value 
+  const asinId = asinUpcOption?.value
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
-  console.log(asinUpcOption)
+
   useEffect(() => {
     if (storeName && asinUpcOption) {
       const upin = (`${storeName}_${asinUpcOption.label}`);
@@ -79,12 +79,13 @@ const PreparingFormPage = () => {
     const orderID = form.orderID.value
     const courier = form.courier.value
     const storeName = form.storeName.value
-    const upin = `${productName}_${asinUpcOption?.label}`
+    const upin = `${storeName}_${asinUpcOption?.label}`
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value
 
-   
+
+
     if (warehouse === 'Select Warehouse' || !warehouse) {
       setFormError("Missing warehouse")
       return
@@ -94,8 +95,11 @@ const PreparingFormPage = () => {
       setFormError("Missing  store name")
       return
     }
-
-    if (!date || !asinUpcOption.label || !orderID || !productName || !storeName || !upin || !quantity) {
+    if (!productName) {
+      setFormError(`No product available under UPIN ${upin}`)
+      return
+    }
+    if (!date || !asinUpcOption.label || !orderID || !storeName || !upin || !quantity) {
       setFormError("Missing form field detected")
       return;
     }

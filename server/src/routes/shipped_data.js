@@ -12,9 +12,9 @@ const run = async () => {
     router.post("/shipped", async (req, res) => {
         try {
             const id = req.query.id;
-
             const existData = await ready_to_ship_collection.findOne({ _id: new ObjectId(id) })
             if (existData) {
+                
                 const result = await shipped_data_collection.insertOne(existData);
 
                 if (result.acknowledged) {

@@ -62,9 +62,9 @@ export default function InventoryAllStockTable() {
                   <td>{d.upin}</td>
                   <td>{d.product_name}</td>
                   <td>{d.received_quantity}</td>
-                  <td>{d.total_sold ? `$${d.total_sold}` : '-'}</td>
+                  <td>{d.total_sold ? `${d.total_sold}` : '-'}</td>
                   <td>{d.stock}</td>
-                  <td>${d.purchase_price}</td>
+                  <td>${d.unit_price}</td>
                   <td>{d.sold_price ? `$${d.sold_price}` : '-'}</td>
                   <td>{d.remaining_price ? `$${d.remaining_price}` : '-'}</td>
                 </tr>
