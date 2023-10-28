@@ -137,7 +137,7 @@ const run = async () => {
 
                     const deletedResult = await pending_arrival_collection.deleteOne({ _id: new ObjectId(id) });
                     if (!deletedResult.deletedCount) {
-                        res.status(500).json({ message: "Error to delete pending arrival data" })
+                        return res.status(500).json({ message: "Error to delete pending arrival data" })
                     }
 
                     if (missingQuantity) {
@@ -155,18 +155,21 @@ const run = async () => {
 
                     const existInStock = await all_stock_collection.findOne({ upin: result.upin })
                     if (existInStock) {
-                        const quantity = parseInt(result.received_quantity) + parseInt(existInStock.quantity)
+                        const quantity = parseInt(result.received_quantity) + parseInt(existInStock.received_quantity)
                         const stock = parseInt(result.received_quantity) + parseInt(existInStock.stock)
+
                         const oldPrice = parseFloat(existInStock.unit_price)
                         const newPrice = parseFloat(result.unit_price)
                         const avgUnitPrice = (oldPrice + newPrice) / 2;
                         const updateStockdata = {
                             received_quantity: quantity,
-                            unit_price: avgUnitPrice,
-                            stock: stock
+                            unit_price: avgUnitPrice.toFixed(2),
+                            stock: stock,
+                            remark: result.remark
                         }
                         const id = existInStock._id
                         const updateStockResult = await all_stock_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateStockdata })
+
                         if (updateStockResult.modifiedCount) {
                             return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
                         }

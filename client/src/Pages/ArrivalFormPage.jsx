@@ -17,7 +17,6 @@ const ArrivalFormPage = () => {
   // const [asinUpcData, setAsinUpcData] = useState([])
   const [storeName, setStoreName] = useState('')
   const [productName, setProductName] = useState('')
-  const [readOnlyProductName, setReadOnlyProductName] = useState(false)
 
   const asinId = asinUpcOption?.value
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
@@ -30,15 +29,15 @@ const ArrivalFormPage = () => {
           console.log(res)
           if (res.status === 200) {
             setProductName(res.data.data.product_name)
-            setReadOnlyProductName(true)
           }
-        }).catch(() => {
-          console.log("hello")
-          setReadOnlyProductName(false)
-          setProductName("")
+          if(res.status === 204){
+            setProductName(asinUpc[0]?.product_name)
+          }
+        }).catch((error) => {
+          console.log(error)
         })
     }
-  }, [storeName, asinUpcOption]);
+  }, [storeName, asinUpcOption, asinUpc]);
 
   const { data: asinUpcData = [] } = useQuery({
     queryKey: ['asin_upc_data'],
@@ -55,8 +54,6 @@ const ArrivalFormPage = () => {
       }
     }
   })
-
-
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -168,7 +165,7 @@ const ArrivalFormPage = () => {
                   <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />
                 </div>
 
-                <div className="mt-[5px]">
+                <div className="mt-4">
                   <label className="text-slate-500">Supplier ID</label>
                   <input
                     type="text"
@@ -240,7 +237,7 @@ const ArrivalFormPage = () => {
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
-                    readOnly={readOnlyProductName}
+                    readOnly
                     value={productName}
                     onChange={(e) => {
                       setProductName(e.target.value)
