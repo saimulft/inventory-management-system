@@ -70,8 +70,6 @@ export default function InventoryTotalASINTable() {
     setImageError("")
     const form = event.target;
     const minPrice = form.minPrice.value
-
-
     async function checkImageUrlValidity(url) {
       try {
         setLoding(true)
@@ -90,7 +88,7 @@ export default function InventoryTotalASINTable() {
                   form.reset()
                   setLoding(false)
                   refetch()
-                  setSuccess("updated")
+                  setSuccess("Updated")
                   setTimeout(() => {
                     setSuccess("")
                   }, 2000);
@@ -164,10 +162,11 @@ export default function InventoryTotalASINTable() {
           }
         })
         .catch(() => {
-
           setLoding(false)
         })
     }
+
+    
 
   }
   const handleImage = (e) => {
@@ -291,19 +290,19 @@ export default function InventoryTotalASINTable() {
                 <BiSolidEdit size={24} />
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
-              <p className="mt-2">
+              {/* <p className="mt-2">
                 <span className="font-medium">Data : </span>
                 <span>{singleData?.date && format(new Date(singleData.date), "y/MM/d")}</span>
-              </p>
+              </p> */}
 
               <p className="mt-2">
                 <span className="font-medium">Product Name : </span>
                 <span>{singleData?.product_name}</span>
               </p>
-              <p className="mt-2">
+              {/* <p className="mt-2">
                 <span className="font-medium">ASIN : </span>
                 <span>{singleData?.asin_upc_code}</span>
-              </p>
+              </p> */}
               <p className="mt-2">
                 <span className="font-medium">Store Manager: </span>
                 <span>{singleData?.store_manager_name}</span>

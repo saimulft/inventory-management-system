@@ -21,8 +21,12 @@ const PreparingFormPage = () => {
   const [loading, setLoading] = useState(false)
   const [asinUpcOption, setAsinUpcOption] = useState()
   const [storeName, setStoreName] = useState('')
+  const [productName, setProductName] = useState('')
   const { user } = useAuth()
 
+  const asinId = asinUpcOption?.value 
+  const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
+  console.log(asinUpcOption)
   useEffect(() => {
     if (storeName && asinUpcOption) {
       const upin = (`${storeName}_${asinUpcOption.label}`);
@@ -31,6 +35,11 @@ const PreparingFormPage = () => {
         .then(res => {
           if (res.status === 200) {
             console.log(res.data.data)
+            setProductName(res.data.data.product_name)
+          }
+          if (res.status === 204) {
+
+            setProductName("")
           }
         }).catch(err => console.log(err))
     }
@@ -67,20 +76,15 @@ const PreparingFormPage = () => {
     event.preventDefault()
     const form = event.target
     const date = new Date().toISOString();
-    const productName = form.productName.value
     const orderID = form.orderID.value
     const courier = form.courier.value
     const storeName = form.storeName.value
-    const codeType = form.codeType.value
     const upin = `${productName}_${asinUpcOption?.label}`
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value
 
-    if (!asinUpcOption) {
-      setFormError("Missing ASIN or UPC")
-      return
-    }
+   
     if (warehouse === 'Select Warehouse' || !warehouse) {
       setFormError("Missing warehouse")
       return
@@ -90,18 +94,27 @@ const PreparingFormPage = () => {
       setFormError("Missing  store name")
       return
     }
-    if (codeType === 'Pick Code Type' || !codeType) {
-      setFormError("Missing code type")
-      return
-    }
-    if (!date || !asinUpcOption || !orderID || !productName || !storeName || !codeType || !upin || !quantity) {
+
+    if (!date || !asinUpcOption.label || !orderID || !productName || !storeName || !upin || !quantity) {
       setFormError("Missing form field detected")
       return;
     }
 
     const formData = new FormData()
     let preparingFormvalue = {
-      adminId: user?.admin_id, creatorEmail: user?.email, date, asin_upc_code: asinUpcOption?.label, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, warehouse
+      adminId: user?.admin_id,
+      creatorEmail: user?.email,
+      date,
+      asin_upc_code: asinUpcOption.label,
+      orderID,
+      courier,
+      productName,
+      storeName,
+      codeType: asinUpc && asinUpc[0].code_type,
+      upin,
+      quantity,
+      trackingNumber,
+      warehouse
     }
     for (const key in preparingFormvalue) {
       formData.append(key, preparingFormvalue[key]);
@@ -133,6 +146,8 @@ const PreparingFormPage = () => {
             'success'
           )
           form.reset()
+          setProductName("")
+          setAsinUpcOption(null)
           setInvoiceImageFile(null)
           setShippingImageFile(null)
           setInvoiceImageSrc(null)
@@ -144,7 +159,8 @@ const PreparingFormPage = () => {
           setFormError("Something went wrong to send preparing form request")
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err)
         setLoading(false)
         setFormError("Something went wrong to send preparing form request")
 
@@ -217,7 +233,8 @@ const PreparingFormPage = () => {
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
-              
+                    readOnly
+                    value={productName}
                     required
                     placeholder="Enter product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -325,19 +342,20 @@ const PreparingFormPage = () => {
                     <option value="Alibaba">Alibaba</option>
                   </select>
                 </div>
+
+
                 <div className="mt-4">
                   <label className="text-slate-500">Code type</label>
-                  <select
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="codeType"
-                    id="codeType"
-                  >
-                    <option defaultValue="Pick Code Type">
-                      Pick Code Type
-                    </option>
-                    <option value="ASIN">ASIN</option>
-                    <option value="UPC">UPC</option>
-                  </select>
+                  <input
+                    type="text"
+                    readOnly
+                    value={asinUpc && asinUpc[0].code_type}
+
+                    placeholder="Enter product name"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="productName"
+                    name="productName"
+                  />
                 </div>
 
                 <div className="mt-4">
