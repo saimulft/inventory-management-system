@@ -13,7 +13,6 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 }))
 
-
 const authentication_api = require("./src/routes/authentication_api")
 const admin_users_api = require("./src/routes/admin_users_api")
 const all_users_api = require("./src/routes/all_users_api")
@@ -27,6 +26,7 @@ const asin_upc_api = require("./src/routes/asin_upc_api")
 const pending_arrival_api = require("./src/routes/pending_arrival_api")
 const dropdown_data_api = require("./src/routes/dropdown_data_api")
 const preparing_form_api = require("./src/routes/preparing_form_api")
+const conversations_api = require("./src/routes/conversation_api")
 
 app.use('/api/v1/authentication_api',authentication_api)
 app.use('/api/v1/admin_api',admin_users_api)
@@ -41,6 +41,7 @@ app.use('/api/v1/asin_upc_api',asin_upc_api)
 app.use('/api/v1/pending_arrival_api',pending_arrival_api)
 app.use('/api/v1/dropdown_data_api',dropdown_data_api)
 app.use('/api/v1/preparing_form_api',preparing_form_api)
+app.use('/api/v1/conversations_api', conversations_api)
 
 
 app.get('/', (req, res) => {

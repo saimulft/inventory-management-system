@@ -1,31 +1,17 @@
 import { AiOutlineMessage, AiOutlineSearch, AiOutlinePlus } from "react-icons/ai";
 import { BsBell, BsCheckLg } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
-import { useEffect, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import {useState } from "react";
+;
 
-
-export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, handleCurrentReciver }) {
+export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, handleCurrentReciver, allUsersData, messages,currentReciver }) {
   const [isChatBoxOpen, setIsChatBoxOpen] = useState(false)
   const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false)
   const [isAddChatOpen, setIsAddChatOpen] = useState(false)
   const [isInputFocused, setInputFocused] = useState(false)
-
   const { user } = useAuth()
-  const [allUsersData, setAllUsersData] = useState([])
-
-
-  useEffect(() => {
-fetch('http://localhost:5000/api/v1/user_api//all_users') 
-.then(res => res.json())
-.then(data => setAllUsersData(data))
-  }, []); 
 
   const allUsers = allUsersData.filter((singleUser) => singleUser.email != user.email && singleUser.email_verified)
-console.log(allUsers)
-
-
   const handleInputFocus = () => {
     setInputFocused(true);
   };
@@ -163,14 +149,15 @@ console.log(allUsers)
                           <button className="bg-purple-500 p-2 rounded-full text-white absolute right-2 translate-y-1/2"><AiOutlineSearch size={16} /></button>
                         </div>
                     <div className="add_chat_box h-[300px] overflow-y-scroll">
-                    {data.length > 0 ? data.map(d => {
+                    {allUsers.length > 0 ? allUsers.map(singleUser => {
                           return (
                             <div onClick={() => {
-                              handleCurrentReciver(d.id)
+                              handleCurrentReciver(singleUser.email)
+                              setIsMessageBoxOpen(!isMessageBoxOpen)
                               setIsChatBoxOpen(!isChatBoxOpen)
                             }} className="flex gap-2 items-center text-xs font-medium hover:bg-gray-100 py-1 px-2 cursor-pointer rounded-lg">
                               <img className="w-6  rounded-full" src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no" alt="" />
-                              <p>{d.name}</p>
+                              <p>{singleUser.email.match(/[^@]*/)[0]?.split(".")[0]}</p>
                             </div>
                           )
                         }) : <div className="text-gray-500 mt-4 text-center">No user available!</div>}
@@ -189,22 +176,22 @@ console.log(allUsers)
                   <button className="bg-purple-500 p-2 rounded-full text-white absolute right-2 translate-y-1/2"><AiOutlineSearch size={16} /></button>
                 </div>
               </div>
-              {data.length > 0 ? data.map(d => {
+              {messages.length > 0 ? messages.map(message => {
                 return (
                   <div onClick={() => {
-                    handleCurrentReciver(d.id)
+                    handleCurrentReciver(message?.participants[1])
                     setIsChatBoxOpen(!isChatBoxOpen)
                     setIsMessageBoxOpen(!isMessageBoxOpen)
 
                   }} className="hover:bg-gray-100 px-4 flex item-center gap-3 py-3 cursor-pointer rounded-lg transition ">
                     <div>
-                      <img className="h-14 w-14 rounded-full" src={d.img} alt="" />
+                      <img className="h-14 w-14 rounded-full" src='https://png.pngtree.com/png-vector/20220817/ourmid/pngtree-cartoon-man-avatar-vector-ilustration-png-image_6111064.png' alt="" />
                     </div>
                     <div>
-                      <p className="text-black font-medium">{d.name}</p>
+                      <p className="text-black font-medium">{message.participants.find(participant => participant != user.email).match(/[^@]*/)[0]?.split(".")[0]}</p>
                       <div className="flex gap-2">
-                        <p className="text-gray-600">{d.last_message}</p>
-                        <p className="text-gray-600">{d.time}</p>
+                        <p className="text-gray-600">How are you?</p>
+                        <p className="text-gray-600">10min</p>
                       </div>
                     </div>
                   </div>

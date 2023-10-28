@@ -5,23 +5,77 @@ import Navbar from "../Components/Shared/Navbar";
 import Container from "../Components/Shared/Container";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Providers/GlobalProviders";
-import { AiOutlineClose } from "react-icons/ai";
-import { BiSolidSend } from "react-icons/bi";
+
+import useAuth from "../hooks/useAuth";
+import axios from "axios";
+import ChatBox from "../Components/ChatBox";
 
 export default function DashboardLayout() {
   const [isMessageBoxOpen, setIsMessageBoxOpen] = useState(false)
   const [currentReciver, setCurrentReciver] = useState({})
-  console.log(currentReciver)
+  // console.log("currentReciver: ", currentReciver)
 
   const { isSidebarOpen } = useContext(GlobalContext);
   const url = useLocation();
   const settingActiveRoute = url?.pathname?.split("/")[3];
   const { setIsActiveSetting } = useContext(GlobalContext);
+  const [allUsersData, setAllUsersData] = useState([])
+  const [messages, setMessages] = useState([])
+  const { user } = useAuth()
+
+  // console.log("messages: ",messages)
 
   useEffect(() => {
     setIsActiveSetting(settingActiveRoute);
   }, []);
 
+  useEffect(() => {
+    fetch('http://localhost:5000/api/v1/user_api/all_users')
+      .then(res => res.json())
+      .then(data => setAllUsersData(data))
+  }, []);
+
+  useEffect(() => {
+    fetch(`http://localhost:5000/api/v1/conversations_api/messages?sender=${user.email}`)
+      .then(res => res.json())
+      .then(data => setMessages(data))
+  }, [])
+  // const conv = messages?.find((m) => m.participants[1] == currentReciver.email)
+  // console.log(conv)
+ 
+
+  // console.log(user)
+
+  const handleMessage = () => {
+    const msg = document.getElementById("message").value
+
+    if (msg) {
+      const message = {
+        sender: user.email,
+        receiver: currentReciver.email,
+        senderName: user.full_name,
+        reciverName: currentReciver.name,
+        text: msg,
+      }
+
+      axios.post('/api/v1/conversations_api/send_message', message, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+        .then(res => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+
+
+
+    }
+    else {
+    }
+  }
 
   const data = [
     {
@@ -104,8 +158,8 @@ export default function DashboardLayout() {
 
   ]
 
-  const handleCurrentReciver = (id) => {
-    const reciver = data?.find((singleData) => singleData.id == id)
+  const handleCurrentReciver = (email) => {
+    const reciver = allUsersData?.find((singleUser) => singleUser.email == email)
     setCurrentReciver(reciver)
   }
 
@@ -121,38 +175,12 @@ export default function DashboardLayout() {
       <div className={` ${isSidebarOpen ? "w-[81.5%]" : "w-[94%] "}`}>
         <Container>
           <div className="sticky top-0 z-50">
-            <Navbar isMessageBoxOpen={isMessageBoxOpen} setIsMessageBoxOpen={setIsMessageBoxOpen} data={data} handleCurrentReciver={handleCurrentReciver} />
+            <Navbar isMessageBoxOpen={isMessageBoxOpen} setIsMessageBoxOpen={setIsMessageBoxOpen} data={data} handleCurrentReciver={handleCurrentReciver} allUsersData={allUsersData} messages={messages} currentReciver={currentReciver} />
           </div>
           <div>
             <Outlet />
             {/* message box  */}
-            {
-              isMessageBoxOpen && <div className="h-[500px] w-[350px] fixed  bg-white shadow-2xl right-20 bottom-0 rounded-t-lg ">
-                {/* message head  */}
-                <div style={{ boxShadow: "0px 2px 20px 0px rgba(0,0,0,0.1)" }} className="flex justify-between items-center  px-3">
-                  <div className="py-3">
-                    <div className="flex items-center gap-2 font-medium">
-                      <img className="w-10 h-10 rounded-full" src={currentReciver.img} alt="" />
-                      <p>{currentReciver.name}</p>
-                    </div>
-                  </div>
-                  <div onClick={() => setIsMessageBoxOpen(!isMessageBoxOpen)} className="hover:bg-gray-100 transition p-1 rounded-full text-purple-500">
-                    <AiOutlineClose size={22} />
-                  </div>
-                </div>
-                {/* message body  */}
-                <div className="h-[385px]">
-
-                </div>
-                {/* message footer  */}
-                <div style={{ boxShadow: "0px -2px 20px 0px rgba(0,0,0,0.1)" }} className="flex justify-between items-center p-3 gap-2">
-                  <input placeholder="Aa" className="outline-none bg-gray-100 rounded-full py-1 px-3 w-full" type="text" />
-                  <div className="p-2 hover:bg-gray-100 transition rounded-full flex justify-center items-center text-purple-500">
-                    <BiSolidSend size={22} />
-                  </div>
-                </div>
-              </div>
-            }
+            {isMessageBoxOpen && <ChatBox isMessageBoxOpen={isMessageBoxOpen} setIsMessageBoxOpen={setIsMessageBoxOpen} currentReciver={currentReciver} />}
           </div>
         </Container>
       </div>
