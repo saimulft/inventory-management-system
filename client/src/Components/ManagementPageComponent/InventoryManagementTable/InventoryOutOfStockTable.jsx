@@ -89,7 +89,7 @@ export default function StoreOutOfStockTable() {
     }
 
     if (!productName && !quantity && !upin && !remark && !status) {
-      return setErrorMessage('Nothing')
+      return setErrorMessage('No data entered')
     }
 
     axios.put(`/api/v1/out_of_stock_api/update_OOS_data?id=${_id}`, updatedData)
