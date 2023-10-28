@@ -38,8 +38,8 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
-  const handleDelete = (id,product_image) => {
-      console.log(product_image)
+  const handleDelete = (id, product_image) => {
+    console.log(product_image)
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -70,6 +70,7 @@ export default function InventoryTotalASINTable() {
     setImageError("")
     const form = event.target;
     const minPrice = form.minPrice.value
+    const inputUrl = form.inputImageUrl?.value
     async function checkImageUrlValidity(url) {
       try {
         setLoding(true)
@@ -166,9 +167,32 @@ export default function InventoryTotalASINTable() {
         })
     }
 
-    
+    if (!imageFile && !inputUrl && minPrice) {
+      const asinInfo = {
+        minPrice
+      }
+      setLoding(true)
+      axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData._id}`, asinInfo)
+        .then(res => {
+          if (res.status === 200) {
+            setImageSrc(null)
+            setImageFile(null)
+            form.reset()
+            setLoding(false)
+            refetch()
+            setSuccess("Updated")
+            setTimeout(() => {
+              setSuccess("")
+            }, 2000);
+          }
+        })
+        .catch(() => {
+          setLoding(false)
+        })
 
+    }
   }
+
   const handleImage = (e) => {
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
@@ -245,7 +269,7 @@ export default function InventoryTotalASINTable() {
                         }>Edit</button>
                       </li>
                       <li>
-                        <button onClick={() => handleDelete(d._id,d.product_image)}>Delete</button>
+                        <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
                       </li>
                     </ul>
                   </div></td>

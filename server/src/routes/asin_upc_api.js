@@ -40,9 +40,7 @@ const run = async () => {
     router.put('/update_asin_upc', upload.single('file'), async (req, res) => {
 
         const id = req.query.id
-
         const exitsData = await asin_upc_collection.findOne({ _id: new ObjectId(id) })
-        console.log(exitsData)
         const updateData = {
             product_image: req.body.productImage ? req.body.productImage : exitsData.product_image,
             min_price: req.body.minPrice ? req.body.minPrice : exitsData.min_price
