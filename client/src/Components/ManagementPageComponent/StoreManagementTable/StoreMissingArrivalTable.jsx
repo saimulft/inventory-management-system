@@ -105,7 +105,7 @@ export default function StoreMissingArrivalTable() {
     }
 
     if (!productName && !quantity && !upin && !eda && !missingStatus && !notes) {
-      return setErrorMessage('Nothing')
+      return setErrorMessage('No data entered')
     }
 
     axios.put(`/api/v1/missing_arrival_api/update_missing_arrival_data?id=${_id}`, updatedData)

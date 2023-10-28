@@ -79,7 +79,7 @@ const PreparingFormPage = () => {
     const orderID = form.orderID.value
     const courier = form.courier.value
     const storeName = form.storeName.value
-    const upin = `${productName}_${asinUpcOption?.label}`
+    const upin = `${storeName}_${asinUpcOption?.label}`
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value

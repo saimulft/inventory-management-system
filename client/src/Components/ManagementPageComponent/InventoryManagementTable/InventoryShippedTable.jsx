@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
@@ -8,12 +8,20 @@ import axios from "axios";
 import { format } from "date-fns";
 import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
+import Swal from "sweetalert2";
+import { FaSpinner } from "react-icons/fa";
+import { BsCheck2Circle } from "react-icons/bs";
+import { MdErrorOutline } from "react-icons/md";
 
 export default function InventoryShippedTable() {
+  const [singleData, setSingleData] = useState({})
   const { isSidebarOpen } = useContext(GlobalContext);
-  const {user} = useAuth()
+  const { user } = useAuth()
+  const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [loading, setLoading] = useState()
 
-  const { data = [] } = useQuery({
+  const { data = [], refetch } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
@@ -30,6 +38,93 @@ export default function InventoryShippedTable() {
   })
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
 
+  const handleKeyDown = (event) => {
+    const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
+    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
+      event.preventDefault();
+    }
+  };
+
+  const handleDelete = (_id) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.delete(`/api/v1/shipped_api/delete_shipped_data?id=${_id}`)
+          .then(res => {
+            if (res.status === 200) {
+              refetch()
+              Swal.fire(
+                'Deleted!',
+                'A shipped entry has been deleted.',
+                'success'
+              )
+            }
+          })
+          .catch(error => console.log(error))
+      }
+    })
+  }
+
+  const handleUpdate = (event, _id) => {
+    event.preventDefault()
+    setLoading(true)
+    setSuccessMessage('')
+    setErrorMessage('')
+
+    const form = event.target;
+    const resaleableQuantity = form.resaleableQuantity.value;
+    const remark = form.remark.value;
+
+    if (!resaleableQuantity && !remark) {
+      setLoading(false)
+      return setErrorMessage('No data entered')
+    }
+
+    if (parseInt(resaleableQuantity) > parseInt(singleData.quantity)) {
+      setLoading(false)
+      setErrorMessage(`Quantity must be less than ${singleData.quantity}`)
+      setTimeout(() => {
+        setErrorMessage('')
+      }, 2000);
+      return;
+    }
+
+    const updatedData = {
+      resaleable_quantity: resaleableQuantity,
+      remark: remark
+    }
+
+    axios.put(`/api/v1/shipped_api/update_shipped_data?id=${_id}`, updatedData)
+      .then(res => {
+        if (res.status === 201) {
+          setLoading(false)
+          form.reset()
+          refetch()
+          setSuccessMessage('Data update successful!')
+          setTimeout(() => {
+            setSuccessMessage('')
+          }, 2000);
+        }
+      })
+      .catch(error => {
+        setLoading(false)
+        setErrorMessage('Something went wrong while updating data!')
+
+        setTimeout(() => {
+          setErrorMessage('')
+        }, 2000);
+        console.log(error)
+      })
+  }
+
+  console.log(singleData)
 
   return (
     <div className="px-8 py-12">
@@ -65,7 +160,7 @@ export default function InventoryShippedTable() {
       </div>
 
       <div className="overflow-x-auto mt-8">
-        <table className="table table-xs">
+        <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
               <th>Date</th>
@@ -100,13 +195,20 @@ export default function InventoryShippedTable() {
                   <td>{d.order_id}</td>
                   <td className="text-[#8633FF]">{d.tracking_number}</td>
                   <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
-                  <td
-                    onClick={() =>
-                      document.getElementById("my_modal_2").showModal()
-                    }
-                    className="cursor-pointer"
-                  >
-                    <BiDotsVerticalRounded size={15} />
+                  <td>
+                    <div className="dropdown dropdown-end">
+                      <label tabIndex={0}>
+                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+                      </label>
+                      <ul tabIndex={0} className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black">
+                        <li>
+                          <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
+                        </li>
+                        <li>
+                          <button onClick={() => handleDelete(d._id)}>Delete</button>
+                        </li>
+                      </ul>
+                    </div>
                   </td>
                 </tr>
               );
@@ -140,86 +242,74 @@ export default function InventoryShippedTable() {
           </div>
         </div>
       </div>
+
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft }} className="modal-box py-10 px-10">
-          <div className="flex">
+        <div style={{ marginLeft, maxWidth: '700px' }} className="modal-box py-10 px-10">
+          <form onSubmit={(event) => handleUpdate(event, singleData._id)} className="flex gap-10">
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
                 <BiSolidEdit size={24} />
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
-                <span className="font-bold">Data: </span>
-                <span>2023-06-26</span>
+                <span className="font-bold">Date: </span>
+                <span>{singleData.date && format(new Date(singleData.date), 'yyyy/MM/dd')}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Store Name: </span>
-                <span>SAVE_k544.LLC</span>
+                <span>{singleData.store_name}</span>
               </p>
-              <p className="mt-2">
-                <span className="font-bold">ASIN: </span>
-                <span>BOHFK4522</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Ordered Qnt: </span>
-                <span>23</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Received Qnt: </span>
-                <span>23</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Missing Qnt: </span>
-                <span>23</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">UPIN: </span>
-                <span>USA_Quantity5245sdfds</span>
-              </p>
-
               <p className="mt-2">
                 <span className="font-bold">Product Name: </span>
-                <span>demo product name</span>
+                <span>{singleData.product_name}</span>
               </p>
               <p className="mt-2">
-                <span className="font-bold">EDA: </span>
-                <span>2023-06-26</span>
+                <span className="font-bold">Quantity: </span>
+                <span>{singleData.quantity}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Shipping Tracking: </span>
                 <span className="text-[#8633FF] cursor-pointer">Click</span>
               </p>
             </div>
-            <div className="w-1/2 px-4">
+
+            <div className="w-1/2">
               <h3 className="text-2xl font-medium mb-6">Update</h3>
-              <form>
-                <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">ReSellable Qnt</label>
-                  <input
-                    type="text"
-                    placeholder="Enter ReSellable Qnt"
-                    className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs"
-                    id="receivedQnt"
-                    name="receivedQnt"
-                  />
-                </div>
-                <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">Remark</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Remark"
-                    className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs "
-                    id="remark"
-                    name="remark"
-                  />
-                </div>
-              </form>
-              <button className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+              <div className="flex flex-col mt-2">
+                <label className=" font-bold mb-1">Resaleable Qnt</label>
+                <input
+                  type="number"
+                  placeholder="Enter Resaleable Qnt"
+                  className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs"
+                  id="resaleableQuantity"
+                  name="resaleableQuantity"
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+              <div className="flex flex-col mt-2">
+                <label className=" font-bold mb-1">Remark</label>
+                <input
+                  type="text"
+                  placeholder="Enter Remark"
+                  className="border border-[#8633FF] outline-[#8633FF] py-2 pl-2 rounded text-xs "
+                  id="remark"
+                  name="remark"
+                />
+              </div>
+
+              <div className="mt-3">
+                {successMessage && <p className="w-full flex gap-2 items-center justify-center text-center text-sm font-medium text-green-600 bg-green-100 border py-1 px-4 rounded"><BsCheck2Circle size={20} /> {successMessage}</p>}
+
+                {errorMessage && <p className="w-full flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-1 px-4 rounded"><MdErrorOutline size={20} /> {errorMessage}</p>}
+              </div>
+
+              <button className="bg-[#8633FF] flex items-center gap-2 justify-center mt-5 w-full py-[6px] rounded text-white font-medium">
+                {loading && <FaSpinner size={20} className="animate-spin" />}
                 Update
               </button>
             </div>
-          </div>
+          </form>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

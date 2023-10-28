@@ -96,7 +96,7 @@ export default function InventoryPendingArrivalTable() {
 
     if (!productName && !quantity && !upin && !eda && !receivedQnt && !remark) {
       setLoading(false)
-      return setErrorMessage('Nothing')
+      return setErrorMessage('No data entered')
     }
 
     const updatedData = {

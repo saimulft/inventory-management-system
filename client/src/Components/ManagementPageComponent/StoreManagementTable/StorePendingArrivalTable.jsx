@@ -89,7 +89,7 @@ export default function StorePendingArrivalTable() {
     }
 
     if (!productName && !quantity && !upin && !eda && !courier && !supplierTracking){
-      return setErrorMessage('Nothing')
+      return setErrorMessage('No data entered')
     }
 
       axios.put(`/api/v1/pending_arrival_api/update_store_pending_arrival_data?id=${_id}`, updatedData)
