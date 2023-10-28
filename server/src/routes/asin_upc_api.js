@@ -104,8 +104,8 @@ const run = async () => {
                 })
                 res.status(200).json({ data: data, message: "successfully get asin_upc" })
             }
-            else {
-                res.status(500).json({ message: "Error to geting  asin_upc" })
+            else{
+                res.status(204).json({ message: "No content" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in asin_upc' });
@@ -120,8 +120,8 @@ const run = async () => {
 
                 res.status(200).json({ data: asinUpcData, message: "successfully get asin_upc" })
             }
-            else {
-                res.status(500).json({ message: "Error to geting  asin_upc" })
+            else{
+                res.status(204).json({ message: "No content" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in asin_upc' });
@@ -135,8 +135,8 @@ const run = async () => {
             if (asinUpcData) {
                 res.status(200).json({ data: asinUpcData, message: "successfully all get asin_upc" })
             }
-            else {
-                res.status(500).json({ message: "Error to geting all asin_upc" })
+            else{
+                res.status(204).json({ message: "No content" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });

@@ -35,8 +35,8 @@ const run = async () => {
             if (result) {
                 res.status(200).json({ data: result, message: "Successfully got all stock data" })
             }
-            else {
-                res.status(204).json({ message: "No content available in all stock" })
+            else{
+                res.status(204).json({ message: "No content" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });

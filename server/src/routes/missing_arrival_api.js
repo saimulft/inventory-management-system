@@ -19,8 +19,8 @@ const run = async () => {
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got missing arrival data" })
             }
-            else {
-                res.status(500).json({ message: "Error to get missing arrival data" })
+            else{
+                res.status(204).json({ message: "No content" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });

@@ -124,8 +124,6 @@ export default function InventoryShippedTable() {
       })
   }
 
-  console.log(singleData)
-
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">Shipped: {data.length}</h3>

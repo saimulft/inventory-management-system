@@ -54,6 +54,9 @@ const run = async () => {
             if (data) {
                 res.status(200).json({ data: data })
             }
+            else {
+                res.status(204).json({ message: "No content" })
+            }
 
         } catch (error) {
             res.status(500).json({ message: "get_all_RTS_data_ error" })

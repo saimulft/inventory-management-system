@@ -28,7 +28,7 @@ const run = async () => {
                     }
                 }
             }
-            else{
+            else {
                 return res.status(500).json({ message: "Data not found" });
             }
         } catch (error) {
@@ -47,7 +47,9 @@ const run = async () => {
                 res.status(200).json({ data: data })
 
             }
-
+            else {
+                res.status(204).json({ message: "No content" })
+            }
         } catch (error) {
             res.status(500).json({ message: "get_all_OOS_data_ error" })
         }

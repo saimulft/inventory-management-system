@@ -8,9 +8,8 @@ import Swal from "sweetalert2";
 import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
 
-
 export default function StorePreparingRequestTable() {
-  // const [RTSdata ,setRTSdata] = useState({})
+
   const { user } = useAuth()
   const { data = [], refetch } = useQuery({
     queryKey: ['preparing_request_data'],
@@ -29,29 +28,46 @@ export default function StorePreparingRequestTable() {
   })
 
 
-  const handleRTS = (_id) => {
-    Swal.fire({
-      title: 'Confirm ready to ship?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#8633FF',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios.post(`/api/v1/ready_to_ship_api/ready_to_ship?id=${_id}`)
-          .then(res => {
-            if (res.status === 201) {
-              Swal.fire(
-                'Shipped!',
-                'Product has been Shipped.',
-                'success'
-              )
-              refetch()
-            }
-          }).catch(err => console.log(err))
+  const handleRTS = async (_id, quantity, upin) => {
+
+    const res = await axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
+
+    if (res.status === 200) {
+      if (quantity > res?.data?.data?.stock) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Oops...',
+          text: `Product is not available in stock. Please check product quantity under UPIN ${upin}`,
+        })
+        return
       }
-    })
+    }
+    if (quantity < res?.data?.data?.stock) {
+      Swal.fire({
+        title: 'Confirm ready to ship?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#8633FF',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Yes'
+      }).then((result) => {
+        if (result.isConfirmed) {
+
+          axios.post(`/api/v1/ready_to_ship_api/ready_to_ship?id=${_id}`)
+            .then(res => {
+              if (res.status === 201) {
+                Swal.fire(
+                  'Shipped!',
+                  'Product has been Shipped.',
+                  'success'
+                )
+                refetch()
+              }
+            }).catch(err => console.log(err))
+        }
+      })
+    }
+
   }
 
   const handleOOS = (_id) => {
@@ -138,7 +154,7 @@ export default function StorePreparingRequestTable() {
                   <td className="flex gap-2">
 
                     <button onClick={() => {
-                      handleRTS(d._id)
+                      handleRTS(d._id, d.quantity, d.upin)
 
                     }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                       <LiaShippingFastSolid />

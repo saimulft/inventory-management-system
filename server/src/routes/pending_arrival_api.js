@@ -52,7 +52,7 @@ const run = async () => {
                 res.status(200).json({ data: result, message: "Successfully got pending arrival data" })
             }
             else {
-                res.status(500).json({ message: "Error to get pending arrival data" })
+                res.status(204).json({ message: "Error to get pending arrival data" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
@@ -68,7 +68,7 @@ const run = async () => {
                 res.status(200).json({ message: "Successfully deleted a pending arrival data" })
             }
             else {
-                res.status(500).json({ message: "Error to delete pending arrival data" })
+                res.status(204).json({ message: "Error to delete pending arrival data" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
