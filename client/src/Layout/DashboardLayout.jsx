@@ -7,21 +7,21 @@ import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Providers/GlobalProviders";
 
 import useAuth from "../hooks/useAuth";
-import axios from "axios";
 import ChatBox from "../Components/ChatBox";
 
 export default function DashboardLayout() {
   const [isMessageBoxOpen, setIsMessageBoxOpen] = useState(false)
   const [currentReciver, setCurrentReciver] = useState({})
+  const [allUsersData, setAllUsersData] = useState([])
+  const [messages, setMessages] = useState([])
+  const [activeUsers, setActiveUsers] = useState([])
   // console.log("currentReciver: ", currentReciver)
 
   const { isSidebarOpen } = useContext(GlobalContext);
   const url = useLocation();
   const settingActiveRoute = url?.pathname?.split("/")[3];
   const { setIsActiveSetting } = useContext(GlobalContext);
-  const [allUsersData, setAllUsersData] = useState([])
-  const [messages, setMessages] = useState([])
-  const { user } = useAuth()
+  const { user,socket } = useAuth()
 
   // console.log("messages: ",messages)
 
@@ -40,42 +40,16 @@ export default function DashboardLayout() {
       .then(res => res.json())
       .then(data => setMessages(data))
   }, [])
-  // const conv = messages?.find((m) => m.participants[1] == currentReciver.email)
-  // console.log(conv)
+ 
+  useEffect(() => {
+    socket.current.emit('addUsers', user)
+    socket.current.on("getUsers", users => {
+      setActiveUsers(users)
+    })
+  },[])
  
 
   // console.log(user)
-
-  const handleMessage = () => {
-    const msg = document.getElementById("message").value
-
-    if (msg) {
-      const message = {
-        sender: user.email,
-        receiver: currentReciver.email,
-        senderName: user.full_name,
-        reciverName: currentReciver.name,
-        text: msg,
-      }
-
-      axios.post('/api/v1/conversations_api/send_message', message, {
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      })
-        .then(res => {
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-
-
-
-    }
-    else {
-    }
-  }
 
   const data = [
     {
@@ -159,13 +133,14 @@ export default function DashboardLayout() {
   ]
 
   const handleCurrentReciver = (email) => {
-    const reciver = allUsersData?.find((singleUser) => singleUser.email == email)
+    console.log(email)
+    const reciver = allUsersData?.find((singleUser) => singleUser?.email == email)
     setCurrentReciver(reciver)
   }
 
 
   return (
-    <div className="flex bg-[#fafbfc] ">
+    <div className="flex bg-[#fafbfc]">
       <div
         className={`transition-all ease-out duration-300 delay-0 ${isSidebarOpen ? "w-[18.5%]" : "w-[6%] "
           }`}
@@ -180,7 +155,7 @@ export default function DashboardLayout() {
           <div>
             <Outlet />
             {/* message box  */}
-            {isMessageBoxOpen && <ChatBox isMessageBoxOpen={isMessageBoxOpen} setIsMessageBoxOpen={setIsMessageBoxOpen} currentReciver={currentReciver} />}
+            {isMessageBoxOpen && <ChatBox isMessageBoxOpen={isMessageBoxOpen} setIsMessageBoxOpen={setIsMessageBoxOpen} currentReciver={currentReciver} activeUsers={activeUsers}/>}
           </div>
         </Container>
       </div>

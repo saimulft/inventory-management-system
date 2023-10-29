@@ -14,7 +14,7 @@ const run = async () => {
          const receiver = req.body.receiver
          const text = req.body.text
          // console.log(senderName,receiverName);
-         // console.log("sender: ",sender, 'receiver: ',receiver)
+         console.log("sender: ",sender, 'receiver: ',receiver)
          const date = new Date()
          const timestamp = date.toISOString();
          // console.log(req.body);
@@ -46,7 +46,6 @@ const run = async () => {
 
          if (alreadyConversationExist?._id) {
             const newMessages = await conversationsCollection.updateOne({ _id: alreadyConversationExist._id }, { $push: { messages: newMessage } }, { upsert: true })
-            console.log("newMessage",newMessages)
                if(newMessages.acknowledged){
                   res.send(newMessage)
                }               
@@ -69,8 +68,6 @@ const run = async () => {
          const allConversations = await conversationsCollection.find({
             participants: { $all: [sender] }
          }).toArray()
-         console.log(allConversations);
-         
          res.send(allConversations)
       }
       catch (err) {

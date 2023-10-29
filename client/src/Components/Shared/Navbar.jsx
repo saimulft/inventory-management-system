@@ -1,5 +1,5 @@
 import { AiOutlineMessage, AiOutlineSearch, AiOutlinePlus } from "react-icons/ai";
-import { BsBell, BsCheckLg } from "react-icons/bs";
+import { BsBell} from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
 import {useState } from "react";
 ;
@@ -149,10 +149,10 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
                           <button className="bg-purple-500 p-2 rounded-full text-white absolute right-2 translate-y-1/2"><AiOutlineSearch size={16} /></button>
                         </div>
                     <div className="add_chat_box h-[300px] overflow-y-scroll">
-                    {allUsers.length > 0 ? allUsers.map(singleUser => {
+                    {allUsers?.length > 0 ? allUsers?.map(singleUser => {
                           return (
                             <div onClick={() => {
-                              handleCurrentReciver(singleUser.email)
+                              handleCurrentReciver(singleUser?.email)
                               setIsMessageBoxOpen(!isMessageBoxOpen)
                               setIsChatBoxOpen(!isChatBoxOpen)
                             }} className="flex gap-2 items-center text-xs font-medium hover:bg-gray-100 py-1 px-2 cursor-pointer rounded-lg">
@@ -176,10 +176,10 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
                   <button className="bg-purple-500 p-2 rounded-full text-white absolute right-2 translate-y-1/2"><AiOutlineSearch size={16} /></button>
                 </div>
               </div>
-              {messages.length > 0 ? messages.map(message => {
+              {messages?.length > 0 ? messages.map(message => {
                 return (
                   <div onClick={() => {
-                    handleCurrentReciver(message?.participants[1])
+                    handleCurrentReciver(message?.participants?.find(participant => participant != user?.email))
                     setIsChatBoxOpen(!isChatBoxOpen)
                     setIsMessageBoxOpen(!isMessageBoxOpen)
 
@@ -188,7 +188,7 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
                       <img className="h-14 w-14 rounded-full" src='https://png.pngtree.com/png-vector/20220817/ourmid/pngtree-cartoon-man-avatar-vector-ilustration-png-image_6111064.png' alt="" />
                     </div>
                     <div>
-                      <p className="text-black font-medium">{message.participants.find(participant => participant != user.email).match(/[^@]*/)[0]?.split(".")[0]}</p>
+                      <p className="text-black font-medium">{message?.participants?.find(participant => participant != user?.email).match(/[^@]*/)[0]?.split(".")[0]}</p>
                       <div className="flex gap-2">
                         <p className="text-gray-600">How are you?</p>
                         <p className="text-gray-600">10min</p>
