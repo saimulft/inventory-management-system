@@ -11,6 +11,7 @@ import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdErrorOutline } from "react-icons/md";
+import Loading from "../../Shared/Loading";
 
 export default function StoreMissingArrivalTable() {
   const [activeTab, setActiveTab] = useState('active');
@@ -24,7 +25,7 @@ export default function StoreMissingArrivalTable() {
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const { user } = useAuth()
 
-  const { data = [], refetch } = useQuery({
+  const { data = [], refetch, isLoading} = useQuery({
     queryKey: ['missing_arrival_data'],
     queryFn: async () => {
       try {
@@ -140,7 +141,7 @@ export default function StoreMissingArrivalTable() {
       <h3 className="text-center text-2xl font-medium">
         Missing Arrival Item: {data.length}
       </h3>
-      <div className="relative flex justify-between items-center">
+      <div className="relative flex justify-between items-center mt-4">
         <div className="flex text-center w-1/2 ">
           <div
             onClick={() => setActiveTab('active')}
@@ -166,12 +167,12 @@ export default function StoreMissingArrivalTable() {
           placeholder="Search Here"
           type="text"
         />
-        <div className="absolute bottom-[9px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
+        <div className="absolute bottom-[10px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
           <AiOutlineSearch size={20} />
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-8">
+      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-294px)] max-h-full">
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
@@ -190,8 +191,8 @@ export default function StoreMissingArrivalTable() {
               <th></th>
             </tr>
           </thead>
-          <tbody>
-            {data.map((d, index) => {
+          <tbody className="relative">
+            {isLoading ? <Loading /> : data.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
@@ -232,37 +233,41 @@ export default function StoreMissingArrivalTable() {
             })}
           </tbody>
         </table>
-        <div className="flex justify-between mt-4">
-          <p>Showing 1 to 20 of 2,000 entries</p>
-          <div className="flex items-center gap-2">
-            <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              1
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              2
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              ...
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              9
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              10
-            </div>
-            <div className="border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
+
+        {/* pagination */}
+        {!isLoading &&
+          <div className="flex justify-between mt-4">
+            <p>Showing 1 to 20 of 2,000 entries</p>
+            <div className="flex items-center gap-2">
+              <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
+                <LiaGreaterThanSolid size={13} />
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                1
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                2
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                ...
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                9
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                10
+              </div>
+              <div className="border px-[2px] py-[3px] border-gray-400">
+                <LiaGreaterThanSolid size={13} />
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
 
       {/* modal content */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: '700px' }} className="modal-box py-10 px-10">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
           <form onSubmit={(event) => handleUpdate(event, singleData._id)} className="flex gap-10">
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
@@ -287,7 +292,7 @@ export default function StoreMissingArrivalTable() {
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">EDA: </label>
                 <input type={isEditable ? 'date' : 'text'} defaultValue={isEditable ? '' : singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[161px] py-1 pl-2 rounded`} id="eda" name="eda" readOnly={!isEditable} />
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[191px] py-1 pl-2 rounded`} id="eda" name="eda" readOnly={!isEditable} />
               </div>
             </div>
 

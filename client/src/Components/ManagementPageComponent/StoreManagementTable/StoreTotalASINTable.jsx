@@ -1,6 +1,6 @@
 import axios from "axios";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { AiOutlineCloudUpload, AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
@@ -11,6 +11,8 @@ import Swal from "sweetalert2";
 import Compressor from "compressorjs";
 import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../../Shared/ToastMessage";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
+import Loading from "../../Shared/Loading";
 
 
 export default function InventoryTotalASINTable() {
@@ -22,8 +24,11 @@ export default function InventoryTotalASINTable() {
   const [loading, setLoding] = useState(false)
   const [success, setSuccess] = useState()
   const { user } = useAuth()
+  const { isSidebarOpen } = useContext(GlobalContext);
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
+  const [filterDays, setFilterDays] = useState('')
 
-  const { data = [], refetch } = useQuery({
+  const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
       try {
@@ -212,18 +217,41 @@ export default function InventoryTotalASINTable() {
       <h3 className="text-center text-2xl font-medium">
         Total ASIN/UPC: {data?.length}
       </h3>
-      <div className="relative flex justify-end">
+
+      <div className="relative flex justify-between items-center mt-4">
+        <div>
+          <div className="flex gap-4 text-sm items-center">
+            <p onClick={() => setFilterDays('today')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
+              Today
+            </p>
+            <p onClick={() => setFilterDays(7)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && 'bg-[#8633FF] text-white'}`}>
+              7 Days
+            </p>
+            <p onClick={() => setFilterDays(15)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && 'bg-[#8633FF] text-white'}`}>
+              15 Days
+            </p>
+            <p onClick={() => setFilterDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && 'bg-[#8633FF] text-white'}`}>
+              1 Month
+            </p>
+            <p onClick={() => setFilterDays('year')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
+              Year
+            </p>
+            <p onClick={() => setFilterDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
+              Custom
+            </p>
+          </div>
+        </div>
         <input
           className="border bg-white shadow-md border-[#8633FF] outline-none w-1/4 cursor-pointer  py-2 rounded-md px-2 text-sm"
           placeholder="Search Here"
           type="text"
         />
-        <div className="absolute bottom-[6px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
+        <div className="absolute bottom-[7px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
           <AiOutlineSearch size={20} />
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-8">
+      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
@@ -237,8 +265,8 @@ export default function InventoryTotalASINTable() {
               <th></th>
             </tr>
           </thead>
-          <tbody>
-            {data?.map((d, index) => {
+          <tbody className="relative">
+            {isLoading ? <Loading /> : data?.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
@@ -278,36 +306,41 @@ export default function InventoryTotalASINTable() {
             })}
           </tbody>
         </table>
-        <div className="flex justify-between mt-4">
-          <p>Showing 1 to 20 of 2,000 entries</p>
-          <div className="flex items-center gap-2">
-            <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              1
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              2
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              ...
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              9
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              10
-            </div>
-            <div className="border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
+
+        {/* pagination */}
+        {!isLoading &&
+          <div className="flex justify-between mt-4">
+            <p>Showing 1 to 20 of 2,000 entries</p>
+            <div className="flex items-center gap-2">
+              <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
+                <LiaGreaterThanSolid size={13} />
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                1
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                2
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                ...
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                9
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                10
+              </div>
+              <div className="border px-[2px] py-[3px] border-gray-400">
+                <LiaGreaterThanSolid size={13} />
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
+      
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ maxWidth: '700px' }} className="modal-box">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
           <div className="flex">
             <div className="w-1/2">
               <div className="flex items-center mb-4 gap-2">
@@ -334,7 +367,7 @@ export default function InventoryTotalASINTable() {
 
               <p className="mt-2">
                 <span className="font-medium">Old Min Price : </span>
-                <span>$ {singleData?.min_price}</span>
+                <span>${singleData?.min_price}</span>
               </p>
             </div>
             <div className="w-1/2 px-4">
