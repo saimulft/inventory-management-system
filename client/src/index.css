@@ -55,3 +55,11 @@ select {
     color: #fff;
     border: 1px solid #8633FF;
 }
+.pagination .ellipsis {
+    display: none;
+  }
+  
+  .pagination .active + .ellipsis {
+    display: inline-block;
+  }
+  
