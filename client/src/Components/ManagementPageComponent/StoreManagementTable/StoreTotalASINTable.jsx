@@ -30,7 +30,7 @@ export default function InventoryTotalASINTable() {
   const [searchText, setSearchText] = useState('');
   const [searchError, setSearchError] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-
+  // console.log(searchError)
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
@@ -48,6 +48,34 @@ export default function InventoryTotalASINTable() {
     }
   })
 
+  const handleDateSearch = (day) => {
+
+    const currentDate = new Date();
+    const previousDate = new Date();
+    previousDate.setDate(currentDate.getDate() - day);
+    const startDate = previousDate;
+    const endDate = new Date()
+    const filteredDateResults = data.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate && itemDate <= endDate;
+    });
+
+    if (!filteredDateResults.length) {
+      setSearchResults([]);
+      if (day === 365) {
+        return setSearchError(`No data found for past 1 year`)
+      }
+      if (day === 30) {
+        return setSearchError(`No data found for past 1 month`)
+      }
+      return setSearchError(`No data found for past ${day} days`)
+    }
+    if (filteredDateResults.length) {
+      setSearchResults(filteredDateResults);
+
+    }
+  }
+
   const handleSearch = () => {
     setSearchError("")
     const filteredData = data.filter(item =>
@@ -56,11 +84,11 @@ export default function InventoryTotalASINTable() {
       item.code_type?.toLowerCase().includes(searchText))
     );
     if (!filteredData.length) {
-
-      console.log("no data found")
-      setSearchError("No data found")
+      setFilterDays(null)
+      setSearchError(`No data found for "${searchText}"`)
       return
     }
+    setFilterDays(null)
     setSearchResults(filteredData)
   }
   const handleDelete = (id, product_image) => {
@@ -240,19 +268,42 @@ export default function InventoryTotalASINTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p onClick={() => setFilterDays('today')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
+            <p onClick={() => {
+              setSearchResults([])
+              setSearchText("")
+              setSearchError("")
+              setFilterDays("all")
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'all' && 'bg-[#8633FF] text-white'}`}>
+              All
+            </p>
+            <p onClick={() => {
+              handleDateSearch(1)
+              setFilterDays('today')
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
               Today
             </p>
-            <p onClick={() => setFilterDays(7)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && 'bg-[#8633FF] text-white'}`}>
+            <p onClick={() => {
+              handleDateSearch(7)
+              setFilterDays(7)
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && 'bg-[#8633FF] text-white'}`}>
               7 Days
             </p>
-            <p onClick={() => setFilterDays(15)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && 'bg-[#8633FF] text-white'}`}>
+            <p onClick={() => {
+              handleDateSearch(15)
+              setFilterDays(15)
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && 'bg-[#8633FF] text-white'}`}>
               15 Days
             </p>
-            <p onClick={() => setFilterDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && 'bg-[#8633FF] text-white'}`}>
+            <p onClick={() => {
+              handleDateSearch(30)
+              setFilterDays(1)
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && 'bg-[#8633FF] text-white'}`}>
               1 Month
             </p>
-            <p onClick={() => setFilterDays('year')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
+            <p onClick={() => {
+              handleDateSearch(365)
+              setFilterDays('year')
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
               Year
             </p>
             <p onClick={() => setFilterDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
@@ -277,6 +328,7 @@ export default function InventoryTotalASINTable() {
               setSearchResults([])
               setSearchText("")
               setSearchError("")
+              setFilterDays("all")
             }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
               Clear
             </button>
@@ -300,7 +352,7 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? searchError : <>
+            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
               {
                 searchResults.length ? searchResults.map((d, index) => {
                   return (
