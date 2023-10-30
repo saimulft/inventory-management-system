@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
+import useStore from "../../hooks/useStore";
 
 export default function AdditionalPaymentInputList() {
   const [isOpen, setIsOpen] = useState([
@@ -7,7 +8,7 @@ export default function AdditionalPaymentInputList() {
   ]);
 
   const aco = (e, track) => {
-    console.log(e.target);
+    // console.log(e.target);
     e.stopPropagation();
     if (e.target.id == "aco") {
       isOpen.map((singleAco) => {
@@ -24,19 +25,8 @@ export default function AdditionalPaymentInputList() {
       });
     }
   };
-  const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([
-    {
-      email: "",
-      cardName: "",
-      cardInfo: "",
-      date: "",
-      cvc: "",
-      billingAddress: "",
-      city: "",
-      state: "",
-      zipCode: "",
-    },
-  ]);
+
+  const {additionalPaymentInputList, setAdditionalPaymentInputList} = useStore()
 
   const handleAdditionalPaymentInputChange = (event, index) => {
     const { name, value } = event.target;
@@ -73,7 +63,7 @@ export default function AdditionalPaymentInputList() {
 
   return (
     <>
-      {additionalPaymentInputList.map((a, index) => {
+      {additionalPaymentInputList.map((i, index) => {
         const decideAcoIsOpenOrClose = isOpen.find((f) => f.trackNO == index);
 
         return (
@@ -82,7 +72,7 @@ export default function AdditionalPaymentInputList() {
               <div
                 id="aco"
                 onClick={(e) => aco(e, index)}
-                className={`collapse ${decideAcoIsOpenOrClose.class} collapse-arrow bg-white `}
+                className={`collapse ${decideAcoIsOpenOrClose?.class} collapse-arrow bg-white `}
               >
                 <input
                   type="checkbox"
@@ -93,6 +83,7 @@ export default function AdditionalPaymentInputList() {
                   Additional payment Details
                   <span className="text-sm text-slate-400">(Optional)</span>
                 </div>
+                
                 <div className="collapse-content">
                   <form>
                     {/* email address  */}
@@ -105,9 +96,10 @@ export default function AdditionalPaymentInputList() {
                         placeholder="Enter email address"
                         type="text"
                         name="email"
-                        onChange={(e, i) =>
-                          handleAdditionalPaymentInputChange(e, i)
+                        onChange={(e) =>
+                          handleAdditionalPaymentInputChange(e, index)
                         }
+                        defaultValue={i?.email}
                       />
                     </div>
 
@@ -122,9 +114,10 @@ export default function AdditionalPaymentInputList() {
                         type="text"
                         name="cardName"
                         id="cardName"
-                        onChange={(e, i) =>
-                          handleAdditionalPaymentInputChange(e, i)
+                        onChange={(e) =>
+                          handleAdditionalPaymentInputChange(e, index)
                         }
+                        defaultValue={i?.cardName}
                       />
                     </div>
 
@@ -138,9 +131,10 @@ export default function AdditionalPaymentInputList() {
                         placeholder="0000 0000 0000 0000"
                         type="text"
                         name="cardInfo"
-                        onChange={(e, i) =>
-                          handleAdditionalPaymentInputChange(e, i)
+                        onChange={(e) =>
+                          handleAdditionalPaymentInputChange(e, index)
                         }
+                        defaultValue={i?.cardInfo}
                       />
                     </div>
 
@@ -153,9 +147,10 @@ export default function AdditionalPaymentInputList() {
                           type="text"
                           name="date"
                           id="date"
-                          onChange={(e, i) =>
-                            handleAdditionalPaymentInputChange(e, i)
+                          onChange={(e) =>
+                            handleAdditionalPaymentInputChange(e, index)
                           }
+                          defaultValue={i?.date}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
@@ -165,9 +160,10 @@ export default function AdditionalPaymentInputList() {
                           type="text"
                           name="cvc"
                           id="cvc"
-                          onChange={(e, i) =>
-                            handleAdditionalPaymentInputChange(e, i)
+                          onChange={(e) =>
+                            handleAdditionalPaymentInputChange(e, index)
                           }
+                          defaultValue={i?.cvc}
                         />
                       </div>
                     </div>
@@ -184,9 +180,10 @@ export default function AdditionalPaymentInputList() {
                           type="text"
                           name="billingAddress"
                           id="billingAddress"
-                          onChange={(e, i) =>
-                            handleAdditionalPaymentInputChange(e, i)
+                          onChange={(e) =>
+                            handleAdditionalPaymentInputChange(e, index)
                           }
+                          defaultValue={i?.billingAddress}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
@@ -197,9 +194,10 @@ export default function AdditionalPaymentInputList() {
                           type="text"
                           name="city"
                           id="city"
-                          onChange={(e, i) =>
-                            handleAdditionalPaymentInputChange(e, i)
+                          onChange={(e) =>
+                            handleAdditionalPaymentInputChange(e, index)
                           }
+                          defaultValue={i?.city}
                         />
                       </div>
                     </div>
@@ -214,9 +212,10 @@ export default function AdditionalPaymentInputList() {
                           type="text"
                           name="state"
                           id="state"
-                          onChange={(e, i) =>
-                            handleAdditionalPaymentInputChange(e, i)
+                          onChange={(e) =>
+                            handleAdditionalPaymentInputChange(e, index)
                           }
+                          defaultValue={i?.state}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
@@ -229,9 +228,10 @@ export default function AdditionalPaymentInputList() {
                           type="text"
                           name="zipCode"
                           id="zipCode"
-                          onChange={(e, i) =>
-                            handleAdditionalPaymentInputChange(e, i)
+                          onChange={(e) =>
+                            handleAdditionalPaymentInputChange(e, index)
                           }
+                          defaultValue={i?.zipCode}
                         />
                       </div>
                     </div>

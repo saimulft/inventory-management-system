@@ -1,13 +1,14 @@
-import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
+import useStore from "../../hooks/useStore";
 
 export default function SupplierInfoInputList() {
-  const [supplierInfoInputList, setSupplierInfoInputList] = useState([
-    { supplierName: "", userID: "", password: "" },
-  ]);
+  const { supplierInfoInputList, setSupplierInfoInputList } = useStore()
 
   const handleSupplierInfoInputChange = (event, index) => {
     const { name, value } = event.target;
+
+    // console.log(name, value, index)
+
     const list = [...supplierInfoInputList];
     list[index][name] = value;
     setSupplierInfoInputList(list);
@@ -16,7 +17,7 @@ export default function SupplierInfoInputList() {
   const handleSupplierInfoIncrementField = () => {
     setSupplierInfoInputList([
       ...supplierInfoInputList,
-      { supplierName: "", userID: "", password: "" },
+      { supplierName: "", userId: "", password: "" },
     ]);
   };
 
@@ -27,34 +28,38 @@ export default function SupplierInfoInputList() {
     }
     setSupplierInfoInputList(list);
   };
+
   return (
     <>
       {supplierInfoInputList.map((i, index) => {
         return (
           <div key={index} className="flex gap-2 mt-4">
             <input
-              onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
+              onChange={(e) => handleSupplierInfoInputChange(e, index)}
               className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="Supplier name"
               type="text"
               name="supplierName"
               id="supplierName"
+              defaultValue={i?.supplierName}
             />
             <input
-              onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
+              onChange={(e) => handleSupplierInfoInputChange(e, index)}
               className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="User ID"
               type="text"
-              name="userID"
-              id="userID"
+              name="userId"
+              id="userId"
+              defaultValue={i?.userId}
             />
             <input
-              onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
+              onChange={(e) => handleSupplierInfoInputChange(e, index)}
               className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs"
               placeholder="Password"
               type="text"
               name="password"
               id="password"
+              defaultValue={i?.password}
             />
             <button
               onClick={() => handleSupplierInfoRemoveField(index)}

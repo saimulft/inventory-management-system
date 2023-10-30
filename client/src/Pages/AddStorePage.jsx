@@ -23,7 +23,7 @@ export default function AddStorePage() {
       return setErrorMessage('Please select store type')
     }
 
-    const data = { storeName, storeManagerName, storeType }
+    const data = { store_name: storeName, store_manager_name: storeManagerName, store_type: storeType }
     setStoreDetails(data)
 
     navigate("/dashboard/add-store/add-supplier")

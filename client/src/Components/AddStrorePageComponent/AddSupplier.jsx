@@ -3,14 +3,16 @@ import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import SupplierInfoInputList from "./SupplierInfoInputList";
 import AdditionalPaymentInputList from "./AdditionalPaymentInputList";
 import { BsArrowRightShort } from "react-icons/bs";
-import { Link, Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import useStore from "../../hooks/useStore";
 
 export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
-  const {storeDetails} = useStore()
 
-  if(!storeDetails){
+  const { storeDetails, setStoreDetails, supplierInfoInputList, additionalPaymentInputList} = useStore()
+  const navigate = useNavigate()
+
+  if (!storeDetails) {
     return <Navigate to="/dashboard/add-store" />
   }
 
@@ -27,6 +29,11 @@ export default function AddSupplier() {
     setAddSupplier(list);
   };
 
+  const handleNext = () => {
+    setStoreDetails({...storeDetails, supplier_information: supplierInfoInputList, additional_payment_details: additionalPaymentInputList})
+    navigate("/dashboard/add-store/add-supplier/select-payment")
+  }
+
   return (
     <div className="p-10 bg-white rounded-lg">
       {/* option select  */}
@@ -34,20 +41,20 @@ export default function AddSupplier() {
         <div className="collapse collapse-arrow bg-white ">
           <input type="checkbox" />
           <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
-           General Information
+            General Information
           </div>
           <div className="collapse-content">
             <p>
               <span className="font-bold text-slate-600">Store name: </span>
-              <span>{storeDetails.storeName}</span>
+              <span>{storeDetails.store_name}</span>
             </p>
             <p>
               <span className="font-bold text-slate-600">Store manager name: </span>
-              <span>{storeDetails.storeManagerName}</span>
+              <span>{storeDetails.store_manager_name}</span>
             </p>
             <p>
               <span className="font-bold text-slate-600">Store type: </span>
-              <span>{storeDetails.storeType}</span>
+              <span>{storeDetails.store_type}</span>
             </p>
           </div>
         </div>
@@ -97,12 +104,10 @@ export default function AddSupplier() {
         );
       })}
       {/* next btn  */}
-      <Link to="/dashboard/add-store/add-supplier/select-payment">
-        <button className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
-          <p>Next</p>
-          <BsArrowRightShort className="mt-[1px]" size={28} />
-        </button>
-      </Link>
+      <button onClick={handleNext} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
+        <p>Next</p>
+        <BsArrowRightShort className="mt-[1px]" size={28} />
+      </button>
     </div>
   );
 }
