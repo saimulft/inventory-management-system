@@ -1,4 +1,5 @@
 import Swal from "sweetalert2";
+import countries from "../../Utilities/countries";
 
 export default function CheckoutForm() {
   const boxShadowStyle = {
@@ -135,10 +136,10 @@ export default function CheckoutForm() {
             <div className="mt-2 flex flex-col w-full">
               <label className="text-sm text-slate-500">Country</label>
               <select className="select select-primary w-full mt-2">
-                <option selected>Open this select menu</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+                <option defaultValue="Select your country">
+                  Select your country
+                </option>
+                {countries}
               </select>
             </div>
             <div className="mt-8 flex items-center gap-2">

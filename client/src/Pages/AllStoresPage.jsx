@@ -58,7 +58,7 @@ export default function AllStoresPage() {
                 placeholder="Search Here"
                 type="text"
               />
-              <div className="absolute bottom-[6px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
+              <div className="absolute bottom-[8px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
                 <AiOutlineSearch size={20} />
               </div>
             </div>

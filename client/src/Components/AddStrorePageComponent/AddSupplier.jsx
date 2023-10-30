@@ -25,11 +25,10 @@ export default function AddSupplier() {
     <div className="p-10 bg-white rounded-lg">
       {/* option select  */}
       <div className=" border-2 border-[#8633FF]  rounded-lg">
-        <div className="collapse  collapse-arrow bg-white ">
+        <div className="collapse collapse-arrow bg-white ">
           <input type="checkbox" />
           <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
-            Additional payment Details
-            <span className="text-sm text-slate-400">(Optional)</span>
+           General Information
           </div>
           <div className="collapse-content">
             <p>
@@ -37,18 +36,17 @@ export default function AddSupplier() {
               <span>Amazon</span>
             </p>
             <p>
-              <span className="font-bold text-slate-600">
-                Store manager name:
-              </span>
-              <span>Saidul Basar</span>
+              <span className="font-bold text-slate-600">Store manager name:</span>
+              <span> Saidul Basar</span>
             </p>
             <p>
               <span className="font-bold text-slate-600">Store type:</span>{" "}
-              <span>fsdklfsdkllk</span>
+              <span>Aafsdja</span>
             </p>
           </div>
         </div>
       </div>
+
       {/* add information  */}
       {addSupplier.map((a, index) => {
         return (
