@@ -117,7 +117,7 @@ export default function AllUsersPage() {
                 <td className="flex gap-2">
                   <button onClick={() => handleEditUserRole(user.id)} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
                     <FiEdit />
-                    <p>Edit</p>
+                    <p>Update</p>
                   </button>
                   <button onClick={() => handleDeleteUser(user.id)} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-red-500 hover:text-white transition-all duration-150">
                     <FiTrash />

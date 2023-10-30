@@ -24,8 +24,6 @@ export default function StoreAllStockTable() {
     }
   })
 
-  console.log(isLoading)
-
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">All Stocks</h3>

@@ -20,37 +20,36 @@ const run = async () => {
             
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
-            const store_owner_user_data = {
-                admin_id: req.body.admin_id,
-                store_owner_id: req.body.store_owner_id,
-                full_name: req.body.full_name,
-                email: req.body.email,
-                username: req.body.username,
-                role: req.body.role,
-                phone: null,
-                address: null,
-                city: null,
-                state: null,
-                zip: null,
-                country: null,
-                whatsapp_number: null
-            }
             const login_data = {
-                id: req.body.store_owner_id,
                 creator_email: req.body.creator_email,
                 email: req.body.email,
                 password: hashed_password,
                 role: req.body.role,
                 email_verified: false,
             }
-            const result = await store_owner_users_collection.insertOne(store_owner_user_data)
+            const result = await all_users_collection.insertOne(login_data)
 
             if (result.acknowledged) {
-                const response = await all_users_collection.insertOne(login_data)
+                const store_owner_user_data = {
+                    admin_id: req.body.admin_id,
+                    store_owner_id: result.insertedId.toString(),
+                    full_name: req.body.full_name,
+                    email: req.body.email,
+                    username: req.body.username,
+                    role: req.body.role,
+                    phone: null,
+                    address: null,
+                    city: null,
+                    state: null,
+                    zip: null,
+                    country: null,
+                    whatsapp_number: null
+                }
+                const response = await store_owner_users_collection.insertOne(store_owner_user_data)
                 if (response.acknowledged) {
                     const send_email_data = {
                         email: req.body.email,
-                        subject: "Verify your email",
+                        subject: `Hi ${req.body.full_name}, Verify your email`,
                         html: `
                         <div class="container">
                             <h2>Your login credentials</h2>
@@ -60,8 +59,8 @@ const run = async () => {
                                 <p><strong>Role:</strong> ${req.body.role}</p>
                             </div>
                             <hr />
-                            <h2>Please verify your email before login to your account</h2>
-                            <p>To verify your email <a href="http://localhost:5173/verify_email?id=${req.body.store_owner_id}">Click here</a></p>
+                            <h2>Hi ${req.body.full_name}, Please verify your email before login to your account</h2>
+                            <p>To verify your email <a href="http://localhost:5173/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
                         </div>`
                     }
 

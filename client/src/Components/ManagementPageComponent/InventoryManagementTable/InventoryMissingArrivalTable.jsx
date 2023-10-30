@@ -25,7 +25,7 @@ export default function InventoryMissingArrivalTable() {
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const { user } = useAuth()
 
-  const { data = [], refetch, isLoading } = useQuery({
+  const { data = [], refetch, isLoading, isRefetching } = useQuery({
     queryKey: ['missing_arrival_data'],
     queryFn: async () => {
       try {
@@ -193,7 +193,7 @@ export default function InventoryMissingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {isLoading ? <Loading /> : data.map((d, index) => {
+            {isLoading || isRefetching ? <Loading /> : data.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
@@ -236,7 +236,7 @@ export default function InventoryMissingArrivalTable() {
         </table>
         
         {/* pagination */}
-        {!isLoading &&
+        {!isLoading && !isRefetching &&
           <div className="flex justify-between mt-4">
             <p>Showing 1 to 20 of 2,000 entries</p>
             <div className="flex items-center gap-2">
