@@ -3,10 +3,16 @@ import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import SupplierInfoInputList from "./SupplierInfoInputList";
 import AdditionalPaymentInputList from "./AdditionalPaymentInputList";
 import { BsArrowRightShort } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import useStore from "../../hooks/useStore";
 
 export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
+  const {storeDetails} = useStore()
+
+  if(!storeDetails){
+    return <Navigate to="/dashboard/add-store" />
+  }
 
   const handleAddSupplierIncrementField = () => {
     setAddSupplier([...addSupplier, { id: 1 }]);
@@ -32,16 +38,16 @@ export default function AddSupplier() {
           </div>
           <div className="collapse-content">
             <p>
-              <span className="font-bold text-slate-600">Store name:</span>{" "}
-              <span>Amazon</span>
+              <span className="font-bold text-slate-600">Store name: </span>
+              <span>{storeDetails.storeName}</span>
             </p>
             <p>
-              <span className="font-bold text-slate-600">Store manager name:</span>
-              <span> Saidul Basar</span>
+              <span className="font-bold text-slate-600">Store manager name: </span>
+              <span>{storeDetails.storeManagerName}</span>
             </p>
             <p>
-              <span className="font-bold text-slate-600">Store type:</span>{" "}
-              <span>Aafsdja</span>
+              <span className="font-bold text-slate-600">Store type: </span>
+              <span>{storeDetails.storeType}</span>
             </p>
           </div>
         </div>

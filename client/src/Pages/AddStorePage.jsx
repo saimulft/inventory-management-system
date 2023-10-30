@@ -1,10 +1,33 @@
 import { BsArrowRightShort } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import useStore from "../hooks/useStore";
+import { useState } from "react";
+import { MdErrorOutline } from "react-icons/md";
 
 export default function AddStorePage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.5)",
   };
+  const [errorMessage, setErrorMessage] = useState('')
+  const { setStoreDetails } = useStore()
+  const navigate = useNavigate()
+
+  const handleNext = (event) => {
+    event.preventDefault()
+    const form = event.target;
+    const storeName = form.storeName.value;
+    const storeManagerName = form.storeManagerName.value;
+    const storeType = form.storeType.value;
+
+    if (storeType && storeType === 'Pick Store Type') {
+      return setErrorMessage('Please select store type')
+    }
+
+    const data = { storeName, storeManagerName, storeType }
+    setStoreDetails(data)
+
+    navigate("/dashboard/add-store/add-supplier")
+  }
 
   return (
     <div className="bg-white p-20 rounded-lg">
@@ -13,7 +36,7 @@ export default function AddStorePage() {
         className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl flex justify-center items-center"
       >
         <div className="lg:py-20 lg:px-28 p-10">
-          <form>
+          <form onSubmit={handleNext}>
             <h4 className="text-xl font-bold">Add New Store</h4>
             <p className="text-slate-400">
               Please fill out the details to add a new store
@@ -27,6 +50,7 @@ export default function AddStorePage() {
                 className="input input-bordered input-primary w-full max-w-xs mt-2"
                 id="storeName"
                 name="storeName"
+                required
               />
             </div>
 
@@ -38,6 +62,7 @@ export default function AddStorePage() {
                 className="input input-bordered input-primary w-full max-w-xs mt-2"
                 id="storeManagerName"
                 name="storeManagerName"
+                required
               />
             </div>
 
@@ -45,26 +70,29 @@ export default function AddStorePage() {
               <label className="text-slate-500">Store type*</label>
               <select
                 className="select select-primary w-full mt-2"
-                name="country"
-                id="country"
+                name="storeType"
+                id="storeType"
+                required
               >
-                <option disabled selected>
+                <option defaultValue="Pick Store Type">
                   Pick Store Type
                 </option>
-                <option value="Amazon">Amazon</option>
-                <option value="Daraz">Daraz</option>
-                <option value="Alibaba">Alibaba</option>
+                <option value="Type-1">Type-1</option>
+                <option value="Type-2">Type-2</option>
+                <option value="Type-3">Type-3</option>
               </select>
             </div>
 
-            <Link to="/dashboard/add-store/add-supplier">
-              <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
-                <button className=" flex py-[10px] justify-center items-center text-white w-full capitalize ">
-                  Next
-                  <BsArrowRightShort className="mt-[2px]" size={28} />
-                </button>
-              </div>
-            </Link>
+            <div>
+              {errorMessage && <p className="w-full mt-5 flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {errorMessage}</p>}
+            </div>
+
+            <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
+              <button type="submit" className="flex py-[10px] justify-center items-center text-white w-full capitalize">
+                Next
+                <BsArrowRightShort className="mt-[2px]" size={28} />
+              </button>
+            </div>
           </form>
         </div>
       </div>
