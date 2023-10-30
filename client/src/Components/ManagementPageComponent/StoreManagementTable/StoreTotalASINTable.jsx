@@ -1,6 +1,6 @@
 import axios from "axios";
 import { format } from "date-fns";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineCloudUpload, AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { LiaGreaterThanSolid } from "react-icons/lia";
@@ -27,6 +27,8 @@ export default function InventoryTotalASINTable() {
   const { isSidebarOpen } = useContext(GlobalContext);
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const [filterDays, setFilterDays] = useState('')
+  const [searchText, setSearchText] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
 
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
@@ -34,6 +36,7 @@ export default function InventoryTotalASINTable() {
       try {
         const res = await axios.get(`/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`)
         if (res.status === 200) {
+
           return res.data.data;
         }
         return [];
@@ -43,8 +46,16 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
+
+  const handleSearch = () => {
+    const filteredData = data.filter(item =>
+    (item.asin_upc_code?.toLowerCase().includes(searchText) ||
+      item.product_name?.toLowerCase().includes(searchText) ||
+      item.code_type?.toLowerCase().includes(searchText))
+    );
+    setSearchResults(filteredData)
+  }
   const handleDelete = (id, product_image) => {
-    console.log(product_image)
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -241,17 +252,31 @@ export default function InventoryTotalASINTable() {
             </p>
           </div>
         </div>
-        <input
-          className="border bg-white shadow-md border-[#8633FF] outline-none w-1/4 cursor-pointer  py-2 rounded-md px-2 text-sm"
-          placeholder="Search Here"
-          type="text"
-        />
-        <div className="absolute bottom-[7px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
-          <AiOutlineSearch size={20} />
+
+        <div className="w-1/4  flex items-center justify-between">
+          <input
+            className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
+            placeholder="Search Here"
+            value={searchText}
+            type="text"
+            onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
+          />
+          <div className="w-[40%] flex items-center justify-evenly">
+            <button onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white">
+              <AiOutlineSearch size={24} />
+            </button>
+            <button onClick={() => {
+              setSearchResults([])
+              setSearchText("")
+            }} className="py-[6px] px-4 bg-[#8633FF] text-white">
+              Clear
+            </button>
+
+          </div>
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
+      <div className="overflow-x-auto  mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
@@ -266,44 +291,87 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {isLoading ? <Loading /> : data?.map((d, index) => {
-              return (
-                <tr
-                  className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
-                  <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                  <td>{d.asin_upc_code}</td>
-                  <td className="text-[#8633FF]">{d.product_name}</td>
-                  <td>{d.min_price}</td>
-                  <td>{d.code_type}</td>
-                  <td>{d.store_manager_name}</td>
-                  <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
-                  <td><div className="dropdown dropdown-end">
-                    <label
-                      tabIndex={0}
-                    >
-                      <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+            {
+              searchResults.length ? searchResults.map((d, index) => {
+                return (
+                  <tr
+                    className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
+                    <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                    <td>{d.asin_upc_code}</td>
+                    <td className="text-[#8633FF]">{d.product_name}</td>
+                    <td>{d.min_price}</td>
+                    <td>{d.code_type}</td>
+                    <td>{d.store_manager_name}</td>
+                    <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
+                    <td><div className="dropdown dropdown-end">
+                      <label
+                        tabIndex={0}
+                      >
+                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
 
-                    </label>
-                    <ul
-                      tabIndex={0}
-                      className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                    >
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
 
-                      <li>
-                        <button onClick={() => {
-                          document.getElementById("my_modal_2").showModal()
+                        <li>
+                          <button onClick={() => {
+                            document.getElementById("my_modal_2").showModal()
 
-                        }
-                        }>Edit</button>
-                      </li>
-                      <li>
-                        <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
-                      </li>
-                    </ul>
-                  </div></td>
-                </tr>
-              );
-            })}
+                          }
+                          }>Edit</button>
+                        </li>
+                        <li>
+                          <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
+                        </li>
+                      </ul>
+                    </div></td>
+                  </tr>
+                )
+              })
+
+                :
+
+                isLoading ? <Loading /> : data?.map((d, index) => {
+                  return (
+                    <tr
+                      className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
+                      <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                      <td>{d.asin_upc_code}</td>
+                      <td className="text-[#8633FF]">{d.product_name}</td>
+                      <td>{d.min_price}</td>
+                      <td>{d.code_type}</td>
+                      <td>{d.store_manager_name}</td>
+                      <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
+                      <td><div className="dropdown dropdown-end">
+                        <label
+                          tabIndex={0}
+                        >
+                          <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+
+                        </label>
+                        <ul
+                          tabIndex={0}
+                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                        >
+
+                          <li>
+                            <button onClick={() => {
+                              document.getElementById("my_modal_2").showModal()
+
+                            }
+                            }>Edit</button>
+                          </li>
+                          <li>
+                            <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
+                          </li>
+                        </ul>
+                      </div></td>
+                    </tr>
+                  );
+                })
+            }
           </tbody>
         </table>
 
@@ -337,7 +405,7 @@ export default function InventoryTotalASINTable() {
           </div>
         }
       </div>
-      
+
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">

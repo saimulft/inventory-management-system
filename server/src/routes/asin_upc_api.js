@@ -104,14 +104,14 @@ const run = async () => {
                 })
                 res.status(200).json({ data: data, message: "successfully get asin_upc" })
             }
-            else{
+            else {
                 res.status(204).json({ message: "No content" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in asin_upc' });
         }
     });
-    //   get asin or upc by email
+    //   get asin or upc by id
     router.get('/get_asin_upc_by_id', async (req, res) => {
         const id = req.query.id;
         try {
@@ -120,22 +120,24 @@ const run = async () => {
 
                 res.status(200).json({ data: asinUpcData, message: "successfully get asin_upc" })
             }
-            else{
+            else {
                 res.status(204).json({ message: "No content" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in asin_upc' });
         }
     });
+
+    // get all asin upc for admin
     router.get('/get_all_asin_upc', async (req, res) => {
 
         const id = req.query.id
         try {
-            const asinUpcData = await asin_upc_collection.find({ admin_id: id }).toArray()
+            const asinUpcData = await asin_upc_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
             if (asinUpcData) {
                 res.status(200).json({ data: asinUpcData, message: "successfully all get asin_upc" })
             }
-            else{
+            else {
                 res.status(204).json({ message: "No content" })
             }
         } catch (error) {
