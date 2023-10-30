@@ -36,6 +36,7 @@ select {
     display: flex;
     list-style: none;
     padding: 0;
+    user-select: none;
 }
 
 .pagination li {
