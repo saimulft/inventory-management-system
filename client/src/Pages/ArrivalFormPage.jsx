@@ -14,23 +14,21 @@ const ArrivalFormPage = () => {
   const { user } = useAuth();
   const [inputError, setInputError] = useState('')
   const [asinUpcOption, setAsinUpcOption] = useState(null)
-  // const [asinUpcData, setAsinUpcData] = useState([])
   const [storeName, setStoreName] = useState('')
   const [productName, setProductName] = useState('')
-
   const asinId = asinUpcOption?.value
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
+
 
   useEffect(() => {
     if (storeName && asinUpcOption) {
       const upin = (`${storeName}_${asinUpcOption.label}`);
       axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
         .then(res => {
-          console.log(res)
           if (res.status === 200) {
             setProductName(res.data.data.product_name)
           }
-          if(res.status === 204){
+          if (res.status === 204) {
             setProductName(asinUpc[0]?.product_name)
           }
         }).catch((error) => {
@@ -239,9 +237,6 @@ const ArrivalFormPage = () => {
                     type="text"
                     readOnly
                     value={productName}
-                    onChange={(e) => {
-                      setProductName(e.target.value)
-                    }}
                     placeholder="Enter product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="productName"
