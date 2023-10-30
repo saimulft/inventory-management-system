@@ -5,7 +5,8 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 
 export default function StoreAllStockTable() {
-  const {user} = useAuth()
+  const { user } = useAuth()
+
 
   const { data = [] } = useQuery({
     queryKey: ['all_stock_data'],
@@ -18,7 +19,7 @@ export default function StoreAllStockTable() {
         return []
       } catch (error) {
         console.log(error)
-        return[]
+        return []
       }
     }
   })
@@ -70,6 +71,7 @@ export default function StoreAllStockTable() {
                 </tr>
               );
             })}
+
           </tbody>
         </table>
         <div className="flex justify-between mt-4">
