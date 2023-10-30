@@ -13,7 +13,7 @@ import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../../Shared/ToastMessage";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import Loading from "../../Shared/Loading";
-
+import { DateRange } from 'react-date-range';
 
 export default function InventoryTotalASINTable() {
   const [photoUploadType, setPhotoUploadType] = useState(null);
@@ -30,7 +30,35 @@ export default function InventoryTotalASINTable() {
   const [searchText, setSearchText] = useState('');
   const [searchError, setSearchError] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  // console.log(searchError)
+
+
+  const [rangeDate, setRangeDate] = useState([{
+    startDate: new Date(),
+    endDate: new Date(),  //addDays(new Date(), 7)
+    key: 'selection'
+  }]);
+
+  const handleCustomDateSearch = () => {
+    setSearchResults("")
+    const startDate = rangeDate[0].startDate
+    const endDate = rangeDate[0].endDate
+    const filteredDateResults = data.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate && itemDate <= endDate;
+    });
+    if (!filteredDateResults.length) {
+      setSearchResults([]);
+
+      return setSearchError(`No data found for selected date range`)
+    }
+    if (filteredDateResults.length) {
+      setSearchResults(filteredDateResults);
+
+    }
+
+  }
+
+
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
@@ -306,7 +334,10 @@ export default function InventoryTotalASINTable() {
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
               Year
             </p>
-            <p onClick={() => setFilterDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
+            <p onClick={() => {
+              setFilterDays('custom')
+              document.getElementById("date_range_modal").showModal()
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
               Custom
             </p>
           </div>
@@ -593,6 +624,34 @@ export default function InventoryTotalASINTable() {
               </form>
             </div>
           </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
+
+      {/* date range modal */}
+      <dialog id="date_range_modal" className="modal">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
+          <div className='mb-10'>
+            <DateRange
+              editableDateInputs={true}
+              onChange={item => {
+
+                setRangeDate([item.selection])
+              }}
+              moveRangeOnFirstSelection={false}
+              months={2}
+              ranges={rangeDate}
+              direction="horizontal"
+              rangeColors={["#8633FF"]}
+              color="#8633FF"
+            />
+          </div>
+          <button onClick={() => {
+            handleCustomDateSearch()
+            document.getElementById("date_range_modal").close()
+          }} className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded">Select</button>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
