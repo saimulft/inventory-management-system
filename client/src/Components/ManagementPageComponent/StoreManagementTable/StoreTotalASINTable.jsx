@@ -3,7 +3,6 @@ import { format } from "date-fns";
 import { useContext, useState } from "react";
 import { AiOutlineCloudUpload, AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-import { LiaGreaterThanSolid } from "react-icons/lia";
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import FileDownload from "../../Shared/FileDownload";
@@ -14,6 +13,7 @@ import ToastMessage from "../../Shared/ToastMessage";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import Loading from "../../Shared/Loading";
 import { DateRange } from 'react-date-range';
+import ReactPaginate from "react-paginate";
 
 export default function InventoryTotalASINTable() {
   const [photoUploadType, setPhotoUploadType] = useState(null);
@@ -30,7 +30,7 @@ export default function InventoryTotalASINTable() {
   const [searchText, setSearchText] = useState('');
   const [searchError, setSearchError] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-
+  const [currentPage, setCurrentPage] = useState(0);
 
   const [rangeDate, setRangeDate] = useState([{
     startDate: new Date(),
@@ -42,22 +42,21 @@ export default function InventoryTotalASINTable() {
     setSearchResults("")
     const startDate = rangeDate[0].startDate
     const endDate = rangeDate[0].endDate
-    const filteredDateResults = data.filter((item) => {
-      const itemDate = new Date(item.date);
-      return itemDate >= startDate && itemDate <= endDate;
-    });
-    if (!filteredDateResults.length) {
-      setSearchResults([]);
+    if (startDate !== endDate) {
+      const filteredDateResults = data.filter((item) => {
+        const itemDate = new Date(item.date);
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+      if (!filteredDateResults.length) {
 
-      return setSearchError(`No data found for selected date range`)
-    }
-    if (filteredDateResults.length) {
-      setSearchResults(filteredDateResults);
-
+        return setSearchError(`No data found for selected date range`)
+      }
+      if (filteredDateResults.length) {
+        setSearchResults(filteredDateResults);
+      }
     }
 
   }
-
 
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
@@ -287,6 +286,17 @@ export default function InventoryTotalASINTable() {
       }
     }
   }
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+  // Set the number of items per page and initialize the current page
+  const itemsPerPage = 2;
+
+  // Calculate the start and end indices for the current page
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayedData = data.slice(startIndex, endIndex);
+
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
@@ -426,7 +436,7 @@ export default function InventoryTotalASINTable() {
 
                   :
 
-                  isLoading ? <Loading /> : data?.map((d, index) => {
+                  isLoading ? <Loading /> : displayedData?.map((d, index) => {
                     return (
                       <tr
                         className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
@@ -470,193 +480,177 @@ export default function InventoryTotalASINTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading &&
-          <div className="flex justify-between mt-4">
-            <p>Showing 1 to 20 of 2,000 entries</p>
-            <div className="flex items-center gap-2">
-              <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
-                <LiaGreaterThanSolid size={13} />
-              </div>
-              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-                1
-              </div>
-              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-                2
-              </div>
-              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-                ...
-              </div>
-              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-                9
-              </div>
-              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-                10
-              </div>
-              <div className="border px-[2px] py-[3px] border-gray-400">
-                <LiaGreaterThanSolid size={13} />
-              </div>
-            </div>
-          </div>
-        }
-      </div>
+        {!isLoading && data?.length > 0 && < div >
+          <ReactPaginate
 
-      {/* modal content  */}
-      <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
-          <div className="flex">
-            <div className="w-1/2">
-              <div className="flex items-center mb-4 gap-2">
-                <BiSolidEdit size={24} />
-                <h3 className="text-2xl font-medium">Details</h3>
-              </div>
-              {/* <p className="mt-2">
+            pageCount={Math.ceil(data.length / itemsPerPage)}
+            pageRangeDisplayed={3}
+            marginPagesDisplayed={1}
+            onPageChange={handlePageChange}
+            containerClassName="pagination"
+            activeClassName="active"
+          />
+        </div>
+        }
+    </div>
+
+      {/* modal content  */ }
+  <dialog id="my_modal_2" className="modal">
+    <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
+      <div className="flex">
+        <div className="w-1/2">
+          <div className="flex items-center mb-4 gap-2">
+            <BiSolidEdit size={24} />
+            <h3 className="text-2xl font-medium">Details</h3>
+          </div>
+          {/* <p className="mt-2">
                 <span className="font-medium">Data : </span>
                 <span>{singleData?.date && format(new Date(singleData.date), "y/MM/d")}</span>
               </p> */}
 
-              <p className="mt-2">
-                <span className="font-medium">Product Name : </span>
-                <span>{singleData?.product_name}</span>
-              </p>
-              {/* <p className="mt-2">
+          <p className="mt-2">
+            <span className="font-medium">Product Name : </span>
+            <span>{singleData?.product_name}</span>
+          </p>
+          {/* <p className="mt-2">
                 <span className="font-medium">ASIN : </span>
                 <span>{singleData?.asin_upc_code}</span>
               </p> */}
-              <p className="mt-2">
-                <span className="font-medium">Store Manager: </span>
-                <span>{singleData?.store_manager_name}</span>
-              </p>
+          <p className="mt-2">
+            <span className="font-medium">Store Manager: </span>
+            <span>{singleData?.store_manager_name}</span>
+          </p>
 
-              <p className="mt-2">
-                <span className="font-medium">Old Min Price : </span>
-                <span>${singleData?.min_price}</span>
-              </p>
+          <p className="mt-2">
+            <span className="font-medium">Old Min Price : </span>
+            <span>${singleData?.min_price}</span>
+          </p>
+        </div>
+        <div className="w-1/2 px-4">
+          <h3 className="text-2xl font-medium">Update</h3>
+          <form onSubmit={handleAsinUpcUpdate}>
+            <div className="flex flex-col mt-4">
+              <label className="text-slate-500">New Min Price</label>
+              <input
+                type="number"
+                placeholder="Enter new min price"
+                className="input input-bordered input-primary w-full input-sm mt-2"
+                id="minPrice"
+                name="minPrice"
+              />
             </div>
-            <div className="w-1/2 px-4">
-              <h3 className="text-2xl font-medium">Update</h3>
-              <form onSubmit={handleAsinUpcUpdate}>
-                <div className="flex flex-col mt-4">
-                  <label className="text-slate-500">New Min Price</label>
-                  <input
-                    type="number"
-                    placeholder="Enter new min price"
-                    className="input input-bordered input-primary w-full input-sm mt-2"
-                    id="minPrice"
-                    name="minPrice"
-                  />
-                </div>
 
+            <div className="mt-4">
+              <div className="mt-4">
+                <label className="text-slate-500">Product Image</label>
+                <select disabled={imageSrc}
+                  onChange={(e) => {
+                    setPhotoUploadType(e.target.value);
+                  }}
+                  className="select select-primary w-full mt-2 shadow-lg"
+                >
+                  <option defaultValue="Select Upload Option"> Select Upload Option </option>
+                  <option value="url"> Image URL</option>
+                  <option value="file">Upload image</option>
+                </select>
+              </div>
+
+              {photoUploadType == "url" && (
                 <div className="mt-4">
-                  <div className="mt-4">
-                    <label className="text-slate-500">Product Image</label>
-                    <select disabled={imageSrc}
-                      onChange={(e) => {
-                        setPhotoUploadType(e.target.value);
-                      }}
-                      className="select select-primary w-full mt-2 shadow-lg"
-                    >
-                      <option defaultValue="Select Upload Option"> Select Upload Option </option>
-                      <option value="url"> Image URL</option>
-                      <option value="file">Upload image</option>
-                    </select>
-                  </div>
-
-                  {photoUploadType == "url" && (
-                    <div className="mt-4">
-                      <label className="text-slate-500">Image URL</label>
-                      <input required
-                        type="text"
-                        placeholder="Enter your image URL link"
-                        className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                        id="inputImageUrl"
-                        name="inputImageUrl"
-                      />
-                      {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
-                    </div>
-
-                  )}
-
-                  {photoUploadType == "file" && (
-                    <div className="mt-4">
-                      <label className="text-slate-500">Add Photo</label>
-                      <div className="flex items-center w-full mt-2">
-                        <label
-                          htmlFor="invoice-dropzone"
-                          className="flex justify-between items-center px-5 w-full h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
-                        >
-                          <div className="flex items-center gap-5 py-[6.5px]">
-                            {imageSrc ? <img src={imageSrc} className="h-8" alt="" /> :
-                              <AiOutlineCloudUpload size={26} />}
-                            <div>
-                              {imageFile && <p className="text-md font-semibold">{imageFile.name.slice(0, 32)}</p>}
-
-                              <p className="text-xs text-gray-500 dark:text-gray-400">
-                                PNG or JPG file size no more than 5MB
-                              </p>
-                            </div>
-                          </div>
-                          <input
-
-                            id="invoice-dropzone"
-                            name="invoice-dropzone"
-                            type="file"
-                            className="hidden"
-                            accept='image/*'
-                            onChange={handleImage}
-                          />
-
-                        </label>
-                      </div>
-                      {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
-                      {imageSrc && <button onClick={() => {
-                        setImageSrc(null)
-                        setImageFile(null)
-                      }} className="btn btn-outline btn-primary btn-xs mx-2 mt-2">Cancel image</button>}
-
-                    </div>
-                  )}
-                  <ToastMessage successMessage={success} errorMessage={imageError} />
+                  <label className="text-slate-500">Image URL</label>
+                  <input required
+                    type="text"
+                    placeholder="Enter your image URL link"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="inputImageUrl"
+                    name="inputImageUrl"
+                  />
+                  {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
                 </div>
-                <button type="submit" className="flex gap-2 justify-center items-cente bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
-                  {loading && <FaSpinner size={20} className="animate-spin" />}
-                  Update
-                </button>
-              </form>
+
+              )}
+
+              {photoUploadType == "file" && (
+                <div className="mt-4">
+                  <label className="text-slate-500">Add Photo</label>
+                  <div className="flex items-center w-full mt-2">
+                    <label
+                      htmlFor="invoice-dropzone"
+                      className="flex justify-between items-center px-5 w-full h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                    >
+                      <div className="flex items-center gap-5 py-[6.5px]">
+                        {imageSrc ? <img src={imageSrc} className="h-8" alt="" /> :
+                          <AiOutlineCloudUpload size={26} />}
+                        <div>
+                          {imageFile && <p className="text-md font-semibold">{imageFile.name.slice(0, 32)}</p>}
+
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            PNG or JPG file size no more than 5MB
+                          </p>
+                        </div>
+                      </div>
+                      <input
+
+                        id="invoice-dropzone"
+                        name="invoice-dropzone"
+                        type="file"
+                        className="hidden"
+                        accept='image/*'
+                        onChange={handleImage}
+                      />
+
+                    </label>
+                  </div>
+                  {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
+                  {imageSrc && <button onClick={() => {
+                    setImageSrc(null)
+                    setImageFile(null)
+                  }} className="btn btn-outline btn-primary btn-xs mx-2 mt-2">Cancel image</button>}
+
+                </div>
+              )}
+              <ToastMessage successMessage={success} errorMessage={imageError} />
             </div>
-          </div>
+            <button type="submit" className="flex gap-2 justify-center items-cente bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+              {loading && <FaSpinner size={20} className="animate-spin" />}
+              Update
+            </button>
+          </form>
         </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
-
-      {/* date range modal */}
-      <dialog id="date_range_modal" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
-          <div className='mb-10'>
-            <DateRange
-              editableDateInputs={true}
-              onChange={item => {
-
-                setRangeDate([item.selection])
-              }}
-              moveRangeOnFirstSelection={false}
-              months={2}
-              ranges={rangeDate}
-              direction="horizontal"
-              rangeColors={["#8633FF"]}
-              color="#8633FF"
-            />
-          </div>
-          <button onClick={() => {
-            handleCustomDateSearch()
-            document.getElementById("date_range_modal").close()
-          }} className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded">Select</button>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </dialog>
+      </div>
     </div>
+    <form method="dialog" className="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+
+  {/* date range modal */ }
+  <dialog id="date_range_modal" className="modal">
+    <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
+      <div className='mb-10'>
+        <DateRange
+          editableDateInputs={true}
+          onChange={item => {
+
+            setRangeDate([item.selection])
+          }}
+          moveRangeOnFirstSelection={false}
+          months={2}
+          ranges={rangeDate}
+          direction="horizontal"
+          rangeColors={["#8633FF"]}
+          color="#8633FF"
+        />
+      </div>
+      <button onClick={() => {
+        handleCustomDateSearch()
+        document.getElementById("date_range_modal").close()
+      }} className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded">Select</button>
+    </div>
+    <form method="dialog" className="modal-backdrop">
+      <button>close</button>
+    </form>
+  </dialog>
+    </div >
   );
 }

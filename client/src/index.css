@@ -11,11 +11,13 @@
     }
 }
 
-input, select{
+input,
+select {
     outline: none !important;
 }
 
-.css-13cymwt-control, .css-t3ipsp-control{
+.css-13cymwt-control,
+.css-t3ipsp-control {
     border: 0.6px solid #8633FF !important;
     margin-top: 8px !important;
     cursor: pointer !important;
@@ -24,4 +26,31 @@ input, select{
 
 .css-art2ul-ValueContainer2 {
     padding: 7px 16px !important;
+}
+
+
+/* css for pagination */
+/* Pagination.css */
+.pagination {
+    margin-top: 40px;
+    display: flex;
+    list-style: none;
+    padding: 0;
+}
+
+.pagination li {
+    margin: 0 5px;
+}
+
+.pagination a {
+    text-decoration: none;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.pagination .active a {
+    background-color: #8633FF;
+    color: #fff;
+    border: 1px solid #8633FF;
 }
