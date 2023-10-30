@@ -12,11 +12,13 @@ import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import AsinSearchDropdown from "../../../Utilities/AsinSearchDropdown";
 import { useQuery } from "@tanstack/react-query";
 import FileDownload from "../../Shared/FileDownload";
+import { LiaGreaterThanSolid } from "react-icons/lia";
+import Loading from "../../Shared/Loading";
 
 
 export default function StorePreparingRequestTable() {
-
   const { isSidebarOpen } = useContext(GlobalContext);
+  const [filterDays, setFilterDays] = useState('')
   const [singleData, setSingleData] = useState()
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
@@ -33,7 +35,7 @@ export default function StorePreparingRequestTable() {
   const [asinUpcOption, setAsinUpcOption] = useState('')
   const [asinUpcData, setAsinUpcData] = useState([])
 
-  const { data: preparingRequestData = [], refetch } = useQuery({
+  const { data: preparingRequestData = [], refetch, isLoading} = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
@@ -185,18 +187,41 @@ export default function StorePreparingRequestTable() {
       <h3 className="text-center text-2xl font-medium">
         Preparing Request : {preparingRequestData?.length}
       </h3>
-      <div className="relative flex justify-end">
+
+      <div className="relative flex justify-between items-center mt-4">
+        <div>
+          <div className="flex gap-4 text-sm items-center">
+            <p onClick={() => setFilterDays('today')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
+              Today
+            </p>
+            <p onClick={() => setFilterDays(7)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && 'bg-[#8633FF] text-white'}`}>
+              7 Days
+            </p>
+            <p onClick={() => setFilterDays(15)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && 'bg-[#8633FF] text-white'}`}>
+              15 Days
+            </p>
+            <p onClick={() => setFilterDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && 'bg-[#8633FF] text-white'}`}>
+              1 Month
+            </p>
+            <p onClick={() => setFilterDays('year')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
+              Year
+            </p>
+            <p onClick={() => setFilterDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
+              Custom
+            </p>
+          </div>
+        </div>
         <input
           className="border bg-white shadow-md border-[#8633FF] outline-none w-1/4 cursor-pointer  py-2 rounded-md px-2 text-sm"
           placeholder="Search Here"
           type="text"
         />
-        <div className="absolute bottom-[6px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
+        <div className="absolute bottom-[7px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
           <AiOutlineSearch size={20} />
         </div>
       </div>
 
-      <div className="overflow-x-auto overflow-y-auto mt-8">
+      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
@@ -217,7 +242,7 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {preparingRequestData.map((d, index) => {
+            {isLoading ? <Loading /> : preparingRequestData.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
@@ -267,10 +292,39 @@ export default function StorePreparingRequestTable() {
             })}
           </tbody>
         </table>
-
+        
+        {/* pagination */}
+        {!isLoading &&
+          <div className="flex justify-between mt-4">
+            <p>Showing 1 to 20 of 2,000 entries</p>
+            <div className="flex items-center gap-2">
+              <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
+                <LiaGreaterThanSolid size={13} />
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                1
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                2
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                ...
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                9
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                10
+              </div>
+              <div className="border px-[2px] py-[3px] border-gray-400">
+                <LiaGreaterThanSolid size={13} />
+              </div>
+            </div>
+          </div>
+        }
       </div>
-      {/* modal content  */}
 
+      {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
           <div className="flex">

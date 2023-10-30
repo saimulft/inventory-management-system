@@ -7,13 +7,15 @@ import axios from "axios";
 import { format } from "date-fns";
 import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
+import Loading from "../../Shared/Loading";
 
 export default function InventoryShippedTable() {
   const [singleData, setSingleData] = useState({})
   const { isSidebarOpen } = useContext(GlobalContext);
   const {user} = useAuth()
+  const [filterDays, setFilterDays] = useState('')
 
-  const { data = [] } = useQuery({
+  const { data = [], isLoading} = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
@@ -30,28 +32,30 @@ export default function InventoryShippedTable() {
   })
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
 
-  console.log(singleData)
-
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">Shipped: {data.length}</h3>
+      
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setFilterDays('today')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
               Today
             </p>
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setFilterDays(7)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && 'bg-[#8633FF] text-white'}`}>
               7 Days
             </p>
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setFilterDays(15)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && 'bg-[#8633FF] text-white'}`}>
               15 Days
             </p>
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setFilterDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && 'bg-[#8633FF] text-white'}`}>
               1 Month
             </p>
-            <p className="border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded">
+            <p onClick={() => setFilterDays('year')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
               Year
+            </p>
+            <p onClick={() => setFilterDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
+              Custom
             </p>
           </div>
         </div>
@@ -60,12 +64,12 @@ export default function InventoryShippedTable() {
           placeholder="Search Here"
           type="text"
         />
-        <div className="absolute bottom-[6px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
+        <div className="absolute bottom-[7px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
           <AiOutlineSearch size={20} />
         </div>
       </div>
 
-      <div className="overflow-x-auto mt-8">
+      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-xs">
           <thead>
             <tr className="bg-gray-200">
@@ -83,8 +87,8 @@ export default function InventoryShippedTable() {
               <th></th>
             </tr>
           </thead>
-          <tbody>
-            {data.map((d, index) => {
+          <tbody className="relative">
+            {isLoading ? <Loading /> : data.map((d, index) => {
               return (
                 <tr
                   className={`${index % 2 == 1 && "bg-gray-200"}`}
@@ -116,32 +120,34 @@ export default function InventoryShippedTable() {
         </table>
 
         {/* pagination */}
-        <div className="flex justify-between mt-4">
-          <p>Showing 1 to 20 of 2,000 entries</p>
-          <div className="flex items-center gap-2">
-            <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              1
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              2
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              ...
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              9
-            </div>
-            <div className="border px-1 py-[2px]  border-gray-400 text-xs">
-              10
-            </div>
-            <div className="border px-[2px] py-[3px] border-gray-400">
-              <LiaGreaterThanSolid size={13} />
+        {!isLoading &&
+          <div className="flex justify-between mt-4">
+            <p>Showing 1 to 20 of 2,000 entries</p>
+            <div className="flex items-center gap-2">
+              <div className="rotate-180 border px-[2px] py-[3px] border-gray-400">
+                <LiaGreaterThanSolid size={13} />
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                1
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                2
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                ...
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                9
+              </div>
+              <div className="border px-1 py-[2px]  border-gray-400 text-xs">
+                10
+              </div>
+              <div className="border px-[2px] py-[3px] border-gray-400">
+                <LiaGreaterThanSolid size={13} />
+              </div>
             </div>
           </div>
-        </div>
+        }
       </div>
 
       {/* modal content  */}
