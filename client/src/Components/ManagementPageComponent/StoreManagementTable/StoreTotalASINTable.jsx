@@ -77,14 +77,23 @@ export default function InventoryTotalASINTable() {
   }
 
 
-
   const handleDateSearch = (day) => {
-
+    setSearchError("")
     const currentDate = new Date();
-    const previousDate = new Date();
-    previousDate.setDate(currentDate.getDate() - day);
-    const startDate = previousDate;
-    const endDate = new Date()
+    const endDate = new Date();
+    let startDate;
+
+
+    if (day === "today") {
+      startDate = new Date(currentDate);
+      startDate.setHours(0, 0, 0, 0); // Set to midnight
+    }
+    else {
+      const previousDate = new Date();
+      previousDate.setDate(currentDate.getDate() - day);
+      startDate = previousDate;
+    }
+
     const filteredDateResults = data.filter((item) => {
       const itemDate = new Date(item.date);
       return itemDate >= startDate && itemDate <= endDate;
@@ -92,19 +101,20 @@ export default function InventoryTotalASINTable() {
 
     if (!filteredDateResults.length) {
       setSearchResults([]);
-      if (day === 365) {
-        return setSearchError(`No data found for past 1 year`)
+      if (day === "today") {
+        return setSearchError("No data found for today");
+      } else if (day === 365) {
+        return setSearchError("No data found for the past 1 year");
+      } else if (day === 30) {
+        return setSearchError("No data found for the past 1 month");
+      } else {
+        return setSearchError(`No data found for the past ${day} days`);
       }
-      if (day === 30) {
-        return setSearchError(`No data found for past 1 month`)
-      }
-      return setSearchError(`No data found for past ${day} days`)
     }
-    if (filteredDateResults.length) {
-      setSearchResults(filteredDateResults);
 
-    }
+    setSearchResults(filteredDateResults);
   }
+
 
   const handleSearch = () => {
     setSearchError("")
@@ -402,7 +412,7 @@ export default function InventoryTotalASINTable() {
               All
             </p>
             <p onClick={() => {
-              handleDateSearch(1)
+              handleDateSearch("today")
               setFilterDays('today')
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
               Today
