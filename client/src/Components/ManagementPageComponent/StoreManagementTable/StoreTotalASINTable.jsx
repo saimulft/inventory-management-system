@@ -32,7 +32,11 @@ export default function InventoryTotalASINTable() {
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
-
+  const [rangeDate, setRangeDate] = useState([{
+    startDate: new Date(),
+    endDate: new Date(),  //addDays(new Date(), 7)
+    key: 'selection'
+  }]);
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
@@ -49,11 +53,7 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
-  const [rangeDate, setRangeDate] = useState([{
-    startDate: new Date(),
-    endDate: new Date(),  //addDays(new Date(), 7)
-    key: 'selection'
-  }]);
+
 
   const handleCustomDateSearch = () => {
     setSearchError("")
@@ -357,7 +357,7 @@ export default function InventoryTotalASINTable() {
     }
   }
   const itemsPerPage = 5;
-  const maxVisiblePages = 20; // Adjust the number of maximum visible pages as needed
+  const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
   const pageCount = Math.ceil(data.length / itemsPerPage);
   const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
 
@@ -494,23 +494,16 @@ export default function InventoryTotalASINTable() {
                       <td>{d.store_manager_name}</td>
                       <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
                       <td><div className="dropdown dropdown-end">
-                        <label
-                          tabIndex={0}
-                        >
+                        <label tabIndex={0}>
                           <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
-
                         </label>
                         <ul
                           tabIndex={0}
-                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                        >
-
+                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black">
                           <li>
                             <button onClick={() => {
                               document.getElementById("my_modal_2").showModal()
-
-                            }
-                            }>Edit</button>
+                            }}>Edit</button>
                           </li>
                           <li>
                             <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
