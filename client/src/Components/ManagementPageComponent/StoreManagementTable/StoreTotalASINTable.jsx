@@ -33,32 +33,6 @@ export default function InventoryTotalASINTable() {
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
 
-  const [rangeDate, setRangeDate] = useState([{
-    startDate: new Date(),
-    endDate: new Date(),  //addDays(new Date(), 7)
-    key: 'selection'
-  }]);
-
-  const handleCustomDateSearch = () => {
-    setSearchResults("")
-    const startDate = rangeDate[0].startDate
-    const endDate = rangeDate[0].endDate
-    if (startDate !== endDate) {
-      const filteredDateResults = data.filter((item) => {
-        const itemDate = new Date(item.date);
-        return itemDate >= startDate && itemDate <= endDate;
-      });
-      if (!filteredDateResults.length) {
-
-        return setSearchError(`No data found for selected date range`)
-      }
-      if (filteredDateResults.length) {
-        setSearchResults(filteredDateResults);
-      }
-    }
-
-  }
-
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
@@ -75,6 +49,34 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
+  const [rangeDate, setRangeDate] = useState([{
+    startDate: new Date(),
+    endDate: new Date(),  //addDays(new Date(), 7)
+    key: 'selection'
+  }]);
+
+  const handleCustomDateSearch = () => {
+    setSearchError("")
+    const startDate = rangeDate[0].startDate
+    const endDate = rangeDate[0].endDate
+    if (startDate !== endDate) {
+      const filteredDateResults = data.filter((item) => {
+        const itemDate = new Date(item.date);
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+      console.log(filteredDateResults)
+      if (!filteredDateResults.length) {
+
+        return setSearchError(`No data found for selected date range`)
+      }
+      if (filteredDateResults.length) {
+        setSearchResults(filteredDateResults);
+      }
+    }
+
+  }
+
+
 
   const handleDateSearch = (day) => {
 
