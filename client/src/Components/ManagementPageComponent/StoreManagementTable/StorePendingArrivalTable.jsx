@@ -108,7 +108,6 @@ export default function StorePendingArrivalTable() {
       previousDate.setDate(currentDate.getDate() - day);
       startDate = previousDate;
     }
-
     const filteredDateResults = data.filter((item) => {
       const itemDate = new Date(item.date);
       return itemDate >= startDate && itemDate <= endDate;
