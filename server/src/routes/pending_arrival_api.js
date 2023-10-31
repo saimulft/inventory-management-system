@@ -47,7 +47,7 @@ const run = async () => {
         try {
             // const creator_email = req.query.email;
             const admin_id = req.query.admin_id;
-            const result = await pending_arrival_collection.find({ admin_id: admin_id }).toArray()
+            const result = await pending_arrival_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got pending arrival data" })
             }

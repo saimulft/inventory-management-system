@@ -115,7 +115,6 @@ export default function InventoryTotalASINTable() {
     setSearchResults(filteredDateResults);
   }
 
-
   const handleSearch = () => {
     setSearchError("")
     if (!searchText) {
@@ -134,6 +133,7 @@ export default function InventoryTotalASINTable() {
     setFilterDays(null)
     setSearchResults(filteredData)
   }
+
   const handleDelete = (id, product_image) => {
     Swal.fire({
       title: 'Are you sure?',
@@ -470,7 +470,6 @@ export default function InventoryTotalASINTable() {
             }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
               Clear
             </button>
-
           </div>
         </div>
       </div>

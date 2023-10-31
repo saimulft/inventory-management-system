@@ -144,12 +144,12 @@ const run = async () => {
         const id = req.query.id
 
         try {
-            const data = await preparing_form_collection.find({ admin_id: id }).toArray()
+            const data = await preparing_form_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
 
             if (data) {
                 res.status(200).json({ data: data })
             }
-            else{
+            else {
                 res.status(204).json({ message: "No content" })
             }
 

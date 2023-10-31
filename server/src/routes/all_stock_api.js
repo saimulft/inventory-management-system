@@ -11,7 +11,7 @@ const run = async () => {
         try {
             // const creator_email = req.query.email;
             const admin_id = req.query.admin_id;
-            const result = await all_stock_collection.find({ admin_id: admin_id }).toArray()
+            const result = await all_stock_collection.find({ admin_id: admin_id }).sort({date : -1}).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got all stock data" })
             }

@@ -212,7 +212,8 @@ export default function StorePendingArrivalTable() {
         console.log(error)
       })
   }
-  function generatePageNumbers(currentPage, pageCount, maxVisiblePages) {
+  // pagination code 
+  const generatePageNumbers = (currentPage, pageCount, maxVisiblePages) => {
     if (pageCount <= maxVisiblePages) {
       // If the total page count is less than or equal to the maximum visible pages, show all pages.
       return Array.from({ length: pageCount }, (_, i) => i + 1);
@@ -244,7 +245,7 @@ export default function StorePendingArrivalTable() {
       return pageNumbers;
     }
   }
-  function generatePageNumbersFilter(currentPage, pageCount, maxVisiblePages) {
+  const generatePageNumbersFilter = (currentPage, pageCount, maxVisiblePages) => {
     if (pageCount <= maxVisiblePages) {
       // If the total page count is less than or equal to the maximum visible pages, show all pages.
       return Array.from({ length: pageCount }, (_, i) => i + 1);
@@ -276,15 +277,13 @@ export default function StorePendingArrivalTable() {
       return pageNumbers;
     }
   }
-  const itemsPerPage = 2;
-  const maxVisiblePages = 20; // Adjust the number of maximum visible pages as needed
+  const itemsPerPage = 5;
+  const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
   const pageCount = Math.ceil(data.length / itemsPerPage);
   const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
 
   generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
   generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
-
-  // pagination code 
 
   const handleFilteredDataPageChange = ({ selected }) => {
     setFilteredDataPage(selected);
@@ -379,7 +378,6 @@ export default function StorePendingArrivalTable() {
             }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
               Clear
             </button>
-
           </div>
         </div>
       </div>
@@ -499,7 +497,7 @@ export default function StorePendingArrivalTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 0 && < div >
+        {!isLoading && !searchError && !searchResults.length && data?.length > 5 && < div >
           <ReactPaginate
             pageCount={Math.ceil(data.length / itemsPerPage)}
 
@@ -515,7 +513,7 @@ export default function StorePendingArrivalTable() {
           />
         </div>
         }
-        {!isLoading && !searchError && searchResults.length > 0 && <ReactPaginate
+        {!isLoading && !searchError && searchResults.length > 5 && <ReactPaginate
           pageCount={Math.ceil(searchResults.length / itemsPerPage)}
           pageRangeDisplayed={maxVisiblePages}
           marginPagesDisplayed={1}
