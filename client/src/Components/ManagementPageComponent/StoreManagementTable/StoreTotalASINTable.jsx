@@ -31,33 +31,12 @@ export default function InventoryTotalASINTable() {
   const [searchError, setSearchError] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-
+  const [filteredDataPage, setFilteredDataPage] = useState(0);
   const [rangeDate, setRangeDate] = useState([{
     startDate: new Date(),
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
-
-  const handleCustomDateSearch = () => {
-    setSearchResults("")
-    const startDate = rangeDate[0].startDate
-    const endDate = rangeDate[0].endDate
-    if (startDate !== endDate) {
-      const filteredDateResults = data.filter((item) => {
-        const itemDate = new Date(item.date);
-        return itemDate >= startDate && itemDate <= endDate;
-      });
-      if (!filteredDateResults.length) {
-
-        return setSearchError(`No data found for selected date range`)
-      }
-      if (filteredDateResults.length) {
-        setSearchResults(filteredDateResults);
-      }
-    }
-
-  }
-
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
@@ -74,6 +53,30 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
+
+
+  const handleCustomDateSearch = () => {
+    setSearchError("")
+    const startDate = rangeDate[0].startDate
+    const endDate = rangeDate[0].endDate
+    if (startDate !== endDate) {
+      const filteredDateResults = data.filter((item) => {
+        const itemDate = new Date(item.date);
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+      console.log(filteredDateResults)
+      if (!filteredDateResults.length) {
+
+        return setSearchError(`No data found for selected date range`)
+      }
+      if (filteredDateResults.length) {
+        setSearchResults(filteredDateResults);
+      }
+    }
+
+  }
+
+
 
   const handleDateSearch = (day) => {
 
@@ -105,6 +108,9 @@ export default function InventoryTotalASINTable() {
 
   const handleSearch = () => {
     setSearchError("")
+    if (!searchText) {
+      return
+    }
     const filteredData = data.filter(item =>
     (item.asin_upc_code?.toLowerCase().includes(searchText) ||
       item.product_name?.toLowerCase().includes(searchText) ||
@@ -286,16 +292,97 @@ export default function InventoryTotalASINTable() {
       }
     }
   }
+  function generatePageNumbers(currentPage, pageCount, maxVisiblePages) {
+    if (pageCount <= maxVisiblePages) {
+      // If the total page count is less than or equal to the maximum visible pages, show all pages.
+      return Array.from({ length: pageCount }, (_, i) => i + 1);
+    } else {
+      const halfVisible = Math.floor(maxVisiblePages / 2);
+      const firstPage = Math.max(currentPage - halfVisible, 1);
+      const lastPage = Math.min(currentPage + halfVisible, pageCount);
+
+      const pageNumbers = [];
+
+      if (firstPage > 1) {
+        pageNumbers.push(1);
+        if (firstPage > 2) {
+          pageNumbers.push("..."); // Show ellipsis
+        }
+      }
+
+      for (let i = firstPage; i <= lastPage; i++) {
+        pageNumbers.push(i);
+      }
+
+      if (lastPage < pageCount) {
+        if (lastPage < pageCount - 1) {
+          pageNumbers.push("..."); // Show ellipsis
+        }
+        pageNumbers.push(pageCount);
+      }
+
+      return pageNumbers;
+    }
+  }
+  function generatePageNumbersFilter(currentPage, pageCount, maxVisiblePages) {
+    if (pageCount <= maxVisiblePages) {
+      // If the total page count is less than or equal to the maximum visible pages, show all pages.
+      return Array.from({ length: pageCount }, (_, i) => i + 1);
+    } else {
+      const halfVisible = Math.floor(maxVisiblePages / 2);
+      const firstPage = Math.max(currentPage - halfVisible, 1);
+      const lastPage = Math.min(currentPage + halfVisible, pageCount);
+
+      const pageNumbers = [];
+
+      if (firstPage > 1) {
+        pageNumbers.push(1);
+        if (firstPage > 2) {
+          pageNumbers.push("..."); // Show ellipsis
+        }
+      }
+
+      for (let i = firstPage; i <= lastPage; i++) {
+        pageNumbers.push(i);
+      }
+
+      if (lastPage < pageCount) {
+        if (lastPage < pageCount - 1) {
+          pageNumbers.push("..."); // Show ellipsis
+        }
+        pageNumbers.push(pageCount);
+      }
+
+      return pageNumbers;
+    }
+  }
+  const itemsPerPage = 5;
+  const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
+  const pageCount = Math.ceil(data.length / itemsPerPage);
+  const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
+
+  generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
+  generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
+
+  // pagination code 
+
+  const handleFilteredDataPageChange = ({ selected }) => {
+    setFilteredDataPage(selected);
+
+  };
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
   };
-  // Set the number of items per page and initialize the current page
-  const itemsPerPage = 2;
+  // filter pagination calculation
+  const startIndexFilter = filteredDataPage * itemsPerPage;
+  const endIndexFilter = startIndexFilter + itemsPerPage;
+  const displayedDataFilter = searchResults.slice(startIndexFilter, endIndexFilter);
 
-  // Calculate the start and end indices for the current page
+
+  //  ALl data pagination calculation
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const displayedData = data.slice(startIndex, endIndex);
+  const displayAllData = data.slice(startIndex, endIndex);
 
   return (
     <div className="px-8 py-12">
@@ -395,7 +482,7 @@ export default function InventoryTotalASINTable() {
           <tbody className="relative">
             {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
               {
-                searchResults.length ? searchResults.map((d, index) => {
+                searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
                       className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
@@ -407,23 +494,16 @@ export default function InventoryTotalASINTable() {
                       <td>{d.store_manager_name}</td>
                       <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
                       <td><div className="dropdown dropdown-end">
-                        <label
-                          tabIndex={0}
-                        >
+                        <label tabIndex={0}>
                           <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
-
                         </label>
                         <ul
                           tabIndex={0}
-                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                        >
-
+                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black">
                           <li>
                             <button onClick={() => {
                               document.getElementById("my_modal_2").showModal()
-
-                            }
-                            }>Edit</button>
+                            }}>Edit</button>
                           </li>
                           <li>
                             <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
@@ -436,7 +516,7 @@ export default function InventoryTotalASINTable() {
 
                   :
 
-                  isLoading ? <Loading /> : displayedData?.map((d, index) => {
+                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
                         className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
@@ -462,7 +542,6 @@ export default function InventoryTotalASINTable() {
                             <li>
                               <button onClick={() => {
                                 document.getElementById("my_modal_2").showModal()
-
                               }
                               }>Edit</button>
                             </li>
@@ -480,177 +559,193 @@ export default function InventoryTotalASINTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading && data?.length > 0 && < div >
+        {!isLoading && !searchError && !searchResults.length && data?.length > 5 && < div >
           <ReactPaginate
-
             pageCount={Math.ceil(data.length / itemsPerPage)}
-            pageRangeDisplayed={3}
+
             marginPagesDisplayed={1}
+            pageRangeDisplayed={maxVisiblePages}
             onPageChange={handlePageChange}
             containerClassName="pagination"
             activeClassName="active"
+            breakLabel={"..."}
+            pageLinkClassName={(pageNumber) => {
+              return pageNumber === "..." ? "ellipsis" : "";
+            }}
           />
         </div>
         }
-    </div>
+        {!isLoading && !searchError && searchResults.length > 5 && <ReactPaginate
+          pageCount={Math.ceil(searchResults.length / itemsPerPage)}
+          pageRangeDisplayed={maxVisiblePages}
+          marginPagesDisplayed={1}
+          onPageChange={handleFilteredDataPageChange}
+          containerClassName="pagination"
+          activeClassName="active"
+          breakLabel={"..."}
+          pageLinkClassName={(pageNumber) => {
+            return pageNumber === "..." ? "ellipsis" : "";
+          }}
+        />}
+      </div>
 
-      {/* modal content  */ }
-  <dialog id="my_modal_2" className="modal">
-    <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
-      <div className="flex">
-        <div className="w-1/2">
-          <div className="flex items-center mb-4 gap-2">
-            <BiSolidEdit size={24} />
-            <h3 className="text-2xl font-medium">Details</h3>
-          </div>
-          {/* <p className="mt-2">
+      {/* modal content  */}
+      <dialog id="my_modal_2" className="modal">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
+          <div className="flex">
+            <div className="w-1/2">
+              <div className="flex items-center mb-4 gap-2">
+                <BiSolidEdit size={24} />
+                <h3 className="text-2xl font-medium">Details</h3>
+              </div>
+              {/* <p className="mt-2">
                 <span className="font-medium">Data : </span>
                 <span>{singleData?.date && format(new Date(singleData.date), "y/MM/d")}</span>
               </p> */}
 
-          <p className="mt-2">
-            <span className="font-medium">Product Name : </span>
-            <span>{singleData?.product_name}</span>
-          </p>
-          {/* <p className="mt-2">
+              <p className="mt-2">
+                <span className="font-medium">Product Name : </span>
+                <span>{singleData?.product_name}</span>
+              </p>
+              {/* <p className="mt-2">
                 <span className="font-medium">ASIN : </span>
                 <span>{singleData?.asin_upc_code}</span>
               </p> */}
-          <p className="mt-2">
-            <span className="font-medium">Store Manager: </span>
-            <span>{singleData?.store_manager_name}</span>
-          </p>
+              <p className="mt-2">
+                <span className="font-medium">Store Manager: </span>
+                <span>{singleData?.store_manager_name}</span>
+              </p>
 
-          <p className="mt-2">
-            <span className="font-medium">Old Min Price : </span>
-            <span>${singleData?.min_price}</span>
-          </p>
-        </div>
-        <div className="w-1/2 px-4">
-          <h3 className="text-2xl font-medium">Update</h3>
-          <form onSubmit={handleAsinUpcUpdate}>
-            <div className="flex flex-col mt-4">
-              <label className="text-slate-500">New Min Price</label>
-              <input
-                type="number"
-                placeholder="Enter new min price"
-                className="input input-bordered input-primary w-full input-sm mt-2"
-                id="minPrice"
-                name="minPrice"
-              />
+              <p className="mt-2">
+                <span className="font-medium">Old Min Price : </span>
+                <span>${singleData?.min_price}</span>
+              </p>
             </div>
-
-            <div className="mt-4">
-              <div className="mt-4">
-                <label className="text-slate-500">Product Image</label>
-                <select disabled={imageSrc}
-                  onChange={(e) => {
-                    setPhotoUploadType(e.target.value);
-                  }}
-                  className="select select-primary w-full mt-2 shadow-lg"
-                >
-                  <option defaultValue="Select Upload Option"> Select Upload Option </option>
-                  <option value="url"> Image URL</option>
-                  <option value="file">Upload image</option>
-                </select>
-              </div>
-
-              {photoUploadType == "url" && (
-                <div className="mt-4">
-                  <label className="text-slate-500">Image URL</label>
-                  <input required
-                    type="text"
-                    placeholder="Enter your image URL link"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="inputImageUrl"
-                    name="inputImageUrl"
+            <div className="w-1/2 px-4">
+              <h3 className="text-2xl font-medium">Update</h3>
+              <form onSubmit={handleAsinUpcUpdate}>
+                <div className="flex flex-col mt-4">
+                  <label className="text-slate-500">New Min Price</label>
+                  <input
+                    type="number"
+                    placeholder="Enter new min price"
+                    className="input input-bordered input-primary w-full input-sm mt-2"
+                    id="minPrice"
+                    name="minPrice"
                   />
-                  {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
                 </div>
 
-              )}
-
-              {photoUploadType == "file" && (
                 <div className="mt-4">
-                  <label className="text-slate-500">Add Photo</label>
-                  <div className="flex items-center w-full mt-2">
-                    <label
-                      htmlFor="invoice-dropzone"
-                      className="flex justify-between items-center px-5 w-full h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                  <div className="mt-4">
+                    <label className="text-slate-500">Product Image</label>
+                    <select disabled={imageSrc}
+                      onChange={(e) => {
+                        setPhotoUploadType(e.target.value);
+                      }}
+                      className="select select-primary w-full mt-2 shadow-lg"
                     >
-                      <div className="flex items-center gap-5 py-[6.5px]">
-                        {imageSrc ? <img src={imageSrc} className="h-8" alt="" /> :
-                          <AiOutlineCloudUpload size={26} />}
-                        <div>
-                          {imageFile && <p className="text-md font-semibold">{imageFile.name.slice(0, 32)}</p>}
-
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            PNG or JPG file size no more than 5MB
-                          </p>
-                        </div>
-                      </div>
-                      <input
-
-                        id="invoice-dropzone"
-                        name="invoice-dropzone"
-                        type="file"
-                        className="hidden"
-                        accept='image/*'
-                        onChange={handleImage}
-                      />
-
-                    </label>
+                      <option defaultValue="Select Upload Option"> Select Upload Option </option>
+                      <option value="url"> Image URL</option>
+                      <option value="file">Upload image</option>
+                    </select>
                   </div>
-                  {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
-                  {imageSrc && <button onClick={() => {
-                    setImageSrc(null)
-                    setImageFile(null)
-                  }} className="btn btn-outline btn-primary btn-xs mx-2 mt-2">Cancel image</button>}
 
+                  {photoUploadType == "url" && (
+                    <div className="mt-4">
+                      <label className="text-slate-500">Image URL</label>
+                      <input required
+                        type="text"
+                        placeholder="Enter your image URL link"
+                        className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                        id="inputImageUrl"
+                        name="inputImageUrl"
+                      />
+                      {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
+                    </div>
+
+                  )}
+
+                  {photoUploadType == "file" && (
+                    <div className="mt-4">
+                      <label className="text-slate-500">Add Photo</label>
+                      <div className="flex items-center w-full mt-2">
+                        <label
+                          htmlFor="invoice-dropzone"
+                          className="flex justify-between items-center px-5 w-full h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                        >
+                          <div className="flex items-center gap-5 py-[6.5px]">
+                            {imageSrc ? <img src={imageSrc} className="h-8" alt="" /> :
+                              <AiOutlineCloudUpload size={26} />}
+                            <div>
+                              {imageFile && <p className="text-md font-semibold">{imageFile.name.slice(0, 32)}</p>}
+
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                PNG or JPG file size no more than 5MB
+                              </p>
+                            </div>
+                          </div>
+                          <input
+
+                            id="invoice-dropzone"
+                            name="invoice-dropzone"
+                            type="file"
+                            className="hidden"
+                            accept='image/*'
+                            onChange={handleImage}
+                          />
+
+                        </label>
+                      </div>
+                      {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
+                      {imageSrc && <button onClick={() => {
+                        setImageSrc(null)
+                        setImageFile(null)
+                      }} className="btn btn-outline btn-primary btn-xs mx-2 mt-2">Cancel image</button>}
+
+                    </div>
+                  )}
+                  <ToastMessage successMessage={success} errorMessage={imageError} />
                 </div>
-              )}
-              <ToastMessage successMessage={success} errorMessage={imageError} />
+                <button type="submit" className="flex gap-2 justify-center items-cente bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                  {loading && <FaSpinner size={20} className="animate-spin" />}
+                  Update
+                </button>
+              </form>
             </div>
-            <button type="submit" className="flex gap-2 justify-center items-cente bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
-              {loading && <FaSpinner size={20} className="animate-spin" />}
-              Update
-            </button>
-          </form>
+          </div>
         </div>
-      </div>
-    </div>
-    <form method="dialog" className="modal-backdrop">
-      <button>close</button>
-    </form>
-  </dialog>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
 
-  {/* date range modal */ }
-  <dialog id="date_range_modal" className="modal">
-    <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
-      <div className='mb-10'>
-        <DateRange
-          editableDateInputs={true}
-          onChange={item => {
+      {/* date range modal */}
+      <dialog id="date_range_modal" className="modal">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
+          <div className='mb-10'>
+            <DateRange
+              editableDateInputs={true}
+              onChange={item => {
 
-            setRangeDate([item.selection])
-          }}
-          moveRangeOnFirstSelection={false}
-          months={2}
-          ranges={rangeDate}
-          direction="horizontal"
-          rangeColors={["#8633FF"]}
-          color="#8633FF"
-        />
-      </div>
-      <button onClick={() => {
-        handleCustomDateSearch()
-        document.getElementById("date_range_modal").close()
-      }} className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded">Select</button>
-    </div>
-    <form method="dialog" className="modal-backdrop">
-      <button>close</button>
-    </form>
-  </dialog>
+                setRangeDate([item.selection])
+              }}
+              moveRangeOnFirstSelection={false}
+              months={2}
+              ranges={rangeDate}
+              direction="horizontal"
+              rangeColors={["#8633FF"]}
+              color="#8633FF"
+            />
+          </div>
+          <button onClick={() => {
+            handleCustomDateSearch()
+            document.getElementById("date_range_modal").close()
+          }} className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded">Select</button>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div >
   );
 }

@@ -36,6 +36,7 @@ select {
     display: flex;
     list-style: none;
     padding: 0;
+    user-select: none;
 }
 
 .pagination li {
@@ -54,3 +55,11 @@ select {
     color: #fff;
     border: 1px solid #8633FF;
 }
+.pagination .ellipsis {
+    display: none;
+  }
+  
+  .pagination .active + .ellipsis {
+    display: inline-block;
+  }
+  
