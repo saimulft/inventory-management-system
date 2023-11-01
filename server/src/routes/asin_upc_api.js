@@ -63,6 +63,9 @@ const run = async () => {
 
     // insert a new asin or upc
     router.post('/insert_asin_upc', async (req, res) => {
+
+    
+
         const data = {
             admin_id: req.body.adminId,
             date: req.body.date,
@@ -75,6 +78,7 @@ const run = async () => {
             code_type: req.body.codeType
         }
         try {
+
 
             const result = await asin_upc_collection.insertOne(data)
 

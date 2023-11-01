@@ -93,12 +93,21 @@ export default function StorePendingArrivalTable() {
   }
 
   const handleDateSearch = (day) => {
-
+    setSearchError("")
     const currentDate = new Date();
-    const previousDate = new Date();
-    previousDate.setDate(currentDate.getDate() - day);
-    const startDate = previousDate;
-    const endDate = new Date()
+    const endDate = new Date();
+    let startDate;
+
+
+    if (day === "today") {
+      startDate = new Date(currentDate);
+      startDate.setHours(0, 0, 0, 0); // Set to midnight
+    }
+    else {
+      const previousDate = new Date();
+      previousDate.setDate(currentDate.getDate() - day);
+      startDate = previousDate;
+    }
     const filteredDateResults = data.filter((item) => {
       const itemDate = new Date(item.date);
       return itemDate >= startDate && itemDate <= endDate;
@@ -106,18 +115,18 @@ export default function StorePendingArrivalTable() {
 
     if (!filteredDateResults.length) {
       setSearchResults([]);
-      if (day === 365) {
-        return setSearchError(`No data found for past 1 year`)
+      if (day === "today") {
+        return setSearchError("No data found for today");
+      } else if (day === 365) {
+        return setSearchError("No data found for the past 1 year");
+      } else if (day === 30) {
+        return setSearchError("No data found for the past 1 month");
+      } else {
+        return setSearchError(`No data found for the past ${day} days`);
       }
-      if (day === 30) {
-        return setSearchError(`No data found for past 1 month`)
-      }
-      return setSearchError(`No data found for past ${day} days`)
     }
-    if (filteredDateResults.length) {
-      setSearchResults(filteredDateResults);
 
-    }
+    setSearchResults(filteredDateResults);
   }
 
 
@@ -203,7 +212,8 @@ export default function StorePendingArrivalTable() {
         console.log(error)
       })
   }
-  function generatePageNumbers(currentPage, pageCount, maxVisiblePages) {
+  // pagination code 
+  const generatePageNumbers = (currentPage, pageCount, maxVisiblePages) => {
     if (pageCount <= maxVisiblePages) {
       // If the total page count is less than or equal to the maximum visible pages, show all pages.
       return Array.from({ length: pageCount }, (_, i) => i + 1);
@@ -235,7 +245,7 @@ export default function StorePendingArrivalTable() {
       return pageNumbers;
     }
   }
-  function generatePageNumbersFilter(currentPage, pageCount, maxVisiblePages) {
+  const generatePageNumbersFilter = (currentPage, pageCount, maxVisiblePages) => {
     if (pageCount <= maxVisiblePages) {
       // If the total page count is less than or equal to the maximum visible pages, show all pages.
       return Array.from({ length: pageCount }, (_, i) => i + 1);
@@ -267,15 +277,13 @@ export default function StorePendingArrivalTable() {
       return pageNumbers;
     }
   }
-  const itemsPerPage = 2;
-  const maxVisiblePages = 20; // Adjust the number of maximum visible pages as needed
+  const itemsPerPage = 5;
+  const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
   const pageCount = Math.ceil(data.length / itemsPerPage);
   const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
 
   generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
   generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
-
-  // pagination code 
 
   const handleFilteredDataPageChange = ({ selected }) => {
     setFilteredDataPage(selected);
@@ -313,7 +321,7 @@ export default function StorePendingArrivalTable() {
               All
             </p>
             <p onClick={() => {
-              handleDateSearch(1)
+              handleDateSearch("today")
               setFilterDays('today')
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
               Today
@@ -370,7 +378,6 @@ export default function StorePendingArrivalTable() {
             }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
               Clear
             </button>
-
           </div>
         </div>
       </div>
@@ -490,7 +497,7 @@ export default function StorePendingArrivalTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 0 && < div >
+        {!isLoading && !searchError && !searchResults.length && data?.length > 5 && < div >
           <ReactPaginate
             pageCount={Math.ceil(data.length / itemsPerPage)}
 
@@ -506,7 +513,7 @@ export default function StorePendingArrivalTable() {
           />
         </div>
         }
-        {!isLoading && !searchError && searchResults.length > 0 && <ReactPaginate
+        {!isLoading && !searchError && searchResults.length > 5 && <ReactPaginate
           pageCount={Math.ceil(searchResults.length / itemsPerPage)}
           pageRangeDisplayed={maxVisiblePages}
           marginPagesDisplayed={1}

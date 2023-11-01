@@ -40,7 +40,7 @@ const run = async () => {
     router.get('/get_all_shipped_data', async (req, res) => {
         try {
             const admin_id = req.query.admin_id;
-            const data = await shipped_data_collection.find({ admin_id: admin_id }).toArray()
+            const data = await shipped_data_collection.find({ admin_id: admin_id }).sort({date: -1}).toArray()
             if (data) {
                 res.status(200).json({ data: data })
             }

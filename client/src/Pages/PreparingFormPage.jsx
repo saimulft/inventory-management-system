@@ -34,7 +34,6 @@ const PreparingFormPage = () => {
       axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
         .then(res => {
           if (res.status === 200) {
-            console.log(res.data.data)
             setProductName(res.data.data.product_name)
           }
           if (res.status === 204) {
