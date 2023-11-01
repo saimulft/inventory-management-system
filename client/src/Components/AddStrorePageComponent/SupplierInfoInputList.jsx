@@ -17,7 +17,7 @@ export default function SupplierInfoInputList() {
   const handleSupplierInfoIncrementField = () => {
     setSupplierInfoInputList([
       ...supplierInfoInputList,
-      { supplierName: "", userId: "", password: "" },
+      { supplier_name: "", username: "", password: "" },
     ]);
   };
 
@@ -39,18 +39,18 @@ export default function SupplierInfoInputList() {
               className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="Supplier name"
               type="text"
-              name="supplierName"
-              id="supplierName"
-              defaultValue={i?.supplierName}
+              name="supplier_name"
+              id="supplier_name"
+              defaultValue={i?.supplier_name}
             />
             <input
               onChange={(e) => handleSupplierInfoInputChange(e, index)}
               className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs "
-              placeholder="User ID"
+              placeholder="Username"
               type="text"
-              name="userId"
-              id="userId"
-              defaultValue={i?.userId}
+              name="username"
+              id="username"
+              defaultValue={i?.username}
             />
             <input
               onChange={(e) => handleSupplierInfoInputChange(e, index)}

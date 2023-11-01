@@ -11,6 +11,10 @@
     }
 }
 
+body {
+    overflow-y: scroll;
+}
+
 input,
 select {
     outline: none !important;

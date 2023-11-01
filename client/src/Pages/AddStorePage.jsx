@@ -30,7 +30,7 @@ export default function AddStorePage() {
   }
 
   return (
-    <div className="bg-white p-20 rounded-lg">
+    <div className="p-20 rounded-lg">
       <div
         style={boxShadowStyle}
         className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl flex justify-center items-center"
@@ -77,9 +77,11 @@ export default function AddStorePage() {
                 <option defaultValue="Pick Store Type">
                   Pick Store Type
                 </option>
-                <option value="Type-1">Type-1</option>
-                <option value="Type-2">Type-2</option>
-                <option value="Type-3">Type-3</option>
+                <option value="Amazon">Amazon</option>
+                <option value="Walmart">Walmart</option>
+                <option value="Ebay">Ebay</option>
+                <option value="Shopify">Shopify</option>
+                <option value="Ali Express">Ali Express</option>
               </select>
             </div>
 

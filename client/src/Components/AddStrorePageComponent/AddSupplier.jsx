@@ -3,14 +3,24 @@ import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import SupplierInfoInputList from "./SupplierInfoInputList";
 import AdditionalPaymentInputList from "./AdditionalPaymentInputList";
 import { BsArrowRightShort } from "react-icons/bs";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import useStore from "../../hooks/useStore";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import Swal from "sweetalert2";
+import useAuth from "../../hooks/useAuth";
+import { FaSpinner } from "react-icons/fa";
 
 export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
+  const { storeDetails, setStoreDetails, supplierInfoInputList, setSupplierInfoInputList, additionalPaymentInputList, setAdditionalPaymentInputList } = useStore()
+  const { user } = useAuth()
 
-  const { storeDetails, setStoreDetails, supplierInfoInputList, additionalPaymentInputList} = useStore()
-  const navigate = useNavigate()
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: (storeData) => {
+      return axios.post('/api/v1/store_api/add_new_store', storeData)
+    },
+  })
 
   if (!storeDetails) {
     return <Navigate to="/dashboard/add-store" />
@@ -29,9 +39,36 @@ export default function AddSupplier() {
     setAddSupplier(list);
   };
 
-  const handleNext = () => {
-    setStoreDetails({...storeDetails, supplier_information: supplierInfoInputList, additional_payment_details: additionalPaymentInputList})
-    navigate("/dashboard/add-store/add-supplier/select-payment")
+  const handleAddStore = async () => {
+    const date = new Date().toISOString();
+
+    const storeData = {
+      ...storeDetails,
+      supplier_information: supplierInfoInputList,
+      additional_payment_details: additionalPaymentInputList,
+      admin_id: user.admin_id,
+      date: date,
+      creator_email: user?.email,
+    }
+
+    try {
+      const { status } = await mutateAsync(storeData)
+
+      if (status === 201) {
+        setStoreDetails(null)
+        setSupplierInfoInputList([{ supplier_name: "", username: "", password: "" }])
+        setAdditionalPaymentInputList([{ email: "", card_name: "", card_info: "", date: "", cvc: "", billing_address: "", city: "", state: "", zip_code: "" }])
+
+        Swal.fire(
+          'Added',
+          'New store has been added.',
+          'success'
+        )
+      }
+    } catch (error) {
+      console.log(error)
+    }
+    // navigate("/dashboard/add-store/add-supplier/select-payment")
   }
 
   return (
@@ -104,9 +141,10 @@ export default function AddSupplier() {
         );
       })}
       {/* next btn  */}
-      <button onClick={handleNext} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
-        <p>Next</p>
-        <BsArrowRightShort className="mt-[1px]" size={28} />
+      <button onClick={handleAddStore} disabled={isLoading} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
+        {isLoading && <FaSpinner size={20} className="animate-spin mr-[5px]" />}
+        <p>Add Store</p>
+        {!isLoading && <BsArrowRightShort className="mt-[1px]" size={28} />}
       </button>
     </div>
   );

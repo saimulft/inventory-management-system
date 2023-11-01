@@ -92,11 +92,11 @@ export default function Checkout() {
   ];
 
   const handleGetStarted = (plan) => {
-    setStoreDetails({ ...storeDetails, subscription_plan: plan })
+    setStoreDetails({ ...storeDetails, subscription_plan: plan, subscription_type: isToggleActive ? 'yearly' : 'monthly' })
     navigate("/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form")
   }
 
-
+  console.log(isToggleActive)
   return (
     <div className="flex justify-center items-center h-screen my-10   ">
       {isToggleActive && (

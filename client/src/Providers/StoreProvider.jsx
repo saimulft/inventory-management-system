@@ -4,19 +4,19 @@ export const StoreContext = createContext(null)
 
 const StoreProvider = ({ children }) => {
     const [storeDetails, setStoreDetails] = useState(null)
-    const [supplierInfoInputList, setSupplierInfoInputList] = useState([{ supplierName: "", userId: "", password: "" }]);
+    const [supplierInfoInputList, setSupplierInfoInputList] = useState([{ supplier_name: "", username: "", password: "" }]);
     const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([
         {
             email: "",
-            cardName: "",
-            cardInfo: "",
+            card_name: "",
+            card_info: "",
             date: "",
             cvc: "",
-            billingAddress: "",
+            billing_address: "",
             city: "",
             state: "",
-            zipCode: "",
-        },
+            zip_code: "",
+        }
     ]);
 
     const storeInfo = {

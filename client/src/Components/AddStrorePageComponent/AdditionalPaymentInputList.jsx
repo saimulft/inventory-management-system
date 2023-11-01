@@ -40,14 +40,14 @@ export default function AdditionalPaymentInputList() {
       ...additionalPaymentInputList,
       {
         email: "",
-        cardName: "",
-        cardInfo: "",
+        card_name: "",
+        card_info: "",
         date: "",
         cvc: "",
-        billingAddress: "",
+        billing_address: "",
         city: "",
         state: "",
-        zipCode: "",
+        zip_code: "",
       },
     ]);
     setIsOpen([...isOpen, { class: "collapse-open", trackNO: isOpen.length }]);
@@ -112,12 +112,12 @@ export default function AdditionalPaymentInputList() {
                         className="border outline-[#8633FF] text-xs border-[#8633FF] rounded py-3 px-2 w-full mt-1"
                         placeholder="Card Name"
                         type="text"
-                        name="cardName"
-                        id="cardName"
+                        name="card_name"
+                        id="card_name"
                         onChange={(e) =>
                           handleAdditionalPaymentInputChange(e, index)
                         }
-                        defaultValue={i?.cardName}
+                        defaultValue={i?.card_name}
                       />
                     </div>
 
@@ -130,11 +130,12 @@ export default function AdditionalPaymentInputList() {
                         className="border outline-[#8633FF] text-xs border-[#8633FF] rounded py-3 px-2 w-full mt-1"
                         placeholder="0000 0000 0000 0000"
                         type="text"
-                        name="cardInfo"
+                        name="card_info"
+                        id="card_info"
                         onChange={(e) =>
                           handleAdditionalPaymentInputChange(e, index)
                         }
-                        defaultValue={i?.cardInfo}
+                        defaultValue={i?.card_info}
                       />
                     </div>
 
@@ -178,12 +179,12 @@ export default function AdditionalPaymentInputList() {
                           className="border outline-[#8633FF] text-xs border-[#8633FF] rounded py-3 px-2 w-full mt-1"
                           placeholder="Billing address"
                           type="text"
-                          name="billingAddress"
-                          id="billingAddress"
+                          name="billing_address"
+                          id="billing_address"
                           onChange={(e) =>
                             handleAdditionalPaymentInputChange(e, index)
                           }
-                          defaultValue={i?.billingAddress}
+                          defaultValue={i?.billing_address}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
@@ -226,12 +227,12 @@ export default function AdditionalPaymentInputList() {
                           className="border outline-[#8633FF] text-xs border-[#8633FF] rounded py-3 px-2 w-full mt-1"
                           placeholder="Enter your zip code"
                           type="text"
-                          name="zipCode"
-                          id="zipCode"
+                          name="zip_code"
+                          id="zip_code"
                           onChange={(e) =>
                             handleAdditionalPaymentInputChange(e, index)
                           }
-                          defaultValue={i?.zipCode}
+                          defaultValue={i?.zip_code}
                         />
                       </div>
                     </div>
