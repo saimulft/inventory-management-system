@@ -25,7 +25,6 @@ export default function InventoryTotalASINTable() {
   const [success, setSuccess] = useState()
   const { user } = useAuth()
   const { isSidebarOpen } = useContext(GlobalContext);
-  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const [filterDays, setFilterDays] = useState('')
   const [searchText, setSearchText] = useState('');
   const [searchError, setSearchError] = useState('');
@@ -393,7 +392,7 @@ export default function InventoryTotalASINTable() {
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const displayAllData = data.slice(startIndex, endIndex);
-
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">

@@ -15,7 +15,7 @@ const run = async () => {
             const admin_id = req.query.admin_id;
             const missingStatus = req.query.status;
 
-            const result = await missing_arrival_collection.find({ admin_id: admin_id, missing_status: missingStatus }).toArray()
+            const result = await missing_arrival_collection.find({ admin_id: admin_id, missing_status: missingStatus }).sort({date:-1}).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got missing arrival data" })
             }

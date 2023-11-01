@@ -37,7 +37,7 @@ const ArrivalFormPage = () => {
     }
   }, [storeName, asinUpcOption, asinUpc]);
 
-  const { data: asinUpcData = [] } = useQuery({
+  const { data: asinUpcData = [], } = useQuery({
     queryKey: ['asin_upc_data'],
     queryFn: async () => {
       try {
@@ -52,7 +52,6 @@ const ArrivalFormPage = () => {
       }
     }
   })
-
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {

@@ -14,13 +14,11 @@ const run = async () => {
 
         try {
             const id = req.query.id;
-            console.log(id);
 
             const existData = await preparing_form_collection.findOne({ _id: new ObjectId(id) })
-            console.log(existData)
 
             if (existData) {
-                const result = await out_of_stock_collection.insertOne(existData)
+                const result = await out_of_stock_collection.insertOne({ ...existData, status: "Pending" })
                 if (result.acknowledged) {
                     const deleteResult = await preparing_form_collection.deleteOne({ "_id": new ObjectId(id) })
                     if (deleteResult.deletedCount) {
@@ -41,7 +39,7 @@ const run = async () => {
     router.get('/get_all_OOS_data', async (req, res) => {
         try {
             const admin_id = req.query.admin_id;
-            const data = await out_of_stock_collection.find({ admin_id: admin_id }).toArray()
+            const data = await out_of_stock_collection.find({ admin_id: admin_id }).sort({date: -1}).toArray()
 
             if (data) {
                 res.status(200).json({ data: data })
@@ -78,14 +76,15 @@ const run = async () => {
     router.put('/update_OOS_data', async (req, res) => {
         try {
             const id = req.query.id;
+            const from = req.query.from
             const updatedData = {
                 product_name: req.body.product_name,
                 quantity: req.body.quantity,
                 upin: req.body.upin,
-                notes: req.body.notes
+                notes: req.body.notes,
             }
 
-            if (req.body.status) {
+            if (req.body.status && from === "inventory") {
                 const result = await out_of_stock_collection.findOneAndUpdate(
                     { _id: new ObjectId(id) },
                     { $set: updatedData },
@@ -99,7 +98,7 @@ const run = async () => {
                     }
 
                     const preparingData = {
-                        ...result
+                        ...result,
                     }
                     const preparingResult = await preparing_form_collection.insertOne(preparingData)
                     console.log(preparingResult)
@@ -115,12 +114,42 @@ const run = async () => {
                     return res.status(203).json({ status: 'failed', message: 'Data not modified' })
                 }
             }
+
+            else if (req.body.status && from === "store") {
+                const updatedDataStore = {
+                    product_name: req.body.product_name,
+                    quantity: req.body.quantity,
+                    upin: req.body.upin,
+                    notes: req.body.notes,
+                    status: "Solved"
+                }
+                const result = await out_of_stock_collection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: updatedDataStore },
+                    { upsert: true }
+                );
+
+                if (result.modifiedCount) {
+                    return res.status(201).json({ status: 'success', message: 'Data update successful' });
+                }
+                else {
+                    return res.status(203).json({ message: 'Error to modify out of stock data' });
+                }
+            }
+
             else {
+                const updatedData = {
+                    product_name: req.body.product_name,
+                    quantity: req.body.quantity,
+                    upin: req.body.upin,
+                    notes: req.body.notes,
+
+                }
                 const result = await out_of_stock_collection.updateOne(
                     { _id: new ObjectId(id) },
                     { $set: updatedData }
                 );
-                console.log(result)
+
 
                 if (result.modifiedCount) {
                     return res.status(201).json({ status: 'success', message: 'Data update successful' });
@@ -130,6 +159,7 @@ const run = async () => {
                 }
             }
         } catch (error) {
+            console.log(error)
             return res.status(500).json({ message: 'Internal server error' });
         }
     });
