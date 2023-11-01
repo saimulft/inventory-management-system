@@ -38,6 +38,19 @@ const run = async () => {
     router.get('/get_all_stores', async (req, res) => {
         try {
             const id = req.query.id
+            const storeType = req.query.storeType
+
+            if (storeType && storeType !== 'All Store') {
+                const allStores = await all_stores_collection.find({ admin_id: id, store_type: storeType }).sort({ date: -1 }).toArray()
+
+                if (allStores.length) {
+                    return res.status(200).json({ data: allStores, message: "Successfully get all stores" })
+                }
+                else {
+                    return res.status(204).json({ message: "No content" })
+                }
+            }
+
             const allStores = await all_stores_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
 
             if (allStores.length) {

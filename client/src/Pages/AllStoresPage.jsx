@@ -1,24 +1,24 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { FaAmazon } from "react-icons/fa";
+import { FaAmazon, FaEbay, FaShopify } from "react-icons/fa";
+import { TbBrandWalmart } from "react-icons/tb";
+import { AiOutlineAlibaba } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Loading from "../Components/Shared/Loading";
 
 export default function AllStoresPage() {
   const [isActive, setIsActive] = useState(true);
-  const {user} = useAuth()
+  const [storeType, setStoreType] = useState('')
+  const { user } = useAuth()
 
-  const { data:allStoreData = [], isLoading } = useQuery({
-    queryKey: ['get_all_asin_upc'],
+  const { data: allStoreData = [], refetch, isLoading, isRefetching } = useQuery({
+    queryKey: ['get_all_stores'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/store_api/get_all_stores?id=${user.admin_id}`)
-
-        console.log(res)
-
+        const res = await axios.get(`/api/v1/store_api/get_all_stores?id=${user.admin_id}&storeType=${storeType}`)
         if (res.status === 200) {
           return res.data.data;
         }
@@ -29,7 +29,11 @@ export default function AllStoresPage() {
       }
     }
   })
-  
+
+  useEffect(() => {
+    refetch()
+  }, [refetch, storeType])
+
   const shadowStyle = {
     boxShadow: "0px 0px 15px -8px rgba(0,0,0,0.75)",
   };
@@ -41,8 +45,8 @@ export default function AllStoresPage() {
           <div
             onClick={() => setIsActive(true)}
             className={`px-3 rounded-s-md py-2 cursor-pointer ${isActive
-                ? "bg-[#8633FF] text-white"
-                : "border-2 border-[#8633FF] text-[#8633FF]"
+              ? "bg-[#8633FF] text-white"
+              : "border-2 border-[#8633FF] text-[#8633FF]"
               }  `}
           >
             Active
@@ -50,8 +54,8 @@ export default function AllStoresPage() {
           <div
             onClick={() => setIsActive(false)}
             className={`px-3 rounded-e-md py-2 cursor-pointer ${!isActive
-                ? "bg-[#8633FF] text-white"
-                : "border-2 border-[#8633FF] text-[#8633FF]"
+              ? "bg-[#8633FF] text-white"
+              : "border-2 border-[#8633FF] text-[#8633FF]"
               }  `}
           >
             Inactive
@@ -59,9 +63,9 @@ export default function AllStoresPage() {
         </div>
         <div className="w-1/2 gap-4 flex items-center">
           <form className="w-full flex gap-4 ">
-            <select name="storeType" id="storeType" className="border bg-white shadow-md border-[#8633FF] outline-none cursor-pointer w-1/2 py-2 rounded-md px-2 text-sm">
-              <option defaultValue="Pick Store Type">
-                Pick Store Type
+            <select onChange={(e) => setStoreType(e.target.value)} name="storeType" id="storeType" className="border bg-white shadow-md border-[#8633FF] outline-none cursor-pointer w-1/2 py-2 rounded-md px-2 text-sm">
+              <option defaultValue="All Store">
+                All Store
               </option>
               <option value="Amazon">Amazon</option>
               <option value="Walmart">Walmart</option>
@@ -86,7 +90,7 @@ export default function AllStoresPage() {
 
       {/* store info  */}
       <div className="relative grid grid-cols-4 gap-6 mb-8 mt-8">
-        {isLoading ? <Loading /> : allStoreData.map((singleStore, index) => {
+        {isLoading || isRefetching ? <Loading /> : allStoreData.map((singleStore, index) => {
           return (
             <Link
               to="/dashboard/all-stores/store-edit"
@@ -96,7 +100,11 @@ export default function AllStoresPage() {
               <div className="flex items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
                 <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
                   <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
-                    <FaAmazon size={24} />
+                    {singleStore.store_type === 'Amazon' && <FaAmazon size={24} />}
+                    {singleStore.store_type === 'Walmart' && <TbBrandWalmart size={24} />}
+                    {singleStore.store_type === 'Ebay' && <FaEbay size={30} />}
+                    {singleStore.store_type === 'Shopify' && <FaShopify size={24} />}
+                    {singleStore.store_type === 'Ali Express' && <AiOutlineAlibaba size={30} />}
                   </div>
                 </div>
                 <div>
