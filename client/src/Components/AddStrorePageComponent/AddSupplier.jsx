@@ -3,7 +3,7 @@ import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import SupplierInfoInputList from "./SupplierInfoInputList";
 import AdditionalPaymentInputList from "./AdditionalPaymentInputList";
 import { BsArrowRightShort } from "react-icons/bs";
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import useStore from "../../hooks/useStore";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -15,6 +15,7 @@ export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
   const { storeDetails, setStoreDetails, supplierInfoInputList, setSupplierInfoInputList, additionalPaymentInputList, setAdditionalPaymentInputList } = useStore()
   const { user } = useAuth()
+  const navigate = useNavigate()
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (storeData) => {
@@ -57,13 +58,14 @@ export default function AddSupplier() {
       if (status === 201) {
         setStoreDetails(null)
         setSupplierInfoInputList([{ supplier_name: "", username: "", password: "" }])
-        setAdditionalPaymentInputList([{ email: "", card_name: "", card_info: "", date: "", cvc: "", billing_address: "", city: "", state: "", zip_code: "" }])
+        setAdditionalPaymentInputList([{ email: "", card_name: "", card_info: "", date: "", cvc: "", billing_address: "", city: "", state: "", zip_code: "", country: ""}])
 
         Swal.fire(
           'Added',
           'New store has been added.',
           'success'
         )
+        navigate("/dashboard/all-stores")
       }
     } catch (error) {
       console.log(error)
@@ -142,7 +144,7 @@ export default function AddSupplier() {
       })}
       {/* next btn  */}
       <button onClick={handleAddStore} disabled={isLoading} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
-        {isLoading && <FaSpinner size={20} className="animate-spin mr-[5px]" />}
+        {isLoading && <FaSpinner size={20} className="animate-spin mr-[6px]" />}
         <p>Add Store</p>
         {!isLoading && <BsArrowRightShort className="mt-[1px]" size={28} />}
       </button>

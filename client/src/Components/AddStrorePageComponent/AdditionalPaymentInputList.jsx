@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import useStore from "../../hooks/useStore";
+import countries from "../../Utilities/countries";
 
 export default function AdditionalPaymentInputList() {
   const [isOpen, setIsOpen] = useState([
@@ -26,7 +27,7 @@ export default function AdditionalPaymentInputList() {
     }
   };
 
-  const {additionalPaymentInputList, setAdditionalPaymentInputList} = useStore()
+  const { additionalPaymentInputList, setAdditionalPaymentInputList } = useStore()
 
   const handleAdditionalPaymentInputChange = (event, index) => {
     const { name, value } = event.target;
@@ -48,6 +49,7 @@ export default function AdditionalPaymentInputList() {
         city: "",
         state: "",
         zip_code: "",
+        country: ""
       },
     ]);
     setIsOpen([...isOpen, { class: "collapse-open", trackNO: isOpen.length }]);
@@ -83,7 +85,7 @@ export default function AdditionalPaymentInputList() {
                   Additional payment Details
                   <span className="text-sm text-slate-400">(Optional)</span>
                 </div>
-                
+
                 <div className="collapse-content">
                   <form>
                     {/* email address  */}
@@ -235,6 +237,16 @@ export default function AdditionalPaymentInputList() {
                           defaultValue={i?.zip_code}
                         />
                       </div>
+                    </div>
+
+                    <div className="mt-2 flex flex-col w-full">
+                      <label className="text-sm text-slate-500">Country</label>
+                      <select onChange={(e) => handleAdditionalPaymentInputChange(e, index)} defaultValue={i?.country} name="country" id="country" className="select select-primary w-full mt-2">
+                        <option defaultValue="Select your country">
+                          Select your country
+                        </option>
+                        {countries}
+                      </select>
                     </div>
                   </form>
                 </div>

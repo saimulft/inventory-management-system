@@ -33,6 +33,23 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
+
+    // get all stores
+    router.get('/get_all_stores', async (req, res) => {
+        try {
+            const id = req.query.id
+            const allStores = await all_stores_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
+
+            if (allStores.length) {
+                res.status(200).json({ data: allStores, message: "Successfully get all stores" })
+            }
+            else {
+                res.status(204).json({ message: "No content" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
+        }
+    });
 }
 run()
 

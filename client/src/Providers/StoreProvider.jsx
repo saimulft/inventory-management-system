@@ -16,6 +16,7 @@ const StoreProvider = ({ children }) => {
             city: "",
             state: "",
             zip_code: "",
+            country: ""
         }
     ]);
 
