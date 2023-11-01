@@ -161,11 +161,15 @@ const run = async () => {
                         const oldPrice = parseFloat(existInStock.unit_price)
                         const newPrice = parseFloat(result.unit_price)
                         const avgUnitPrice = (oldPrice + newPrice) / 2;
+
+                        const remainingPrice = stock * avgUnitPrice
+
                         const updateStockdata = {
                             received_quantity: quantity,
                             unit_price: avgUnitPrice.toFixed(2),
                             stock: stock,
-                            remark: result.remark
+                            remark: result.remark,
+                            remaining_price: remainingPrice
                         }
                         const id = existInStock._id
                         const updateStockResult = await all_stock_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateStockdata })

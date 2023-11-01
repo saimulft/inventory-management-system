@@ -11,7 +11,7 @@ import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 export default function StoreShippedTable() {
-  
+
   const { user } = useAuth()
   const [filterDays, setFilterDays] = useState('')
   const [searchText, setSearchText] = useState('');
@@ -26,7 +26,7 @@ export default function StoreShippedTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
-  const { data = [],isLoading } = useQuery({
+  const { data = [], isLoading } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
@@ -215,7 +215,7 @@ export default function StoreShippedTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Ready to ship : {data?.length}
+        Shipped : {data?.length}
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
@@ -315,49 +315,18 @@ export default function StoreShippedTable() {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                  className={`${index % 2 == 1 && "bg-gray-200"}`}
-                  key={index}
-                >
-                  <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                  <th className="font-normal">{d.store_name}</th>
-                  <td>{d.asin_upc_code}</td>
-                  <td>{d.code_type}</td>
-                  <td>{d.product_name}</td>
-                  <td>{d.upin}</td>
-                  <td>{d.quantity}</td>
-                  <td>{d.courier}</td>
-                  <td>{d.order_id}</td>
-                  <td className="text-[#8633FF]">{d.tracking_number}</td>
-                  <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
-                  <td
-                    onClick={() =>
-                      document.getElementById("my_modal_2").showModal()
-                    }
-                    className="cursor-pointer"
-                  >
-                    <AiOutlineEye onClick={() => setSingleData(d)} size={15} />
-                  </td>
-                </tr>
-                  )
-                })
-
-                  :
-
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
-                    return (
-                      <tr
                       className={`${index % 2 == 1 && "bg-gray-200"}`}
                       key={index}
                     >
                       <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                      <th className="font-normal">{d.store_name}</th>
+                      <td className="font-normal">{d.store_name}</td>
                       <td>{d.asin_upc_code}</td>
                       <td>{d.code_type}</td>
                       <td>{d.product_name}</td>
+                      <td>{d.order_id}</td>
                       <td>{d.upin}</td>
                       <td>{d.quantity}</td>
                       <td>{d.courier}</td>
-                      <td>{d.order_id}</td>
                       <td className="text-[#8633FF]">{d.tracking_number}</td>
                       <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                       <td
@@ -369,6 +338,37 @@ export default function StoreShippedTable() {
                         <AiOutlineEye onClick={() => setSingleData(d)} size={15} />
                       </td>
                     </tr>
+                  )
+                })
+
+                  :
+
+                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+                    return (
+                      <tr
+                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        key={index}
+                      >
+                        <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                        <td className="font-normal">{d.store_name}</td>
+                        <td>{d.asin_upc_code}</td>
+                        <td>{d.code_type}</td>
+                        <td>{d.product_name}</td>
+                        <td>{d.order_id}</td>
+                        <td>{d.upin}</td>
+                        <td>{d.quantity}</td>
+                        <td>{d.courier}</td>
+                        <td className="text-[#8633FF]">{d.tracking_number}</td>
+                        <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
+                        <td
+                          onClick={() =>
+                            document.getElementById("my_modal_2").showModal()
+                          }
+                          className="cursor-pointer"
+                        >
+                          <AiOutlineEye onClick={() => setSingleData(d)} size={15} />
+                        </td>
+                      </tr>
                     );
                   })
               }
@@ -406,8 +406,8 @@ export default function StoreShippedTable() {
           }}
         />}
       </div>
-{/* modal content  */}
-<dialog id="my_modal_2" className="modal">
+      {/* modal content  */}
+      <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft }} className="modal-box py-10 px-10">
           <div className="flex">
             <div>
