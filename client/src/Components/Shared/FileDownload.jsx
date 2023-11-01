@@ -16,9 +16,6 @@ function FileDownload({ fileName }) {
                     a.download = fileName;
                     a.click();
                     window.URL.revokeObjectURL(url);
-
-
-
                 })
                 .catch(error => {
                     console.error('File download error:', error);
