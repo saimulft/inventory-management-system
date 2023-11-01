@@ -74,7 +74,8 @@ const PreparingFormPage = () => {
     setFormError('')
     event.preventDefault()
     const form = event.target
-    const date = new Date().toISOString();
+    const date = new Date(form.date.value).toISOString();
+    const createdAt = new Date().toISOString();
     const orderID = form.orderID.value
     const courier = form.courier.value
     const storeName = form.storeName.value
@@ -82,8 +83,6 @@ const PreparingFormPage = () => {
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value
-
-
 
     if (warehouse === 'Select Warehouse' || !warehouse) {
       setFormError("Missing warehouse")
@@ -109,6 +108,7 @@ const PreparingFormPage = () => {
       creatorEmail: user?.email,
       date,
       asin_upc_code: asinUpcOption.label,
+      createdAt,
       orderID,
       courier,
       productName,
@@ -214,17 +214,15 @@ const PreparingFormPage = () => {
           <form onSubmit={hadnlePreparingForm}>
             <div className="flex gap-7">
               <div className="w-full">
-                <div>
-                  <label className="text-slate-500">Warehouse</label>
-                  <select
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="warehouse"
-                    id="warehouse"
-                  >
-                    <option defaultValue="Select Warehouse">Select Warehouse</option>
-                    <option value="Test-1">Test-1</option>
-                    <option value="Test-2">Test-2</option>
-                  </select>
+                <div >
+                  <label className="text-slate-500">Date</label>
+                  <input
+                    type="date"
+                    placeholder="Enter store name"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="date"
+                    name="date"
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -442,12 +440,22 @@ const PreparingFormPage = () => {
                       </div>
                     </label>
                   </div>
+
                   {shippingImageError && <p className="text-xs mt-2 font-medium text-rose-500">{shippingImageError}</p>}
                 </div>
-
               </div>
             </div>
-
+            <div className="mt-4">
+              <label className="text-slate-500">Warehouse</label>
+              <select
+                className="select select-primary w-full mt-2 shadow-lg"
+                name="warehouse"
+                id="warehouse">
+                <option defaultValue="Select Warehouse">Select Warehouse</option>
+                <option value="Test-1">Test-1</option>
+                <option value="Test-2">Test-2</option>
+              </select>
+            </div>
             <ToastMessage errorMessage={formError} />
             <div className="flex items-center justify-center mt-8">
               <button type="submit" disabled={loading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">

@@ -58,6 +58,7 @@ const run = async () => {
                 admin_id: req.body.adminId,
                 creator_email: req.body.creatorEmail,
                 date: req.body.date,
+                creted_at: req.body.createdAt,
                 asin_upc_code: req.body.asin_upc_code,
                 order_id: req.body.orderID,
                 courier: req.body.courier === "Select courier" ? null : req.body.courier,
@@ -144,7 +145,7 @@ const run = async () => {
         const id = req.query.id
 
         try {
-            const data = await preparing_form_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
+            const data = await preparing_form_collection.find({ admin_id: id }).sort({ creted_at: -1 }).toArray()
 
             if (data) {
                 res.status(200).json({ data: data })
