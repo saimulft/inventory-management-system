@@ -15,11 +15,11 @@ const run = async () => {
             const admin_id = req.query.admin_id;
             const missingStatus = req.query.status;
 
-            const result = await missing_arrival_collection.find({ admin_id: admin_id, missing_status: missingStatus }).sort({date:-1}).toArray()
+            const result = await missing_arrival_collection.find({ admin_id: admin_id, missing_status: missingStatus }).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got missing arrival data" })
             }
-            else{
+            else {
                 res.status(204).json({ message: "No content" })
             }
         } catch (error) {
@@ -72,18 +72,21 @@ const run = async () => {
                     const newPrice = parseFloat(result.unit_price)
                     const avgUnitPrice = (oldPrice + newPrice) / 2;
 
+                    const remainingPrice = stock * avgUnitPrice 
+                    
                     const updateStockdata = {
                         received_quantity: quantity,
                         unit_price: avgUnitPrice.toFixed(2),
                         stock: stock,
-                        remark: result.remark
+                        remark: result.remark,
+                        remaining_price: remainingPrice
                     }
 
                     const updatedResult = await all_stock_collection.updateOne(
                         { _id: new ObjectId(existInStock._id) },
                         { $set: updateStockdata }
                     );
-                    
+
                     if (updatedResult.modifiedCount) {
                         return res.status(200).json({ status: 'success', message: 'Data modified successful' });
                     }

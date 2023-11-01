@@ -309,7 +309,7 @@ export default function InventoryShippedTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Ready to ship : {data?.length}
+        Shipped : {data?.length}
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
@@ -413,14 +413,14 @@ export default function InventoryShippedTable() {
                       key={index}
                     >
                       <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                      <th className="font-normal">{d.store_name}</th>
+                      <td className="font-normal">{d.store_name}</td>
                       <td>{d.asin_upc_code}</td>
                       <td>{d.code_type}</td>
                       <td>{d.product_name}</td>
+                      <td>{d.order_id}</td>
                       <td>{d.upin}</td>
                       <td>{d.quantity}</td>
                       <td>{d.courier}</td>
-                      <td>{d.order_id}</td>
                       <td className="text-[#8633FF]">{d.tracking_number}</td>
                       <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                       <td>
@@ -451,14 +451,14 @@ export default function InventoryShippedTable() {
                         key={index}
                       >
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                        <th className="font-normal">{d.store_name}</th>
+                        <td className="font-normal">{d.store_name}</td>
                         <td>{d.asin_upc_code}</td>
                         <td>{d.code_type}</td>
                         <td>{d.product_name}</td>
+                        <td>{d.order_id}</td>
                         <td>{d.upin}</td>
                         <td>{d.quantity}</td>
                         <td>{d.courier}</td>
-                        <td>{d.order_id}</td>
                         <td className="text-[#8633FF]">{d.tracking_number}</td>
                         <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                         <td>

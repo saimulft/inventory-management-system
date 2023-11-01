@@ -75,9 +75,13 @@ const run = async () => {
 
             const existData = await shipped_data_collection.findOne({ _id: new ObjectId(id) });
             if (existData) {
-                const deletedResult = await shipped_data_collection.deleteOne({ _id: new ObjectId(id) })
-                if (!deletedResult.deletedCount) {
-                    return res.status(500).json({ message: "Error to delete shipped data" })
+                const quantity = parseInt(existData.quantity) - parseInt(req.body.resaleable_quantity)
+                const updateShippedData = {
+                    quantity: quantity
+                }
+                const updatedResult = await shipped_data_collection.updateOne({ _id: new ObjectId(id) }, {$set: updateShippedData})
+                if (!updatedResult.modifiedCount) {
+                    return res.status(500).json({ message: "Error to update shipped data" })
                 }
 
                 const existInStock = await all_stock_collection.findOne({ upin: existData.upin })
@@ -85,9 +89,14 @@ const run = async () => {
                     const stock = parseInt(existInStock.stock) + parseInt(req.body.resaleable_quantity);
                     const totalSold = parseFloat(existInStock.total_sold) - parseInt(req.body.resaleable_quantity);
 
+                    const soldPrice = totalSold * parseFloat(existInStock.unit_price)
+                    const remainingPrice = stock * parseFloat(existInStock.unit_price)
+
                     const updateStockdata = {
                         stock: stock,
                         total_sold: totalSold,
+                        sold_price: soldPrice,
+                        remaining_price: remainingPrice,
                         remark: req.body.remark ? req.body.remark : existInStock.remark
                     }
                     const id = existInStock._id

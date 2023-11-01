@@ -20,9 +20,15 @@ const run = async () => {
                 const existInStock = await all_stock_collection.findOne({ upin: upin })
                 const stock = parseInt(existInStock.stock) - parseInt(existData.quantity)
                 const totalSold = parseInt(existInStock.total_sold) + parseInt(existData.quantity)
+
+                const soldPrice = totalSold * parseFloat(existInStock.unit_price)
+                const remainingPrice = stock * parseFloat(existInStock.unit_price)
+
                 const updateStockdata = {
                     stock: stock,
-                    total_sold: totalSold
+                    total_sold: totalSold,
+                    sold_price: soldPrice,
+                    remaining_price: remainingPrice
                 }
                 const StockProductid = existInStock._id
                 const updateStockResult = await all_stock_collection.updateOne({ _id: new ObjectId(StockProductid) }, { $set: updateStockdata })
@@ -49,7 +55,7 @@ const run = async () => {
     router.get('/get_all_RTS_data', async (req, res) => {
         try {
             const admin_id = req.query.admin_id;
-            const data = await ready_to_ship_collection.find({ admin_id: admin_id }).sort({date: -1}).toArray()
+            const data = await ready_to_ship_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()
 
             if (data) {
                 res.status(200).json({ data: data })
