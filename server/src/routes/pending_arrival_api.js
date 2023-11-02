@@ -16,6 +16,7 @@ const run = async () => {
             date: req.body.date,
             creator_email: req.body.creator_email,
             store_name: req.body.store_name,
+            store_id: req.body.store_id,
             asin_upc_code: req.body.asin_upc_code,
             code_type: req.body.code_type,
             supplier_id: req.body.supplier_id,

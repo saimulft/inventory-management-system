@@ -64,6 +64,7 @@ const run = async () => {
                 courier: req.body.courier === "Select courier" ? null : req.body.courier,
                 product_name: req.body.productName,
                 store_name: req.body.storeName,
+                store_id: req.body.storeId,
                 code_type: req.body.codeType,
                 upin: req.body.upin,
                 quantity: req.body.quantity,

@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import ToastMessage from "../../Shared/ToastMessage";
 import { FaSpinner } from "react-icons/fa";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-import AsinSearchDropdown from "../../../Utilities/AsinSearchDropdown";
+import SearchDropdown from "../../../Utilities/SearchDropdown";
 import { useQuery } from "@tanstack/react-query";
 import FileDownload from "../../Shared/FileDownload";
 import Loading from "../../Shared/Loading";
@@ -628,7 +628,7 @@ export default function StorePreparingRequestTable() {
               <div className="mt-2">
                 <label className="font-bold">ASIN/UPC : </label>
                 {!isEditable && <span>{singleData?.code}</span>}
-                {isEditable && <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />}
+                {isEditable && <SearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />}
               </div>
 
 
