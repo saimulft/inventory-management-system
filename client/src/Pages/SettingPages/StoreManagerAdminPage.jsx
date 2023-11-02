@@ -2,26 +2,40 @@ import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import { v4 as uuidv4 } from 'uuid';
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import ToastMessage from "../../Components/Shared/ToastMessage";
+import SearchDropdown from "../../Utilities/SearchDropdown";
 
 export default function StoreManagerAdminPage() {
   const { user } = useAuth();
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-  console.log(user)
+  const [warehouseOption, setWarehouseOption] = useState(null)
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (storeManagerAdmin) => {
       return axios.post('/api/v1/store_manager_admin_api/create_store_manager_admin', storeManagerAdmin)
     },
   })
-
+  const { data: warehouseData = [] } = useQuery({
+    queryKey: ['get_warehouse_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
   const handleCreateStoreManagerAdmin = async (event) => {
     event.preventDefault()
     setErrorMessage('')
     setSuccessMessage('')
-
     const form = event.target;
     const name = form.name.value;
     const email = form.email.value;
@@ -119,6 +133,10 @@ export default function StoreManagerAdminPage() {
                 name="password"
                 required
               />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Select Store</label>
+              <SearchDropdown option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
             </div>
           </div>
         </div>
