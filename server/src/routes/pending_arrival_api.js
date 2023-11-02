@@ -25,7 +25,8 @@ const run = async () => {
             quantity: req.body.quantity,
             unit_price: req.body.unit_price,
             eda: req.body.eda,
-            warehouse_name: req.body.warehouse_name
+            warehouse_name: req.body.warehouse_name,
+            warehouse_id: req.body.warehouse_id,
         }
         try {
 

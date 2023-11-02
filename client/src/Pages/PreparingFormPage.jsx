@@ -20,10 +20,10 @@ const PreparingFormPage = () => {
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
   const [storeOption, setStoreOption] = useState(null)
+  const [warehouseOption, setWarehouseOption] = useState(null)
   const [asinUpcOption, setAsinUpcOption] = useState()
   const [productName, setProductName] = useState('')
   const { user } = useAuth()
-
   const asinId = asinUpcOption?.value
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
 
@@ -75,7 +75,21 @@ const PreparingFormPage = () => {
     }
   })
 
-
+  const { data: warehouseData = [] } = useQuery({
+    queryKey: ['get_warehouse_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -97,9 +111,9 @@ const PreparingFormPage = () => {
     const upin = `${storeOption?.label}_${asinUpcOption?.label}`
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
-    const warehouse = form.warehouse.value
 
-    if (warehouse === 'Select Warehouse' || !warehouse) {
+
+    if (!warehouseOption?.label) {
       setFormError("Missing warehouse")
       return
     }
@@ -132,7 +146,8 @@ const PreparingFormPage = () => {
       upin,
       quantity,
       trackingNumber,
-      warehouse
+      warehouseName: warehouseOption?.label,
+      warehouseId: warehouseOption?.value
     }
     for (const key in preparingFormvalue) {
       formData.append(key, preparingFormvalue[key]);
@@ -242,7 +257,7 @@ const PreparingFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500 mb-2">ASIN/UPC</label>
-                  <SearchDropdown option={asinUpcOption} optionData={asinUpcData} setOption={setAsinUpcOption} />
+                  <SearchDropdown option={asinUpcOption} placeholder="Select ASIN or UPC" optionData={asinUpcData} setOption={setAsinUpcOption} />
                 </div>
 
                 <div className="mt-4">
@@ -443,14 +458,7 @@ const PreparingFormPage = () => {
             </div>
             <div className="mt-4">
               <label className="text-slate-500">Warehouse</label>
-              <select
-                className="select select-primary w-full mt-2 shadow-lg"
-                name="warehouse"
-                id="warehouse">
-                <option defaultValue="Select Warehouse">Select Warehouse</option>
-                <option value="Test-1">Test-1</option>
-                <option value="Test-2">Test-2</option>
-              </select>
+              <SearchDropdown option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
             </div>
             <ToastMessage errorMessage={formError} />
             <div className="flex items-center justify-center mt-8">

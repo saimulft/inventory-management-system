@@ -86,7 +86,7 @@ const run = async () => {
     router.get('/get_stores_dropdown_data', async (req, res) => {
         try {
             const creator_email = req.query.email;
-            const allStores = await all_stores_collection.find({ creator_email: creator_email }).toArray()
+            const allStores = await all_stores_collection.find({ creator_email: creator_email }).sort({date : -1}).toArray()
             if (allStores) {
                 const data = allStores.map(item => {
                     return { data: allStores, value: item._id, label: item.store_name }

@@ -4,6 +4,7 @@ const SearchDropdown = ({ setOption, option, optionData, placeholder }) => {
 
     return (
         <Select
+        className='shadow-lg'
             options={optionData}
             value={option}
             onChange={setOption}

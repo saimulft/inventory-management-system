@@ -15,6 +15,7 @@ const ArrivalFormPage = () => {
   const [inputError, setInputError] = useState('')
   const [asinUpcOption, setAsinUpcOption] = useState(null)
   const [storeOption, setStoreOption] = useState(null)
+  const [warehouseOption, setWarehouseOption] = useState(null)
   const [productName, setProductName] = useState('')
   const asinId = asinUpcOption?.value
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
@@ -68,6 +69,21 @@ const ArrivalFormPage = () => {
       }
     }
   })
+  const { data: warehouseData = [] } = useQuery({
+    queryKey: ['get_warehouse_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
 
 
 
@@ -94,10 +110,9 @@ const ArrivalFormPage = () => {
     const upin = form.upin.value;
     const unitPrice = form.unitPrice.value;
     const quantity = form.quantity.value;
-    const eda = form.eda.value;          // estimated date of arrival
-    const warehouse = form.warehouse.value;
+    const eda = form.eda.value;
 
-    if (warehouse === "Select Warehouse" || !warehouse) {
+    if (!warehouseOption?.label) {
       setInputError('Select a warehouse')
       return;
     }
@@ -111,7 +126,7 @@ const ArrivalFormPage = () => {
       return;
     }
 
-    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda || !warehouse) {
+    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda ) {
       setInputError('Please fill out all the inputs in order to submit the form')
       return;
     }
@@ -131,7 +146,8 @@ const ArrivalFormPage = () => {
       quantity: quantity,
       unit_price: unitPrice,
       eda: isoEda,
-      warehouse_name: warehouse
+      warehouse_name: warehouseOption?.label,
+      warehouse_id: warehouseOption?.value
     }
 
     try {
@@ -167,15 +183,7 @@ const ArrivalFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Warehouse</label>
-                  <select
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="warehouse"
-                    id="warehouse"
-                  >
-                    <option defaultValue="Select Warehouse">Select Warehouse</option>
-                    <option value="Test-1">Test-1</option>
-                    <option value="Test-2">Test-2</option>
-                  </select>
+                  <SearchDropdown option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
                 </div>
 
                 <div className="mt-4">

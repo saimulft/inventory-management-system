@@ -33,6 +33,7 @@ const ready_to_ship_api = require("./src/routes/ready_to_ship_api")
 const missing_arrival_api = require("./src/routes/missing_arrival_api")
 const out_of_stock_api = require("./src/routes/out_of_stock_api")
 const shipped_api = require("./src/routes/shipped_data")
+const warehouse_api = require("./src/routes/warehouse_api")
 
 app.use('/api/v1/global_api', global_api)
 app.use('/api/v1/authentication_api', authentication_api)
@@ -53,6 +54,7 @@ app.use('/api/v1/ready_to_ship_api', ready_to_ship_api)
 app.use('/api/v1/missing_arrival_api', missing_arrival_api)
 app.use('/api/v1/out_of_stock_api', out_of_stock_api)
 app.use('/api/v1/shipped_api', shipped_api)
+app.use('/api/v1/warehouse_api', warehouse_api)
 
 app.get('/', (req, res) => {
 

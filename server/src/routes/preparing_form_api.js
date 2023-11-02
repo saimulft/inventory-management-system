@@ -72,7 +72,8 @@ const run = async () => {
                 invoice_file: invoiceFileName,
                 shipping_file: shippingFilename,
                 notes: req.body.notes ? req.body.notes : null,
-                warehouse: req.body.warehouse,
+                warehouse_name: req.body.warehouseName,
+                warehouse_id: req.body.warehouseId,
             };
 
             const result = await preparing_form_collection.insertOne(data)

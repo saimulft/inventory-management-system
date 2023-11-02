@@ -32,62 +32,66 @@ const run = async () => {
             const result = await all_users_collection.insertOne(login_data)
 
             if (result.acknowledged) {
-                const warehouse_admin_user_data = {
+                const warehouse_data = {
                     admin_id: req.body.admin_id,
                     warehouse_admin_id: result.insertedId.toString(),
-                    full_name: req.body.full_name,
-                    email: req.body.email,
+                    warehouse_name: req.body.warehouse_name,
                     creator_email: req.body.creator_email,
-                    username: req.body.username,
-                    role: req.body.role,
-                    phone: null,
-                    address: null,
-                    city: null,
-                    state: null,
-                    zip: null,
-                    country: null,
-                    whatsapp_number: null
+                    address: req.body.address,
+                    city: req.body.city,
+                    state: req.body.state,
+                    zip: req.body.zip,
+                    country: req.body.country
                 }
-                const response = await warehouse_admin_users_collection.insertOne(warehouse_admin_user_data)
-                if (response.acknowledged) {
-                    const send_email_data = {
-                        email: req.body.email,
-                        subject: `Hi ${req.body.full_name}, Verify your email`,
-                        html: `
-                        <div class="container">
-                            <h2>Your login credentials</h2>
-                            <div class="user-info">
-                                <p><strong>Email:</strong> ${req.body.email}</p>
-                                <p><strong>Password:</strong> ${req.body.password}</p>
-                                <p><strong>Role:</strong> ${req.body.role}</p>
-                            </div>
-                            <hr />
-                            <h2>Please verify your email before login to your account</h2>
-                            <p>To verify your email <a href="http://localhost:5173/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
-                        </div>`
-                    }
 
-                    sendEmail(send_email_data);
+                const warehouseResult = await warehouses_collection.insertOne(warehouse_data)
 
-                    const warehouse_data = {
+                if (warehouseResult.acknowledged) {
+                    const warehouse_admin_user_data = {
                         admin_id: req.body.admin_id,
                         warehouse_admin_id: result.insertedId.toString(),
-                        warehouse_name: req.body.warehouse_name,
-                        address: req.body.address,
-                        city: req.body.city,
-                        state: req.body.state,
-                        zip: req.body.zip,
-                        country: req.body.country
+                        creator_email: req.body.creator_email,
+                        warehouse_id: warehouseResult.insertedId.toString(),
+                        full_name: req.body.full_name,
+                        email: req.body.email,
+                        username: req.body.username,
+                        role: req.body.role,
+                        phone: null,
+                        address: null,
+                        city: null,
+                        state: null,
+                        zip: null,
+                        country: null,
+                        whatsapp_number: null
                     }
+                    const response = await warehouse_admin_users_collection.insertOne(warehouse_admin_user_data)
+                    if (response.acknowledged) {
+                        const send_email_data = {
+                            email: req.body.email,
+                            subject: `Hi ${req.body.full_name}, Verify your email`,
+                            html: `
+                            <div class="container">
+                                <h2>Your login credentials</h2>
+                                <div class="user-info">
+                                    <p><strong>Email:</strong> ${req.body.email}</p>
+                                    <p><strong>Password:</strong> ${req.body.password}</p>
+                                    <p><strong>Role:</strong> ${req.body.role}</p>
+                                </div>
+                                <hr />
+                                <h2>Please verify your email before login to your account</h2>
+                                <p>To verify your email <a href="http://localhost:5173/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
+                            </div>`
+                        }
 
-                    const warehouseResult = await warehouses_collection.insertOne(warehouse_data)
-                    if (warehouseResult.acknowledged) {
+                        sendEmail(send_email_data);
                         res.status(201).json({ message: 'Warehouse admin user created successfully', status: "success" });
                     }
-                    else {
-                        res.status(500).json({ message: 'Failed to create Warehouse' });
-                    }
+
                 }
+                else {
+                    res.status(500).json({ message: 'Failed to create Warehouse' });
+                }
+
             } else {
                 res.status(500).json({ message: 'Failed to create Warehouse admin user' });
             }
@@ -96,6 +100,26 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
+
+    router.get('/get_warehouse_dropdown_data', async (req, res) => {
+        try {
+            const admin_id = req.query.id;
+            const allWarehouseData = await warehouses_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()
+            if (allStores) {
+                const data = allStores.map(item => {
+                    return { data: allStores, value: item._id, label: item.store_name }
+                })
+                res.status(200).json({ data: data, message: "successfully stores data" })
+            }
+            else {
+                res.status(204).json({ message: "No content" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in stores data' });
+        }
+    });
+
+
 }
 run()
 module.exports = router;
