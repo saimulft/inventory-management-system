@@ -1,7 +1,6 @@
 import axios from "axios";
 import Cookies from "js-cookie";
-import { createContext, useEffect, useRef, useState } from "react";
-import {io} from 'socket.io-client'
+import { createContext, useEffect,  useState } from "react";
  
 export const AuthContext = createContext(null)
 
@@ -10,13 +9,7 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
 
     const token = Cookies.get('loginToken')
-    
-    const socket = useRef()
-    
-    useEffect(() => {
-        socket.current = io('ws://localhost:9000')
-    },[])
-    
+ 
     useEffect(() => {
         axios.get('/api/v1/authentication_api/get_user_profile_data', {
             headers: {
@@ -40,7 +33,7 @@ const AuthProvider = ({ children }) => {
             })
 
         }, [token])
-        const authInfo = { user, setUser, loading, socket }
+        const authInfo = { user, setUser, loading }
 
         return (
         <AuthContext.Provider value={authInfo}>

@@ -13,13 +13,11 @@ const run = async () => {
          const sender = req.body.sender
          const receiver = req.body.receiver
          const text = req.body.text
-         // console.log(senderName,receiverName);
-         console.log("sender: ",sender, 'receiver: ',receiver)
          const date = new Date()
          const timestamp = date.toISOString();
-         // console.log(req.body);
          const prepairMessage = {
                   participants: [sender, receiver],
+                  isMessageSeen: false,
             messages: [
                {
                   _id: new ObjectId(),
@@ -41,8 +39,6 @@ const run = async () => {
          const alreadyConversationExist = await conversationsCollection.findOne({
             participants: { $all: [sender, receiver] }
          })
-         // console.log(alreadyConversationExist)
-
 
          if (alreadyConversationExist?._id) {
             const newMessages = await conversationsCollection.updateOne({ _id: alreadyConversationExist._id }, { $push: { messages: newMessage } }, { upsert: true })
@@ -75,6 +71,55 @@ const run = async () => {
       }
 
    })
+   router.get("/user_messages_list", async (req, res) => {
+      try {
+         const {sender} = req.query
+         const allConversations = await conversationsCollection.find({
+            participants: { $all: [sender] }
+         }).toArray()
+
+         console.log(allConversations);
+         
+
+         res.send(allConversations)
+      }
+      catch (err) {
+         console.log(err)
+      }
+
+   })
+
+   router.patch("/messages/seen_messages", async (req, res) => {
+try{
+   const {id, seenUnseenStatus} = req.body
+   console.log(id,seenUnseenStatus)
+   const query = {_id: new ObjectId(id)}
+   let updateSeenStatus;
+   if(seenUnseenStatus == "seen"){
+      // console.log("inside if")
+      updateSeenStatus = {
+      $set: {
+         isMessageSeen: true,
+      },
+   }
+   }
+   else if(seenUnseenStatus == "unseen"){
+      // console.log("inside else")
+      updateSeenStatus = {
+         $set: {
+            isMessageSeen: false,
+         },
+      }
+   }
+   // console.log(updateSeenStatus)
+
+   const result = await conversationsCollection.updateOne(query, updateSeenStatus)
+   res.status(200).send(result)
+}
+catch(err){
+   res.status(500).send({err: "Internal server error"})
+}
+   })
 
    router.get('/single_conversation', async (req, res) => {
     try{
@@ -104,6 +149,7 @@ const run = async () => {
       console.log(err)
     }
    })
+
 
 
 }

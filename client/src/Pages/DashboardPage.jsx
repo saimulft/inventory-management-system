@@ -15,7 +15,8 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import useAuth from "../hooks/useAuth";
 
 const data = [
   {
@@ -64,7 +65,15 @@ const data = [
 
 export default function DashboardPage() {
   const [analyticsDays, setAnalyticsDays] = useState()
+  const { user } = useAuth();
 
+  useEffect(() => {
+    if(user?.email){
+      localStorage.setItem("userEmail", user.email);
+    }else{
+      
+    }
+  }, [user?.email])
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
   };

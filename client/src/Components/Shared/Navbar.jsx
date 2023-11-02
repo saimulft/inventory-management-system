@@ -1,17 +1,25 @@
 import { AiOutlineMessage, AiOutlineSearch, AiOutlinePlus } from "react-icons/ai";
-import { BsBell} from "react-icons/bs";
+import { BsBell, BsDot} from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
-import {useState } from "react";
-;
+import {useContext, useEffect, useState } from "react";
+import { ChatContext } from "../../Providers/ChatProvider";
 
-export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, handleCurrentReciver, allUsersData, messages,currentReciver }) {
+export default function Navbar({ data }) {
+  const {isMessageBoxOpen, setIsMessageBoxOpen, handleCurrentReciver,handleSeenMessage, allUsersData, messagesData, setLastMessageReceiver} = useContext(ChatContext)
   const [isChatBoxOpen, setIsChatBoxOpen] = useState(false)
   const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false)
   const [isAddChatOpen, setIsAddChatOpen] = useState(false)
   const [isInputFocused, setInputFocused] = useState(false)
+  const [conversationData, setConversationData] = useState([])
+  const [allUsersSearchData, setAllUsersSearchData] = useState([])
+
+
+    
+
   const { user } = useAuth()
 
-  const allUsers = allUsersData.filter((singleUser) => singleUser.email != user.email && singleUser.email_verified)
+  const allUsers = allUsersSearchData.filter((singleUser) => singleUser.email != user.email && singleUser.email_verified)
+
   const handleInputFocus = () => {
     setInputFocused(true);
   };
@@ -20,7 +28,32 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
     setInputFocused(false);
   };
 
+  useEffect(()=> {
+    setConversationData(messagesData)
+  },[messagesData])
 
+  useEffect(()=>{
+    setAllUsersSearchData(allUsersData)
+  },[])
+
+  const handleAddUsersSearch = (e) => {
+    if(e.target.value == ""){
+      setConversationData(messagesData)
+    }
+    setTimeout(() => {
+        const addUsersSearch = allUsersData?.filter((userData) => userData?.email.match(/[^@]*/)[0]?.split(".")[0].includes(e.target.value))
+    setAllUsersSearchData(addUsersSearch)
+    }, 800);
+  } 
+  const handleCoversationSearch = (e) => {
+  if(e.target.value == ""){
+    setConversationData(messagesData)
+  }
+  setTimeout(()=>{
+    const coversationSearchData = messagesData?.filter((messageData) => messageData?.participants?.find(participant => participant != user?.email).match(/[^@]*/)[0]?.split(".")[0].includes(e.target.value) )
+    setConversationData(coversationSearchData)
+  }, 800)
+ }
 
   return (
     <>
@@ -77,8 +110,7 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
             </div>
 
             {/* notifications box  */}
-            {
-              isNotificationBoxOpen && <div className=" notifications_box absolute -right-44 top-14 shadow-2xl z-10 bg-white overflow-y-scroll rounded-lg h-[590px] w-[350px] px-2 py-4">
+            {isNotificationBoxOpen && <div className=" notifications_box absolute -right-44 top-14 shadow-2xl z-10 bg-white overflow-y-scroll rounded-lg h-[590px] w-[350px] px-2 py-4">
                 <div className="text-black px-2">
                   <h3 className="text-2xl font-bold">Notifications</h3>
                   <div className="flex gap-2 mt-3 mb-2">
@@ -86,9 +118,9 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
                     <p className="bg-purple-50 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-100 transition hover:shadow">Unread</p>
                   </div>
                 </div>
-                {data.map(d => {
+                {data.map((d, index) => {
                   return (
-                    <div className="hover:bg-gray-100 px-4 flex item-center gap-3 py-3 cursor-pointer rounded-lg transition ">
+                    <div key={index} className="hover:bg-gray-100 px-4 flex item-center gap-3 py-3 cursor-pointer rounded-lg transition ">
                       <div>
                         <img className="h-14 w-14 rounded-full" src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no" alt="" />
                       </div>
@@ -100,8 +132,8 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
                   )
                 })}
 
-              </div>
-            }
+              </div>}
+              
           </div>
 
           {/* message btn  */}
@@ -144,14 +176,14 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
                         </form>
                         <h3 className="text-xl font-medium" >Add User</h3>
                         <div className="relative ">
-                          <input onFocus={handleInputFocus}
+                          <input onChange={(e) => handleAddUsersSearch(e)} onFocus={handleInputFocus}
                             onBlur={handleInputBlur} type="text" placeholder="Search users" className={`w-full bg-gray-100 outline-none py-2 px-3 rounded-full mt-3 mb-2 ${isInputFocused && 'shadow'} `} />
                           <button className="bg-purple-500 p-2 rounded-full text-white absolute right-2 translate-y-1/2"><AiOutlineSearch size={16} /></button>
                         </div>
                     <div className="add_chat_box h-[300px] overflow-y-scroll">
                     {allUsers?.length > 0 ? allUsers?.map(singleUser => {
                           return (
-                            <div onClick={() => {
+                            <div key={singleUser._id} onClick={() => {
                               handleCurrentReciver(singleUser?.email)
                               setIsMessageBoxOpen(!isMessageBoxOpen)
                               setIsChatBoxOpen(!isChatBoxOpen)
@@ -163,35 +195,71 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
                         }) : <div className="text-gray-500 mt-4 text-center">No user available!</div>}
                     </div>
                       </div>
-
-
                     </dialog>
-
                   </div>
-
                 </div>
+
                 <div className="relative ">
-                  <input onFocus={handleInputFocus}
+                  <input onChange={(e) => handleCoversationSearch(e)} onFocus={handleInputFocus}
                     onBlur={handleInputBlur} type="text" placeholder="Search users" className={`w-full bg-gray-100 outline-none py-2 px-3 rounded-full mt-3 mb-2 ${isInputFocused && 'shadow'} `} />
                   <button className="bg-purple-500 p-2 rounded-full text-white absolute right-2 translate-y-1/2"><AiOutlineSearch size={16} /></button>
                 </div>
               </div>
-              {messages?.length > 0 ? messages.map(message => {
+              {conversationData?.length > 0 ? conversationData.sort((a, b) => {
+                const aTimestamp = a?.messages[a.messages?.length - 1]?.timestamp
+                const bTimestamp = b?.messages[b.messages?.length - 1]?.timestamp
+                const sortADate = new Date(aTimestamp)
+                const sortBDate = new Date(bTimestamp)
+                return (sortBDate - sortADate)
+              }).map(message => {
+                
+
+
+                let arrayLength = message?.messages?.length
+                const lastMessageTimeStamp = message?.messages[arrayLength - 1]?.timestamp
+                const lastMessageDate = new Date(lastMessageTimeStamp)
+                const currentDate = new Date();
+                const timeDifference = currentDate - lastMessageDate;
+                const minutesDifference = Math.floor(timeDifference / 60000);
+                const hoursDifference = Math.floor(timeDifference / 3600000);
+                const daysDifference = Math.floor(timeDifference / 86400000);
+                const weeksDifference = Math.floor(timeDifference / 604800000);
+                const monthsDifference = Math.floor(timeDifference / 2630016000)
+                const yearsDifference = Math.floor(timeDifference / 31536000000);
+
+                const agoTime =  timeDifference < 60000 ? "Just now" : timeDifference >= 60000 && timeDifference < 3600000 ? minutesDifference + "m": timeDifference >= 3600000 && timeDifference < 86400000 ? hoursDifference + "h": timeDifference >= 86400000 && timeDifference < 604800000 ? daysDifference + "d": timeDifference >= 604800000 && timeDifference < 2630016000 ? weeksDifference + "w" : timeDifference >= 2630016000 && timeDifference < 31536000000 ? monthsDifference + "mo": timeDifference >= 31536000000 ? yearsDifference + "y" : ""
+
+
+            
+
+                const lastMsg = message?.messages[arrayLength - 1].text.length <= 17 ? message?.messages[arrayLength - 1].text: message?.messages[arrayLength - 1].text.slice(0, 17) + "..."
+                const senderStatus = user.email == message?.messages[arrayLength - 1].sender && "You: "
+                const reciverUserName = message?.participants?.find(participant => participant != user?.email)?.match(/[^@]*/)[0]?.split(".")[0]
+
+                const unseenMessage = user.email == message?.messages[arrayLength - 1]?.receiver
+
+                const seenMessageReceiver = message?.messages[arrayLength - 1]?.receiver
+                const coversationID = message?._id
+                const seenUnseenStatus = 'seen';
+
                 return (
-                  <div onClick={() => {
+                  <div key={message._id} onClick={() => {
                     handleCurrentReciver(message?.participants?.find(participant => participant != user?.email))
                     setIsChatBoxOpen(!isChatBoxOpen)
                     setIsMessageBoxOpen(!isMessageBoxOpen)
-
+                    handleSeenMessage(seenMessageReceiver, coversationID, seenUnseenStatus)
                   }} className="hover:bg-gray-100 px-4 flex item-center gap-3 py-3 cursor-pointer rounded-lg transition ">
                     <div>
                       <img className="h-14 w-14 rounded-full" src='https://png.pngtree.com/png-vector/20220817/ourmid/pngtree-cartoon-man-avatar-vector-ilustration-png-image_6111064.png' alt="" />
                     </div>
                     <div>
-                      <p className="text-black font-medium">{message?.participants?.find(participant => participant != user?.email).match(/[^@]*/)[0]?.split(".")[0]}</p>
+                      <p className="text-black font-medium">{reciverUserName}</p>
                       <div className="flex gap-2">
-                        <p className="text-gray-600">How are you?</p>
-                        <p className="text-gray-600">10min</p>
+                        <p className={` ${unseenMessage && !message.isMessageSeen ? "font-medium text-black":"text-gray-600"} text-sm `}>
+                            {senderStatus}
+                            {lastMsg}
+                        </p>
+                        <p className="text-gray-600 text-sm flex items-center"><BsDot size={10} className="p-0 m-0"/> {agoTime}</p>
                       </div>
                     </div>
                   </div>
@@ -201,9 +269,8 @@ export default function Navbar({ isMessageBoxOpen, setIsMessageBoxOpen, data, ha
             </div>
             }
 
-
-
           </div>
+
           <div className="flex gap-3">
             <div className="dropdown dropdown-end">
               <label
