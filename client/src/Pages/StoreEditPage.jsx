@@ -3,9 +3,34 @@ import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import SupplierInfoInputListEdit from "../Components/StoreEditPageComponents/SupplierInfoInputListEdit";
 import AdditionalPaymentInputListEdit from "../Components/StoreEditPageComponents/AdditionalPaymentInputListEdit";
 import { BiSolidEdit } from "react-icons/bi";
+import { useParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 export default function StoreEditPage() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
+  const [supplierInfoInputList, setSupplierInfoInputList] = useState([])
+  const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([])
+
+  const {id} = useParams()
+
+  const { data: singleStore = [] } = useQuery({
+    queryKey: ['single_store'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/store_api/get_store_by_id?id=${id}`)
+        if (res.status === 200) {
+          setSupplierInfoInputList(res.data.data.supplier_information)
+          setAdditionalPaymentInputList(res.data.data.additional_payment_details)
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
 
   const handleAddSupplierIncrementField = () => {
     setAddSupplier([...addSupplier, { id: 1 }]);
@@ -27,23 +52,20 @@ export default function StoreEditPage() {
         <div className="collapse  collapse-arrow bg-white ">
           <input type="checkbox" />
           <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
-            Additional payment Details
-            <span className="text-sm text-slate-400">(Optional)</span>
+            General Information
           </div>
           <div className="collapse-content">
             <p>
-              <span className="font-bold text-slate-600">Store name:</span>{" "}
-              <span>Amazon</span>
+              <span className="font-bold text-slate-600">Store name: </span>
+              <span>{singleStore.store_name}</span>
             </p>
             <p>
-              <span className="font-bold text-slate-600">
-                Store manager name:
-              </span>
-              <span>Saidul Basar</span>
+              <span className="font-bold text-slate-600">Store manager name: </span>
+              <span>{singleStore.store_manager_name}</span>
             </p>
             <p>
-              <span className="font-bold text-slate-600">Store type:</span>{" "}
-              <span>fsdklfsdkllk</span>
+              <span className="font-bold text-slate-600">Store type: </span>
+              <span>{singleStore.store_type}</span>
             </p>
             <button className="border border-[#8633FF] px-4 py-1 flex justify-center items-center gap-2 my-4 rounded hover:bg-[#8633FF] hover:text-white transition-all w-20 ">
               <BiSolidEdit />
@@ -60,12 +82,12 @@ export default function StoreEditPage() {
               <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">
                 {/* supplier information  */}
                 <div className="w-1/2  p-8">
-                  <SupplierInfoInputListEdit />
+                  <SupplierInfoInputListEdit supplierInfoInputList={supplierInfoInputList} setSupplierInfoInputList={setSupplierInfoInputList} />
                 </div>
 
                 {/* add payment details  */}
                 <div className="w-1/2 p-4 pb-24">
-                  <AdditionalPaymentInputListEdit />
+                  <AdditionalPaymentInputListEdit additionalPaymentInputList={additionalPaymentInputList} setAdditionalPaymentInputList={setAdditionalPaymentInputList} />
                 </div>
               </div>
               <button className="absolute left-[50%] -translate-x-1/2 bottom-8 bg-[#8633FF] text-white px-32 py-[10px] font-medium rounded ">

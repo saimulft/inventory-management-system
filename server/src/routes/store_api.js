@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
+const { ObjectId } = require("mongodb")
 
 const run = async () => {
     const db = await connectDatabase()
@@ -61,6 +62,23 @@ const run = async () => {
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
+        }
+    });
+
+    // get store by id
+    router.get('/get_store_by_id', async (req, res) => {
+        try {
+            const id = req.query.id;
+            const storeData = await all_stores_collection.findOne({ _id: new ObjectId(id) })
+            
+            if (storeData) {
+                res.status(200).json({ data: storeData, message: "Successfully get store" })
+            }
+            else {
+                res.status(204).json({ message: "No content" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in store api' });
         }
     });
 }

@@ -1,4 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -11,28 +10,22 @@ import Loading from "../Components/Shared/Loading";
 
 export default function AllStoresPage() {
   const [isActive, setIsActive] = useState(true);
+  const [allStoreData, setAllStoreData] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
   const [storeType, setStoreType] = useState('')
   const { user } = useAuth()
 
-  const { data: allStoreData = [], refetch, isLoading, isRefetching } = useQuery({
-    queryKey: ['get_all_stores'],
-    queryFn: async () => {
-      try {
-        const res = await axios.get(`/api/v1/store_api/get_all_stores?id=${user.admin_id}&storeType=${storeType}`)
-        if (res.status === 200) {
-          return res.data.data;
-        }
-        return [];
-      } catch (error) {
-        console.log(error);
-        return [];
-      }
-    }
-  })
-
   useEffect(() => {
-    refetch()
-  }, [refetch, storeType])
+    setIsLoading(true)
+    axios.get(`/api/v1/store_api/get_all_stores?id=${user.admin_id}&storeType=${storeType}`)
+      .then(res => {
+        if (res.status === 200) {
+          setIsLoading(false)
+          setAllStoreData(res.data.data)
+        }
+      })
+      .catch(error => console.log(error))
+  }, [storeType, user.admin_id])
 
   const shadowStyle = {
     boxShadow: "0px 0px 15px -8px rgba(0,0,0,0.75)",
@@ -90,10 +83,10 @@ export default function AllStoresPage() {
 
       {/* store info  */}
       <div className="relative grid grid-cols-4 gap-6 mb-8 mt-8">
-        {isLoading || isRefetching ? <Loading /> : allStoreData.map((singleStore, index) => {
+        {isLoading ? <Loading /> : allStoreData.map((singleStore, index) => {
           return (
             <Link
-              to="/dashboard/all-stores/store-edit"
+              to={`/dashboard/all-stores/store-edit/${singleStore._id}`}
               style={shadowStyle}
               key={index}
             >

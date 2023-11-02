@@ -153,7 +153,7 @@ export const router = createBrowserRouter([
         element: <AllStoresPage />,
       },
       {
-        path: "/dashboard/all-stores/store-edit",
+        path: "/dashboard/all-stores/store-edit/:id",
         element: <StoreEditPage />,
       },
       {
