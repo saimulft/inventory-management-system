@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from "react-icons/md";
 import Swal from "sweetalert2";
-import AsinSearchDropdown from "../Utilities/AsinSearchDropdown";
+import SearchDropdown from "../Utilities/SearchDropdown";
 
 const ArrivalFormPage = () => {
   const boxShadowStyle = {
@@ -14,15 +14,15 @@ const ArrivalFormPage = () => {
   const { user } = useAuth();
   const [inputError, setInputError] = useState('')
   const [asinUpcOption, setAsinUpcOption] = useState(null)
-  const [storeName, setStoreName] = useState('')
+  const [storeOption, setStoreOption] = useState(null)
   const [productName, setProductName] = useState('')
   const asinId = asinUpcOption?.value
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
 
 
   useEffect(() => {
-    if (storeName && asinUpcOption) {
-      const upin = (`${storeName}_${asinUpcOption.label}`);
+    if (storeOption?.label && asinUpcOption) {
+      const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
       axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
         .then(res => {
           if (res.status === 200) {
@@ -35,7 +35,7 @@ const ArrivalFormPage = () => {
           console.log(error)
         })
     }
-  }, [storeName, asinUpcOption, asinUpc]);
+  }, [storeOption?.label, asinUpcOption, asinUpc]);
 
   const { data: asinUpcData = [], } = useQuery({
     queryKey: ['asin_upc_data'],
@@ -52,6 +52,25 @@ const ArrivalFormPage = () => {
       }
     }
   })
+
+  const { data: allStoreData = [] } = useQuery({
+    queryKey: ['get_all_stores_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/store_api/get_stores_dropdown_data?email=${user.email}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
+
+
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -71,7 +90,6 @@ const ArrivalFormPage = () => {
 
     const form = event.target;
     const date = new Date().toISOString();
-    const storeName = form.storeName.value;
     const supplierId = form.supplierId.value;
     const upin = form.upin.value;
     const unitPrice = form.unitPrice.value;
@@ -83,16 +101,17 @@ const ArrivalFormPage = () => {
       setInputError('Select a warehouse')
       return;
     }
-    if (storeName === "Pick Store Name" || !storeName) {
-      setInputError('Select a store name')
-      return;
-    }
+
     if (!asinUpcOption) {
       setInputError('Select ASIN or UPC')
       return;
     }
+    if (!storeOption) {
+      setInputError('Select Store')
+      return;
+    }
 
-    if (!date || !asinUpcOption?.label || !storeName || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda || !warehouse) {
+    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda || !warehouse) {
       setInputError('Please fill out all the inputs in order to submit the form')
       return;
     }
@@ -102,7 +121,8 @@ const ArrivalFormPage = () => {
       admin_id: user.admin_id,
       date: date,
       creator_email: user?.email,
-      store_name: storeName,
+      store_name: storeOption?.label,
+      store_id: storeOption?.value,
       asin_upc_code: asinUpcOption.label,
       code_type: asinUpc[0]?.code_type,
       supplier_id: supplierId,
@@ -119,6 +139,7 @@ const ArrivalFormPage = () => {
       if (status === 201) {
         form.reset()
         setAsinUpcOption('')
+        setStoreOption('')
         setProductName('')
         Swal.fire(
           'Submitted',
@@ -159,7 +180,7 @@ const ArrivalFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">ASIN/UPC</label>
-                  <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />
+                  <SearchDropdown option={asinUpcOption} optionData={asinUpcData} placeholder="Select ASIN or UPC" setOption={setAsinUpcOption} />
                 </div>
 
                 <div className="mt-4">
@@ -176,7 +197,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">UPIN</label>
                   <input
-                    value={asinUpcOption && storeName && storeName !== 'Pick Store Name' ? `${storeName}_${asinUpcOption.label}` : ''}
+                    value={asinUpcOption && storeOption?.label ? `${storeOption?.label}_${asinUpcOption.label}` : ''}
                     type="text"
                     placeholder="Enter UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -201,19 +222,7 @@ const ArrivalFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <select
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="storeName"
-                    id="storeName"
-                    onChange={(e) => setStoreName(e.target.value)}
-                  >
-                    <option defaultValue="Pick Store Name">
-                      Pick Store Name
-                    </option>
-                    <option value="Amazon">Amazon</option>
-                    <option value="Daraz">Daraz</option>
-                    <option value="Alibaba">Alibaba</option>
-                  </select>
+                  <SearchDropdown option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                 </div>
 
                 <div className="mt-4">

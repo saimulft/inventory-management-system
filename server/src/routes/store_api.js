@@ -36,6 +36,7 @@ const run = async () => {
 
     // get all stores
     router.get('/get_all_stores', async (req, res) => {
+
         try {
             const id = req.query.id
             const storeType = req.query.storeType
@@ -61,6 +62,25 @@ const run = async () => {
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
+        }
+    });
+
+    router.get('/get_stores_dropdown_data', async (req, res) => {
+
+        const creator_email = req.query.email;
+        try {
+            const allStores = await all_stores_collection.find({ creator_email: creator_email }).toArray()
+            if (allStores) {
+                const data = allStores.map(item => {
+                    return { data: allStores, value: item._id, label: item.store_name }
+                })
+                res.status(200).json({ data: data, message: "successfully stores data" })
+            }
+            else {
+                res.status(204).json({ message: "No content" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in stores data' });
         }
     });
 }

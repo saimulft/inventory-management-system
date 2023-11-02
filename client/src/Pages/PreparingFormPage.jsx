@@ -5,7 +5,7 @@ import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../Components/Shared/ToastMessage";
-import AsinSearchDropdown from "../Utilities/AsinSearchDropdown";
+import SearchDropdown from "../Utilities/SearchDropdown";
 import { useQuery } from "@tanstack/react-query";
 const PreparingFormPage = () => {
   const boxShadowStyle = {
@@ -19,8 +19,8 @@ const PreparingFormPage = () => {
   const [shippingImageError, setShippingImageError] = useState('')
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [storeOption, setStoreOption] = useState(null)
   const [asinUpcOption, setAsinUpcOption] = useState()
-  const [storeName, setStoreName] = useState('')
   const [productName, setProductName] = useState('')
   const { user } = useAuth()
 
@@ -28,8 +28,8 @@ const PreparingFormPage = () => {
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
 
   useEffect(() => {
-    if (storeName && asinUpcOption) {
-      const upin = (`${storeName}_${asinUpcOption.label}`);
+    if (storeOption?.label && asinUpcOption) {
+      const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
 
       axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
         .then(res => {
@@ -42,7 +42,7 @@ const PreparingFormPage = () => {
           }
         }).catch(err => console.log(err))
     }
-  }, [storeName, asinUpcOption]);
+  }, [storeOption?.label, asinUpcOption]);
 
   const { data: asinUpcData = [] } = useQuery({
     queryKey: ['asin_upc_data'],
@@ -59,6 +59,22 @@ const PreparingFormPage = () => {
       }
     }
   })
+  const { data: allStoreData = [] } = useQuery({
+    queryKey: ['get_all_stores_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/store_api/get_stores_dropdown_data?email=${user.email}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -78,8 +94,7 @@ const PreparingFormPage = () => {
     const createdAt = new Date().toISOString();
     const orderID = form.orderID.value
     const courier = form.courier.value
-    const storeName = form.storeName.value
-    const upin = `${storeName}_${asinUpcOption?.label}`
+    const upin = `${storeOption?.label}_${asinUpcOption?.label}`
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
     const warehouse = form.warehouse.value
@@ -88,16 +103,15 @@ const PreparingFormPage = () => {
       setFormError("Missing warehouse")
       return
     }
-
-    if (storeName === 'Pick Store Name' || !storeName) {
-      setFormError("Missing  store name")
+    if (!storeOption?.label) {
+      setFormError("Select  Store")
       return
     }
     if (!productName) {
       setFormError(`No product available under UPIN ${upin}`)
       return
     }
-    if (!date || !asinUpcOption.label || !orderID || !storeName || !upin || !quantity) {
+    if (!date || !asinUpcOption.label || !orderID || !upin || !quantity) {
       setFormError("Missing form field detected")
       return;
     }
@@ -112,7 +126,8 @@ const PreparingFormPage = () => {
       orderID,
       courier,
       productName,
-      storeName,
+      storeName: storeOption?.label,
+      storeId: storeOption?.value,
       codeType: asinUpc && asinUpc[0].code_type,
       upin,
       quantity,
@@ -227,7 +242,7 @@ const PreparingFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500 mb-2">ASIN/UPC</label>
-                  <AsinSearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />
+                  <SearchDropdown option={asinUpcOption} optionData={asinUpcData} setOption={setAsinUpcOption} />
                 </div>
 
                 <div className="mt-4">
@@ -322,26 +337,7 @@ const PreparingFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <select
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="storeName"
-                    id="storeName"
-                    onChange={(e) => {
-                      if (e.target.value === 'Pick Store Name') {
-                        setStoreName('')
-                      }
-                      else {
-                        setStoreName(e.target.value)
-                      }
-                    }}
-                  >
-                    <option defaultValue="Pick Store Name">
-                      Pick Store Name
-                    </option>
-                    <option value="Amazon">Amazon</option>
-                    <option value="Daraz">Daraz</option>
-                    <option value="Alibaba">Alibaba</option>
-                  </select>
+                  <SearchDropdown option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                 </div>
 
 
@@ -364,7 +360,7 @@ const PreparingFormPage = () => {
                   <input
                     required
                     readOnly
-                    value={storeName && asinUpcOption && `${storeName}_${asinUpcOption.label}`}
+                    value={storeOption?.label && asinUpcOption && `${storeOption?.label}_${asinUpcOption.label}`}
                     type="text"
                     placeholder="Enter UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
