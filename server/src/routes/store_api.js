@@ -83,10 +83,22 @@ const run = async () => {
         }
     });
 
-    router.get('/get_stores_dropdown_data', async (req, res) => {
+    router.post('/get_stores_dropdown_data', async (req, res) => {
         try {
-            const creator_email = req.query.email;
-            const allStores = await all_stores_collection.find({ creator_email: creator_email }).sort({date : -1}).toArray()
+            const user = req.body.user;
+            const role = user.role;
+
+            let query;
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+                query = {_id: new ObjectId(user.store_id) }
+            }
+
+            const allStores = await all_stores_collection.find(query).sort({ date: -1 }).toArray()
             if (allStores) {
                 const data = allStores.map(item => {
                     return { data: allStores, value: item._id, label: item.store_name }

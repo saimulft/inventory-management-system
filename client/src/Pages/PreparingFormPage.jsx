@@ -48,7 +48,7 @@ const PreparingFormPage = () => {
     queryKey: ['asin_upc_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
+        const res = await axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', {user})
         if (res.status === 200) {
           return res.data.data;
         }
@@ -63,7 +63,7 @@ const PreparingFormPage = () => {
     queryKey: ['get_all_stores_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/store_api/get_stores_dropdown_data?email=${user.email}`)
+        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', {user})
         if (res.status === 200) {
           return res.data.data;
         }

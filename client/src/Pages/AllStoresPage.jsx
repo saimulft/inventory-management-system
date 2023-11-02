@@ -23,6 +23,9 @@ export default function AllStoresPage() {
           setIsLoading(false)
           setAllStoreData(res.data.data)
         }
+        if(res.status === 204){
+          setIsLoading(false)
+        }
       })
       .catch(error => console.log(error))
   }, [storeType, user.admin_id])

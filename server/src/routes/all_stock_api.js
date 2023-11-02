@@ -7,11 +7,26 @@ const run = async () => {
     const all_stock_collection = db.collection("all_stock")
 
     //get all stock data
-    router.get('/get_all_stock_data', async (req, res) => {
+    router.post('/get_all_stock_data', async (req, res) => {
         try {
-            // const creator_email = req.query.email;
-            const admin_id = req.query.admin_id;
-            const result = await all_stock_collection.find({ admin_id: admin_id }).sort({date : -1}).toArray()
+            const user = req.body.user;
+            const role = user.role;
+
+            let query;
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+                query = { store_id: user.store_id }
+            }
+
+            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                query = { warehouse_id: user.warehouse_id }
+            }
+
+            const result = await all_stock_collection.find(query).sort({date : -1}).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got all stock data" })
             }
@@ -24,13 +39,23 @@ const run = async () => {
     })
 
     // get stock data by UPIN
-    router.get('/all_stock_by_upin', async (req, res) => {
-        const upin = req.query.upin
-        
+    router.post('/all_stock_by_upin', async (req, res) => {
         try {
-            // const creator_email = req.query.email;
+            const upin = req.query.upin
+            const user = req.body.user;
+            const role = user.role;
 
-            const result = await all_stock_collection.findOne({ upin: upin })
+            let query;
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id, upin: upin }
+            }
+
+            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                query = { warehouse_id: user.warehouse_id, upin: upin }
+            }
+
+            const result = await all_stock_collection.findOne(query)
             
             if (result) {
                 res.status(200).json({ data: result, message: "Successfully got all stock data" })

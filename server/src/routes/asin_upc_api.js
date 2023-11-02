@@ -98,10 +98,24 @@ const run = async () => {
 
 
     //   get asin or upc by email
-    router.get('/get_asin_upc_by_email', async (req, res) => {
-        const creator_email = req.query.email;
+    router.post('/get_asin_upc_dropdown_data', async (req, res) => {
         try {
-            const asinUpcData = await asin_upc_collection.find({ creator_email: creator_email }).toArray()
+            const user = req.body.user;
+            const role = user.role;
+
+            let query;
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+                query = {creator_email: user.email}
+            }
+
+            //todo: warehouse ki dekhbo.. r store manager er khetre store id diye query korte hbe
+
+            const asinUpcData = await asin_upc_collection.find(query).sort({ date: -1 }).toArray()
             if (asinUpcData) {
                 const data = asinUpcData.map(item => {
                     return { data: asinUpcData, value: item._id, label: item.asin_upc_code }
@@ -115,6 +129,7 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error in asin_upc' });
         }
     });
+
     //   get asin or upc by id
     router.get('/get_asin_upc_by_id', async (req, res) => {
         const id = req.query.id;

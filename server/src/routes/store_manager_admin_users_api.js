@@ -33,6 +33,7 @@ const run = async () => {
                 const store_manager_admin_user_data = {
                     admin_id: req.body.admin_id,
                     store_manager_admin_id: result.insertedId.toString(),
+                    store_id: req.body.store_id,
                     full_name: req.body.full_name,
                     email: req.body.email,
                     creator_email: req.body.creator_email,

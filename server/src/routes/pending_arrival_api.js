@@ -45,11 +45,26 @@ const run = async () => {
     })
 
     //get all pending arrival data
-    router.get('/get_all_pending_arrival_data', async (req, res) => {
+    router.post('/get_all_pending_arrival_data', async (req, res) => {
         try {
-            // const creator_email = req.query.email;
-            const admin_id = req.query.admin_id;
-            const result = await pending_arrival_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()
+            const user = req.body.user;
+            const role = user.role;
+
+            let query;
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+                query = { store_id: user.store_id }
+            }
+
+            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                query = { warehouse_id: user.warehouse_id }
+            }
+
+            const result = await pending_arrival_collection.find(query).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got pending arrival data" })
             }

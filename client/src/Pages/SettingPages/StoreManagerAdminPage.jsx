@@ -11,17 +11,18 @@ export default function StoreManagerAdminPage() {
   const { user } = useAuth();
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-  const [warehouseOption, setWarehouseOption] = useState(null)
+  const [storeOption, setStoreOption] = useState(null)
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (storeManagerAdmin) => {
       return axios.post('/api/v1/store_manager_admin_api/create_store_manager_admin', storeManagerAdmin)
     },
   })
-  const { data: warehouseData = [] } = useQuery({
-    queryKey: ['get_warehouse_data'],
+  
+  const { data: allStoreData = [] } = useQuery({
+    queryKey: ['get_all_stores_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`)
+        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', {user})
         if (res.status === 200) {
           return res.data.data;
         }
@@ -32,6 +33,7 @@ export default function StoreManagerAdminPage() {
       }
     }
   })
+
   const handleCreateStoreManagerAdmin = async (event) => {
     event.preventDefault()
     setErrorMessage('')
@@ -51,7 +53,7 @@ export default function StoreManagerAdminPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Store Manager Admin' }
+    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), store_id: storeOption?.value, full_name: name, email, username, password, role: 'Store Manager Admin' }
 
     try {
       const { status } = await mutateAsync(storeManagerAdmin)
@@ -136,7 +138,7 @@ export default function StoreManagerAdminPage() {
             </div>
             <div className="mt-3">
               <label className="text-slate-500">Select Store</label>
-              <SearchDropdown option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
+              <SearchDropdown option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
             </div>
           </div>
         </div>

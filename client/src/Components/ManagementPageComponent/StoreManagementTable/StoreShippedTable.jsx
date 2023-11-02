@@ -425,7 +425,7 @@ export default function StoreShippedTable() {
               </p>
               <p className="mt-2">
                 <span className="font-bold">ASIN: </span>
-                <span>{singleData.code}</span>
+                <span>{singleData.asin_upc_code}</span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Sold Qnt: </span>

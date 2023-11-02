@@ -34,11 +34,12 @@ export default function StorePendingArrivalTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['pending_arrival_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/pending_arrival_api/get_all_pending_arrival_data?admin_id=${user?.admin_id}`)
+        const res = await axios.post('/api/v1/pending_arrival_api/get_all_pending_arrival_data', {user})
         if (res.status === 200) {
           return res.data.data;
         }

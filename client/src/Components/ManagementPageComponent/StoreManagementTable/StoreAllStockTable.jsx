@@ -17,7 +17,7 @@ export default function StoreAllStockTable() {
     queryKey: ['all_stock_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/all_stock_api/get_all_stock_data?admin_id=${user?.admin_id}`)
+        const res = await axios.post('/api/v1/all_stock_api/get_all_stock_data', {user})
         if (res.status === 200) {
           return res.data.data;
         }

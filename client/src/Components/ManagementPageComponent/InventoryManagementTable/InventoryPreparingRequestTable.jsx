@@ -11,6 +11,7 @@ import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import { LiaShippingFastSolid } from "react-icons/lia";
+import { FaSpinner } from "react-icons/fa";
 
 
 export default function InventoryPreparingRequestTable() {
@@ -27,12 +28,13 @@ export default function InventoryPreparingRequestTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+  const [loading, setLoading] = useState(false)
 
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data?id=${user?.admin_id}`)
+        const res = await axios.post('http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -44,9 +46,22 @@ export default function InventoryPreparingRequestTable() {
   })
 
   const handleRTS = async (_id, quantity, upin) => {
-    const res = await axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
-    if (res.status === 200) {
-      if (parseInt(quantity) > parseInt(res?.data?.data?.stock)) {
+    try {
+      setLoading(true)
+      const res = await axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
+      if (res.status === 200) {
+        setLoading(false)
+        if (parseInt(quantity) > parseInt(res?.data?.data?.stock)) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: `Product is not available in stock. Please check product quantity under UPIN ${upin}`,
+          })
+          return
+        }
+      }
+      else if (res.status === 204) {
+        setLoading(false)
         Swal.fire({
           icon: 'error',
           title: 'Oops...',
@@ -54,34 +69,36 @@ export default function InventoryPreparingRequestTable() {
         })
         return
       }
+
+      if (parseInt(quantity) <= parseInt(res?.data?.data?.stock)) {
+        Swal.fire({
+          title: 'Confirm ready to ship?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#8633FF',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes'
+        }).then((result) => {
+          if (result.isConfirmed) {
+
+            axios.post(`/api/v1/ready_to_ship_api/ready_to_ship?id=${_id}`)
+              .then(res => {
+                if (res.status === 201) {
+                  Swal.fire(
+                    'Shipped!',
+                    'Product has been Shipped.',
+                    'success'
+                  )
+                  refetch()
+                }
+              }).catch(err => console.log(err))
+          }
+        })
+      }
+    } catch (error) {
+      setLoading(false)
+      console.log(error)
     }
-
-    if (parseInt(quantity) <= parseInt(res?.data?.data?.stock)) {
-      Swal.fire({
-        title: 'Confirm ready to ship?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#8633FF',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Yes'
-      }).then((result) => {
-        if (result.isConfirmed) {
-
-          axios.post(`/api/v1/ready_to_ship_api/ready_to_ship?id=${_id}`)
-            .then(res => {
-              if (res.status === 201) {
-                Swal.fire(
-                  'Shipped!',
-                  'Product has been Shipped.',
-                  'success'
-                )
-                refetch()
-              }
-            }).catch(err => console.log(err))
-        }
-      })
-    }
-
   }
 
   const handleOOS = (_id) => {
@@ -184,7 +201,7 @@ export default function InventoryPreparingRequestTable() {
 
   }
 
-    // pagination code 
+  // pagination code 
   const generatePageNumbers = (currentPage, pageCount, maxVisiblePages) => {
     if (pageCount <= maxVisiblePages) {
       // If the total page count is less than or equal to the maximum visible pages, show all pages.
@@ -400,17 +417,17 @@ export default function InventoryPreparingRequestTable() {
                       <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                       <td>{d.notes}</td>
                       <td className="flex gap-2">
-
-                        <button onClick={() => {
+                        <button disabled={loading} onClick={() => {
                           handleRTS(d._id, d.quantity, d.upin)
 
                         }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
-                          <LiaShippingFastSolid />
+                          {
+                            loading ? <FaSpinner size={14} className="animate-spin" /> : <LiaShippingFastSolid />
+                          }
                           <p>RTS</p>
                         </button>
 
-
-                        <button onClick={() => {
+                        <button disabled={loading} onClick={() => {
                           handleOOS(d._id)
                         }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                           <LiaShippingFastSolid />
@@ -445,17 +462,17 @@ export default function InventoryPreparingRequestTable() {
                         <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
                         <td>{d.notes}</td>
                         <td className="flex gap-2">
-
-                          <button onClick={() => {
+                          <button disabled={loading} onClick={() => {
                             handleRTS(d._id, d.quantity, d.upin)
 
                           }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
-                            <LiaShippingFastSolid />
+                            {
+                              loading ? <FaSpinner size={14} className="animate-spin" /> : <LiaShippingFastSolid />
+                            }
                             <p>RTS</p>
                           </button>
-
-
-                          <button onClick={() => {
+                          
+                          <button disabled={loading} onClick={() => {
                             handleOOS(d._id)
                           }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
                             <LiaShippingFastSolid />

@@ -58,7 +58,7 @@ const run = async () => {
                 admin_id: req.body.adminId,
                 creator_email: req.body.creatorEmail,
                 date: req.body.date,
-                creted_at: req.body.createdAt,
+                created_at: req.body.createdAt,
                 asin_upc_code: req.body.asin_upc_code,
                 order_id: req.body.orderID,
                 courier: req.body.courier === "Select courier" ? null : req.body.courier,
@@ -142,12 +142,26 @@ const run = async () => {
 
 
     // get all preparing request data
-
-    router.get('/get_all_preparing_request_data', async (req, res) => {
-        const id = req.query.id
-
+    router.post('/get_all_preparing_request_data', async (req, res) => {
         try {
-            const data = await preparing_form_collection.find({ admin_id: id }).sort({ creted_at: -1 }).toArray()
+            const user = req.body.user;
+            const role = user.role;
+
+            let query;
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+                query = { store_id: user.store_id }
+            }
+
+            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                query = { warehouse_id: user.warehouse_id }
+            }
+
+            const data = await preparing_form_collection.find(query).sort({ created_at: -1 }).toArray()
 
             if (data) {
                 res.status(200).json({ data: data })
