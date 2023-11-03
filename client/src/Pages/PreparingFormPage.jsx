@@ -31,7 +31,7 @@ const PreparingFormPage = () => {
     if (storeOption?.label && asinUpcOption) {
       const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
 
-      axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
+      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`,{user})
         .then(res => {
           if (res.status === 200) {
             setProductName(res.data.data.product_name)
@@ -42,7 +42,7 @@ const PreparingFormPage = () => {
           }
         }).catch(err => console.log(err))
     }
-  }, [storeOption?.label, asinUpcOption]);
+  }, [storeOption?.label, asinUpcOption,user]);
 
   const { data: asinUpcData = [] } = useQuery({
     queryKey: ['asin_upc_data'],

@@ -33,7 +33,7 @@ export default function InventoryOutOfStockTable() {
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/out_of_stock_api/get_all_OOS_data?admin_id=${user?.admin_id}`)
+        const res = await axios.post(`/api/v1/out_of_stock_api/get_all_OOS_data`,{user})
         if (res.status === 200) {
           return res.data.data;
         }

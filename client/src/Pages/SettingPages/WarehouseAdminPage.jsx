@@ -29,7 +29,6 @@ export default function WareHouseAdminPage() {
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
     const username = form.username.value;
-
     const warehouseName = form.warehouseName.value;
     const address = form.address.value;
     const city = form.city.value;
@@ -60,7 +59,6 @@ export default function WareHouseAdminPage() {
     } catch (error) {
       setSuccessMessage('')
       setErrorMessage('Failed to create new warehouse admin!')
-      console.log(error)
     }
   }
 

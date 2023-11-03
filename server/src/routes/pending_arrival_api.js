@@ -57,7 +57,8 @@ const run = async () => {
             }
 
             else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
-                query = { store_id: user.store_id }
+                const store_access_ids = req.body.user.store_access_ids; 
+                query = { store_id: { $in: store_access_ids.map(id => id) }};
             }
 
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {

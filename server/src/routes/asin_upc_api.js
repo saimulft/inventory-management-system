@@ -37,6 +37,7 @@ const run = async () => {
             res.status(500).json({ message: "Multer error" })
         }
     })
+    
     router.put('/update_asin_upc', upload.single('file'), async (req, res) => {
 
         const id = req.query.id
@@ -60,11 +61,8 @@ const run = async () => {
         }
     })
 
-
     // insert a new asin or upc
     router.post('/insert_asin_upc', async (req, res) => {
-
-    
 
         const data = {
             admin_id: req.body.adminId,
@@ -78,8 +76,6 @@ const run = async () => {
             code_type: req.body.codeType
         }
         try {
-
-
             const result = await asin_upc_collection.insertOne(data)
 
             if (result.acknowledged) {
@@ -96,26 +92,26 @@ const run = async () => {
 
     })
 
-
     //   get asin or upc by email
     router.post('/get_asin_upc_dropdown_data', async (req, res) => {
         try {
             const user = req.body.user;
             const role = user.role;
 
-            let query;
+            // let query;
 
-            if (role === 'Admin' || role === 'Admin VA') {
-                query = { admin_id: user.admin_id }
-            }
+            // if (role === 'Admin' || role === 'Admin VA') {
+            //     query = { admin_id: user.admin_id }
+            // }
 
-            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
-                query = {creator_email: user.email}
-            }
+            // else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+            //     const store_access_ids = req.body.user.store_access_ids;
+            //     query = { _id: { $in: store_access_ids.map(id => new ObjectId(id)) } };
+            // }
 
             //todo: warehouse ki dekhbo.. r store manager er khetre store id diye query korte hbe
 
-            const asinUpcData = await asin_upc_collection.find(query).sort({ date: -1 }).toArray()
+            const asinUpcData = await asin_upc_collection.find({ admin_id: user.admin_id }).sort({ date: -1 }).toArray()
             if (asinUpcData) {
                 const data = asinUpcData.map(item => {
                     return { data: asinUpcData, value: item._id, label: item.asin_upc_code }
@@ -150,8 +146,8 @@ const run = async () => {
     // get all asin upc for admin
     router.get('/get_all_asin_upc', async (req, res) => {
 
-        const id = req.query.id
         try {
+            const id = req.query.id
             const asinUpcData = await asin_upc_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
             if (asinUpcData) {
                 res.status(200).json({ data: asinUpcData, message: "successfully all get asin_upc" })
@@ -163,7 +159,6 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
         }
     });
-
 
     router.delete('/delete_asin_upc', async (req, res) => {
         try {

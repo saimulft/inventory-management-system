@@ -37,10 +37,27 @@ const run = async () => {
         }
     });
 
-    router.get('/get_all_shipped_data', async (req, res) => {
+    router.post('/get_all_shipped_data', async (req, res) => {
         try {
-            const admin_id = req.query.admin_id;
-            const data = await shipped_data_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()
+            const user = req.body.user;
+            const role = user.role;
+
+            let query;
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+
+                const store_access_ids = req.body.user.store_access_ids;
+                query = { store_id: { $in: store_access_ids.map(id => id) } };
+            }
+
+            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                query = { warehouse_id: user.warehouse_id }
+            }
+            const data = await shipped_data_collection.find(query).sort({ date: -1 }).toArray()
             if (data) {
                 res.status(200).json({ data: data })
             }
@@ -79,7 +96,7 @@ const run = async () => {
                 const updateShippedData = {
                     quantity: quantity
                 }
-                const updatedResult = await shipped_data_collection.updateOne({ _id: new ObjectId(id) }, {$set: updateShippedData})
+                const updatedResult = await shipped_data_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateShippedData })
                 if (!updatedResult.modifiedCount) {
                     return res.status(500).json({ message: "Error to update shipped data" })
                 }

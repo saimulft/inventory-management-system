@@ -20,11 +20,11 @@ const ArrivalFormPage = () => {
   const asinId = asinUpcOption?.value
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
 
-
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
+
       const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
-      axios.get(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`)
+      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`,{user})
         .then(res => {
           if (res.status === 200) {
             setProductName(res.data.data.product_name)
@@ -36,7 +36,7 @@ const ArrivalFormPage = () => {
           console.log(error)
         })
     }
-  }, [storeOption?.label, asinUpcOption, asinUpc]);
+  }, [storeOption?.label, asinUpcOption, asinUpc,user]);
 
   const { data: asinUpcData = [], } = useQuery({
     queryKey: ['asin_upc_data'],
@@ -184,12 +184,12 @@ const ArrivalFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Warehouse</label>
-                  <SearchDropdown option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
+                  <SearchDropdown isMulti={false} option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">ASIN/UPC</label>
-                  <SearchDropdown option={asinUpcOption} optionData={asinUpcData} placeholder="Select ASIN or UPC" setOption={setAsinUpcOption} />
+                  <SearchDropdown isMulti={false} option={asinUpcOption} optionData={asinUpcData} placeholder="Select ASIN or UPC" setOption={setAsinUpcOption} />
                 </div>
 
                 <div className="mt-4">
@@ -231,7 +231,7 @@ const ArrivalFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <SearchDropdown option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                  <SearchDropdown isMulti={false} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                 </div>
 
                 <div className="mt-4">
@@ -241,10 +241,10 @@ const ArrivalFormPage = () => {
                     readOnly
                     value={asinUpc && asinUpc[0].code_type}
 
-                    placeholder="Enter product name"
+                    placeholder="Code type"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="productName"
-                    name="productName"
+                    id="codeType"
+                    name="codeType"
                   />
                 </div>
 

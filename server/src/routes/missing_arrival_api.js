@@ -9,13 +9,29 @@ const run = async () => {
     const all_stock_collection = db.collection("all_stock")
 
     //get all missing arrival data
-    router.get('/get_all_missing_arrival_data', async (req, res) => {
+    router.post('/get_all_missing_arrival_data', async (req, res) => {
         try {
-            // const creator_email = req.query.email;
-            const admin_id = req.query.admin_id;
+            const user = req.body.user
+            const role = user.role
             const missingStatus = req.query.status;
+            let query;
 
-            const result = await missing_arrival_collection.find({ admin_id: admin_id, missing_status: missingStatus }).sort({ date: -1 }).toArray()
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id, missing_status: missingStatus }
+            }
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+
+                const store_access_ids = req.body.user.store_access_ids;
+                query = { store_id: { $in: store_access_ids.map(id => id) }, missing_status: missingStatus };
+            }
+
+            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                query = { warehouse_id: user.warehouse_id, missing_status: missingStatus }
+            }
+
+
+
+            const result = await missing_arrival_collection.find(query).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got missing arrival data" })
             }
@@ -72,8 +88,8 @@ const run = async () => {
                     const newPrice = parseFloat(result.unit_price)
                     const avgUnitPrice = (oldPrice + newPrice) / 2;
 
-                    const remainingPrice = stock * avgUnitPrice 
-                    
+                    const remainingPrice = stock * avgUnitPrice
+
                     const updateStockdata = {
                         received_quantity: quantity,
                         unit_price: avgUnitPrice.toFixed(2),

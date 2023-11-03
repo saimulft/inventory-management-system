@@ -19,14 +19,16 @@ const run = async () => {
             }
 
             else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
-                query = { store_id: user.store_id }
+
+                const store_access_ids = req.body.user.store_access_ids; // Assuming store_access_ids is an array of IDs
+                query = { store_id: { $in: store_access_ids.map(id => id) } };
             }
 
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
                 query = { warehouse_id: user.warehouse_id }
             }
 
-            const result = await all_stock_collection.find(query).sort({date : -1}).toArray()
+            const result = await all_stock_collection.find(query).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got all stock data" })
             }
@@ -50,17 +52,21 @@ const run = async () => {
             if (role === 'Admin' || role === 'Admin VA') {
                 query = { admin_id: user.admin_id, upin: upin }
             }
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+
+                const store_access_ids = req.body.user.store_access_ids;
+                query = { store_id: { $in: store_access_ids.map(id => id) }, upin: upin };
+            }
 
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
                 query = { warehouse_id: user.warehouse_id, upin: upin }
             }
-
             const result = await all_stock_collection.findOne(query)
-            
+
             if (result) {
                 res.status(200).json({ data: result, message: "Successfully got all stock data" })
             }
-            else{
+            else {
                 res.status(204).json({ message: "No content" })
             }
         } catch (error) {

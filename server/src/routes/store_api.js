@@ -87,7 +87,6 @@ const run = async () => {
         try {
             const user = req.body.user;
             const role = user.role;
-
             let query;
 
             if (role === 'Admin' || role === 'Admin VA') {
@@ -95,10 +94,13 @@ const run = async () => {
             }
 
             else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
-                query = {_id: new ObjectId(user.store_id) }
+
+                const store_access_ids = req.body.user.store_access_ids; // Assuming store_access_ids is an array of IDs
+                query = { _id: { $in: store_access_ids.map(id => new ObjectId(id)) } };
             }
 
             const allStores = await all_stores_collection.find(query).sort({ date: -1 }).toArray()
+
             if (allStores) {
                 const data = allStores.map(item => {
                     return { data: allStores, value: item._id, label: item.store_name }

@@ -1,14 +1,15 @@
 import Select from 'react-select'
 
-const SearchDropdown = ({ setOption, option, optionData, placeholder }) => {
+const SearchDropdown = ({ setOption, option, optionData, placeholder, isMulti }) => {
 
     return (
         <Select
-        className='shadow-lg'
+            className='shadow-lg'
             options={optionData}
             value={option}
             onChange={setOption}
             placeholder={placeholder}
+            isMulti={isMulti}
         />
     )
 }

@@ -30,7 +30,7 @@ export default function StoreShippedTable() {
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/shipped_api/get_all_shipped_data?admin_id=${user?.admin_id}`)
+        const res = await axios.post(`/api/v1/shipped_api/get_all_shipped_data`,{user})
         if (res.status === 200) {
           return res.data.data;
         }

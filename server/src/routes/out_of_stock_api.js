@@ -36,14 +36,27 @@ const run = async () => {
     })
 
     //get out of stock data
-    router.get('/get_all_OOS_data', async (req, res) => {
+    router.post('/get_all_OOS_data', async (req, res) => {
         try {
-            const admin_id = req.query.admin_id;
-            const data = await out_of_stock_collection.find({ admin_id: admin_id }).sort({date: -1}).toArray()
+            const user = req.body.user
+            const role = user.role
+            let query;
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+
+                const store_access_ids = req.body.user.store_access_ids;
+                query = { store_id: { $in: store_access_ids.map(id => id) } };
+            }
+
+            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                query = { warehouse_id: user.warehouse_id }
+            }
+            const data = await out_of_stock_collection.find(query).sort({ date: -1 }).toArray()
 
             if (data) {
                 res.status(200).json({ data: data })
-
             }
             else {
                 res.status(204).json({ message: "No content" })

@@ -17,12 +17,12 @@ export default function StoreManagerAdminPage() {
       return axios.post('/api/v1/store_manager_admin_api/create_store_manager_admin', storeManagerAdmin)
     },
   })
-  
+
   const { data: allStoreData = [] } = useQuery({
     queryKey: ['get_all_stores_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', {user})
+        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -34,6 +34,9 @@ export default function StoreManagerAdminPage() {
     }
   })
 
+  const storeIDS = []
+  storeOption?.map(store => storeIDS.push(store.value))
+  
   const handleCreateStoreManagerAdmin = async (event) => {
     event.preventDefault()
     setErrorMessage('')
@@ -45,6 +48,9 @@ export default function StoreManagerAdminPage() {
     const confirmPassword = form.confirmPassword.value;
     const username = form.username.value;
 
+    if (!storeOption.length) {
+      return setErrorMessage('Please select store')
+    }
     if (password !== confirmPassword) {
       return setErrorMessage('Password and confirm password must be same!')
     }
@@ -53,12 +59,13 @@ export default function StoreManagerAdminPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), store_id: storeOption?.value, full_name: name, email, username, password, role: 'Store Manager Admin' }
+    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager Admin' }
 
     try {
       const { status } = await mutateAsync(storeManagerAdmin)
       if (status === 201) {
         form.reset()
+        setStoreOption(null)
         setSuccessMessage(`Successfully created a new store manager admin and sent an invitation mail to ${email} with login credentials`)
       }
       else if (status === 200) {
@@ -138,7 +145,7 @@ export default function StoreManagerAdminPage() {
             </div>
             <div className="mt-3">
               <label className="text-slate-500">Select Store</label>
-              <SearchDropdown option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+              <SearchDropdown isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
             </div>
           </div>
         </div>
