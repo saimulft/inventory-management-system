@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 import useAuth from "../hooks/useAuth";
 import { MdErrorOutline } from "react-icons/md";
 import Compressor from "compressorjs"
+import useGlobal from "../hooks/useGlobal";
 
 const AddASINForm = () => {
   const boxShadowStyle = {
@@ -19,6 +20,7 @@ const AddASINForm = () => {
   const [inputError, setInputError] = useState('')
 
   const { user } = useAuth()
+  const {setCountsRefetch} = useGlobal()
 
   // handler function for adding ASIN or UPC
   const handleAsinUpcForm = async (event) => {
@@ -48,6 +50,7 @@ const AddASINForm = () => {
             axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
               .then(res => {
                 if (res.status === 201) {
+                  setCountsRefetch(true)
                   setImageSrc(null)
                   setImageFile(null)
                   form.reset()
@@ -136,6 +139,7 @@ const AddASINForm = () => {
 
               .then(res => {
                 if (res.status === 201) {
+                  setCountsRefetch(true)
                   form.reset()
                   setImageSrc(null)
                   setImageFile(null)
@@ -179,6 +183,7 @@ const AddASINForm = () => {
 
   return (
     <div className="mt-20 rounded-lg h-screen">
+      <button onClick={()=> setCountsRefetch(true)}>Click</button>
       <div
         style={boxShadowStyle}
         className="border border-[#8633FF] shadow-lg  w-fit m-auto rounded-xl"

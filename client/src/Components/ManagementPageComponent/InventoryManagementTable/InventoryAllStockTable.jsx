@@ -13,6 +13,7 @@ export default function InventoryAllStockTable() {
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
+
   const { data = [], isLoading } = useQuery({
     queryKey: ['all_stock_data'],
     queryFn: async () => {
@@ -45,7 +46,6 @@ export default function InventoryAllStockTable() {
     }
     setSearchResults(filteredData)
   }
-
 
   function generatePageNumbers(currentPage, pageCount, maxVisiblePages) {
     if (pageCount <= maxVisiblePages) {

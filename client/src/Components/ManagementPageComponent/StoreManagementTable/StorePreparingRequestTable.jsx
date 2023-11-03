@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import useAuth from "../../../hooks/useAuth";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import { format } from "date-fns"
 import Swal from "sweetalert2";
@@ -14,10 +13,11 @@ import FileDownload from "../../Shared/FileDownload";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
+import useGlobal from "../../../hooks/useGlobal";
 
 
 export default function StorePreparingRequestTable() {
-  const { isSidebarOpen } = useContext(GlobalContext);
+  const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const [filterDays, setFilterDays] = useState('')
   const [singleData, setSingleData] = useState()
   const [loading, setLoading] = useState(false)
@@ -44,6 +44,7 @@ export default function StorePreparingRequestTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
@@ -58,6 +59,7 @@ export default function StorePreparingRequestTable() {
       }
     }
   })
+
   useEffect(() => {
     axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', {user})
       .then(res => {
@@ -84,17 +86,19 @@ export default function StorePreparingRequestTable() {
         axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data`, { data: deleteData })
           .then(res => {
             if (res.status === 200) {
+              refetch()
+              setCountsRefetch(true)
               Swal.fire(
                 'Deleted!',
                 'Data has been deleted.',
                 'success'
               )
-              refetch()
             }
           }).catch(err => console.log(err))
       }
     })
   }
+
   const handleUpdateRequestForm = (event) => {
     setSuccessMessage('')
     event.preventDefault()
@@ -139,6 +143,7 @@ export default function StorePreparingRequestTable() {
           setLoading(false)
           setSuccessMessage("Data Updated")
           refetch()
+          setCountsRefetch(true)
           setTimeout(() => {
             setSuccessMessage("")
           }, 1000);

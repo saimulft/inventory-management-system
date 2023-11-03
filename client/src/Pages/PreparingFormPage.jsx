@@ -7,6 +7,7 @@ import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../Components/Shared/ToastMessage";
 import SearchDropdown from "../Utilities/SearchDropdown";
 import { useQuery } from "@tanstack/react-query";
+import useGlobal from "../hooks/useGlobal";
 const PreparingFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
@@ -24,6 +25,7 @@ const PreparingFormPage = () => {
   const [asinUpcOption, setAsinUpcOption] = useState()
   const [productName, setProductName] = useState('')
   const { user } = useAuth()
+  const {setCountsRefetch} = useGlobal()
   const asinId = asinUpcOption?.value
   const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
 
@@ -96,7 +98,6 @@ const PreparingFormPage = () => {
       event.preventDefault();
     }
   };
-
 
   const hadnlePreparingForm = (event) => {
     setInvoiceImageError('')
@@ -173,6 +174,7 @@ const PreparingFormPage = () => {
     })
       .then(res => {
         if (res.status === 201) {
+          setCountsRefetch(true)
           Swal.fire(
             'Added',
             'Preparing form request has been added.',
@@ -199,6 +201,7 @@ const PreparingFormPage = () => {
 
       })
   }
+
   const handleInvoiceImage = (e) => {
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
@@ -214,6 +217,7 @@ const PreparingFormPage = () => {
       }
     }
   }
+
   const handleShippingImage = (e) => {
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
@@ -268,7 +272,7 @@ const PreparingFormPage = () => {
                     value={productName}
                     required
                     placeholder="Enter product name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
                     id="productName"
                     name="productName"
                   />
@@ -365,8 +369,8 @@ const PreparingFormPage = () => {
 
                     placeholder="Enter product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="productName"
-                    name="productName"
+                    id="code"
+                    name="code"
                   />
                 </div>
 

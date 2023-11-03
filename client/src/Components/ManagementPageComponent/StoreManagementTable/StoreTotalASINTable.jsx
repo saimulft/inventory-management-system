@@ -1,6 +1,6 @@
 import axios from "axios";
 import { format } from "date-fns";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { AiOutlineCloudUpload, AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import useAuth from "../../../hooks/useAuth";
@@ -10,10 +10,10 @@ import Swal from "sweetalert2";
 import Compressor from "compressorjs";
 import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../../Shared/ToastMessage";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
 import Loading from "../../Shared/Loading";
 import { DateRange } from 'react-date-range';
 import ReactPaginate from "react-paginate";
+import useGlobal from "../../../hooks/useGlobal";
 
 export default function InventoryTotalASINTable() {
   const [photoUploadType, setPhotoUploadType] = useState(null);
@@ -24,7 +24,7 @@ export default function InventoryTotalASINTable() {
   const [loading, setLoding] = useState(false)
   const [success, setSuccess] = useState()
   const { user } = useAuth()
-  const { isSidebarOpen } = useContext(GlobalContext);
+  const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const [filterDays, setFilterDays] = useState('')
   const [searchText, setSearchText] = useState('');
   const [searchError, setSearchError] = useState('');
@@ -36,6 +36,7 @@ export default function InventoryTotalASINTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
@@ -74,7 +75,6 @@ export default function InventoryTotalASINTable() {
     }
 
   }
-
 
   const handleDateSearch = (day) => {
     setSearchError("")
@@ -153,6 +153,7 @@ export default function InventoryTotalASINTable() {
                 'success'
               )
               refetch()
+              setCountsRefetch(true)
             }
           }).catch(err => console.log(err))
       }
@@ -183,6 +184,7 @@ export default function InventoryTotalASINTable() {
                   form.reset()
                   setLoding(false)
                   refetch()
+                  setCountsRefetch(true)
                   setSuccess("Updated")
                   setTimeout(() => {
                     setSuccess("")

@@ -1,7 +1,6 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import useAuth from "../../../hooks/useAuth";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import { format } from "date-fns"
 import Swal from "sweetalert2";
@@ -12,10 +11,11 @@ import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { FaSpinner } from "react-icons/fa";
+import useGlobal from "../../../hooks/useGlobal";
 
 
 export default function InventoryPreparingRequestTable() {
-  const { isSidebarOpen } = useContext(GlobalContext);
+  const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const [filterDays, setFilterDays] = useState('')
   const { user } = useAuth()
   const [searchText, setSearchText] = useState('');
@@ -90,6 +90,7 @@ export default function InventoryPreparingRequestTable() {
                     'success'
                   )
                   refetch()
+                  setCountsRefetch(true)
                 }
               }).catch(err => console.log(err))
           }
@@ -120,6 +121,7 @@ export default function InventoryPreparingRequestTable() {
                 'success'
               )
               refetch()
+              setCountsRefetch(true)
             }
           }).catch(err => console.log(err))
       }

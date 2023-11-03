@@ -1,6 +1,5 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
@@ -13,6 +12,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
+import useGlobal from "../../../hooks/useGlobal";
 
 export default function StorePendingArrivalTable() {
   const [singleData, setSingleData] = useState({})
@@ -21,7 +21,7 @@ export default function StorePendingArrivalTable() {
   const [errorMessage, setErrorMessage] = useState('')
   const [loading, setLoading] = useState()
   const { user } = useAuth()
-  const { isSidebarOpen } = useContext(GlobalContext);
+  const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const [filterDays, setFilterDays] = useState('')
   const [searchText, setSearchText] = useState('');
@@ -130,8 +130,6 @@ export default function StorePendingArrivalTable() {
     setSearchResults(filteredDateResults);
   }
 
-
-
   const handleDelete = (_id) => {
     Swal.fire({
       title: 'Are you sure?',
@@ -147,6 +145,7 @@ export default function StorePendingArrivalTable() {
           .then(res => {
             if (res.status === 200) {
               refetch()
+              setCountsRefetch(true)
               Swal.fire(
                 'Deleted!',
                 'A pending arrival entry has been deleted.',
@@ -193,6 +192,7 @@ export default function StorePendingArrivalTable() {
           setLoading(false)
           form.reset()
           refetch()
+          setCountsRefetch(true)
           setSuccessMessage('Data update successful!')
           setTimeout(() => {
             setSuccessMessage('')

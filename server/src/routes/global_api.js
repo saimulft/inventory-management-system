@@ -4,41 +4,62 @@ const connectDatabase = require('../config/connectDatabase')
 const path = require("path")
 const run = async () => {
     const db = await connectDatabase()
+    const all_stock_collection = db.collection("all_stock")
+    const pending_arrival_collection = db.collection("pending_arrival")
+    const preparing_form_data_collection = db.collection("preparing_form_data")
+    const ready_to_ship_collection = db.collection("ready_to_ship_data")
+    const shipped_data_collection = db.collection("shipped_data")
+    const out_of_stock_collection = db.collection("out_of_stock")
+    const missing_arrival_collection = db.collection("missing_arrival")
+    const asin_upc_collection = db.collection("asin_upc")
 
-    const collections = [
-        'all_stock',
-        'pending_arrival',
-        'preparing_form_data',
-        'ready_to_ship_data',
-        'shipped_data',
-        'out_of_stock',
-        'missing_arrival',
-        'asin_upc',
-    ];
+    // const collections = [
+    //     'all_stock',
+    //     'pending_arrival',
+    //     'preparing_form_data',
+    //     'ready_to_ship_data',
+    //     'shipped_data',
+    //     'out_of_stock',
+    //     'missing_arrival',
+    //     'asin_upc',
+    // ];
+    // for (const collectionName of collections) {
+    //     const collection = db.collection(collectionName);
+    //     const count = await collection.countDocuments(query);
+    //     counts[collectionName] = count;
+    // }
 
     // Define a route to get document counts for all collections
-    router.get('/collections-docs-counts', async (req, res) => {
+    router.post('/collections-docs-counts', async (req, res) => {
         try {
-            const role = req.query.role;
-            const admin_id = req.query.admin_id;
-            const creator_email = req.query.creator_email;
+            const user = req.body.user;
+            const role = user.role;
 
             let query;
 
             if (role === 'Admin' || role === 'Admin VA') {
-                query = { admin_id: admin_id }
-            }
-            else {
-                query = { creator_email: creator_email }
+                query = { admin_id: user.admin_id }
             }
 
-            const counts = {};
-
-            for (const collectionName of collections) {
-                const collection = db.collection(collectionName);
-                const count = await collection.countDocuments(query);
-                counts[collectionName] = count;
+            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+                const store_access_ids = req.body.user.store_access_ids; 
+                query = { store_id: { $in: store_access_ids.map(id => id) }};
             }
+
+            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                query = { warehouse_id: user.warehouse_id }
+            }
+
+            const all_stock = await all_stock_collection.countDocuments(query)
+            const pending_arrival = await pending_arrival_collection.countDocuments(query)
+            const preparing_form_data = await preparing_form_data_collection.countDocuments(query)
+            const ready_to_ship_data = await ready_to_ship_collection.countDocuments(query)
+            const shipped_data = await shipped_data_collection.countDocuments(query)
+            const out_of_stock = await out_of_stock_collection.countDocuments(query)
+            const missing_arrival = await missing_arrival_collection.countDocuments(query)
+            const asin_upc = await asin_upc_collection.countDocuments(query)
+
+            const counts = {all_stock, pending_arrival, preparing_form_data, ready_to_ship_data, shipped_data, out_of_stock, missing_arrival, asin_upc};
 
             res.status(200).json({ data: counts });
         } catch (error) {

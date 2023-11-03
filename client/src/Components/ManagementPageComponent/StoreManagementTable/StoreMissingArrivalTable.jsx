@@ -1,7 +1,6 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
@@ -12,6 +11,7 @@ import { BsCheck2Circle } from "react-icons/bs";
 import { MdErrorOutline } from "react-icons/md";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
+import useGlobal from "../../../hooks/useGlobal";
 
 export default function StoreMissingArrivalTable() {
   const [activeTab, setActiveTab] = useState('active');
@@ -23,7 +23,7 @@ export default function StoreMissingArrivalTable() {
   const [searchText, setSearchText] = useState('');
   const [searchError, setSearchError] = useState('');
   const [searchResults, setSearchResults] = useState([]);
-  const { isSidebarOpen } = useContext(GlobalContext);
+  const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const { user } = useAuth()
   const [currentPage, setCurrentPage] = useState(0);
@@ -51,6 +51,7 @@ export default function StoreMissingArrivalTable() {
   useEffect(() => {
     refetch();
   }, [activeTab, refetch]);
+
   const handleSearch = () => {
     setSearchError("")
     if (!searchText) {
@@ -69,6 +70,7 @@ export default function StoreMissingArrivalTable() {
     }
     setSearchResults(filteredData)
   }
+
   const handleDelete = (_id) => {
     Swal.fire({
       title: 'Are you sure?',
@@ -84,6 +86,7 @@ export default function StoreMissingArrivalTable() {
           .then(res => {
             if (res.status === 200) {
               refetch()
+              setCountsRefetch(true)
               Swal.fire(
                 'Deleted!',
                 'A missing arrival entry has been deleted.',
@@ -139,6 +142,7 @@ export default function StoreMissingArrivalTable() {
           setLoading(false)
           form.reset()
           refetch()
+          setCountsRefetch(true)
           setSuccessMessage('Data update successful!')
           setTimeout(() => {
             setSuccessMessage('')

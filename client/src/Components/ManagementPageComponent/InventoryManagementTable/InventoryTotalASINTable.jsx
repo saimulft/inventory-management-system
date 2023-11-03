@@ -25,6 +25,7 @@ export default function InventoryTotalASINTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+
   const { data = [], isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
     queryFn: async () => {
@@ -41,7 +42,6 @@ export default function InventoryTotalASINTable() {
       }
     }
   })
-
 
   const handleCustomDateSearch = () => {
     setSearchError("")
@@ -63,7 +63,6 @@ export default function InventoryTotalASINTable() {
     }
 
   }
-
 
   const handleDateSearch = (day) => {
     setSearchError("")
@@ -103,7 +102,6 @@ export default function InventoryTotalASINTable() {
     setSearchResults(filteredDateResults);
   }
 
-
   const handleSearch = () => {
     setSearchError("")
     if (!searchText) {
@@ -122,7 +120,6 @@ export default function InventoryTotalASINTable() {
     setFilterDays(null)
     setSearchResults(filteredData)
   }
-
 
   function generatePageNumbers(currentPage, pageCount, maxVisiblePages) {
     if (pageCount <= maxVisiblePages) {

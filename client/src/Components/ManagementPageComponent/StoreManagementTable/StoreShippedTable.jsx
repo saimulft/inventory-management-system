@@ -26,6 +26,7 @@ export default function StoreShippedTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+  
   const { data = [], isLoading } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {

@@ -5,16 +5,16 @@ import { format } from "date-fns"
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
 import Swal from "sweetalert2";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { FaSpinner } from "react-icons/fa";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdErrorOutline } from "react-icons/md";
+import useGlobal from "../../../hooks/useGlobal";
 
 export default function InventoryShippedTable() {
   // const [RTSdata ,setRTSdata] = useState({})
@@ -26,7 +26,7 @@ export default function InventoryShippedTable() {
   const [singleData, setSingleData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
-  const { isSidebarOpen } = useContext(GlobalContext);
+  const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [loading, setLoading] = useState()
@@ -35,6 +35,7 @@ export default function InventoryShippedTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
@@ -129,6 +130,7 @@ export default function InventoryShippedTable() {
     }
 
   }
+
   const handleDelete = (_id) => {
     Swal.fire({
       title: 'Are you sure?',
@@ -144,6 +146,7 @@ export default function InventoryShippedTable() {
           .then(res => {
             if (res.status === 200) {
               refetch()
+              setCountsRefetch(true)
               Swal.fire(
                 'Deleted!',
                 'A shipped entry has been deleted.',
@@ -191,6 +194,7 @@ export default function InventoryShippedTable() {
           setLoading(false)
           form.reset()
           refetch()
+          setCountsRefetch(true)
           setSuccessMessage('Data update successful!')
           setTimeout(() => {
             setSuccessMessage('')

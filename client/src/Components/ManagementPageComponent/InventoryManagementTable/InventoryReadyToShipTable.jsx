@@ -1,17 +1,16 @@
-
 import { AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
 import { format } from "date-fns"
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { FiCheckCircle } from "react-icons/fi";
 import Swal from "sweetalert2";
+import useGlobal from "../../../hooks/useGlobal";
 
 export default function InventoryReadyToShipTable() {
   // const [RTSdata ,setRTSdata] = useState({})
@@ -22,12 +21,13 @@ export default function InventoryReadyToShipTable() {
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
-  const { isSidebarOpen } = useContext(GlobalContext);
+  const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const [rangeDate, setRangeDate] = useState([{
     startDate: new Date(),
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+
   const { data = [], isLoading, refetch } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
@@ -84,6 +84,7 @@ export default function InventoryReadyToShipTable() {
                 'success'
               )
               refetch()
+              setCountsRefetch(true)
             }
           }).catch(err => console.log(err))
       }

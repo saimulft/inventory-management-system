@@ -6,12 +6,14 @@ import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from "react-icons/md";
 import Swal from "sweetalert2";
 import SearchDropdown from "../Utilities/SearchDropdown";
+import useGlobal from "../hooks/useGlobal";
 
 const ArrivalFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
   const { user } = useAuth();
+  const {setCountsRefetch} = useGlobal()
   const [inputError, setInputError] = useState('')
   const [asinUpcOption, setAsinUpcOption] = useState(null)
   const [storeOption, setStoreOption] = useState(null)
@@ -154,6 +156,7 @@ const ArrivalFormPage = () => {
     try {
       const { status } = await mutateAsync(arrivalFormData)
       if (status === 201) {
+        setCountsRefetch(true)
         form.reset()
         setAsinUpcOption('')
         setStoreOption('')
@@ -209,7 +212,7 @@ const ArrivalFormPage = () => {
                     value={asinUpcOption && storeOption?.label ? `${storeOption?.label}_${asinUpcOption.label}` : ''}
                     type="text"
                     placeholder="Enter UPIN"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
                     id="upin"
                     name="upin"
                     readOnly
@@ -255,7 +258,7 @@ const ArrivalFormPage = () => {
                     readOnly
                     value={productName}
                     placeholder="Enter product name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
                     id="productName"
                     name="productName"
                   />
