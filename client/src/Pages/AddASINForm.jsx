@@ -183,7 +183,6 @@ const AddASINForm = () => {
 
   return (
     <div className="mt-20 rounded-lg h-screen">
-      <button onClick={()=> setCountsRefetch(true)}>Click</button>
       <div
         style={boxShadowStyle}
         className="border border-[#8633FF] shadow-lg  w-fit m-auto rounded-xl"
