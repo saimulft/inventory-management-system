@@ -33,7 +33,7 @@ export default function StoreMissingArrivalTable() {
     queryKey: ['missing_arrival_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post(`/api/v1/missing_arrival_api/get_all_missing_arrival_data?status=${activeTab}`,{user})
+        const res = await axios.post(`/api/v1/missing_arrival_api/get_all_missing_arrival_data?status=${activeTab}`, { user })
         if (res.status === 200) {
           setSearchResults([])
           setSearchText("")
@@ -354,9 +354,11 @@ export default function StoreMissingArrivalTable() {
                             <li>
                               <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
                             </li>
-                            <li>
-                              <button onClick={() => handleDelete(d._id)}>Delete</button>
-                            </li>
+                            {
+                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                <button onClick={() => handleDelete(d._id)}>Delete</button>
+                              </li> : ''
+                            }
                           </ul>
                         </div>
                       </td>
@@ -395,9 +397,11 @@ export default function StoreMissingArrivalTable() {
                               <li>
                                 <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
                               </li>
-                              <li>
-                                <button onClick={() => handleDelete(d._id)}>Delete</button>
-                              </li>
+                              {
+                                user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                  <button onClick={() => handleDelete(d._id)}>Delete</button>
+                                </li> : ''
+                              }
                             </ul>
                           </div>
                         </td>

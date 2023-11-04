@@ -428,9 +428,11 @@ export default function StoreOutOfStockTable() {
                             <li>
                               <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
                             </li>
-                            <li>
-                              <button onClick={() => handleDelete(d._id)}>Delete</button>
-                            </li>
+                            {
+                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                <button onClick={() => handleDelete(d._id)}>Delete</button>
+                              </li> : ''
+                            }
                           </ul>
                         </div>
                       </td>
@@ -469,9 +471,11 @@ export default function StoreOutOfStockTable() {
                               <li>
                                 <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
                               </li>
-                              <li>
-                                <button onClick={() => handleDelete(d._id)}>Delete</button>
-                              </li>
+                              {
+                                user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                  <button onClick={() => handleDelete(d._id)}>Delete</button>
+                                </li> : ''
+                              }
                             </ul>
                           </div>
                         </td>

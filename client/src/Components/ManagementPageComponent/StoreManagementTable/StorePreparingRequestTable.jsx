@@ -49,7 +49,7 @@ export default function StorePreparingRequestTable() {
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data', {user})
+        const res = await axios.post('http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -61,7 +61,7 @@ export default function StorePreparingRequestTable() {
   })
 
   useEffect(() => {
-    axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', {user})
+    axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', { user })
       .then(res => {
         if (res.status === 200) {
           setAsinUpcData(res.data.data)
@@ -502,9 +502,11 @@ export default function StorePreparingRequestTable() {
                               }
                               }>Edit</button>
                             </li>
-                            <li>
-                              <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
-                            </li>
+                            {
+                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
+                              </li> : ''
+                            }
                           </ul>
                         </div>
                       </td>
@@ -554,9 +556,11 @@ export default function StorePreparingRequestTable() {
                                 }
                                 }>Edit</button>
                               </li>
-                              <li>
-                                <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
-                              </li>
+                              {
+                                user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                  <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
+                                </li> : ''
+                              }
                             </ul>
                           </div>
                         </td>

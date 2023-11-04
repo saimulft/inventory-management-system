@@ -515,9 +515,11 @@ export default function InventoryTotalASINTable() {
                               document.getElementById("my_modal_2").showModal()
                             }}>Edit</button>
                           </li>
-                          <li>
-                            <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
-                          </li>
+                          {
+                            user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                              <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
+                            </li> : ''
+                          }
                         </ul>
                       </div></td>
                     </tr>
@@ -555,9 +557,11 @@ export default function InventoryTotalASINTable() {
                               }
                               }>Edit</button>
                             </li>
-                            <li>
-                              <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
-                            </li>
+                            {
+                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                <button onClick={() => handleDelete(d._id, d.product_image)}>Delete</button>
+                              </li> : ''
+                            }
                           </ul>
                         </div></td>
                       </tr>
