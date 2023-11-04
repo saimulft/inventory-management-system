@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
@@ -7,7 +7,6 @@ import Swal from "sweetalert2";
 import ToastMessage from "../../Shared/ToastMessage";
 import { FaSpinner } from "react-icons/fa";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-import SearchDropdown from "../../../Utilities/SearchDropdown";
 import { useQuery } from "@tanstack/react-query";
 import FileDownload from "../../Shared/FileDownload";
 import Loading from "../../Shared/Loading";
@@ -30,10 +29,7 @@ export default function StorePreparingRequestTable() {
   const [isEditable, setIsEditable] = useState(false)
   const [quantity, setQuantity] = useState('')
   const [productName, setProductName] = useState('')
-  const [codeType, setCodeType] = useState('')
   const { user } = useAuth()
-  const [asinUpcOption, setAsinUpcOption] = useState('')
-  const [asinUpcData, setAsinUpcData] = useState([])
   const [searchText, setSearchText] = useState('');
   const [searchError, setSearchError] = useState('');
   const [searchResults, setSearchResults] = useState([]);
@@ -44,6 +40,13 @@ export default function StorePreparingRequestTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+
+  const handleKeyDown = (event) => {
+    const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
+    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
+      event.preventDefault();
+    }
+  };
 
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['preparing_request_data'],
@@ -59,15 +62,6 @@ export default function StorePreparingRequestTable() {
       }
     }
   })
-
-  useEffect(() => {
-    axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', { user })
-      .then(res => {
-        if (res.status === 200) {
-          setAsinUpcData(res.data.data)
-        }
-      }).catch(err => console.log(err))
-  }, [user])
 
   const handleDelete = (_id, invoice_file, shipping_file) => {
     const deleteData = {
@@ -109,7 +103,7 @@ export default function StorePreparingRequestTable() {
 
     let preparingFormvalue = {
 
-      courier, trackingNumber: supplierTracker, notes: note, id: singleData._id, quantity, productName, asin_upc_code: asinUpcOption?.label, codeType
+      courier, trackingNumber: supplierTracker, notes: note, id: singleData._id, quantity, productName,
     }
 
     const formData = new FormData()
@@ -606,43 +600,26 @@ export default function StorePreparingRequestTable() {
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
-          <div className="flex">
+          <div className="flex gap-10">
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
                 {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
 
-
-
-              <div className="mb-2">
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold ">Quantity : </label>
-                <input onChange={(e) => setQuantity(e.target.value)} type="number" defaultValue={singleData?.quantity}
+                <input onKeyDown={handleKeyDown} onChange={(e) => setQuantity(e.target.value)} type="number" defaultValue={singleData?.quantity}
                   className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
               </div>
-              <div className="mb-2">
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold ">Product name : </label>
                 <input onChange={(e) => setProductName(e.target.value)} type="text" defaultValue={singleData?.product_name}
                   className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
               </div>
-              <div className="mb-2">
-                <label className="font-bold ">Code Type : </label>
-                {!isEditable && <span>{singleData?.code_type}</span>}
-                {isEditable && <select onChange={(e) => setCodeType(e.target.value)} name="codeType" id="codeType">
-                  <option value="Select type">Select type</option>
-                  <option value="ASIN">ASIN</option>
-                  <option value="UPC">UPC</option>
-                </select>}
-              </div>
-              <div className="mt-2">
-                <label className="font-bold">ASIN/UPC : </label>
-                {!isEditable && <span>{singleData?.code}</span>}
-                {isEditable && <SearchDropdown asinUpcOption={asinUpcOption} asinUpcData={asinUpcData} setAsinUpcOption={setAsinUpcOption} />}
-              </div>
-
 
             </div>
-            <div className="w-1/2 px-4">
+            <div className="w-1/2">
               <h3 className="text-2xl mb-6 font-medium">Update</h3>
               <form onSubmit={handleUpdateRequestForm}>
                 <div className="flex flex-col mt-2">

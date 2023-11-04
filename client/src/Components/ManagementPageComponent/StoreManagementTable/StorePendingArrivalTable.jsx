@@ -35,6 +35,13 @@ export default function StorePendingArrivalTable() {
     key: 'selection'
   }]);
 
+  const handleKeyDown = (event) => {
+    const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
+    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
+      event.preventDefault();
+    }
+  };
+
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['pending_arrival_data'],
     queryFn: async () => {
@@ -77,13 +84,12 @@ export default function StorePendingArrivalTable() {
     const startDate = rangeDate[0].startDate
     const endDate = rangeDate[0].endDate
     if (startDate !== endDate) {
-      const filteredDateResults = data.filter((item) => {
+        const filteredDateResults = data.filter((item) => {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= endDate;
       });
-      console.log(filteredDateResults)
-      if (!filteredDateResults.length) {
 
+      if (!filteredDateResults.length) {
         return setSearchError(`No data found for selected date range`)
       }
       if (filteredDateResults.length) {
@@ -167,7 +173,6 @@ export default function StorePendingArrivalTable() {
     const form = event.target;
     const productName = form.productName.value;
     const quantity = form.quantity.value;
-    const upin = form.upin.value;
     const eda = form.eda.value;
     const courier = form.courier.value;
     const supplierTracking = form.supplierTracking.value;
@@ -176,13 +181,12 @@ export default function StorePendingArrivalTable() {
     const updatedData = {
       product_name: productName,
       quantity: quantity,
-      upin: upin,
       eda: eda ? new Date(eda).toISOString() : '',
       courier: courier,
       supplier_tracking: supplierTracking
     }
 
-    if (!productName && !quantity && !upin && !eda && !courier && !supplierTracking) {
+    if (!productName && !quantity && !eda && !courier && !supplierTracking) {
       return setErrorMessage('No data entered')
     }
 
@@ -548,13 +552,8 @@ export default function StorePendingArrivalTable() {
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">Quantity: </label>
-                <input type="text" defaultValue={singleData.quantity}
+                <input onKeyDown={handleKeyDown} type="text" defaultValue={singleData.quantity}
                   className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="quantity" name="quantity" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">UPIN: </label>
-                <input type="text" defaultValue={singleData.upin}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="upin" name="upin" readOnly={!isEditable} />
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">EDA: </label>

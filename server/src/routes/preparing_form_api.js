@@ -9,6 +9,7 @@ const run = async () => {
 
     const db = await connectDatabase()
     const preparing_form_collection = db.collection("preparing_form_data")
+    const all_stock_collection = db.collection("all_stock")
 
     // upload asin upc image 
     const storage = multer.diskStorage({
@@ -112,7 +113,6 @@ const run = async () => {
                 }
             }
             const UpdateData = {
-
                 courier: req.body.courier === "Select courier" ? existData.courier : req.body.courier,
                 code_type: req.body.codeType === "Select type" || !req.body.codeType ? existData.code_type : req.body.codeType,
                 tracking_number: req.body.trackingNumber ? req.body.trackingNumber : existData.tracking_number,
@@ -123,16 +123,25 @@ const run = async () => {
                 quantity: req.body.quantity ? req.body.quantity : existData.quantity,
                 product_name: req.body.productName ? req.body.productName : existData.product_name,
                 asin_upc_code: req.body.code ? req.body.code : existData.asin_upc_code,
-
             };
 
             const result = await preparing_form_collection.updateOne({ _id: new ObjectId(id) }, { $set: UpdateData })
 
             if (result.modifiedCount) {
-                res.status(200).json({ message: "Preparing form updated" })
+                if (req.body.productName) {
+                    const allStockResult = await all_stock_collection.updateOne({ upin: existData.upin }, { $set: { product_name: req.body.productName } })
+
+                    if (allStockResult.modifiedCount) {
+                        return res.status(200).json({ message: "All stock updated" })
+                    }
+                    else {
+                        return res.status(500).json({ message: "Error to update all stock" });
+                    }
+                }
+                return res.status(200).json({ message: "Preparing form updated" })
             }
             else {
-                res.status(500).json({ message: "Error to Preparing form " });
+                return res.status(500).json({ message: "Error to Preparing form " });
             }
         } catch (error) {
             console.log(error)
@@ -156,7 +165,7 @@ const run = async () => {
             else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
 
                 const store_access_ids = req.body.user.store_access_ids;
-                 query = { store_id: { $in: store_access_ids.map(id => id) }};
+                query = { store_id: { $in: store_access_ids.map(id => id) } };
             }
 
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {

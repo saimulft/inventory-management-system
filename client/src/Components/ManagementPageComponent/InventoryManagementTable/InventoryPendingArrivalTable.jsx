@@ -171,7 +171,6 @@ export default function InventoryPendingArrivalTable() {
     const form = event.target;
     const productName = form.productName.value;
     const quantity = form.quantity.value;
-    const upin = form.upin.value;
     const eda = form.eda.value;
     const receivedQnt = form.receivedQnt.value;
     const remark = form.remark.value;
@@ -185,7 +184,7 @@ export default function InventoryPendingArrivalTable() {
       return;
     }
 
-    if (!productName && !quantity && !upin && !eda && !receivedQnt && !remark) {
+    if (!productName && !quantity && !eda && !receivedQnt && !remark) {
       setLoading(false)
       return setErrorMessage('No data entered')
     }
@@ -193,7 +192,6 @@ export default function InventoryPendingArrivalTable() {
     const updatedData = {
       product_name: productName,
       quantity: quantity,
-      upin: upin,
       eda: eda ? new Date(eda).toISOString() : '',
       received_quantity: receivedQnt,
       remark: remark
@@ -561,13 +559,8 @@ export default function InventoryPendingArrivalTable() {
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">Quantity: </label>
-                <input type="text" defaultValue={singleData.quantity}
+                <input onKeyDown={handleKeyDown} type="text" defaultValue={singleData.quantity}
                   className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="quantity" name="quantity" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">UPIN: </label>
-                <input type="text" defaultValue={singleData.upin}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="upin" name="upin" readOnly={!isEditable} />
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">EDA: </label>
