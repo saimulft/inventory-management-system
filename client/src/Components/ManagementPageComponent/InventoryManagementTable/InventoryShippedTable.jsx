@@ -10,7 +10,7 @@ import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import Swal from "sweetalert2";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 import { FaSpinner } from "react-icons/fa";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdErrorOutline } from "react-icons/md";
@@ -528,7 +528,7 @@ export default function InventoryShippedTable() {
           <form onSubmit={(event) => handleUpdate(event, singleData._id)} className="flex gap-10">
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
-                <BiSolidEdit size={24} />
+                {/* <BiSolidEdit size={24} /> */}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <p className="mt-2">
