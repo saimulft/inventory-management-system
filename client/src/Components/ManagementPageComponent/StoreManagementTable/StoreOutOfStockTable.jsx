@@ -34,7 +34,7 @@ export default function StoreOutOfStockTable() {
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/out_of_stock_api/get_all_OOS_data`,{user})
+        const res = await axios.post(`/api/v1/out_of_stock_api/get_all_OOS_data`, { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -428,9 +428,11 @@ export default function StoreOutOfStockTable() {
                             <li>
                               <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
                             </li>
-                            <li>
-                              <button onClick={() => handleDelete(d._id)}>Delete</button>
-                            </li>
+                            {
+                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                <button onClick={() => handleDelete(d._id)}>Delete</button>
+                              </li> : ''
+                            }
                           </ul>
                         </div>
                       </td>
@@ -469,9 +471,11 @@ export default function StoreOutOfStockTable() {
                               <li>
                                 <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
                               </li>
-                              <li>
-                                <button onClick={() => handleDelete(d._id)}>Delete</button>
-                              </li>
+                              {
+                                user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                  <button onClick={() => handleDelete(d._id)}>Delete</button>
+                                </li> : ''
+                              }
                             </ul>
                           </div>
                         </td>

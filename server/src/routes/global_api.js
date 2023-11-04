@@ -57,7 +57,7 @@ const run = async () => {
             const shipped_data = await shipped_data_collection.countDocuments(query)
             const out_of_stock = await out_of_stock_collection.countDocuments(query)
             const missing_arrival = await missing_arrival_collection.countDocuments(query)
-            const asin_upc = await asin_upc_collection.countDocuments(query)
+            const asin_upc = await asin_upc_collection.countDocuments({ admin_id: user.admin_id })
 
             const counts = {all_stock, pending_arrival, preparing_form_data, ready_to_ship_data, shipped_data, out_of_stock, missing_arrival, asin_upc};
 

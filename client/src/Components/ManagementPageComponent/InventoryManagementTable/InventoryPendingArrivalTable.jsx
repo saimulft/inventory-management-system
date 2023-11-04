@@ -45,7 +45,7 @@ export default function InventoryPendingArrivalTable() {
     queryKey: ['pending_arrival_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/pending_arrival_api/get_all_pending_arrival_data', {user})
+        const res = await axios.post('/api/v1/pending_arrival_api/get_all_pending_arrival_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -451,9 +451,11 @@ export default function InventoryPendingArrivalTable() {
                               }
                               }>Edit</button>
                             </li>
-                            <li>
-                              <button onClick={() => handleDelete(d._id)}>Delete</button>
-                            </li>
+                            {
+                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                <button onClick={() => handleDelete(d._id)}>Delete</button>
+                              </li> : ''
+                            }
                           </ul>
                         </div>
                       </td>
@@ -496,9 +498,11 @@ export default function InventoryPendingArrivalTable() {
                                 }
                                 }>Edit</button>
                               </li>
-                              <li>
-                                <button onClick={() => handleDelete(d._id)}>Delete</button>
-                              </li>
+                              {
+                                user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                  <button onClick={() => handleDelete(d._id)}>Delete</button>
+                                </li> : ''
+                              }
                             </ul>
                           </div>
                         </td>
