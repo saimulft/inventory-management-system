@@ -45,8 +45,11 @@ const StoreManagerVAPage = () => {
             }
         }
     })
+
     const storeAccessIds = storeManagerOption?.data?.filter(storeManager => storeManager._id === storeManagerOption.value)[0]?.store_access_ids;
-    const filteredArray = allStoreData.filter(store => storeAccessIds?.includes(store.value));
+    const filteredStoreData = allStoreData.filter(store => storeAccessIds?.includes(store.value));
+    const storeIDS = []
+    storeOption?.map(store => storeIDS.push(store.value))
 
     const { mutateAsync, isLoading } = useMutation({
         mutationFn: (storeManagerVA) => {
@@ -70,16 +73,22 @@ const StoreManagerVAPage = () => {
             return setErrorMessage('Password and confirm password must be same!')
         }
 
-        else if (password.length < 6) {
+        if (password.length < 6) {
             return setErrorMessage("Password must be at least 6 characters or longer!")
         }
 
-        const storeManagerVA = { admin_id: user.admin_id, creator_email: user?.email, store_manager_va_id: uuidv4(), full_name: name, email, username, password, role: 'Store Manager VA' }
+        if (!storeOption.length) {
+            return setErrorMessage('Please select store')
+        }
+
+        const storeManagerVA = { admin_id: user.admin_id, creator_email: user?.email, store_manager_va_id: uuidv4(), store_manager_admin_id: storeManagerOption.store_manager_admin_id , store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager VA' }
 
         try {
             const { status } = await mutateAsync(storeManagerVA)
             if (status === 201) {
                 form.reset()
+                setStoreOption(null)
+                setStoreManagerOption(null)
                 setSuccessMessage(`Successfully created a new store manager VA and sent an invitation mail to ${email} with login credentials`)
             }
             else if (status === 200) {
@@ -100,7 +109,7 @@ const StoreManagerVAPage = () => {
                 <div className="flex gap-4 w-full mt-5">
                     <div className="w-1/2">
                         <div className="mt-3">
-                            <label className="text-slate-500">Name*</label>
+                            <label className="text-slate-500">Name*</label>     
                             <input
                                 type="text"
                                 placeholder="Enter name"
@@ -172,7 +181,7 @@ const StoreManagerVAPage = () => {
                 {
                     user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-3">
                         <label className="text-slate-500">Select Store</label>
-                        <SearchDropdown isMulti={true} option={storeOption} optionData={filteredArray} placeholder="Select Store" setOption={setStoreOption} />
+                        <SearchDropdown isMulti={true} option={storeOption} optionData={filteredStoreData} placeholder="Select Store" setOption={setStoreOption} />
                     </div> : ''
                 }
 

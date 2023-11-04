@@ -161,6 +161,7 @@ const ArrivalFormPage = () => {
         setAsinUpcOption('')
         setStoreOption('')
         setProductName('')
+        setWarehouseOption(null)
         Swal.fire(
           'Submitted',
           'Pending arrival data has been submitted.',

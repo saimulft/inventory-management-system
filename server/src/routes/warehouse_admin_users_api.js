@@ -10,7 +10,7 @@ const run = async () => {
     const all_users_collection = db.collection("all_users")
     const warehouses_collection = db.collection("warehouses")
 
-    // create new admin va 
+    // create new warehouse admin
     router.post('/create_warehouse_admin', async (req, res) => {
         try {
             const inputEmail = req.body.email
@@ -101,25 +101,27 @@ const run = async () => {
         }
     })
 
-    router.get('/get_warehouse_dropdown_data', async (req, res) => {
+
+    // get all warehouse admin
+    router.get('/get_all_warehouse_admin', async (req, res) => {
         try {
             const admin_id = req.query.id;
-            const allWarehouseData = await warehouses_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()
-            if (allStores) {
-                const data = allStores.map(item => {
-                    return { data: allStores, value: item._id, label: item.store_name }
+
+            const result = await warehouse_admin_users_collection.find({admin_id: admin_id}).toArray()
+
+            if(result.length){
+                const data = result.map(item => {
+                    return {warehouse_admin_id: item.warehouse_admin_id, value: item.warehouse_id, label: item.full_name }
                 })
-                res.status(200).json({ data: data, message: "successfully stores data" })
+                return res.status(200).json({data: data, message: 'Successfully got all warehouse admin'})
             }
-            else {
-                res.status(204).json({ message: "No content" })
+            else{
+                return res.status(204).json({message: 'No content found'})
             }
         } catch (error) {
-            res.status(500).json({ message: 'Internal Server Error in stores data' });
+            res.status(500).json({ message: 'Internal Server Error' });
         }
-    });
-
-
+    })
 }
 run()
 module.exports = router;

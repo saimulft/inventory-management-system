@@ -182,6 +182,8 @@ const PreparingFormPage = () => {
           )
           form.reset()
           setProductName("")
+          setWarehouseOption(null)
+          setStoreOption(null)
           setAsinUpcOption(null)
           setInvoiceImageFile(null)
           setShippingImageFile(null)
