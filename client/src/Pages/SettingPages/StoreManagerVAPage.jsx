@@ -30,6 +30,7 @@ const StoreManagerVAPage = () => {
         }
     })
 
+
     const { data: allStoreData = [] } = useQuery({
         queryKey: ['get_all_stores_data'],
         queryFn: async () => {
@@ -81,7 +82,11 @@ const StoreManagerVAPage = () => {
             return setErrorMessage('Please select store')
         }
 
-        const storeManagerVA = { admin_id: user.admin_id, creator_email: user?.email, store_manager_va_id: uuidv4(), store_manager_admin_id: storeManagerOption.store_manager_admin_id , store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager VA' }
+        const storeManagerVA = {
+            admin_id: user.admin_id, creator_email: user?.email, store_manager_va_id: uuidv4(),
+             store_manager_admin_id: user.role === "Store Manager Admin" ? user.store_manager_admin_id : storeManagerOption?.store_manager_admin_id,
+            store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager VA'
+        }
 
         try {
             const { status } = await mutateAsync(storeManagerVA)
@@ -109,7 +114,7 @@ const StoreManagerVAPage = () => {
                 <div className="flex gap-4 w-full mt-5">
                     <div className="w-1/2">
                         <div className="mt-3">
-                            <label className="text-slate-500">Name*</label>     
+                            <label className="text-slate-500">Name*</label>
                             <input
                                 type="text"
                                 placeholder="Enter name"

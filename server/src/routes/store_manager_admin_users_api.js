@@ -21,6 +21,8 @@ const run = async () => {
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
             const login_data = {
+                admin_id: req.body.admin_id,
+                full_name: req.body.full_name,
                 email: req.body.email,
                 creator_email: req.body.creator_email,
                 password: hashed_password,
