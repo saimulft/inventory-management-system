@@ -180,7 +180,7 @@ const ArrivalFormPage = () => {
         className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl"
       >
         <div className="text-center mt-10">
-          <p className="text-2xl font-bold">Pending Arrival From</p>
+          <p className="text-2xl font-bold">Pending Arrival Form</p>
         </div>
         <div className="lg:py-10 lg:px-20 w-full flex justify-center">
           <form onSubmit={handleArrivalForm}>

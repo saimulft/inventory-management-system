@@ -244,7 +244,7 @@ const PreparingFormPage = () => {
         className="border border-[#8633FF] bg-white shadow-lg h-fit w-fit m-auto rounded-xl"
       >
         <div className="text-center mt-10">
-          <p className="text-2xl font-bold">Preparing Request From</p>
+          <p className="text-2xl font-bold">Preparing Request Form</p>
         </div>
         <div className="lg:py-10 lg:px-20 w-full">
           <form onSubmit={hadnlePreparingForm}>

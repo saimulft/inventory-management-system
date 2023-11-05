@@ -182,7 +182,7 @@ const AddASINForm = () => {
 
 
   return (
-    <div className="mt-20 rounded-lg h-screen">
+    <div className="my-20 rounded-lg h-full">
       <div
         style={boxShadowStyle}
         className="border border-[#8633FF] shadow-lg  w-fit m-auto rounded-xl"

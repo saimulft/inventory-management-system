@@ -54,6 +54,8 @@ import StoreManagerVAPage from "../Pages/SettingPages/StoreManagerVAPage";
 import WarehouseManagerVAPage from "../Pages/SettingPages/WarehouseManagerVAPage";
 import AuthRoute from "./AuthRoute";
 import AdminRoute from "./AdminRoute";
+import StoreManagerRoute from "./StoreManagerRoute";
+import StoreOwnerRoute from "./StoreOwnerRoute";
 
 export const router = createBrowserRouter([
   {
@@ -151,19 +153,19 @@ export const router = createBrowserRouter([
 
       {
         path: "/dashboard/all-stores",
-        element: <AllStoresPage />,
+        element: <AdminRoute><AllStoresPage /></AdminRoute>,
       },
       {
         path: "/dashboard/all-stores/store-edit/:id",
-        element: <StoreEditPage />,
+        element: <AdminRoute><StoreEditPage /></AdminRoute>,
       },
       {
         path: "/dashboard/add-store",
-        element: <AddStorePage />,
+        element: <AdminRoute><AddStorePage /></AdminRoute>,
       },
       {
         path: "/dashboard/profit-tracker",
-        element: <ProfitTrackerPage />,
+        element: <StoreOwnerRoute><ProfitTrackerPage /></StoreOwnerRoute>,
       },
       {
         path: "/dashboard/support",
@@ -180,15 +182,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/pending-arrival-from",
-        element: <ArrivalFormPage />,
+        element: <StoreManagerRoute><ArrivalFormPage /></StoreManagerRoute>,
       },
       {
         path: "/dashboard/preparing-request-from",
-        element: <PreparingFormPage />,
+        element: <StoreManagerRoute><PreparingFormPage /></StoreManagerRoute>,
       },
       {
         path: "/dashboard/add-ASIN-UPC-from",
-        element: <AddASINForm />,
+        element: <StoreManagerRoute><AddASINForm /></StoreManagerRoute>,
       },
       {
         path: "/dashboard/add-store/add-supplier",
@@ -280,14 +282,18 @@ export const router = createBrowserRouter([
   },
   {
     path: "/verify_email",
-    element: <VerifyEmail />,
+    element: <AuthRoute><VerifyEmail /></AuthRoute>,
   },
   {
     path: "/reset_password",
-    element: <ResetPassword />,
+    element: <AuthRoute><ResetPassword /></AuthRoute>,
   },
   {
     path: "/update_password",
-    element: <UpdatePassword />,
+    element: <AuthRoute><UpdatePassword /></AuthRoute>,
   },
+  {
+    path: '*',
+    element: <Navigate to="/dashboard/home"></Navigate>
+  }
 ]);
