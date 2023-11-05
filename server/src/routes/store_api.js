@@ -45,7 +45,7 @@ const run = async () => {
             const storeStatus = req.query.storeStatus
 
             if (storeType && storeType !== 'All Store') {
-                const allStores = await all_stores_collection.find({ admin_id: id, store_type: storeType, store_status: storeStatus}).sort({ date: -1 }).toArray()
+                const allStores = await all_stores_collection.find({ admin_id: id, store_type: storeType, store_status: storeStatus }).sort({ date: -1 }).toArray()
 
                 if (allStores.length) {
                     return res.status(200).json({ data: allStores, message: "Successfully get all stores" })
@@ -90,15 +90,15 @@ const run = async () => {
             const user = req.body.user;
             const role = user.role;
             let query;
-
+            console.log(user)
             if (role === 'Admin' || role === 'Admin VA') {
                 query = { admin_id: user.admin_id }
             }
 
             else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
 
-                const store_access_ids = req.body.user.store_access_ids; // Assuming store_access_ids is an array of IDs
-                query = { _id: { $in: store_access_ids.map(id => new ObjectId(id)) } };
+                const store_access_ids = user.store_access_ids;
+                query = { _id: { $in: store_access_ids?.map(id => new ObjectId(id)) } };
             }
 
             const allStores = await all_stores_collection.find(query).sort({ date: -1 }).toArray()

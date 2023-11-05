@@ -3,10 +3,18 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const sendEmail = require("../utilities/send_email")
+const { ObjectId } = require("mongodb")
 const run = async () => {
     const db = await connectDatabase()
-    const admin_users_collection = db.collection("admin_users")
     const all_users_collection = db.collection("all_users")
+    const admin_users_collection = db.collection("admin_users")
+    const admin_va_users_collection = db.collection("admin_va_users")
+    const store_owner_users_collection = db.collection("store_owner_users")
+    const store_manager_admin_users_collection = db.collection("store_manager_admin_users")
+    const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
+    const store_manager_va_users_collection = db.collection("store_manager_va_users")
+    const warehouse_manager_va_users_collection = db.collection("warehouse_manager_va_users")
+
 
 
     // create a new admin
@@ -21,6 +29,7 @@ const run = async () => {
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
             const login_data = {
+                full_name: req.body.full_name,
                 email: req.body.email,
                 role: req.body.role,
                 password: hashed_password,
@@ -112,8 +121,8 @@ const run = async () => {
 
             let query;
 
-            if(role === 'Admin'){
-                query = {admin_id: user.admin_id}
+            if (role === 'Admin') {
+                query = { admin_id: user.admin_id }
             }
 
             if (role === 'Admin' || role === 'Admin VA') {
@@ -138,6 +147,114 @@ const run = async () => {
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
         }
+    })
+
+
+    router.post('/get_all_users_list', async (req, res) => {
+        try {
+            const user = req.body.user;
+            const role = user.role;
+
+            let query;
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+            if (role === 'Store Manager Admin' || role === 'Warehouse Admin') {
+                query = { creator_email: user.email };
+            }
+
+            const result = await all_users_collection.find(query).toArray()
+
+            if (result.length) {
+                res.status(200).json(result);
+            }
+            else {
+                res.status(204).json({ message: 'No user found' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
+
+    router.post('/delete_user', async (req, res) => {
+        try {
+
+            const user = req.body.user
+            const role = user.role
+
+            if (role === 'Admin VA') {
+                const deleteResult = await all_users_collection.deleteOne({ _id: new ObjectId(user._id) })
+                if (deleteResult.deletedCount) {
+
+                    const result = await admin_va_users_collection.deleteOne({ email: user.email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else {
+                    return res.status(204).json({ data: result, status: 'user not found' })
+                }
+            }
+            if (role === 'Store Owner') {
+                const deleteResult = await all_users_collection.deleteOne({ _id: new ObjectId(user._id) })
+                if (deleteResult.deletedCount) {
+
+                    const result = await store_owner_users_collection.deleteOne({ email: user.email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else {
+                    return res.status(204).json({ data: result, status: 'user not found' })
+                }
+            }
+            if (role === 'Store Manager Admin') {
+                const deleteResult = await all_users_collection.deleteOne({ _id: new ObjectId(user._id) })
+                if (deleteResult.deletedCount) {
+
+                    const result = await store_manager_admin_users_collection.deleteOne({ email: user.email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else {
+                    return res.status(204).json({ data: result, status: 'user not found' })
+                }
+            }
+            if (role === 'Warehouse Admin') {
+                const deleteResult = await all_users_collection.deleteOne({ _id: new ObjectId(user._id) })
+                if (deleteResult.deletedCount) {
+
+                    const result = await warehouse_admin_users_collection.deleteOne({ email: user.email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else {
+                    return res.status(204).json({ data: result, status: 'user not found' })
+                }
+            }
+            if (role === 'Store Manager VA') {
+                const deleteResult = await all_users_collection.deleteOne({ _id: new ObjectId(user._id) })
+                if (deleteResult.deletedCount) {
+
+                    const result = await store_manager_va_users_collection.deleteOne({ email: user.email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else {
+                    return res.status(204).json({ data: result, status: 'user not found' })
+                }
+            }
+            if (role === 'Warehouse Manager VA') {
+                const deleteResult = await all_users_collection.deleteOne({ _id: new ObjectId(user._id) })
+                if (deleteResult.deletedCount) {
+
+                    const result = await warehouse_manager_va_users_collection.deleteOne({ email: user.email })
+                    return res.status(200).json({ data: result, status: 'success' })
+                }
+                else {
+                    return res.status(204).json({ data: result, status: 'user not found' })
+                }
+            }
+
+        } catch (error) {
+            res.status(500).json({ message: "internal server error" })
+        }
+
+
     })
 }
 run()
