@@ -11,7 +11,7 @@ import { useQuery } from "@tanstack/react-query";
 import Loading2 from "../Components/Shared/Loading2";
 
 export default function AllStoresPage() {
-  const [isActive, setIsActive] = useState(true);
+  const [tab, setTab] = useState('Active')
   const [loading, setLoading] = useState(false)
   const [storeType, setStoreType] = useState('')
   const [searchText, setSearchText] = useState('')
@@ -24,7 +24,7 @@ export default function AllStoresPage() {
     queryKey: ['all_stores'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/store_api/get_all_stores?id=${user.admin_id}&storeType=${storeType}`)
+        const res = await axios.get(`/api/v1/store_api/get_all_stores?id=${user.admin_id}&storeType=${storeType}&storeStatus=${tab}`)
         if (res.status === 200) {
           setLoading(false)
           return res.data.data;
@@ -48,7 +48,7 @@ export default function AllStoresPage() {
       setStoreRefetch(false)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storeRefetch, storeType]);
+  }, [storeRefetch, storeType, tab]);
 
   const shadowStyle = {
     boxShadow: "0px 0px 15px -8px rgba(0,0,0,0.75)",
@@ -76,25 +76,30 @@ export default function AllStoresPage() {
     }, 200);
   }
 
+  console.log(tab)
+  console.log(allStoreData)
+
   return (
     <div className="p-20">
       <div className="flex justify-between">
         <div className="flex text-center w-1/2 ">
           <div
-            onClick={() => setIsActive(true)}
-            className={`px-3 rounded-s-md py-2 cursor-pointer ${isActive
-              ? "bg-[#8633FF] text-white"
-              : "border-2 border-[#8633FF] text-[#8633FF]"
-              }  `}
+            onClick={() => {
+              setTab('Active')
+              setStoreRefetch(true)
+            }}
+            className={`px-3 rounded-s-md py-2 cursor-pointer ${tab === 'Active' ? "bg-[#8633FF] text-white"
+              : "border-2 border-[#8633FF] text-[#8633FF]"}`}
           >
             Active
           </div>
           <div
-            onClick={() => setIsActive(false)}
-            className={`px-3 rounded-e-md py-2 cursor-pointer ${!isActive
-              ? "bg-[#8633FF] text-white"
-              : "border-2 border-[#8633FF] text-[#8633FF]"
-              }  `}
+            onClick={() => {
+              setTab('Inactive')
+              setStoreRefetch(true)
+            }}
+            className={`px-3 rounded-e-md py-2 cursor-pointer ${tab === 'Inactive' ? "bg-[#8633FF] text-white"
+              : "border-2 border-[#8633FF] text-[#8633FF]"}`}
           >
             Inactive
           </div>
@@ -117,7 +122,7 @@ export default function AllStoresPage() {
 
             <div className="relative  w-1/2 ">
               <input
-                className="border bg-white shadow-md border-[#8633FF] outline-none w-full cursor-pointer  py-2 rounded-md px-2 text-sm"
+                className="border bg-white shadow-md border-[#8633FF] outline-none w-full py-2 rounded-md px-2 text-sm"
                 placeholder="Search Here"
                 type="text"
                 value={searchText}
@@ -143,56 +148,56 @@ export default function AllStoresPage() {
         {
           loading || isLoading ? <Loading2 contentHeight="342px" /> :
             searchError ? <div className="absolute flex items-center justify-center w-full h-[calc(100vh-342px)] text-xl font-medium text-rose-500">{searchError}</div> :
-            !allStoreData.length ? <div className="absolute flex items-center justify-center w-full h-[calc(100vh-342px)] text-xl font-medium text-rose-500">No store added yet!</div> :
-              searchResults.length ? searchResults.map((singleStore, index) => {
-                return (
-                  <Link
-                    to={`/dashboard/all-stores/store-edit/${singleStore._id}`}
-                    style={shadowStyle}
-                    key={index}
-                  >
-                    <div className="flex items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
-                      <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
-                        <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
-                          {singleStore.store_type === 'Amazon' && <FaAmazon size={24} />}
-                          {singleStore.store_type === 'Walmart' && <TbBrandWalmart size={24} />}
-                          {singleStore.store_type === 'Ebay' && <FaEbay size={30} />}
-                          {singleStore.store_type === 'Shopify' && <FaShopify size={24} />}
-                          {singleStore.store_type === 'Ali Express' && <AiOutlineAlibaba size={30} />}
+              !allStoreData.length ? <div className="absolute flex items-center justify-center w-full h-[calc(100vh-342px)] text-xl font-medium text-rose-500">No store added yet!</div> :
+                searchResults.length ? searchResults.map((singleStore, index) => {
+                  return (
+                    <Link
+                      to={`/dashboard/all-stores/store-edit/${singleStore._id}`}
+                      style={shadowStyle}
+                      key={index}
+                    >
+                      <div className="flex items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
+                        <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
+                          <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
+                            {singleStore.store_type === 'Amazon' && <FaAmazon size={24} />}
+                            {singleStore.store_type === 'Walmart' && <TbBrandWalmart size={24} />}
+                            {singleStore.store_type === 'Ebay' && <FaEbay size={30} />}
+                            {singleStore.store_type === 'Shopify' && <FaShopify size={24} />}
+                            {singleStore.store_type === 'Ali Express' && <AiOutlineAlibaba size={30} />}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xl">{singleStore.store_name}</p>
+                          <p className="text-slate-500">{singleStore.store_manager_name}</p>
                         </div>
                       </div>
-                      <div>
-                        <p className="text-xl">{singleStore.store_name}</p>
-                        <p className="text-slate-500">{singleStore.store_manager_name}</p>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              }) : allStoreData.map((singleStore, index) => {
-                return (
-                  <Link
-                    to={`/dashboard/all-stores/store-edit/${singleStore._id}`}
-                    style={shadowStyle}
-                    key={index}
-                  >
-                    <div className="flex items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
-                      <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
-                        <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
-                          {singleStore.store_type === 'Amazon' && <FaAmazon size={24} />}
-                          {singleStore.store_type === 'Walmart' && <TbBrandWalmart size={24} />}
-                          {singleStore.store_type === 'Ebay' && <FaEbay size={30} />}
-                          {singleStore.store_type === 'Shopify' && <FaShopify size={24} />}
-                          {singleStore.store_type === 'Ali Express' && <AiOutlineAlibaba size={30} />}
+                    </Link>
+                  );
+                }) : allStoreData.map((singleStore, index) => {
+                  return (
+                    <Link
+                      to={`/dashboard/all-stores/store-edit/${singleStore._id}`}
+                      style={shadowStyle}
+                      key={index}
+                    >
+                      <div className="flex items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
+                        <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
+                          <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
+                            {singleStore.store_type === 'Amazon' && <FaAmazon size={24} />}
+                            {singleStore.store_type === 'Walmart' && <TbBrandWalmart size={24} />}
+                            {singleStore.store_type === 'Ebay' && <FaEbay size={30} />}
+                            {singleStore.store_type === 'Shopify' && <FaShopify size={24} />}
+                            {singleStore.store_type === 'Ali Express' && <AiOutlineAlibaba size={30} />}
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-xl">{singleStore.store_name}</p>
+                          <p className="text-slate-500">{singleStore.store_manager_name}</p>
                         </div>
                       </div>
-                      <div>
-                        <p className="text-xl">{singleStore.store_name}</p>
-                        <p className="text-slate-500">{singleStore.store_manager_name}</p>
-                      </div>
-                    </div>
-                  </Link>
-                );
-              })
+                    </Link>
+                  );
+                })
         }
       </div>
     </div>

@@ -1,71 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { FiEdit, FiTrash } from "react-icons/fi";
+import useAuth from "../../hooks/useAuth";
 
 export default function AllUsersPage() {
+  const {user} = useAuth()
 
-  // table data
-  const data = [
-    {
-      id: 1,
-      full_name: "Nabil",
-      email: "dlldf@gmail.com",
-      role: "Admin"
-    },
-    {
-      id: 2,
-      full_name: "Toukir",
-      email: "demo.email@testdomain.net",
-      role: "Store Manager Admin"
-    },
-    // Repeat the structure for additional objects with different roles
-    {
-      id: 3,
-      full_name: "John",
-      email: "john@example.com",
-      role: "Admin VA"
-    },
-    {
-      id: 4,
-      full_name: "Alice",
-      email: "alice@example.com",
-      role: "Store Owner"
-    },
-    {
-      id: 5,
-      full_name: "Bob",
-      email: "bob@example.com",
-      role: "Warehouse Admin"
-    },
-    {
-      id: 6,
-      full_name: "Ella",
-      email: "ella@example.com",
-      role: "Warehouse VA"
-    },
-    {
-      id: 7,
-      full_name: "Mike",
-      email: "mike@example.com",
-      role: "Store Manager VA"
-    },
-    {
-      id: 8,
-      full_name: "Sara",
-      email: "sara@example.com",
-      role: "Store Manager Admin"
-    },
-    {
-      id: 9,
-      full_name: "David",
-      email: "david@example.com",
-      role: "Admin VA"
-    },
-    {
-      id: 10,
-      full_name: "Grace",
-      email: "grace@example.com",
-      role: "Store Owner"
+  const { data = [] } = useQuery({
+    queryKey: ['all_users'],
+    queryFn: async () => {
+      try {
+        const res = await axios.post('/api/v1/admin_api/get_all_users', {user})
+        if (res.status === 200) {
+          return res.data
+        }
+      } catch (error) {
+        console.log(error)
+      }
     }
-  ];
+  })
 
   // user roles
   const roles = [
@@ -84,7 +37,7 @@ export default function AllUsersPage() {
 
   const handleDeleteUser = (id) => {
     console.log(id)
-  } 
+  }
 
   return (
     <div className="overflow-x-auto py-10">

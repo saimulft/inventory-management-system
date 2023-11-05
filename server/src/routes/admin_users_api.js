@@ -102,6 +102,43 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
+
+    // get all users
+    router.post('/get_all_users', async (req, res) => {
+        try {
+            const user = req.body.user;
+            const role = user.role;
+            console.log(user)
+
+            let query;
+
+            if(role === 'Admin'){
+                query = {admin_id: user.admin_id}
+            }
+
+            if (role === 'Admin' || role === 'Admin VA') {
+                query = { admin_id: user.admin_id }
+            }
+
+            else if (role === 'Store Manager Admin') {
+                query = { store_id: { $in: store_access_ids.map(id => id) } };
+            }
+
+            else if (role === 'Warehouse Admin') {
+                query = { warehouse_id: user.warehouse_id }
+            }
+
+            const result = await admin_users_collection.find({}).toArray()
+            if (result.length) {
+                res.status(200).json(result);
+            }
+            else {
+                res.status(500).json({ message: 'Failed to get admin users' });
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
 }
 run()
 module.exports = router;

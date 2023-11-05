@@ -17,6 +17,7 @@ const run = async () => {
                 store_name: req.body.store_name,
                 store_manager_name: req.body.store_manager_name,
                 store_type: req.body.store_type,
+                store_status: req.body.store_status,
                 supplier_information: req.body.supplier_information,
                 additional_payment_details: req.body.additional_payment_details
             }
@@ -41,9 +42,10 @@ const run = async () => {
         try {
             const id = req.query.id
             const storeType = req.query.storeType
+            const storeStatus = req.query.storeStatus
 
             if (storeType && storeType !== 'All Store') {
-                const allStores = await all_stores_collection.find({ admin_id: id, store_type: storeType }).sort({ date: -1 }).toArray()
+                const allStores = await all_stores_collection.find({ admin_id: id, store_type: storeType, store_status: storeStatus}).sort({ date: -1 }).toArray()
 
                 if (allStores.length) {
                     return res.status(200).json({ data: allStores, message: "Successfully get all stores" })
@@ -53,7 +55,7 @@ const run = async () => {
                 }
             }
 
-            const allStores = await all_stores_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
+            const allStores = await all_stores_collection.find({ admin_id: id, store_status: storeStatus }).sort({ date: -1 }).toArray()
 
             if (allStores.length) {
                 res.status(200).json({ data: allStores, message: "Successfully get all stores" })

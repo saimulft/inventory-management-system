@@ -98,6 +98,10 @@ export default function AddSupplier() {
               <span className="font-bold text-slate-600">Store type: </span>
               <span>{storeDetails.store_type}</span>
             </p>
+            <p>
+              <span className="font-bold text-slate-600">Store status: </span>
+              <span>{storeDetails.store_status}</span>
+            </p>
           </div>
         </div>
       </div>

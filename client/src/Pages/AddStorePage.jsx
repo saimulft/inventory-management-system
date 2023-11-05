@@ -18,12 +18,16 @@ export default function AddStorePage() {
     const storeName = form.storeName.value;
     const storeManagerName = form.storeManagerName.value;
     const storeType = form.storeType.value;
+    const storeStatus = form.storeStatus.value;
 
     if (storeType && storeType === 'Pick Store Type') {
       return setErrorMessage('Please select store type')
     }
+    if(storeStatus && storeStatus === 'Select Status'){
+      return setErrorMessage('Please select store status')
+    }
 
-    const data = { store_name: storeName, store_manager_name: storeManagerName, store_type: storeType }
+    const data = { store_name: storeName, store_manager_name: storeManagerName, store_type: storeType, store_status: storeStatus }
     setStoreDetails(data)
 
     navigate("/dashboard/add-store/add-supplier")
@@ -82,6 +86,22 @@ export default function AddStorePage() {
                 <option value="Ebay">Ebay</option>
                 <option value="Shopify">Shopify</option>
                 <option value="Ali Express">Ali Express</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col mt-2">
+              <label className="text-slate-500">Store status*</label>
+              <select
+                className="select select-primary w-full mt-2"
+                name="storeStatus"
+                id="storeStatus"
+                required
+              >
+                <option defaultValue="Select Status">
+                  Select Status
+                </option>
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
               </select>
             </div>
 
