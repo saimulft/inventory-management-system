@@ -10,7 +10,6 @@ import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import { LiaShippingFastSolid } from "react-icons/lia";
-import { FaSpinner } from "react-icons/fa";
 import useGlobal from "../../../hooks/useGlobal";
 
 
@@ -127,7 +126,8 @@ export default function InventoryPreparingRequestTable() {
       }
     })
   }
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault()
     setSearchError("")
     if (!searchText) {
       return
@@ -268,7 +268,7 @@ export default function InventoryPreparingRequestTable() {
       return pageNumbers;
     }
   }
-  const itemsPerPage = 5;
+  const itemsPerPage = 15;
   const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
   const pageCount = Math.ceil(data.length / itemsPerPage);
   const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
@@ -351,7 +351,7 @@ export default function InventoryPreparingRequestTable() {
             </p>
           </div>
         </div>
-        <div className="w-1/4  flex items-center justify-between">
+        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
           <input
             className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
             placeholder="Search Here"
@@ -360,7 +360,7 @@ export default function InventoryPreparingRequestTable() {
             onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
           />
           <div className="w-[40%] flex items-center justify-evenly">
-            <button onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+            <button type="submit" onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
               <AiOutlineSearch size={24} />
             </button>
             <button onClick={() => {
@@ -372,7 +372,7 @@ export default function InventoryPreparingRequestTable() {
               Clear
             </button>
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -489,7 +489,7 @@ export default function InventoryPreparingRequestTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 5 && < div >
+        {!isLoading && !searchError && !searchResults.length && data?.length > 15 && < div >
           <ReactPaginate
             pageCount={Math.ceil(data.length / itemsPerPage)}
 
@@ -505,7 +505,7 @@ export default function InventoryPreparingRequestTable() {
           />
         </div>
         }
-        {!isLoading && !searchError && searchResults.length > 5 && <ReactPaginate
+        {!isLoading && !searchError && searchResults.length > 15 && <ReactPaginate
           pageCount={Math.ceil(searchResults.length / itemsPerPage)}
           pageRangeDisplayed={maxVisiblePages}
           marginPagesDisplayed={1}
