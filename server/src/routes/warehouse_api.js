@@ -23,8 +23,6 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error in warehouse data' });
         }
     });
-
-
 }
 run()
 module.exports = router;

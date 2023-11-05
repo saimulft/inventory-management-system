@@ -87,7 +87,7 @@ const run = async () => {
 
             if(result.length){
                 const data = result.map(item => {
-                    return { data: result, value: item._id, label: item.full_name }
+                    return { data: result, store_manager_admin_id: item.store_manager_admin_id, value: item._id, label: item.full_name }
                 })
                 return res.status(200).json({data: data, message: 'Successfully got all store maanger admin'})
             }

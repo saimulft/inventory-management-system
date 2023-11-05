@@ -17,11 +17,11 @@ const run = async () => {
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }
-            
+
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
             const login_data = {
-                creator_email: user?.email,
+                creator_email: req.body.creator_email,
                 email: req.body.email,
                 password: hashed_password,
                 role: req.body.role,
@@ -33,6 +33,8 @@ const run = async () => {
                 const warehouse_manager_va_user_data = {
                     admin_id: req.body.admin_id,
                     warehouse_manager_va_id: result.insertedId.toString(),
+                    warehouse_admin_id: req.body.warehouse_admin_id,
+                    warehouse_id: req.body.warehouse_id,
                     full_name: req.body.full_name,
                     email: req.body.email,
                     username: req.body.username,

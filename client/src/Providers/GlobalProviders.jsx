@@ -9,6 +9,8 @@ export const GlobalProvider = ({ children }) => {
 
   const [countsRefetch, setCountsRefetch] = useState(false)
 
+  const [storeRefetch, setStoreRefetch] = useState(false)
+
   const modalMarginLeft = isSidebarOpen ? "18.5%" : "6%";
 
 
@@ -20,7 +22,9 @@ export const GlobalProvider = ({ children }) => {
     setIsActiveSetting,
     modalMarginLeft,
     countsRefetch, 
-    setCountsRefetch
+    setCountsRefetch,
+    storeRefetch,
+    setStoreRefetch
   };
 
   return (

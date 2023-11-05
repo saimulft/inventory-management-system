@@ -53,6 +53,7 @@ import AllAdminUsers from "../Pages/SettingPages/AllAdminUsers";
 import StoreManagerVAPage from "../Pages/SettingPages/StoreManagerVAPage";
 import WarehouseManagerVAPage from "../Pages/SettingPages/WarehouseManagerVAPage";
 import AuthRoute from "./AuthRoute";
+import AdminRoute from "./AdminRoute";
 
 export const router = createBrowserRouter([
   {
@@ -65,7 +66,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/home",
-        element: <DashboardPage />,
+        element: <AdminRoute><DashboardPage /></AdminRoute>,
       },
       {
         path: "/dashboard/management",
