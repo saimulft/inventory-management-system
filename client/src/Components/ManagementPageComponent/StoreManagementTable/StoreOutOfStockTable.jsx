@@ -34,7 +34,7 @@ export default function StoreOutOfStockTable() {
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post(`/api/v1/out_of_stock_api/get_all_OOS_data`, { user })
+        const res = await axios.post(`/api/v1/out_of_stock_api/get_all_OOS_data`,{user})
         if (res.status === 200) {
           return res.data.data;
         }
@@ -133,7 +133,8 @@ export default function StoreOutOfStockTable() {
         console.log(error)
       })
   }
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault()
     setSearchError("")
     if (!searchText) {
       return
@@ -273,7 +274,7 @@ export default function StoreOutOfStockTable() {
       return pageNumbers;
     }
   }
-  const itemsPerPage = 5;
+  const itemsPerPage = 15;
   const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
   const pageCount = Math.ceil(data.length / itemsPerPage);
   const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
@@ -352,7 +353,7 @@ export default function StoreOutOfStockTable() {
             </p>
           </div>
         </div>
-        <div className="w-1/4  flex items-center justify-between">
+        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
           <input
             className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
             placeholder="Search Here"
@@ -361,7 +362,7 @@ export default function StoreOutOfStockTable() {
             onChange={(e) => setSearchText(e.target.value.toLowerCase())}
           />
           <div className="w-[40%] flex items-center justify-evenly">
-            <button onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+            <button type="submit" onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
               <AiOutlineSearch size={24} />
             </button>
             <button onClick={() => {
@@ -373,7 +374,7 @@ export default function StoreOutOfStockTable() {
               Clear
             </button>
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -488,7 +489,7 @@ export default function StoreOutOfStockTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 5 && < div >
+        {!isLoading && !searchError && !searchResults.length && data?.length > 15 && < div >
           <ReactPaginate
             pageCount={Math.ceil(data.length / itemsPerPage)}
 
@@ -504,7 +505,7 @@ export default function StoreOutOfStockTable() {
           />
         </div>
         }
-        {!isLoading && !searchError && searchResults.length > 5 && <ReactPaginate
+        {!isLoading && !searchError && searchResults.length > 15 && <ReactPaginate
           pageCount={Math.ceil(searchResults.length / itemsPerPage)}
           pageRangeDisplayed={maxVisiblePages}
           marginPagesDisplayed={1}

@@ -2,7 +2,7 @@ import axios from "axios";
 import { format } from "date-fns";
 import { useState } from "react";
 import { AiOutlineCloudUpload, AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
+import { BiDotsVerticalRounded, } from "react-icons/bi";
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
 import FileDownload from "../../Shared/FileDownload";
@@ -114,7 +114,9 @@ export default function InventoryTotalASINTable() {
     setSearchResults(filteredDateResults);
   }
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    e.preventDefault()
+    
     setSearchError("")
     if (!searchText) {
       return
@@ -367,7 +369,7 @@ export default function InventoryTotalASINTable() {
       return pageNumbers;
     }
   }
-  const itemsPerPage = 5;
+  const itemsPerPage = 15;
   const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
   const pageCount = Math.ceil(data.length / itemsPerPage);
   const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
@@ -451,7 +453,7 @@ export default function InventoryTotalASINTable() {
           </div>
         </div>
 
-        <div className="w-1/4  flex items-center justify-between">
+        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
           <input
             className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
             placeholder="Search Here"
@@ -460,7 +462,7 @@ export default function InventoryTotalASINTable() {
             onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
           />
           <div className="w-[40%] flex items-center justify-evenly">
-            <button onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+            <button type="submit" onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
               <AiOutlineSearch size={24} />
             </button>
             <button onClick={() => {
@@ -472,7 +474,7 @@ export default function InventoryTotalASINTable() {
               Clear
             </button>
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="overflow-x-auto  mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -573,7 +575,7 @@ export default function InventoryTotalASINTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 5 && < div >
+        {!isLoading && !searchError && !searchResults.length && data?.length > 15 && < div >
           <ReactPaginate
             pageCount={Math.ceil(data.length / itemsPerPage)}
 
@@ -589,7 +591,7 @@ export default function InventoryTotalASINTable() {
           />
         </div>
         }
-        {!isLoading && !searchError && searchResults.length > 5 && <ReactPaginate
+        {!isLoading && !searchError && searchResults.length > 15 && <ReactPaginate
           pageCount={Math.ceil(searchResults.length / itemsPerPage)}
           pageRangeDisplayed={maxVisiblePages}
           marginPagesDisplayed={1}
@@ -605,37 +607,10 @@ export default function InventoryTotalASINTable() {
 
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
-          <div className="flex">
-            <div className="w-1/2">
-              <div className="flex items-center mb-4 gap-2">
-                <BiSolidEdit size={24} />
-                <h3 className="text-2xl font-medium">Details</h3>
-              </div>
-              {/* <p className="mt-2">
-                <span className="font-medium">Data : </span>
-                <span>{singleData?.date && format(new Date(singleData.date), "y/MM/d")}</span>
-              </p> */}
+        <div style={{ marginLeft, maxWidth: '450px' }} className="modal-box">
+          <div className="flex items-center justify-center">
 
-              <p className="mt-2">
-                <span className="font-medium">Product Name : </span>
-                <span>{singleData?.product_name}</span>
-              </p>
-              {/* <p className="mt-2">
-                <span className="font-medium">ASIN : </span>
-                <span>{singleData?.asin_upc_code}</span>
-              </p> */}
-              <p className="mt-2">
-                <span className="font-medium">Store Manager: </span>
-                <span>{singleData?.store_manager_name}</span>
-              </p>
-
-              <p className="mt-2">
-                <span className="font-medium">Old Min Price : </span>
-                <span>${singleData?.min_price}</span>
-              </p>
-            </div>
-            <div className="w-1/2 px-4">
+            <div className="w-full px-4">
               <h3 className="text-2xl font-medium">Update</h3>
               <form onSubmit={handleAsinUpcUpdate}>
                 <div className="flex flex-col mt-4">
