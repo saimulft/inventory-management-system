@@ -10,11 +10,13 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
 import { FaSpinner } from "react-icons/fa";
+import useGlobal from "../../hooks/useGlobal";
 
 export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
   const { storeDetails, setStoreDetails, supplierInfoInputList, setSupplierInfoInputList, additionalPaymentInputList, setAdditionalPaymentInputList } = useStore()
   const { user } = useAuth()
+  const {setStoreRefetch} = useGlobal()
   const navigate = useNavigate()
 
   const { mutateAsync, isLoading } = useMutation({
@@ -60,6 +62,7 @@ export default function AddSupplier() {
         setSupplierInfoInputList([{ supplier_name: "", username: "", password: "" }])
         setAdditionalPaymentInputList([{ email: "", card_name: "", card_info: "", date: "", cvc: "", billing_address: "", city: "", state: "", zip_code: "", country: ""}])
 
+        setStoreRefetch(true)
         Swal.fire(
           'Added',
           'New store has been added.',

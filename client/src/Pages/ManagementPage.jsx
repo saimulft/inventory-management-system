@@ -5,7 +5,7 @@ import useAuth from "../hooks/useAuth";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import useGlobal from "../hooks/useGlobal";
-import Loading from "../Components/Shared/Loading";
+import Loading2 from "../Components/Shared/Loading2";
 
 export default function ManagementPage() {
   const boxShadowStyle = {
@@ -39,12 +39,13 @@ export default function ManagementPage() {
       refetch()
       setCountsRefetch(false)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [countsRefetch]);
 
   return (
     <div className="relative">
       {
-        loading || isLoading ? <Loading /> : <div className="space-y-8 my-10 mx-8">
+        loading || isLoading ? <Loading2 contentHeight="74px" /> : <div className="space-y-8 my-10 mx-8">
           {
             user?.role === 'Admin' || user?.role === 'Admin VA' || user?.role === 'Store Manager Admin' || user?.role === 'Store Manager VA' ?
               <div style={boxShadowStyle} className="p-16 bg-white rounded-lg">
