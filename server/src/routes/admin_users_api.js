@@ -117,7 +117,6 @@ const run = async () => {
         try {
             const user = req.body.user;
             const role = user.role;
-            console.log(user)
 
             let query;
 
