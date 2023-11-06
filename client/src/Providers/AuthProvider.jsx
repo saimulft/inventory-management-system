@@ -11,6 +11,7 @@ const AuthProvider = ({ children }) => {
     const token = Cookies.get('loginToken')
  
     useEffect(() => {
+
         axios.get('/api/v1/authentication_api/get_user_profile_data', {
             headers: {
                 Authorization: `Bearer ${token}`
@@ -35,6 +36,7 @@ const AuthProvider = ({ children }) => {
         }, [token])
         const authInfo = { user, setUser, loading }
 
+      
         return (
         <AuthContext.Provider value={authInfo}>
             {children}

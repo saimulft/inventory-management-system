@@ -2,7 +2,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../Components/Shared/Sidebar";
 import Navbar from "../Components/Shared/Navbar";
 import Container from "../Components/Shared/Container";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import ChatBox from "../Components/ChatBox";
 import { ChatContext } from "../Providers/ChatProvider";
@@ -10,7 +10,7 @@ import { ChatContext } from "../Providers/ChatProvider";
 export default function DashboardLayout() {
   const {isMessageBoxOpen} = useContext(ChatContext)
   const { isSidebarOpen, setIsActiveSetting } = useContext(GlobalContext);
-
+const [participants, setParticipants] = useState([])
   const url = useLocation();
   const settingActiveRoute = url?.pathname?.split("/")[3];
 
@@ -99,6 +99,7 @@ export default function DashboardLayout() {
 
   ]
 
+
   return (
     <div className="flex bg-[#fafbfc]">
       <div
@@ -110,12 +111,12 @@ export default function DashboardLayout() {
       <div className={` ${isSidebarOpen ? "w-[81.5%]" : "w-[94%] "}`}>
         <Container>
           <div className="sticky top-0 z-50">
-            <Navbar data={data}/>
+            <Navbar data={data} setParticipants={setParticipants}/>
           </div>
           <div>
             <Outlet />
             {/* message box  */}
-            {isMessageBoxOpen && <ChatBox/>}
+            {isMessageBoxOpen && <ChatBox participants={participants}/>}
           </div>
         </Container>
       </div>

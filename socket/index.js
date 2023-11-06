@@ -24,6 +24,7 @@ io.on('connection',  (socket) => {
 
     // connect 
     socket.on('addUsers', userData => {
+        console.log(userData)
         addUser(userData, socket.id)
         io.emit("getUsers", users);
     })
@@ -33,6 +34,14 @@ io.on('connection',  (socket) => {
         console.log("my send message",data);
         const user =  getUser(data.receiver)
        {user && io.to(user?.socketId).emit('getMessage', data)}
+    })
+
+    // typing status
+    socket.on('typing',  ({isTyping: status, receiver}) => {
+       const user =  getUser(receiver)
+      console.log(status);
+      {user && io.to(user?.socketId).emit('getTyping', status)}
+
     })
 
     //disconnect
