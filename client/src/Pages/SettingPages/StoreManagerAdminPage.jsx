@@ -18,7 +18,7 @@ export default function StoreManagerAdminPage() {
     },
   })
 
-  const { data: allStoreData = [] } = useQuery({
+  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
     queryKey: ['get_all_stores_data'],
     queryFn: async () => {
       try {
@@ -145,7 +145,7 @@ export default function StoreManagerAdminPage() {
             </div>
             <div className="mt-3">
               <label className="text-slate-500">Select Store</label>
-              <SearchDropdown isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+              <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
             </div>
           </div>
         </div>

@@ -14,7 +14,7 @@ const StoreManagerVAPage = () => {
     const [storeOption, setStoreOption] = useState(null)
     const [storeManagerOption, setStoreManagerOption] = useState(null)
 
-    const { data: allStoreManager = [] } = useQuery({
+    const { data: allStoreManager = [], isLoading: storeManagerLoading } = useQuery({
         queryKey: ['get_all_store_manager'],
         queryFn: async () => {
             try {
@@ -31,7 +31,7 @@ const StoreManagerVAPage = () => {
     })
 
 
-    const { data: allStoreData = [] } = useQuery({
+    const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
         queryKey: ['get_all_stores_data'],
         queryFn: async () => {
             try {
@@ -174,10 +174,10 @@ const StoreManagerVAPage = () => {
                         {
                             user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-3">
                                 <label className="text-slate-500">Store Manager Admin</label>
-                                <SearchDropdown isMulti={false} option={storeManagerOption} optionData={allStoreManager} placeholder="Select" setOption={setStoreManagerOption} />
+                                <SearchDropdown isLoading={storeManagerLoading} isMulti={false} option={storeManagerOption} optionData={allStoreManager} placeholder="Select" setOption={setStoreManagerOption} />
                             </div> : <div className="mt-3">
                                 <label className="text-slate-500">Select Store</label>
-                                <SearchDropdown isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                                <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                             </div>
                         }
                     </div>
@@ -186,7 +186,7 @@ const StoreManagerVAPage = () => {
                 {
                     user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-3">
                         <label className="text-slate-500">Select Store</label>
-                        <SearchDropdown isMulti={true} option={storeOption} optionData={filteredStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                        <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={filteredStoreData} placeholder="Select Store" setOption={setStoreOption} />
                     </div> : ''
                 }
 

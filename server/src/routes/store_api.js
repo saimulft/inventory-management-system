@@ -38,7 +38,6 @@ const run = async () => {
 
     // get all stores
     router.get('/get_all_stores', async (req, res) => {
-
         try {
             const id = req.query.id
             const storeType = req.query.storeType
@@ -56,6 +55,36 @@ const run = async () => {
             }
 
             const allStores = await all_stores_collection.find({ admin_id: id, store_status: storeStatus }).sort({ date: -1 }).toArray()
+
+            if (allStores.length) {
+                res.status(200).json({ data: allStores, message: "Successfully get all stores" })
+            }
+            else {
+                res.status(204).json({ message: "No content" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
+        }
+    });
+
+    // get all stores for profit tracker page
+    router.get('/profit_tracker_all_stores', async (req, res) => {
+        try {
+            const id = req.query.id
+            const storeType = req.query.storeType
+
+            if (storeType && storeType !== 'All Store') {
+                const allStores = await all_stores_collection.find({ admin_id: id, store_type: storeType }).sort({ date: -1 }).toArray()
+
+                if (allStores.length) {
+                    return res.status(200).json({ data: allStores, message: "Successfully get all stores" })
+                }
+                else {
+                    return res.status(204).json({ message: "No content" })
+                }
+            }
+
+            const allStores = await all_stores_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
 
             if (allStores.length) {
                 res.status(200).json({ data: allStores, message: "Successfully get all stores" })

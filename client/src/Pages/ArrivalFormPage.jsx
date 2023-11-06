@@ -40,7 +40,7 @@ const ArrivalFormPage = () => {
     }
   }, [storeOption?.label, asinUpcOption, asinUpc,user]);
 
-  const { data: asinUpcData = [], } = useQuery({
+  const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
     queryKey: ['asin_upc_data'],
     queryFn: async () => {
       try {
@@ -56,7 +56,7 @@ const ArrivalFormPage = () => {
     }
   })
 
-  const { data: allStoreData = [] } = useQuery({
+  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
     queryKey: ['get_all_stores_data'],
     queryFn: async () => {
       try {
@@ -72,7 +72,7 @@ const ArrivalFormPage = () => {
     }
   })
   
-  const { data: warehouseData = [] } = useQuery({
+  const { data: warehouseData = [], isLoading: warehouseLoading } = useQuery({
     queryKey: ['get_warehouse_data'],
     queryFn: async () => {
       try {
@@ -177,8 +177,7 @@ const ArrivalFormPage = () => {
     <div className="bg-white py-20 rounded-lg w-full">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl"
-      >
+        className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl">
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Pending Arrival Form</p>
         </div>
@@ -188,12 +187,12 @@ const ArrivalFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Warehouse</label>
-                  <SearchDropdown isMulti={false} option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
+                  <SearchDropdown isLoading={warehouseLoading} isMulti={false} option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">ASIN/UPC</label>
-                  <SearchDropdown isMulti={false} option={asinUpcOption} optionData={asinUpcData} placeholder="Select ASIN or UPC" setOption={setAsinUpcOption} />
+                  <SearchDropdown isLoading={asinLoading} isMulti={false} option={asinUpcOption} optionData={asinUpcData} placeholder="Select ASIN or UPC" setOption={setAsinUpcOption} />
                 </div>
 
                 <div className="mt-4">
@@ -235,7 +234,7 @@ const ArrivalFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <SearchDropdown isMulti={false} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                  <SearchDropdown isLoading={storeLoading} isMulti={false} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                 </div>
 
                 <div className="mt-4">
