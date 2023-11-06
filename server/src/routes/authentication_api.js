@@ -196,7 +196,6 @@ const run = async () => {
             const current_email = req.body.current_email;
             const current_password = req.body.current_password;
             const role = req.body.role;
-
             const data = await all_users_collection.findOne({ email: current_email });
 
             if (data) {
@@ -231,7 +230,7 @@ const run = async () => {
                     country: req.body.country,
                     whatsapp_number: req.body.whatsapp_number
                 }
-
+                const nameUpdate = await all_users_collection.updateOne({ email: current_email }, { $set: { full_name: req.body.full_name } })
                 if (role === 'Admin') {
                     const result = await admin_users_collection.findOneAndUpdate(
                         { email: current_email },
@@ -286,12 +285,15 @@ const run = async () => {
                         { $set: updatedData },
                         { returnDocument: "after" }
                     );
+
                     return res.status(200).json(result);
                 }
             }
+
             else {
                 return res.status(404).json({ message: 'User not found' });
             }
+
         } catch (error) {
             return res.status(500).json({ message: 'Internal server error' });
         }
