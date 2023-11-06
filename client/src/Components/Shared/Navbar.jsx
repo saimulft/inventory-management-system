@@ -1,13 +1,16 @@
 import { AiOutlineMessage, AiOutlineSearch } from "react-icons/ai";
 import { BsBell } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
+import useGlobal from "../../hooks/useGlobal";
 
 export default function Navbar() {
   const { user } = useAuth()
+  const {pageName} = useGlobal()
+  const defaultPageName = user?.role === 'Admin' || user?.role === 'Admin VA' ? 'Dashboard' : user?.role === 'Store Owner' ? 'Profit Tracker' : 'Management';
 
   return (
     <div className="flex items-center px-8 ps-3 pe-3 bg-[#2e2e30]  text-white shadow-sm py-3">
-      <div className="text-lg font-medium w-full ">Dashboard</div>
+      <div className="text-lg font-medium w-full ">{pageName ? pageName : defaultPageName}</div>
       <div className="w-full px-8 relative lg:block hidden">
         <div className="form-control w-full">
           <div className="input-group w-full">

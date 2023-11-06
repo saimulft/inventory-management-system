@@ -14,7 +14,7 @@ export default function StoreEditPage() {
 
   const {id} = useParams()
 
-  const { data: singleStore = [] } = useQuery({
+  const { data: singleStore = {} } = useQuery({
     queryKey: ['single_store'],
     queryFn: async () => {
       try {
@@ -24,10 +24,12 @@ export default function StoreEditPage() {
           setAdditionalPaymentInputList(res.data.data.additional_payment_details)
           return res.data.data;
         }
-        return [];
+        if(res.status === 204){
+          return {}
+        }
       } catch (error) {
         console.log(error);
-        return [];
+        return {};
       }
     }
   })

@@ -77,8 +77,8 @@ export default function AllStoresPage() {
   }
 
   return (
-    <div className="p-14">
-      <div className="p-10 rounded-lg min-h-[calc(100vh-186px)] max-h-full" style={{ boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)"}}>
+    <div className="p-10">
+      <div className="p-14 rounded-lg min-h-[calc(100vh-154px)] max-h-full" style={{ boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)"}}>
         <div className="flex items-center justify-between">
           <div className="flex text-center w-1/2 ">
             <div

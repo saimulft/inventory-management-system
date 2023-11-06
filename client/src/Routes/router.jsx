@@ -56,6 +56,7 @@ import AuthRoute from "./AuthRoute";
 import AdminRoute from "./AdminRoute";
 import StoreManagerRoute from "./StoreManagerRoute";
 import StoreOwnerRoute from "./StoreOwnerRoute";
+import ProfitTrackerStatsPage from "../Pages/ProfitTrackerStatsPage";
 
 export const router = createBrowserRouter([
   {
@@ -166,6 +167,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/profit-tracker",
         element: <StoreOwnerRoute><ProfitTrackerPage /></StoreOwnerRoute>,
+      },
+      {
+        path: "/dashboard/profit-tracker/store/:id",
+        element: <StoreOwnerRoute><ProfitTrackerStatsPage /></StoreOwnerRoute>,
       },
       {
         path: "/dashboard/support",

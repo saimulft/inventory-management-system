@@ -1,20 +1,7 @@
-import { BiSolidFoodMenu, BiSolidStore } from "react-icons/bi";
-import { BsFileBarGraphFill } from "react-icons/bs";
+import { BiSolidFoodMenu, BiSolidStore, BiTable } from "react-icons/bi";
+import { BsFileBarGraphFill, BsGraphUp } from "react-icons/bs";
 import { AiTwotoneTag } from "react-icons/ai";
-import {
-  BarChart,
-  Bar,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-  Area,
-  AreaChart,
-  LineChart,
-  Line,
-} from "recharts";
+import { BarChart, Bar, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, LineChart, Line } from "recharts";
 import { useState } from "react";
 
 const data = [
@@ -64,6 +51,7 @@ const data = [
 
 export default function DashboardPage() {
   const [analyticsDays, setAnalyticsDays] = useState()
+  const [view, setView] = useState('Graph')
 
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
@@ -93,6 +81,13 @@ export default function DashboardPage() {
             <p onClick={() => setAnalyticsDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
               Custom
             </p>
+          </div>
+          <div className="flex gap-5 ml-auto">
+            <button onClick={() => setView('Graph')} className={`flex items-center gap-1.5 px-3 rounded-md py-2 cursor-pointer ${view === 'Graph' ? "bg-[#8633FF] text-white"
+              : "border border-slate-500 text-black"}`}><BsGraphUp size={18} /><span>Graph View</span></button>
+              
+            <button onClick={() => setView('Table')} className={`flex items-center gap-1.5 px-3 rounded py-2 cursor-pointer ${view === 'Table' ? "bg-[#8633FF] text-white"
+              : "border border-slate-500 text-black"}`}><BiTable size={20} />Table View</button>
           </div>
         </div>
         <div className="mt-10 flex gap-5 items-center">

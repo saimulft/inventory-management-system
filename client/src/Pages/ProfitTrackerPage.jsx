@@ -75,9 +75,9 @@ export default function ProfitTrackerPage() {
 
   return (
     // w-[90%] mx-auto my-14
-    <div className="p-14">
-      <div className="bg-white p-10 rounded-lg w-full min-h-[calc(100vh-186px)] max-h-full" style={{boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)"}}>
-        <h1 className="text-center text-2xl font-medium mb-8">All Stores</h1>
+    <div className="p-10">
+      <div className="bg-white py-10 px-14 rounded-lg w-full min-h-[calc(100vh-154px)] max-h-full" style={{ boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)" }}>
+        <h1 className="text-center text-3xl font-medium mb-8">All Stores</h1>
 
         <form onSubmit={handleSearch} className="w-full flex justify-between gap-4 ">
           <select onChange={(e) => {
@@ -124,7 +124,7 @@ export default function ProfitTrackerPage() {
                   searchResults.length ? searchResults.map((singleStore, index) => {
                     return (
                       <Link
-                        to="/dashboard/home"
+                        to={`/dashboard/profit-tracker/store/${singleStore._id}`}
                         style={shadowStyle}
                         key={index}
                       >
@@ -148,7 +148,7 @@ export default function ProfitTrackerPage() {
                   }) : allStoreData.map((singleStore, index) => {
                     return (
                       <Link
-                        to="/dashboard/home"
+                        to={`/dashboard/profit-tracker/store/${singleStore._id}`}
                         style={shadowStyle}
                         key={index}
                       >
