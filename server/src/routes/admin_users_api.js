@@ -112,8 +112,10 @@ const run = async () => {
         }
     })
 
-    // get all users
-    router.post('/get_all_users', async (req, res) => {
+
+
+
+    router.post('/get_all_users_list', async (req, res) => {
         try {
             const user = req.body.user;
             const role = user.role;
@@ -124,42 +126,7 @@ const run = async () => {
                 query = { admin_id: user.admin_id }
             }
 
-            if (role === 'Admin' || role === 'Admin VA') {
-                query = { admin_id: user.admin_id }
-            }
-
-            else if (role === 'Store Manager Admin') {
-                query = { store_id: { $in: store_access_ids.map(id => id) } };
-            }
-
-            else if (role === 'Warehouse Admin') {
-                query = { warehouse_id: user.warehouse_id }
-            }
-
-            const result = await admin_users_collection.find({}).toArray()
-            if (result.length) {
-                res.status(200).json(result);
-            }
-            else {
-                res.status(500).json({ message: 'Failed to get admin users' });
-            }
-        } catch (error) {
-            res.status(500).json({ message: 'Internal Server Error' });
-        }
-    })
-
-
-    router.post('/get_all_users_list', async (req, res) => {
-        try {
-            const user = req.body.user;
-            const role = user.role;
-
-            let query;
-
-            if (role === 'Admin' || role === 'Admin VA') {
-                query = { admin_id: user.admin_id }
-            }
-            if (role === 'Store Manager Admin' || role === 'Warehouse Admin') {
+            if (role === 'Store Manager Admin' || role === 'Warehouse Admin' || role === 'Admin VA') {
                 query = { creator_email: user.email };
             }
 
