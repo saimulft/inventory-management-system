@@ -46,7 +46,7 @@ const PreparingFormPage = () => {
     }
   }, [storeOption?.label, asinUpcOption,user]);
 
-  const { data: asinUpcData = [] } = useQuery({
+  const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
     queryKey: ['asin_upc_data'],
     queryFn: async () => {
       try {
@@ -61,7 +61,7 @@ const PreparingFormPage = () => {
       }
     }
   })
-  const { data: allStoreData = [] } = useQuery({
+  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
     queryKey: ['get_all_stores_data'],
     queryFn: async () => {
       try {
@@ -77,7 +77,7 @@ const PreparingFormPage = () => {
     }
   })
 
-  const { data: warehouseData = [] } = useQuery({
+  const { data: warehouseData = [], isLoading: warehouseLoading } = useQuery({
     queryKey: ['get_warehouse_data'],
     queryFn: async () => {
       try {
@@ -263,7 +263,7 @@ const PreparingFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500 mb-2">ASIN/UPC</label>
-                  <SearchDropdown option={asinUpcOption} placeholder="Select ASIN or UPC" optionData={asinUpcData} setOption={setAsinUpcOption} />
+                  <SearchDropdown isLoading={asinLoading} option={asinUpcOption} placeholder="Select ASIN or UPC" optionData={asinUpcData} setOption={setAsinUpcOption} />
                 </div>
 
                 <div className="mt-4">
@@ -358,7 +358,7 @@ const PreparingFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <SearchDropdown option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                  <SearchDropdown isLoading={storeLoading} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                 </div>
 
 
@@ -464,7 +464,7 @@ const PreparingFormPage = () => {
             </div>
             <div className="mt-4">
               <label className="text-slate-500">Warehouse</label>
-              <SearchDropdown option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
+              <SearchDropdown isLoading={warehouseLoading} option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
             </div>
             <ToastMessage errorMessage={formError} />
             <div className="flex items-center justify-center mt-8">

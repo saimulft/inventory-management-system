@@ -13,7 +13,7 @@ const WarehouseManagerVAPage = () => {
     const [successMessage, setSuccessMessage] = useState('')
     const [warehouseAdminOption, setWarehouseAdminOption] = useState(null)
 
-    const { data: allWarehouseAdmin = [] } = useQuery({
+    const { data: allWarehouseAdmin = [], isLoading: warehouseAdminLoading } = useQuery({
         queryKey: ['get_all_warehouse_admin'],
         queryFn: async () => {
             try {
@@ -155,7 +155,7 @@ const WarehouseManagerVAPage = () => {
                             {
                                 user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-3">
                                     <label className="text-slate-500">Warehouse Admin</label>
-                                    <SearchDropdown isMulti={false} option={warehouseAdminOption} optionData={allWarehouseAdmin} placeholder="Select warehouse admin" setOption={setWarehouseAdminOption} />
+                                    <SearchDropdown isLoading={warehouseAdminLoading} isMulti={false} option={warehouseAdminOption} optionData={allWarehouseAdmin} placeholder="Select warehouse admin" setOption={setWarehouseAdminOption} />
                                 </div> : ''
                             }
                         </div>
