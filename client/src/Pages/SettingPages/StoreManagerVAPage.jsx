@@ -78,7 +78,7 @@ const StoreManagerVAPage = () => {
             return setErrorMessage("Password must be at least 6 characters or longer!")
         }
 
-        if (!storeOption.length) {
+        if (!storeOption?.length) {
             return setErrorMessage('Please select store')
         }
 

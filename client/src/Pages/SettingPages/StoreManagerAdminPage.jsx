@@ -48,15 +48,16 @@ export default function StoreManagerAdminPage() {
     const confirmPassword = form.confirmPassword.value;
     const username = form.username.value;
 
-    if (!storeOption.length) {
-      return setErrorMessage('Please select store')
-    }
     if (password !== confirmPassword) {
       return setErrorMessage('Password and confirm password must be same!')
     }
 
     else if (password.length < 6) {
       return setErrorMessage("Password must be at least 6 characters or longer!")
+    }
+
+    if (!storeOption?.length) {
+      return setErrorMessage('Please select store')
     }
 
     const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager Admin' }

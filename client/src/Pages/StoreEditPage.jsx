@@ -71,7 +71,7 @@ export default function StoreEditPage() {
               <span className="font-bold text-slate-600">Store status: </span>
               <span>{singleStore.store_status}</span>
             </p>
-            <button className="border border-[#8633FF] px-4 py-1 flex justify-center items-center gap-2 my-4 rounded hover:bg-[#8633FF] hover:text-white transition-all w-20 ">
+            <button className="border border-[#8633FF] px-4 py-1 flex justify-center items-center gap-2 my-4 rounded hover:bg-[#8633FF] hover:text-white transition-all">
               <BiSolidEdit />
               <p>Edit</p>
             </button>

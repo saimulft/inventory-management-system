@@ -3,11 +3,12 @@ import axios from "axios";
 import { FiTrash } from "react-icons/fi";
 import useAuth from "../../hooks/useAuth";
 import Swal from "sweetalert2";
+import Loading from "../../Components/Shared/Loading";
 
 export default function AllUsersPage() {
   const { user } = useAuth()
 
-  const { data = [], refetch } = useQuery({
+  const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['all_users_list'],
     queryFn: async () => {
       try {
@@ -24,7 +25,6 @@ export default function AllUsersPage() {
       }
     }
   })
-
 
   const handleDeleteUser = (user) => {
     Swal.fire({
@@ -62,7 +62,7 @@ export default function AllUsersPage() {
   }
 
   return (
-    <div className="overflow-x-auto py-10">
+    <div className="overflow-x-auto py-10 min-h-[calc(100vh-310px)] max-h-full">
       <table className="table table-md">
         <thead>
           <tr className="bg-gray-100">
@@ -72,8 +72,8 @@ export default function AllUsersPage() {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          {data?.map((user, index) => {
+        <tbody className="relative">
+          {isLoading ? <Loading /> : data?.map((user, index) => {
             return (
               <tr key={index} className={`${index % 2 == 1 && "bg-gray-100"}`}>
                 <td>{user.full_name}</td>

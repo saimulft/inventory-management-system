@@ -16,7 +16,7 @@ export default function SettingsPage() {
       className="flex flex-col justify-center h-full my-16 pt-10 rounded-lg  max-w-[80%] mx-auto px-20  bg-white shadow-lg"
     >
       <div className="border-b-2 border-slate-500 w-full flex justify-center items-center">
-        <div className="flex mb-6 ">
+        <div className="flex mb-6 rounded overflow-hidden">
           <Link to="/dashboard/settings/profile">
             <button
               onClick={() => setIsActiveSetting("profile")}
