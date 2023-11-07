@@ -85,7 +85,7 @@ export default function DashboardPage() {
           <div className="flex gap-5 ml-auto">
             <button onClick={() => setView('Graph')} className={`flex items-center gap-1.5 px-3 rounded-md py-2 cursor-pointer ${view === 'Graph' ? "bg-[#8633FF] text-white"
               : "border border-slate-500 text-black"}`}><BsGraphUp size={18} /><span>Graph View</span></button>
-              
+
             <button onClick={() => setView('Table')} className={`flex items-center gap-1.5 px-3 rounded py-2 cursor-pointer ${view === 'Table' ? "bg-[#8633FF] text-white"
               : "border border-slate-500 text-black"}`}><BiTable size={20} />Table View</button>
           </div>
@@ -138,8 +138,8 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-8 mt-10">
-        {/* New Profit Chart */}
+      {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
+
         <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
           <h6 className="text-lg font-medium my-4 ml-8">Net Profit</h6>
           <ResponsiveContainer width="100%" height={300}>
@@ -154,7 +154,7 @@ export default function DashboardPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        {/* Total Expenses Chart*/}
+
         <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
           <h6 className="text-lg font-medium my-4 ml-8">Total Expenses</h6>
           <ResponsiveContainer width="100%" height={300}>
@@ -184,9 +184,9 @@ export default function DashboardPage() {
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div>}
 
-      <div className="grid grid-cols-2 gap-8 mt-10">
+      {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
         {/* sales Chart */}
         <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
           <h6 className="text-lg font-medium my-4 ml-8">Sales</h6>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
             </AreaChart>
           </ResponsiveContainer>
         </div>
-        {/* ROI chart  */}
+
         <div style={boxShadowStyle} className="bg-white p-5  rounded-xl">
           <h6 className="text-lg font-medium my-4 ml-8">ROI</h6>
           <ResponsiveContainer width="100%" height={300}>
@@ -248,7 +248,49 @@ export default function DashboardPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
+      </div>}
+      {view === "Table" && <div style={boxShadowStyle} className="mt-10">
+      
+        <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
+          <table className="table table-sm">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Date</th>
+                <th>Store Name</th>
+                <th>ASIN/UPC</th>
+                <th>Code Type</th>
+                <th>Product Name</th>
+                <th>Order ID</th>
+                <th>UPIN</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Courier</th>
+                <th>Supplier Tracking</th>
+                <th>EDA</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody className="relative">
+
+              <tr className="bg-gray-200" >
+                {/* <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th> */}
+              </tr>
+
+
+            </tbody>
+          </table>
+
+
+        </div>
+      </div>}
+
     </div>
   );
 }

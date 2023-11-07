@@ -13,7 +13,7 @@ const ArrivalFormPage = () => {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
   const { user } = useAuth();
-  const {setCountsRefetch} = useGlobal()
+  const { setCountsRefetch } = useGlobal()
   const [inputError, setInputError] = useState('')
   const [asinUpcOption, setAsinUpcOption] = useState(null)
   const [storeOption, setStoreOption] = useState(null)
@@ -26,7 +26,7 @@ const ArrivalFormPage = () => {
     if (storeOption?.label && asinUpcOption) {
 
       const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
-      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`,{user})
+      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then(res => {
           if (res.status === 200) {
             setProductName(res.data.data.product_name)
@@ -38,13 +38,13 @@ const ArrivalFormPage = () => {
           console.log(error)
         })
     }
-  }, [storeOption?.label, asinUpcOption, asinUpc,user]);
+  }, [storeOption?.label, asinUpcOption, asinUpc, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
     queryKey: ['asin_upc_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', {user})
+        const res = await axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -60,7 +60,7 @@ const ArrivalFormPage = () => {
     queryKey: ['get_all_stores_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', {user})
+        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -71,7 +71,7 @@ const ArrivalFormPage = () => {
       }
     }
   })
-  
+
   const { data: warehouseData = [], isLoading: warehouseLoading } = useQuery({
     queryKey: ['get_warehouse_data'],
     queryFn: async () => {
@@ -141,7 +141,7 @@ const ArrivalFormPage = () => {
       return;
     }
 
-    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda ) {
+    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda) {
       setInputError('Please fill out all the inputs in order to submit the form')
       return;
     }
@@ -190,15 +190,15 @@ const ArrivalFormPage = () => {
   }
 
   return (
-    <div className="bg-white py-20 rounded-lg w-full">
+    <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl">
+        className="border border-[#8633FF] shadow-lg h-full w-full m-auto rounded-xl">
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Pending Arrival Form</p>
         </div>
         <div className="lg:py-10 lg:px-20 w-full flex justify-center">
-          <form onSubmit={handleArrivalForm}>
+          <form className="w-[100%]" onSubmit={handleArrivalForm}>
             <div className="flex gap-7">
               <div className="w-full">
                 <div>
@@ -422,7 +422,7 @@ const ArrivalFormPage = () => {
             <div className="mt-5">{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
 
             <div className="flex items-center justify-center mt-8">
-              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-72 capitalize">
+              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-full capitalize">
                 {isLoading && <FaSpinner size={20} className="animate-spin" />}
                 <p>Pending Arrival Request</p>
               </button>

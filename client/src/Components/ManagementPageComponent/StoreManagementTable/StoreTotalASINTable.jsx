@@ -618,7 +618,7 @@ export default function InventoryTotalASINTable() {
                   <input
                     type="number"
                     placeholder="Enter new min price"
-                    className="input input-bordered input-primary w-full input-sm mt-2"
+                    className="input input-bordered input-primary w-full  mt-2"
                     id="minPrice"
                     name="minPrice"
                   />
