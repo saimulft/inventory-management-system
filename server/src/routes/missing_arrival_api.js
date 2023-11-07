@@ -67,10 +67,8 @@ const run = async () => {
             const existData = await missing_arrival_collection.findOne({ _id: new ObjectId(id) });
             if (existData) {
                 const updatedData = {
-                    product_name: req.body.product_name ? req.body.product_name : existData.product_name,
-                    quantity: req.body.quantity ? req.body.quantity : existData.quantity,
-                    upin: req.body.upin ? req.body.upin : existData.upin,
-                    eda: req.body.eda ? req.body.eda : existData.eda,
+                    // product_name: req.body.product_name ? req.body.product_name : existData.product_name,
+                    // eda: req.body.eda ? req.body.eda : existData.eda,
                     missing_status: req.body.missing_status !== 'Select Status' ? req.body.missing_status : existData.missing_status,
                     remark: req.body.notes ? req.body.notes : existData.remark
                 }
@@ -81,33 +79,38 @@ const run = async () => {
                 );
 
                 if (result) {
-                    const existInStock = await all_stock_collection.findOne({ upin: result.upin })
-                    const quantity = parseInt(result.missing_quantity) + parseInt(existInStock.received_quantity)
-                    const stock = parseInt(result.missing_quantity) + parseInt(existInStock.stock)
-                    const oldPrice = parseFloat(existInStock.unit_price)
-                    const newPrice = parseFloat(result.unit_price)
-                    const avgUnitPrice = (oldPrice + newPrice) / 2;
+                    if (req.body.missing_status !== 'Select Status') {
+                        const existInStock = await all_stock_collection.findOne({ upin: result.upin })
+                        const quantity = parseInt(result.missing_quantity) + parseInt(existInStock.received_quantity)
+                        const stock = parseInt(result.missing_quantity) + parseInt(existInStock.stock)
+                        const oldPrice = parseFloat(existInStock.unit_price)
+                        const newPrice = parseFloat(result.unit_price)
+                        const avgUnitPrice = (oldPrice + newPrice) / 2;
 
-                    const remainingPrice = stock * avgUnitPrice
+                        const remainingPrice = stock * avgUnitPrice
 
-                    const updateStockdata = {
-                        received_quantity: quantity,
-                        unit_price: avgUnitPrice.toFixed(2),
-                        stock: stock,
-                        remark: result.remark,
-                        remaining_price: remainingPrice
+                        const updateStockdata = {
+                            received_quantity: quantity,
+                            unit_price: avgUnitPrice.toFixed(2),
+                            stock: stock,
+                            remark: result.remark,
+                            remaining_price: remainingPrice
+                        }
+
+                        const updatedResult = await all_stock_collection.updateOne(
+                            { _id: new ObjectId(existInStock._id) },
+                            { $set: updateStockdata }
+                        );
+
+                        if (updatedResult.modifiedCount) {
+                            return res.status(200).json({ status: 'success', message: 'Data modified successful' });
+                        }
+                        else {
+                            return res.status(203).json({ status: 'failed', message: 'Data not modified' })
+                        }
                     }
-
-                    const updatedResult = await all_stock_collection.updateOne(
-                        { _id: new ObjectId(existInStock._id) },
-                        { $set: updateStockdata }
-                    );
-
-                    if (updatedResult.modifiedCount) {
+                    else{
                         return res.status(200).json({ status: 'success', message: 'Data modified successful' });
-                    }
-                    else {
-                        return res.status(203).json({ status: 'failed', message: 'Data not modified' })
                     }
                 }
                 else {

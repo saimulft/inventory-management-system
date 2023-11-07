@@ -115,6 +115,17 @@ const ArrivalFormPage = () => {
     const quantity = form.quantity.value;
     const eda = form.eda.value;
 
+    const amazonQuantity = form.amazonQuantity.value;
+    const customerName = form.customerName.value;
+    const amazonShipping = form.amazonShipping.value;
+    const shippingCost = form.shippingCost.value;
+    const handlingCost = form.handlingCost.value;
+    const walmartQuantity = form.walmartQuantity.value;
+    const amazonPrice = form.amazonPrice.value;
+    const averagePrice = form.averagePrice.value;
+    const averageTax = form.averageTax.value;
+    const orderNumber = form.orderNumber.value;
+
     if (!warehouseOption?.label) {
       setInputError('Select a warehouse')
       return;
@@ -124,6 +135,7 @@ const ArrivalFormPage = () => {
       setInputError('Select ASIN or UPC')
       return;
     }
+
     if (!storeOption) {
       setInputError('Select Store')
       return;
@@ -150,8 +162,12 @@ const ArrivalFormPage = () => {
       unit_price: unitPrice,
       eda: isoEda,
       warehouse_name: warehouseOption?.label,
-      warehouse_id: warehouseOption?.value
+      warehouse_id: warehouseOption?.value,
+      amazon_quantity: amazonQuantity, customer_name: customerName, amazon_shipping: amazonShipping, shipping_cost: shippingCost, handling_cost: handlingCost,
+      walmart_quantity: walmartQuantity, amazon_price: amazonPrice, average_price: averagePrice, average_tax: averageTax, order_number: orderNumber
     }
+
+    console.log(arrivalFormData)
 
     try {
       const { status } = await mutateAsync(arrivalFormData)
@@ -229,6 +245,63 @@ const ArrivalFormPage = () => {
                     name="unitPrice"
                   />
                 </div>
+
+                {/* left side new input fields */}
+                <div className="mt-4">
+                  <label className="text-slate-500">Amazon Quantity</label>
+                  <input
+                    onKeyDown={handleKeyDown}
+                    type="text"
+                    placeholder="Enter amazon quantity"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="amazonQuantity"
+                    name="amazonQuantity"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Customer Name</label>
+                  <input
+                    type="text"
+                    placeholder="Enter customer name"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="customerName"
+                    name="customerName"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Amazon Shipping</label>
+                  <input
+                    type="text"
+                    placeholder="Enter amazon shipping"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="amazonShipping"
+                    name="amazonShipping"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Shipping Cost</label>
+                  <input
+                    type="text"
+                    placeholder="Enter shipping cost"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="shippingCost"
+                    name="shippingCost"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Handling Cost</label>
+                  <input
+                    type="text"
+                    placeholder="Enter handling cost"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="handlingCost"
+                    name="handlingCost"
+                  />
+                </div>
               </div>
 
               <div className="w-full">
@@ -284,6 +357,63 @@ const ArrivalFormPage = () => {
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="eda"
                     name="eda"
+                  />
+                </div>
+
+                {/* right side new input fields */}
+                <div className="mt-4">
+                  <label className="text-slate-500">Walmart Quantity</label>
+                  <input
+                    onKeyDown={handleKeyDown}
+                    type="text"
+                    placeholder="Enter walmart quantity"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="walmartQuantity"
+                    name="walmartQuantity"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Amazon Price</label>
+                  <input
+                    type="text"
+                    placeholder="Enter amazon price"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="amazonPrice"
+                    name="amazonPrice"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Average Price</label>
+                  <input
+                    type="text"
+                    placeholder="Enter average price"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="averagePrice"
+                    name="averagePrice"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Average Tax</label>
+                  <input
+                    type="text"
+                    placeholder="Enter average tax"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="averageTax"
+                    name="averageTax"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Order Number</label>
+                  <input
+                    type="text"
+                    placeholder="Enter order number"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="orderNumber"
+                    name="orderNumber"
                   />
                 </div>
               </div>
