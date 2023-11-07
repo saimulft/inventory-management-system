@@ -271,6 +271,7 @@ const ProfitTrackerStatsPage = () => {
                     </ResponsiveContainer>
                 </div>
             </div>}
+
             {view === "Table" && <div style={boxShadowStyle} className="mt-10">
 
                 <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -280,7 +281,7 @@ const ProfitTrackerStatsPage = () => {
                                 <th>Date</th>
                                 <th>Amazon Order ID</th>
                                 <th>Amazon Quantity</th>
-                                <th>CWalmart Quantity</th>
+                                <th>Walmart Quantity</th>
                                 <th>Customer Name</th>
                                 <th>Amazon Price</th>
                                 <th>Amazon Shipping</th>
@@ -288,7 +289,7 @@ const ProfitTrackerStatsPage = () => {
                                 <th>Average Price</th>
                                 <th>Supplier Price</th>
                                 <th>Shipping Cost</th>
-                                <th>EDAverage TaxA</th>
+                                <th>Average Tax</th>
                                 <th>Tax</th>
                                 <th>Handling Cost</th>
                                 <th>Cost of Goods</th>
@@ -297,23 +298,18 @@ const ProfitTrackerStatsPage = () => {
                             </tr>
                         </thead>
                         <tbody className="relative">
-
-                            <tr className="bg-gray-200" >
-                                {/* <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th> */}
-                            </tr>
-
-
+                            {/* <tr className="bg-gray-200" >
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                                <th></th>
+                            </tr> */}
                         </tbody>
                     </table>
-
-
                 </div>
             </div>}
         </div>

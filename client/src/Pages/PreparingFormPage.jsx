@@ -312,7 +312,7 @@ const PreparingFormPage = () => {
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="invoice-dropzone"
-                      className="flex justify-between items-center px-4 w-max h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                      className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                     >
                       <div className="flex items-center gap-8 py-[6.5px]">
                         {InvoieImageSrc ? <img src={InvoieImageSrc} className="h-8" alt="" /> :
@@ -419,7 +419,7 @@ const PreparingFormPage = () => {
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="shippingLabel-dropzone"
-                      className="flex justify-between items-center px-4 w-full h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                      className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[6.5px]">
                         {shippingImageSrc ? <img src={shippingImageSrc} className="h-8" alt="" /> :

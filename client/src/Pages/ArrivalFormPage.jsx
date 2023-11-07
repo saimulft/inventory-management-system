@@ -238,7 +238,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Unit Price</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter unit price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="unitPrice"
@@ -376,7 +376,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Amazon Price</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter amazon price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="amazonPrice"
@@ -387,7 +387,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Average Price</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter average price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="averagePrice"
