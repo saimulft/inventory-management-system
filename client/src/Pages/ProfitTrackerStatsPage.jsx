@@ -112,7 +112,7 @@ const ProfitTrackerStatsPage = () => {
                             : "border border-slate-500 text-black"}`}><BiTable size={20} />Table View</button>
                     </div>
                 </div>
-                <div className="mt-10 flex gap-5 items-center">
+                {view === "Graph" && <div className="mt-10 flex gap-5 items-center">
                     <div className="bg-blue-100 p-4 rounded-lg w-40">
                         <div className="h-8 w-8 flex justify-center items-center rounded-full bg-sky-400 text-white">
                             <BiSolidStore />
@@ -157,7 +157,7 @@ const ProfitTrackerStatsPage = () => {
                         <p className="my-1 text-sm">New Customers</p>
                         <p className="text-xs text-purple-500">+6 from yesterday</p>
                     </div>
-                </div>
+                </div>}
             </div>
 
             {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
