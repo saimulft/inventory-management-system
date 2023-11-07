@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import axios from "axios";
@@ -20,6 +20,12 @@ export default function ConversationUserList() {
 
   const [data, loading, error] = alreadyConversationUserState;
   const [setData, setLoading, setError] = alreadyConversationUserSetState;
+
+  const [search, setSearch] = useState("");
+  console.log(
+    "🚀 ~ file: ConversationUserList.jsx:25 ~ ConversationUserList ~ search:",
+    search
+  );
 
   const { user } = useAuth();
 
@@ -104,6 +110,17 @@ export default function ConversationUserList() {
 
     return email;
   };
+  // user Conversation List Search
+  const userConversationListSearch = (data) => {
+    if (search) {
+      const result = data.filter((d) => d?.full_name.toLowerCase().includes(search.toLowerCase()));
+      return result;
+    } else {
+      return data;
+    }
+  };
+
+  console.log("userConversationListSearch", userConversationListSearch(data));
 
   // decide what to render
   let content;
@@ -112,7 +129,7 @@ export default function ConversationUserList() {
   } else if (!loading && error) {
     content = <p>Something is Wrong !</p>;
   } else if (!loading && !error && data.length > 0) {
-    content = dataSortByTime(data)?.map((userData) => {
+    content = dataSortByTime(userConversationListSearch(data))?.map((userData) => {
       return (
         <div
           onClick={(e) => {
@@ -159,7 +176,9 @@ export default function ConversationUserList() {
       {/* search bar  */}
       <div className="relative px-3">
         <input
+          onChange={(e) => setSearch(e?.target?.value)}
           type="text"
+          value={search}
           placeholder="Search users"
           className={`w-full bg-gray-100 outline-none py-2 px-3 rounded-full mt-3 mb-2`}
         />

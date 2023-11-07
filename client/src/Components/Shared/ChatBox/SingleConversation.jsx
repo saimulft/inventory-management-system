@@ -5,14 +5,11 @@ import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
 
 export default function SingleConversation() {
+  const [con, setCon] = useState([]);
   // chat context
   const {
     handleOpenSingleConversationShow,
     currentChatUserInfo,
-    singleConversationState,
-    singleConversationSetState,
-    setIsChatBoxOpen,
-    setSingleConversationShow,
     newConversationAdd,
     setNewConversationAdd,
   } = useContext(ChatContext);
@@ -21,14 +18,8 @@ export default function SingleConversation() {
   const { currentChatUserName, currentChatUserEmail } =
     currentChatUserInfo || {};
 
-  const [data, loading, error] = singleConversationState;
-  const [setData, setLoading, setError] = singleConversationSetState;
-
-  const [con, setCon] = useState([]);
-
+  // fetch cov data
   const fetchConData = async () => {
-    setError(false);
-    setLoading(true);
     await axios
       .get(
         `/api/v1/conversations_api/single_conversation?sender=${
@@ -37,11 +28,8 @@ export default function SingleConversation() {
       )
       .then((res) => {
         setCon(res?.data);
-        setLoading(false);
       })
       .catch((err) => {
-        setError(true);
-        setLoading(false);
         console.log(err);
       });
   };
@@ -69,14 +57,14 @@ export default function SingleConversation() {
         };
 
         //fast time data update locale state
-         console.log(newConversationAdd);
-         
+        console.log(newConversationAdd);
+
         if (!newConversationAdd) {
           console.log(con);
-          const randomId = Math.floor(100000 + Math.random() * 9000000000000000);
-          console.log(randomId);
-          
-          setCon([...con, {...message, _id: randomId}]);
+          const randomId = Math.floor(
+            100000 + Math.random() * 9000000000000000
+          );
+          setCon([...con, { ...message, _id: randomId }]);
         }
 
         document.getElementById("message_input").value = "";
@@ -91,7 +79,7 @@ export default function SingleConversation() {
         );
         if (data?.data?.insertedId) {
           fetchConData();
-          setNewConversationAdd(false)
+          setNewConversationAdd(false);
         } else if (data?.data?._id) {
           // setCon([...con, data?.data])
         }

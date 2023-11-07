@@ -55,36 +55,7 @@ export const ChatProvider = ({ children }) => {
     setAlreadyConversationUserError,
   ];
 
-  // Single conversation data state
 
-  // initial data single conversation state
-  const initialData = {
-    _id: "",
-    participants: ["", ""],
-    full_name: " ",
-    isMessageSeen: false,
-    messages: [],
-    totalMessageLength: 0,
-    currentMessageIndex: {
-      start: 0,
-      end: 0,
-    },
-  };
-
-  const [singleConversation, setSingleConversation] = useState(initialData);
-  const [singleConversationLoading, setSingleConversationLoading] =
-    useState(false);
-  const [singleConversationError, setSingleConversationError] = useState(false);
-  const singleConversationState = [
-    singleConversation,
-    singleConversationLoading,
-    singleConversationError,
-  ];
-  const singleConversationSetState = [
-    setSingleConversation,
-    setSingleConversationLoading,
-    setSingleConversationError,
-  ];
 
   
   // chat head infomation
@@ -418,8 +389,6 @@ export const ChatProvider = ({ children }) => {
     currentChatUserSetInfo,
     alreadyConversationUserState,
     alreadyConversationUserSetState,
-    singleConversationState,
-    singleConversationSetState,
   };
 
   return (
