@@ -250,24 +250,28 @@ export default function DashboardPage() {
         </div>
       </div>}
       {view === "Table" && <div style={boxShadowStyle} className="mt-10">
-      
+
         <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
           <table className="table table-sm">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
-                <th>Store Name</th>
-                <th>ASIN/UPC</th>
-                <th>Code Type</th>
-                <th>Product Name</th>
-                <th>Order ID</th>
-                <th>UPIN</th>
-                <th>Unit Price</th>
-                <th>Quantity</th>
-                <th>Courier</th>
-                <th>Supplier Tracking</th>
-                <th>EDA</th>
-                <th></th>
+                <th>Amazon Order ID</th>
+                <th>Amazon Quantity</th>
+                <th>CWalmart Quantity</th>
+                <th>Customer Name</th>
+                <th>Amazon Price</th>
+                <th>Amazon Shipping</th>
+                <th>Amazon Fee</th>
+                <th>Average Price</th>
+                <th>Supplier Price</th>
+                <th>Shipping Cost</th>
+                <th>EDAverage TaxA</th>
+                <th>Tax</th>
+                <th>Handling Cost</th>
+                <th>Cost of Goods</th>
+                <th>Cash Profit</th>
+                <th>ROI</th>
               </tr>
             </thead>
             <tbody className="relative">

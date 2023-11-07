@@ -56,7 +56,7 @@ const ProfitTrackerStatsPage = () => {
     const [analyticsDays, setAnalyticsDays] = useState()
     const [view, setView] = useState('Graph')
 
-    const {id} = useParams()
+    const { id } = useParams()
 
     const { data: singleStore = {} } = useQuery({
         queryKey: ['single_store'],
@@ -160,8 +160,8 @@ const ProfitTrackerStatsPage = () => {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-8 mt-10">
-                {/* New Profit Chart */}
+            {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
+
                 <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
                     <h6 className="text-lg font-medium my-4 ml-8">Net Profit</h6>
                     <ResponsiveContainer width="100%" height={300}>
@@ -176,7 +176,7 @@ const ProfitTrackerStatsPage = () => {
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
-                {/* Total Expenses Chart*/}
+
                 <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
                     <h6 className="text-lg font-medium my-4 ml-8">Total Expenses</h6>
                     <ResponsiveContainer width="100%" height={300}>
@@ -206,9 +206,9 @@ const ProfitTrackerStatsPage = () => {
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
-            </div>
+            </div>}
 
-            <div className="grid grid-cols-2 gap-8 mt-10">
+            {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
                 {/* sales Chart */}
                 <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
                     <h6 className="text-lg font-medium my-4 ml-8">Sales</h6>
@@ -245,7 +245,7 @@ const ProfitTrackerStatsPage = () => {
                         </AreaChart>
                     </ResponsiveContainer>
                 </div>
-                {/* ROI chart  */}
+
                 <div style={boxShadowStyle} className="bg-white p-5  rounded-xl">
                     <h6 className="text-lg font-medium my-4 ml-8">ROI</h6>
                     <ResponsiveContainer width="100%" height={300}>
@@ -270,7 +270,52 @@ const ProfitTrackerStatsPage = () => {
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
-            </div>
+            </div>}
+            {view === "Table" && <div style={boxShadowStyle} className="mt-10">
+
+                <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
+                    <table className="table table-sm">
+                        <thead>
+                            <tr className="bg-gray-200">
+                                <th>Date</th>
+                                <th>Amazon Order ID</th>
+                                <th>Amazon Quantity</th>
+                                <th>CWalmart Quantity</th>
+                                <th>Customer Name</th>
+                                <th>Amazon Price</th>
+                                <th>Amazon Shipping</th>
+                                <th>Amazon Fee</th>
+                                <th>Average Price</th>
+                                <th>Supplier Price</th>
+                                <th>Shipping Cost</th>
+                                <th>EDAverage TaxA</th>
+                                <th>Tax</th>
+                                <th>Handling Cost</th>
+                                <th>Cost of Goods</th>
+                                <th>Cash Profit</th>
+                                <th>ROI</th>
+                            </tr>
+                        </thead>
+                        <tbody className="relative">
+
+                            <tr className="bg-gray-200" >
+                                {/* <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th> */}
+                            </tr>
+
+
+                        </tbody>
+                    </table>
+
+
+                </div>
+            </div>}
         </div>
     );
 };

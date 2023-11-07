@@ -239,7 +239,6 @@ export default function InventoryTotalASINTable() {
             const asinInfo = {
               productImage: productImage, minPrice
             }
-            console.log(asinInfo)
             axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData._id}`, asinInfo)
 
               .then(res => {
