@@ -20,13 +20,24 @@
 display: none;
 }
 
-.chat_box::-webkit-scrollbar {
+.chat_list::-webkit-scrollbar {
     width: 10px!important;
     height: 6px!important;
   }
-  .chat_box::-webkit-scrollbar-thumb {
+  .chat_list::-webkit-scrollbar-thumb {
     background-color: rgba(0,0,0,.2);
   }
-  .chat_box::-webkit-scrollbar-track {
+  .chat_list::-webkit-scrollbar-track {
+    background: hsla(0,0%,100%,.1);
+  }
+
+.new_conversation::-webkit-scrollbar {
+    width: 10px!important;
+    height: 6px!important;
+  }
+  .new_conversation::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.2);
+  }
+  .new_conversation::-webkit-scrollbar-track {
     background: hsla(0,0%,100%,.1);
   }

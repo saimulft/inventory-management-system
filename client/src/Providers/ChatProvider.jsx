@@ -5,6 +5,42 @@ import { io } from "socket.io-client";
 
 export const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
+  // chat head infomation
+  const [currentChatUserName, setCurrentChatUserName] = useState("");
+  const [currentChatUserEmail, setCurrentChatUserEmail] = useState("");
+  const currentChatUserInfo = { currentChatUserName, currentChatUserEmail };
+  const currentChatUserSetInfo = {
+    setCurrentChatUserName,
+    setCurrentChatUserEmail,
+  };
+
+  // user info
+  const { user } = useAuth();
+  const [activeUsers, setActiveUsers] = useState([]);
+
+
+  // socket install
+  const sendMessageRef = useRef();
+  const socket = useRef();
+
+  useEffect(() => {
+    socket.current = io("ws://localhost:9000");
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      socket.current?.emit("addUsers", user || {});
+      socket.current?.on("getUsers", (users) => {
+        setActiveUsers(users);
+      });
+    }
+  }, [user]);
+
+  const checkOnline = (userEmail) =>
+    activeUsers?.find((active) => active?.email == userEmail);
+  const currentReceiverFind = (participants) =>
+    participants.find((p) => p != user?.email);
+
   // message box open close handle state
   const [isChatBoxOpen, setIsChatBoxOpen] = useState(false);
   const [singleConversationShow, setSingleConversationShow] = useState(false);
@@ -16,6 +52,7 @@ export const ChatProvider = ({ children }) => {
   const handleOpenSingleConversationShow = () => {
     setSingleConversationShow(!singleConversationShow);
     setIsChatBoxOpen(!isChatBoxOpen);
+    setNewConversationAdd(false);
   };
 
   //add New Conversation
@@ -55,20 +92,8 @@ export const ChatProvider = ({ children }) => {
     setAlreadyConversationUserError,
   ];
 
-
-
-  
-  // chat head infomation
-  const [currentChatUserName, setCurrentChatUserName] = useState("");
-  const [currentChatUserEmail, setCurrentChatUserEmail] = useState("");
-  const currentChatUserInfo = { currentChatUserName, currentChatUserEmail };
-  const currentChatUserSetInfo = {
-    setCurrentChatUserName,
-    setCurrentChatUserEmail,
-  };
-
   // old code  old code  old code  old code  old code  old code  old code  old code  old code  old code  old code
-  const { user } = useAuth();
+
   const [isMessageBoxOpen, setIsMessageBoxOpen] = useState(false);
 
   const [clickMsg, setClickMsg] = useState(false);
@@ -77,30 +102,12 @@ export const ChatProvider = ({ children }) => {
   const [loadNewSMS, setLoadNewSMS] = useState(false);
   const [allUsersData, setAllUsersData] = useState([]);
   const [messagesData, setMessagesData] = useState([]);
-  const [activeUsers, setActiveUsers] = useState([]);
   const [currentReciver, setCurrentReciver] = useState({});
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [reFatch, setReFatch] = useState(true);
   const [userMessagesList, setUserMessagesList] = useState([]);
   const [allMessages, setAllMessages] = useState({});
   const [isTypingLoading, setIsTypingLoading] = useState(false);
-
-  const sendMessageRef = useRef();
-
-  const socket = useRef();
-
-  useEffect(() => {
-    socket.current = io("ws://localhost:9000");
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      socket.current?.emit("addUsers", user || {});
-      socket.current?.on("getUsers", (users) => {
-        setActiveUsers(users);
-      });
-    }
-  }, [user]);
 
   // const get user
   useEffect(() => {
@@ -346,7 +353,6 @@ export const ChatProvider = ({ children }) => {
     allUsersData,
     messagesData,
     setMessagesData,
-    activeUsers,
     currentReciver,
     handleCurrentReciver,
     isButtonDisabled,
@@ -372,6 +378,10 @@ export const ChatProvider = ({ children }) => {
     setLoadNewSMS,
 
     // new code
+    socket,
+    activeUsers,
+    checkOnline,
+    currentReceiverFind,
     isChatBoxOpen,
     setIsChatBoxOpen,
     singleConversationShow,

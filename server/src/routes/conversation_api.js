@@ -5,7 +5,40 @@ const router = express.Router();
 
 const run = async () => {
   const db = await connectDatabase();
+  const all_users_collection = db.collection("all_users");
   const conversationsCollection = db.collection("coversations");
+
+  // get all all users
+  router.get("/add_users_list", async (req, res) => {
+    try {
+      const loginUser = req?.query?.user || {}
+
+      const allConversations = await conversationsCollection
+      .find({
+        participants: { $all: [loginUser] },
+      })
+      .toArray();
+
+      let alreadyExistUserEmail = [loginUser,]
+      allConversations?.filter(u => {
+       const existEmail =  u.participants.find(e=> e != loginUser)
+        alreadyExistUserEmail.push(existEmail)
+      })
+
+     const alreadyConversationExistJoin = alreadyExistUserEmail.join("")
+
+      const result = await all_users_collection.find({}).toArray();
+      const newResult = result.filter(e => !alreadyConversationExistJoin.includes(e.email))
+
+      if (result.length) {
+        res.status(200).json(newResult);
+      } else {
+        res.status(500).json({ message: "Failed to get conversation users list" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error" });
+    }
+  });
 
   router.post("/send_message", async (req, res) => {
     try {
@@ -51,7 +84,9 @@ const run = async () => {
           res.send(newMessage);
         }
       } else {
-        const result = await conversationsCollection.insertOne(prepairMessage,{ upsert: true });
+        const result = await conversationsCollection.insertOne(prepairMessage, {
+          upsert: true,
+        });
         res.send(result);
       }
     } catch (err) {
@@ -122,15 +157,14 @@ const run = async () => {
       const result = await conversationsCollection.updateOne(
         query,
         updateSeenStatus
-      );       
+      );
       res.status(200).send(result);
     } catch (err) {
       res.status(500).send({ err: "Internal server error" });
     }
-  });   
+  });
 
   router.get("/single_conversation", async (req, res) => {
-
     try {
       const { sender, receiver, page_no } = req.query || {};
 
@@ -162,20 +196,18 @@ const run = async () => {
             totalMessageLength,
             currentMessageIndex,
           };
-          console.log("sent 5555", chunk?.length );
+          console.log("sent 5555", chunk?.length);
           res.send(chunk);
-        }
-        else{
+        } else {
           console.log("page count not found");
-          res.status(200).send({})
+          res.status(200).send({});
         }
-      }else{
+      } else {
         console.log("user not found");
-        res.status(200).send({})
-        
+        res.status(200).send({});
       }
     } catch (err) {
-      res.status(500).send({ error: "server error"})
+      res.status(500).send({ error: "server error" });
       console.log(err);
     }
   });

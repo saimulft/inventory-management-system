@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
@@ -12,6 +12,9 @@ export default function ConversationUserList() {
     alreadyConversationUserState,
     alreadyConversationUserSetState,
     currentChatUserSetInfo,
+    checkOnline,
+    currentReceiverFind,
+    socket,
   } = useContext(ChatContext);
 
   //set current Chat User Info
@@ -22,12 +25,25 @@ export default function ConversationUserList() {
   const [setData, setLoading, setError] = alreadyConversationUserSetState;
 
   const [search, setSearch] = useState("");
-  console.log(
-    "🚀 ~ file: ConversationUserList.jsx:25 ~ ConversationUserList ~ search:",
-    search
-  );
+  const [socketData, setSocketData] = useState({});
 
   const { user } = useAuth();
+
+  // get message fast time data in client
+  useEffect(() => {
+    socket?.current?.on("getMessageFastTime", (data) => {
+      console.log("jlkdsfkjsdklfjkds", data);
+
+      if (data) {
+        setSocketData(data);
+        console.log(data);
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    setData([...data, socketData]);
+  }, [socketData]);
 
   // get already conversation user data
   useEffect(() => {
@@ -113,65 +129,83 @@ export default function ConversationUserList() {
   // user Conversation List Search
   const userConversationListSearch = (data) => {
     if (search) {
-      const result = data.filter((d) => d?.full_name.toLowerCase().includes(search.toLowerCase()));
+      const result = data.filter((d) =>
+        d?.full_name.toLowerCase().includes(search.toLowerCase())
+      );
       return result;
     } else {
       return data;
     }
   };
 
-  console.log("userConversationListSearch", userConversationListSearch(data));
-
   // decide what to render
   let content;
   if (loading) {
-    content = <p>Loading...</p>;
+    content = (
+      <div className="flex justify-center">
+        <p className="w-10 h-10 animate-spin border-4 border-purple-500 border-dotted rounded-full"></p>
+      </div>
+    );
   } else if (!loading && error) {
     content = <p>Something is Wrong !</p>;
   } else if (!loading && !error && data.length > 0) {
-    content = dataSortByTime(userConversationListSearch(data))?.map((userData) => {
-      return (
-        <div
-          onClick={(e) => {
-            handleOpenSingleConversationShow(e);
-            setCurrentChatUserName(userData?.full_name);
-            setCurrentChatUserEmail(
-              currentChatReceiver(userData?.participants)
-            );
-          }}
-          key={userData?._id}
-          className="p-2 mb-2 flex gap-3 items-center text-xs font-medium bg-gray-50 hover:bg-gray-100 py-1 px-2 cursor-pointer rounded-lg"
-        >
-          <img
-            className="w-14  rounded-full"
-            src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no"
-            alt=""
-          />
-          <div>
-            <p className="font-medium text-base">{userData?.full_name}</p>
-            <div className="text-sm flex items-center">
-              <span className="">{massagesSliceAndSenderStatus(userData)}</span>
-              <span className="pl-2">
-                {calculateAgeTime(userData?.lastMassages?.timestamp)}
-              </span>
+    content = dataSortByTime(userConversationListSearch(data))?.map(
+      (userData) => {
+        const online = checkOnline(currentReceiverFind(userData?.participants));
+
+        return (
+          <div
+            onClick={(e) => {
+              handleOpenSingleConversationShow(e);
+              setCurrentChatUserName(userData?.full_name);
+              setCurrentChatUserEmail(
+                currentChatReceiver(userData?.participants)
+              );
+            }}
+            key={userData?._id}
+            className=" flex gap-3 items-center text-xs font-medium hover:bg-gray-100 tr  py-2 px-4 cursor-pointer "
+          >
+            <div className="w-14 h-14  rounded-full relative">
+              <img
+                className="w-14  rounded-full"
+                src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no"
+                alt=""
+              />
+              <div
+                className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${
+                  online ? "bg-green-500" : "bg-gray-400"
+                }    `}
+              ></div>
+            </div>
+
+            <div>
+              <p className="font-medium text-base">{userData?.full_name}</p>
+              <div className="text-sm flex items-center">
+                <span className="">
+                  {massagesSliceAndSenderStatus(userData)}
+                </span>
+                <span className="pl-2">
+                  {calculateAgeTime(userData?.lastMassages?.timestamp)}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-      );
-    });
+        );
+      }
+    );
   }
 
   return (
     <div className="h-[550px] w-[350px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-20 bottom-0 rounded-t-xl">
       {/* chat head  */}
-      <div className="p-3 flex justify-between items-center py-3 border-b border-gray-300">
+      <div className="p-3 flex justify-between items-center pt-3  border-gray-300">
         <p className="font-bold text-2xl">Chats</p>
-        <p
+        <button
           onClick={handleNewConversation}
-          className="px-3 py-[6px] text-sm rounded-full bg-gray-200 cursor-pointer"
+          className="px-3 py-[6px] text-sm rounded-full bg-gray-200 transition hover:bg-purple-500 hover:text-white flex items-center gap-1  cursor-pointer"
         >
-          + Add
-        </p>
+          <AiOutlinePlus /> <p>Add</p>
+        </button>
       </div>
       {/* search bar  */}
       <div className="relative px-3">
@@ -180,14 +214,14 @@ export default function ConversationUserList() {
           type="text"
           value={search}
           placeholder="Search users"
-          className={`w-full bg-gray-100 outline-none py-2 px-3 rounded-full mt-3 mb-2`}
+          className={`w-full bg-gray-100 outline-none py-2 px-3 rounded-full  mb-2`}
         />
-        <button className="bg-purple-500 p-2 rounded-full text-white absolute right-2 translate-y-1/2">
+        <button className="bg-purple-500 p-2 rounded-full text-white absolute top-1 right-4 ">
           <AiOutlineSearch size={16} />
         </button>
       </div>
       {/* user chat list  */}
-      <div className="p-3 h-[calc(100%_-_126px)] overflow-y-scroll">
+      <div className="chat_list h-[calc(100%_-_126px)] overflow-y-scroll">
         {content}
       </div>
     </div>

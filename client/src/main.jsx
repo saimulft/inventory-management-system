@@ -12,7 +12,7 @@ const queryClient = new QueryClient()
 axios.defaults.baseURL = "http://localhost:5000"
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <QueryClientProvider client={queryClient}>
       <GlobalProvider>
         <AuthProvider>
@@ -22,5 +22,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </AuthProvider>
       </GlobalProvider>
     </QueryClientProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

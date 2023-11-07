@@ -1,9 +1,8 @@
 import {
   AiOutlineMessage,
   AiOutlineSearch,
-  AiOutlinePlus,
 } from "react-icons/ai";
-import { BsBell, BsCheckLg, BsDot } from "react-icons/bs";
+import { BsBell } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
 import { useContext, useEffect, useState } from "react";
 import { ChatContext } from "../../Providers/ChatProvider";
@@ -18,6 +17,7 @@ export default function Navbar({ data, setParticipants }) {
     messagesData,
     userMessagesList,
     setUserMessagesList,
+    setAddNewConversation,
     activeUsers,
      setAddNewChat,
      isChatBoxOpen, setIsChatBoxOpen
@@ -188,6 +188,7 @@ export default function Navbar({ data, setParticipants }) {
                 if (isMessageBoxOpen) {
                   setIsMessageBoxOpen(!isMessageBoxOpen);
                 }
+                setAddNewConversation(false)
                 setIsChatBoxOpen(!isChatBoxOpen);
               }}
               className="bg-[#454547] hover:bg-[#3f3f41] cursor-pointer transition-all duration-15 p-3 rounded relative"

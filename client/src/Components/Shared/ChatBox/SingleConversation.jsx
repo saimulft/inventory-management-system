@@ -1,22 +1,44 @@
 import { useContext, useEffect, useState } from "react";
-import { BsPlusCircleFill } from "react-icons/bs";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
+import { AiOutlineClose } from "react-icons/ai";
 
 export default function SingleConversation() {
   const [con, setCon] = useState([]);
+  const [socketData, setSocketData] = useState({});
   // chat context
   const {
     handleOpenSingleConversationShow,
     currentChatUserInfo,
     newConversationAdd,
     setNewConversationAdd,
+    checkOnline,
+    socket,
   } = useContext(ChatContext);
   const { user } = useAuth();
 
   const { currentChatUserName, currentChatUserEmail } =
     currentChatUserInfo || {};
+
+  useEffect(() => {
+    if (socketData) {
+      setCon([...con, socketData]);
+    }
+  }, [socketData]);
+
+  // get message data in client
+  useEffect(() => {
+    socket?.current?.on("getMessage", (data) => {
+      console.log(
+        "🚀 ~ file: SingleConversation.jsx:26 ~ socket?.current?.on ~ data:",
+        data
+      );
+      if (data) {
+        setSocketData(data);
+      }
+    });
+  }, []);
 
   // fetch cov data
   const fetchConData = async () => {
@@ -56,11 +78,8 @@ export default function SingleConversation() {
           timestamp,
         };
 
-        //fast time data update locale state
-        console.log(newConversationAdd);
-
+        // data update locale state
         if (!newConversationAdd) {
-          console.log(con);
           const randomId = Math.floor(
             100000 + Math.random() * 9000000000000000
           );
@@ -78,9 +97,26 @@ export default function SingleConversation() {
           }
         );
         if (data?.data?.insertedId) {
+          const fastTimeData = {
+            _id: data.data.insertedId,
+            participants: [user?.email, currentChatUserEmail],
+            full_name: message?.full_name,
+            isMessageSeen: false,
+            messages: [
+              {
+                sender: message?.sender,
+                receiver: message?.receiver,
+                text: message?.text,
+                timestamp,
+              },
+            ],
+          };
+
+          socket.current?.emit("sendMessageFastTime", fastTimeData);
           fetchConData();
           setNewConversationAdd(false);
         } else if (data?.data?._id) {
+          socket.current?.emit("sendMessage", data?.data);
           // setCon([...con, data?.data])
         }
       }
@@ -127,10 +163,15 @@ export default function SingleConversation() {
     });
   }
 
+  const online = checkOnline(currentChatUserEmail);
+
   return (
-    <div className="h-[550px] w-[350px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-20 bottom-0 rounded-t-xl overflow-hidden">
+    <div className="h-[550px] w-[350px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-20 bottom-0 rounded-t-xl overflow-hidden">
       {/* conversation header */}
-      <div className="px-3 py-3  flex gap-3 justify-between items-center text-xs font-medium bg-gray-100 border-b border-[#e0e0e0]">
+      <div
+        style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
+        className="px-3 py-2 mb-1  flex gap-3 justify-between items-center text-xs font-medium  "
+      >
         <div className="flex gap-3 items-center">
           <img
             className="w-10  rounded-full"
@@ -142,30 +183,36 @@ export default function SingleConversation() {
               {currentChatUserName ? currentChatUserName : "No Name"}
             </p>
             <div className="text-sm flex items-center">
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
-              <span className="pl-1">Online</span>
+              <div
+                className={`w-2.5 h-2.5 rounded-full ${
+                  online ? "bg-green-500" : "bg-gray-400"
+                } `}
+              ></div>
+              <div className={` pl-1`}>{online ? "Online" : "Offline"}</div>
             </div>
           </div>
         </div>
-        <div>
-          <BsPlusCircleFill
+        <div className="p-1 rounded-full hover:bg-purple-100 text-purple-500 cursor-pointer">
+          <AiOutlineClose
             onClick={handleOpenSingleConversationShow}
             size={22}
-            className="cursor-pointer rotate-45"
           />
         </div>
       </div>
 
       {/* message body */}
-      <div className="h-[calc(100%_-_138px)] overflow-y-auto">{content}</div>
+      <div className="h-[calc(100%_-_120px)] overflow-y-auto">{content}</div>
 
       {/* sent message box  */}
-      <form>
-        <div className="flex items-center px-3 py-2 rounded-lg border">
+      <form
+        style={{ boxShadow: "0px -1px 6px 0px rgba(0, 0, 0, 0.1)" }}
+        className=""
+      >
+        <div className="flex items-center px-3 py-2 ">
           <input
             id="message_input"
             rows="1"
-            className="block mx-4 p-2 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
             placeholder="Your message..."
           ></input>
           <button

@@ -36,6 +36,13 @@ io.on('connection',  (socket) => {
        {user && io.to(user?.socketId).emit('getMessage', data)}
     })
 
+    // send message fast time
+    socket.on('sendMessageFastTime',  (data) => {
+        console.log("my send message fast Time",data);
+        const user =  getUser(data.receiver)
+       {user && io.to(user?.socketId).emit('getMessageFastTime', data)}
+    })
+
     // typing status
     socket.on('typing',  ({isTyping: status, receiver}) => {
        const user =  getUser(receiver)
