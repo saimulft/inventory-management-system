@@ -1,6 +1,6 @@
 import "./App.css";
-import { router } from "./Routes/Router.jsx";
 import { RouterProvider } from "react-router-dom";
+import { router } from "./Routes/router";
 
 function App() {
   return (
