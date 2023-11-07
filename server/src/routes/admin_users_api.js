@@ -120,11 +120,11 @@ const run = async () => {
 
             let query;
 
-            if (role === 'Admin') {
+            if (role === 'Admin' || 'Admin VA') {
                 query = { admin_id: user.admin_id }
             }
 
-            if (role === 'Store Manager Admin' || role === 'Warehouse Admin' || role === 'Admin VA') {
+            if (role === 'Store Manager Admin' || role === 'Warehouse Admin') {
                 query = { creator_email: user.email };
             }
 

@@ -14,7 +14,12 @@ export default function AllUsersPage() {
       try {
         const res = await axios.post('/api/v1/admin_api/get_all_users_list', { user })
         if (res.status === 200) {
-          return res.data
+          if (user.role === 'Admin VA') {
+            const filterData = res.data.filter(u => user.role !== u.role)
+            return filterData
+          } else {
+            return res.data
+          }
         }
         if (res.status === 204) {
           return []
