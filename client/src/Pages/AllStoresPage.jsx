@@ -78,7 +78,7 @@ export default function AllStoresPage() {
 
   return (
     <div className="p-10">
-      <div className="p-14 rounded-lg min-h-[calc(100vh-154px)] max-h-full" style={{ boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)"}}>
+      <div className="p-14 rounded-lg min-h-[calc(100vh-154px)] max-h-full" style={{ boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)" }}>
         <div className="flex items-center justify-between">
           <div className="flex text-center w-1/2 ">
             <div
@@ -118,24 +118,24 @@ export default function AllStoresPage() {
                 <option value="Ali Express">Ali Express</option>
               </select>
 
-              <div className="relative  w-1/2 ">
+              <div className="relative w-1/2 border bg-white shadow-md border-[#8633FF] outline-none py-2 rounded-md px-2 text-sm">
                 <input
-                  className="border bg-white shadow-md border-[#8633FF] outline-none w-full py-2 rounded-md px-2 text-sm"
+                  className="w-[calc(100%-82px)]"
                   placeholder="Search Here"
                   type="text"
                   value={searchText}
                   onChange={(e) => setSearchText(e.target.value)}
                 />
 
+                <button type="submit" className="absolute bottom-[6px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
+                  <AiOutlineSearch size={20} />
+                </button>
+
                 {searchResults.length || searchError ? <button onClick={() => {
                   setSearchResults([])
                   setSearchText('')
                   setSearchError('')
-                }} className="absolute bottom-[8px] cursor-pointer py-[2px] px-2 rounded right-[36px] bg-[#8633FF] text-white text-sm"> Clear </button> : ''}
-
-                <button type="submit" className="absolute bottom-[8px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
-                  <AiOutlineSearch size={20} />
-                </button>
+                }} className="absolute bottom-[6px] cursor-pointer py-[2px] px-2 rounded right-[36px] bg-[#8633FF] text-white text-sm"> Clear </button> : ''}
               </div>
             </form>
           </div>

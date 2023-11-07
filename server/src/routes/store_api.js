@@ -119,7 +119,7 @@ const run = async () => {
             const user = req.body.user;
             const role = user.role;
             let query;
-            console.log(user)
+
             if (role === 'Admin' || role === 'Admin VA') {
                 query = { admin_id: user.admin_id }
             }

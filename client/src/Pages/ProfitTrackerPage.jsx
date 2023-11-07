@@ -94,24 +94,24 @@ export default function ProfitTrackerPage() {
             <option value="Ali Express">Ali Express</option>
           </select>
 
-          <div className="relative w-1/4">
+          <div className="relative w-1/4 border bg-white shadow-md border-[#8633FF] outline-none py-2 rounded-md px-2 text-sm">
             <input
-              className="border bg-white shadow-md border-[#8633FF] outline-none w-full py-2 rounded-md px-2 text-sm"
+              className="w-[calc(100%-82px)]"
               placeholder="Search Here"
               type="text"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
             />
 
+            <button type="submit" className="absolute bottom-[6px] rounded right-[6px] cursor-pointer p-[2px] bg-[#8633FF]  text-white ">
+              <AiOutlineSearch size={20} />
+            </button>
+
             {searchResults.length || searchError ? <button onClick={() => {
               setSearchResults([])
               setSearchText('')
               setSearchError('')
-            }} className="absolute bottom-[8px] cursor-pointer py-[2px] px-2 rounded right-[36px] bg-[#8633FF] text-white text-sm"> Clear </button> : ''}
-
-            <button type="submit" className="absolute bottom-[8px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
-              <AiOutlineSearch size={20} />
-            </button>
+            }} className="absolute bottom-[6px] right-[36px] cursor-pointer py-[2px] px-2 rounded bg-[#8633FF] text-white text-sm"> Clear </button> : ''}
           </div>
         </form>
 

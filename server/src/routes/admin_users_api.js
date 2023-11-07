@@ -113,8 +113,6 @@ const run = async () => {
     })
 
 
-
-
     router.post('/get_all_users_list', async (req, res) => {
         try {
             const user = req.body.user;
