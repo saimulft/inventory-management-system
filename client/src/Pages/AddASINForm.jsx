@@ -261,7 +261,7 @@ const AddASINForm = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Min Price</label>
                   <input required
-                    type="text"
+                    type="number"
                     placeholder="Enter min price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="minPrice"

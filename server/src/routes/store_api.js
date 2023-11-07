@@ -37,7 +37,6 @@ const run = async () => {
     })
 
     // update store details 
-
     router.post("/update_store_details", async (req, res) => {
         try {
             const admin_id = req.query.id
@@ -65,6 +64,7 @@ const run = async () => {
             res.status(500).json({ message: "Internal server error" })
         }
     })
+    
     // get all stores
     router.get('/get_all_stores', async (req, res) => {
         try {
