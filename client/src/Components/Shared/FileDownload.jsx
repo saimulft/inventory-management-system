@@ -5,7 +5,7 @@ function FileDownload({ fileName }) {
     const handleDownload = () => {
 
         if (fileName.startsWith('file')) {
-            axios.get(`http://localhost:5000/api/v1/global_api/download/${fileName}`, {
+            axios.get(`/api/v1/global_api/download/${fileName}`, {
                 responseType: 'blob', // Set the response type to 'blob' for downloading files
             })
                 .then(response => {

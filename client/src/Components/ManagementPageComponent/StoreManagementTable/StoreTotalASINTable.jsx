@@ -20,7 +20,7 @@ export default function InventoryTotalASINTable() {
   const [imageSrc, setImageSrc] = useState(null)
   const [imageFile, setImageFile] = useState(null)
   const [imageError, setImageError] = useState('')
-  const [singleData, setSingleData] = useState()
+  const [singleData, setSingleData] = useState({})
   const [loading, setLoding] = useState(false)
   const [success, setSuccess] = useState()
   const { user } = useAuth()
