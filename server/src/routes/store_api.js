@@ -36,6 +36,35 @@ const run = async () => {
         }
     })
 
+    // update store details 
+
+    router.post("/update_store_details", async (req, res) => {
+        try {
+            const admin_id = req.query.id
+            const existData = await all_stores_collection.findOne({ admin_id: admin_id })
+            if (existData) {
+                const updateData = {
+                    store_name: req.body.storeName ? req.body.storeName : existData.store_name,
+                    store_manager_name: req.body.storeManagername ? req.body.storeManagername : existData.store_manager_name,
+                    store_type: req.body.storeType !== "Pick Store Type" ? req.body.storeType : existData.store_type,
+                    store_status: req.body.storeStatus !== "Select Status" ? req.body.storeStatus : existData.store_status,
+                }
+                const updateResult = await all_stores_collection.updateOne({ admin_id: admin_id }, { $set: updateData })
+               
+                if (updateResult.modifiedCount) {
+                    return res.status(200).json({ message: "Store data updated" })
+                }
+                else {
+                    res.status(204).json({ message: "No data found" })
+                }
+            }
+            else {
+                res.status(204).json({ message: "No data found" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error" })
+        }
+    })
     // get all stores
     router.get('/get_all_stores', async (req, res) => {
         try {
