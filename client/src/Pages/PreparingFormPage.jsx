@@ -238,16 +238,16 @@ const PreparingFormPage = () => {
 
 
   return (
-    <div className="py-20 rounded-lg">
+    <div className="py-20 rounded-lg w-[60%] mx-auto">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] bg-white shadow-lg h-fit w-fit m-auto rounded-xl"
+        className="border border-[#8633FF] bg-white shadow-lg h-fit w-full m-auto rounded-xl"
       >
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Preparing Request Form</p>
         </div>
         <div className="lg:py-10 lg:px-20 w-full">
-          <form onSubmit={hadnlePreparingForm}>
+          <form className="w-full" onSubmit={hadnlePreparingForm}>
             <div className="flex gap-7">
               <div className="w-full">
                 <div >

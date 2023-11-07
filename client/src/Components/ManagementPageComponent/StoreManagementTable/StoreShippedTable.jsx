@@ -26,12 +26,12 @@ export default function StoreShippedTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
-  
+
   const { data = [], isLoading } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post(`/api/v1/shipped_api/get_all_shipped_data`,{user})
+        const res = await axios.post(`/api/v1/shipped_api/get_all_shipped_data`, { user })
         if (res.status === 200) {
           return res.data.data;
         }
