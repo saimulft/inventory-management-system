@@ -4,11 +4,11 @@ import Navbar from "../Components/Shared/Navbar";
 import Container from "../Components/Shared/Container";
 import { useContext, useEffect, useState } from "react";
 import { GlobalContext } from "../Providers/GlobalProviders";
-import ChatBox from "../Components/ChatBox";
+
 import { ChatContext } from "../Providers/ChatProvider";
+import ChatBox from "../Components/Shared/ChatBox/ChatBox";
 
 export default function DashboardLayout() {
-  const {isMessageBoxOpen} = useContext(ChatContext)
   const { isSidebarOpen, setIsActiveSetting } = useContext(GlobalContext);
 const [participants, setParticipants] = useState([])
   const url = useLocation();
@@ -116,7 +116,7 @@ const [participants, setParticipants] = useState([])
           <div>
             <Outlet />
             {/* message box  */}
-            {isMessageBoxOpen && <ChatBox participants={participants}/>}
+            {<ChatBox/>}
           </div>
         </Container>
       </div>

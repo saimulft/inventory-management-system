@@ -1,19 +1,109 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import axios from "axios";
-import { AuthContext } from "./AuthProvider";
 import { io } from "socket.io-client";
 
 export const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
+  // message box open close handle state
+  const [isChatBoxOpen, setIsChatBoxOpen] = useState(false);
+  const [singleConversationShow, setSingleConversationShow] = useState(false);
+  const [addNewConversation, setAddNewConversation] = useState(false);
+  const [newConversationAdd, setNewConversationAdd] = useState(false);
+
+  // message box open close handle function
+  // single conversation show
+  const handleOpenSingleConversationShow = () => {
+    setSingleConversationShow(!singleConversationShow);
+    setIsChatBoxOpen(!isChatBoxOpen);
+  };
+
+  //add New Conversation
+  const handleNewConversation = () => {
+    setAddNewConversation(!addNewConversation);
+    setSingleConversationShow(!singleConversationShow);
+    setIsChatBoxOpen(!isChatBoxOpen);
+  };
+
+  //add New Conversation text box
+  const handleNewConversationTextBox = () => {
+    setSingleConversationShow(true);
+    setAddNewConversation(!addNewConversation);
+  };
+
+  //all user state
+  const [allUsers, setAllUsers] = useState([]);
+  const [allUsersLoading, setAllUsersLoading] = useState(false);
+  const [allUsersError, setAllUsersError] = useState(false);
+  const allUsersState = [allUsers, allUsersLoading, allUsersError];
+  const allUsersSetState = [setAllUsers, setAllUsersLoading, setAllUsersError];
+
+  // already conversation user data state
+  const [alreadyConversationUser, setAlreadyConversationUser] = useState([]);
+  const [alreadyConversationUserLoading, setAlreadyConversationUserLoading] =
+    useState(false);
+  const [alreadyConversationUserError, setAlreadyConversationUserError] =
+    useState(false);
+  const alreadyConversationUserState = [
+    alreadyConversationUser,
+    alreadyConversationUserLoading,
+    alreadyConversationUserError,
+  ];
+  const alreadyConversationUserSetState = [
+    setAlreadyConversationUser,
+    setAlreadyConversationUserLoading,
+    setAlreadyConversationUserError,
+  ];
+
+  // Single conversation data state
+
+  // initial data single conversation state
+  const initialData = {
+    _id: "",
+    participants: ["", ""],
+    full_name: " ",
+    isMessageSeen: false,
+    messages: [],
+    totalMessageLength: 0,
+    currentMessageIndex: {
+      start: 0,
+      end: 0,
+    },
+  };
+
+  const [singleConversation, setSingleConversation] = useState(initialData);
+  const [singleConversationLoading, setSingleConversationLoading] =
+    useState(false);
+  const [singleConversationError, setSingleConversationError] = useState(false);
+  const singleConversationState = [
+    singleConversation,
+    singleConversationLoading,
+    singleConversationError,
+  ];
+  const singleConversationSetState = [
+    setSingleConversation,
+    setSingleConversationLoading,
+    setSingleConversationError,
+  ];
+
+  
+  // chat head infomation
+  const [currentChatUserName, setCurrentChatUserName] = useState("");
+  const [currentChatUserEmail, setCurrentChatUserEmail] = useState("");
+  const currentChatUserInfo = { currentChatUserName, currentChatUserEmail };
+  const currentChatUserSetInfo = {
+    setCurrentChatUserName,
+    setCurrentChatUserEmail,
+  };
+
+  // old code  old code  old code  old code  old code  old code  old code  old code  old code  old code  old code
   const { user } = useAuth();
-  const { loading } = useContext(AuthContext);
   const [isMessageBoxOpen, setIsMessageBoxOpen] = useState(false);
 
   const [clickMsg, setClickMsg] = useState(false);
 
   const [addNewChat, setAddNewChat] = useState("");
-  const [loadNewSMS, setLoadNewSMS] = useState(false)
+  const [loadNewSMS, setLoadNewSMS] = useState(false);
   const [allUsersData, setAllUsersData] = useState([]);
   const [messagesData, setMessagesData] = useState([]);
   const [activeUsers, setActiveUsers] = useState([]);
@@ -41,12 +131,14 @@ export const ChatProvider = ({ children }) => {
     }
   }, [user]);
 
+  // const get user
   useEffect(() => {
     fetch("http://localhost:5000/api/v1/user_api/all_users")
       .then((res) => res.json())
       .then((data) => setAllUsersData(data));
   }, []);
 
+  // get user messages list
   useEffect(() => {
     if (user?.email) {
       fetch(
@@ -57,6 +149,7 @@ export const ChatProvider = ({ children }) => {
     }
   }, [user?.email]);
 
+  // update message in real time
   const newMsgUpdateRealtime = (
     userConvasetionData,
     socketData,
@@ -103,6 +196,7 @@ export const ChatProvider = ({ children }) => {
     return newList;
   };
 
+  // get all user
   useEffect(() => {
     fetch(
       `http://localhost:5000/api/v1/conversations_api/messages?sender=${user?.email}`
@@ -111,6 +205,7 @@ export const ChatProvider = ({ children }) => {
       .then((data) => setMessagesData(data));
   }, []);
 
+  // get current receiver
   const handleCurrentReciver = (email) => {
     const reciver = allUsersData?.find(
       (singleUser) => singleUser?.email == email
@@ -118,14 +213,12 @@ export const ChatProvider = ({ children }) => {
     setCurrentReciver(reciver);
   };
 
+  // handle message data
   const handleMessage = (e, newReceiver = "") => {
-
     if (e.target.value) {
       setIsButtonDisabled(false);
     }
-
     if (e.type == "click" || e.key == "Enter") {
-
       socket.current?.emit("typing", {
         isTypingLoading: false,
         receiver: currentReciver.email,
@@ -155,10 +248,9 @@ export const ChatProvider = ({ children }) => {
               },
             ],
           });
-        }else{
-          setLoadNewSMS(!loadNewSMS)
+        } else {
+          setLoadNewSMS(!loadNewSMS);
         }
-
         setUserMessagesList(
           newMsgUpdateRealtime(userMessagesList, message, newReceiver)
         );
@@ -173,7 +265,7 @@ export const ChatProvider = ({ children }) => {
           .then((res) => {
             if (res.data) {
               setReFatch((r) => !r);
-              setAddNewChat("")
+              setAddNewChat("");
             }
           })
           .catch((err) => {
@@ -184,9 +276,10 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  // update socket data in msg state
   const [newDataAdd, setNewDataAdd] = useState({});
   useEffect(() => {
-    if (allMessages?.messages?.length > 0) {
+    if (allMessages?.messages?.length >= 0) {
       setAllMessages({
         ...allMessages,
         messages: [...allMessages?.messages, newDataAdd],
@@ -196,9 +289,12 @@ export const ChatProvider = ({ children }) => {
     setUserMessagesList(newMsgUpdateRealtime(userMessagesList, newDataAdd));
   }, [newDataAdd]);
 
+  // get message data in client
   useEffect(() => {
     socket?.current?.on("getMessage", (data) => {
-      setClickMsg(true);
+      console.log(data);
+
+      // setClickMsg(true);
       setNewDataAdd(data);
 
       // setAllMessages({
@@ -214,9 +310,10 @@ export const ChatProvider = ({ children }) => {
   }, []);
 
   const [showMessageListLoading, setShowMessageListLoading] = useState(true);
+
+  // get single coversation data
   useEffect(() => {
     const url = `http://localhost:5000/api/v1/conversations_api/single_conversation?sender=${user?.email}&receiver=${currentReciver?.email}`;
-
     const fetchData = () => {
       fetch(url)
         .then((res) => res.json())
@@ -227,13 +324,10 @@ export const ChatProvider = ({ children }) => {
           setAllMessages(data);
         });
     };
-
-    if(!addNewChat){
-
+    if (!addNewChat) {
       fetchData();
     }
   }, [user?.email, currentReciver?.email]);
-  // }, [currentReciver?.email, user?.email, reFatch]);
 
   const handleSeenMessage = (e) => {
     if (e.focus == "focus") {
@@ -254,6 +348,7 @@ export const ChatProvider = ({ children }) => {
     // }
   };
 
+  // send typing status in server
   const handleTyping = (e) => {
     if (e?.target?.value) {
       socket.current?.emit("typing", {
@@ -268,6 +363,7 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  // get typing status in client
   useEffect(() => {
     socket.current?.on("getTyping", (status) => {
       setIsTypingLoading(status);
@@ -301,7 +397,29 @@ export const ChatProvider = ({ children }) => {
     clickMsg,
     setClickMsg,
     addNewChat,
-    setAddNewChat,setLoadNewSMS
+    setAddNewChat,
+    setLoadNewSMS,
+
+    // new code
+    isChatBoxOpen,
+    setIsChatBoxOpen,
+    singleConversationShow,
+    setSingleConversationShow,
+    addNewConversation,
+    setAddNewConversation,
+    newConversationAdd,
+    setNewConversationAdd,
+    handleOpenSingleConversationShow,
+    handleNewConversation,
+    handleNewConversationTextBox,
+    allUsersState,
+    allUsersSetState,
+    currentChatUserInfo,
+    currentChatUserSetInfo,
+    alreadyConversationUserState,
+    alreadyConversationUserSetState,
+    singleConversationState,
+    singleConversationSetState,
   };
 
   return (

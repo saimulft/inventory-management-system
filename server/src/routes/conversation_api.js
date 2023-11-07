@@ -14,10 +14,10 @@ const run = async () => {
       const receiver = request.body.receiver;
       const text = request.body.text;
       const timestamp = request.body.timestamp;
-      // const date = new Date();
-      // const timestamp = date.toISOString();
+      const full_name = request.body.full_name;
       const prepairMessage = {
         participants: [sender, receiver],
+        full_name,
         isMessageSeen: false,
         messages: [
           {
@@ -51,7 +51,7 @@ const run = async () => {
           res.send(newMessage);
         }
       } else {
-        const result = await conversationsCollection.insertOne(prepairMessage);
+        const result = await conversationsCollection.insertOne(prepairMessage,{ upsert: true });
         res.send(result);
       }
     } catch (err) {
@@ -83,11 +83,12 @@ const run = async () => {
 
       const messagesList = allConversations.map((con) => {
         const conversation = {
-          _id: con._id,
-          isMessageSeen: con.isMessageSeen,
-          participants: con.participants,
+          _id: con?._id,
+          full_name: con?.full_name,
+          isMessageSeen: con?.isMessageSeen,
+          participants: con?.participants,
           lastMassages: {
-            ...con.messages[con.messages.length - 1],
+            ...con?.messages[con?.messages.length - 1],
           },
         };
         return conversation;
@@ -129,50 +130,52 @@ const run = async () => {
   });   
 
   router.get("/single_conversation", async (req, res) => {
+
     try {
       const { sender, receiver, page_no } = req.query || {};
 
-      const singleCoversationData = await conversationsCollection.findOne({
+      const singleConversationsData = await conversationsCollection.findOne({
         participants: { $all: [sender, receiver] },
       });
-      if (singleCoversationData) {
-        const totalMessageLength = singleCoversationData.messages.length;
+
+      if (singleConversationsData) {
+        const totalMessageLength = singleConversationsData.messages.length;
         let start;
         let end;
 
         const sentMsgGroupCount = 15;
         if (page_no) {
-          const prepairCount = (page_no - 1) * sentMsgGroupCount;
+          const prepareCount = (page_no - 1) * sentMsgGroupCount;
 
-          end = totalMessageLength - prepairCount;
-          start = totalMessageLength - prepairCount - sentMsgGroupCount;
+          end = totalMessageLength - prepareCount;
+          start = totalMessageLength - prepareCount - sentMsgGroupCount;
 
-          console.log("prepairCount", prepairCount);
-          console.log("totalMessageLength", totalMessageLength);
-          console.log(start, end);
-
-          const chunk = singleCoversationData.messages.slice(start, end);
+          const chunk = singleConversationsData.messages.slice(start, end);
           const currentMessageIndex = {
             start,
             end,
           };
 
           const messagesChunk = {
-            ...singleCoversationData,
+            ...singleConversationsData,
             messages: [...chunk],
             totalMessageLength,
             currentMessageIndex,
           };
-          console.log("sent data");
-          res.send(messagesChunk);
+          console.log("sent 5555", chunk?.length );
+          res.send(chunk);
         }
         else{
-          res.status(500).send({ error: "server error"})
+          console.log("page count not found");
+          res.status(200).send({})
         }
       }else{
-        res.status(500).send({ error: "server error"})
+        console.log("user not found");
+        res.status(200).send({})
+        
       }
     } catch (err) {
+      res.status(500).send({ error: "server error"})
       console.log(err);
     }
   });
