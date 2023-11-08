@@ -273,7 +273,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Amazon Shipping</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter amazon shipping"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="amazonShipping"
@@ -284,7 +284,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Shipping Cost</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter shipping cost"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="shippingCost"
@@ -295,7 +295,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Handling Cost</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter handling cost"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="handlingCost"
@@ -398,7 +398,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Average Tax</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter average tax"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="averageTax"
