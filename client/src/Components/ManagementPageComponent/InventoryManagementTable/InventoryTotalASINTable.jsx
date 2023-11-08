@@ -111,6 +111,7 @@ export default function InventoryTotalASINTable() {
     const filteredData = data.filter(item =>
     (item.asin_upc_code?.toLowerCase().includes(searchText) ||
       item.product_name?.toLowerCase().includes(searchText) ||
+      item.store_manager_name?.toLowerCase().includes(searchText) ||
       item.code_type?.toLowerCase().includes(searchText))
     );
     if (!filteredData.length) {
