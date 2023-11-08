@@ -167,8 +167,6 @@ const ArrivalFormPage = () => {
       walmart_quantity: walmartQuantity, amazon_price: amazonPrice, average_price: averagePrice, average_tax: averageTax, order_number: orderNumber
     }
 
-    console.log(arrivalFormData)
-
     try {
       const { status } = await mutateAsync(arrivalFormData)
       if (status === 201) {

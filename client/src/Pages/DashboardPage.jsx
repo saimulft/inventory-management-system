@@ -258,7 +258,7 @@ export default function DashboardPage() {
                 <th className="border-r border-gray-200">Date</th>
                 <th className="border-r border-gray-200">Amazon Order ID</th>
                 <th className="border-r border-gray-200">Amazon Quantity</th>
-                <th className="border-r border-gray-200">CWalmart Quantity</th>
+                <th className="border-r border-gray-200">Walmart Quantity</th>
                 <th className="border-r border-gray-200">Customer Name</th>
                 <th className="border-r border-gray-200">Amazon Price</th>
                 <th className="border-r border-gray-200">Amazon Shipping</th>
@@ -266,7 +266,7 @@ export default function DashboardPage() {
                 <th className="border-r border-gray-200">Average Price</th>
                 <th className="border-r border-gray-200">Supplier Price</th>
                 <th className="border-r border-gray-200">Shipping Cost</th>
-                <th className="border-r border-gray-200">EDAverage TaxA</th>
+                <th className="border-r border-gray-200">Average Tax</th>
                 <th className="border-r border-gray-200">Tax</th>
                 <th className="border-r border-gray-200">Handling Cost</th>
                 <th className="border-r border-gray-200">Cost of Goods</th>
