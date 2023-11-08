@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
@@ -6,7 +6,18 @@ import { AiOutlineClose } from "react-icons/ai";
 import ChatLoading from "../../ChatLoading/ChatLoading";
 
 export default function SingleConversation() {
+  const specificComponentRef = useRef(null);
+  const [currentPosition, setCurrentPosition] = useState(Number);
+
   const [con, setCon] = useState([]);
+  const [conLoading, setConLoading] = useState(false);
+  const [conError, setConError] = useState(false);
+
+  const [temporaryData, setTemporaryData] = useState([]);
+
+  const [pageCount, setPageCount] = useState(1);
+  const [loadNew, setLoadNew] = useState(true);
+
   const [socketData, setSocketData] = useState({});
   // chat context
   const {
@@ -23,6 +34,30 @@ export default function SingleConversation() {
     currentChatUserInfo || {};
 
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
+
+  const [calcScrollHeight, setCalcScrollHeight] = useState(0);
+  const [go, setGo] = useState(0);
+
+  const scrollPositionSet = () => {
+    setCalcScrollHeight(specificComponentRef.current.scrollHeight);
+    if (pageCount != 1) {
+      const goTo = specificComponentRef.current.scrollHeight - calcScrollHeight;
+      setGo(go);
+      console.log({
+        scrollHeight: specificComponentRef.current.scrollHeight,
+        calcScrollHeight,
+        goTo,
+      });
+    }
+  };
+  useEffect(() => {
+    specificComponentRef.current.scrollTop = go;
+  }, [go]);
+
+  useEffect(() => {
+    setCon([...temporaryData, ...con]);
+    scrollPositionSet();
+  }, [temporaryData]);
 
   // update single message update state with socket data
   useEffect(() => {
@@ -42,23 +77,50 @@ export default function SingleConversation() {
 
   // fetch cov data
   const fetchConData = async () => {
+    setConError(false);
+    setConLoading(true);
     await axios
       .get(
-        `/api/v1/conversations_api/single_conversation?sender=${
-          user?.email
-        }&receiver=${currentChatUserEmail}&page_no=${1}`
+        `/api/v1/conversations_api/single_conversation?sender=${user?.email}&receiver=${currentChatUserEmail}&page_no=${pageCount}`
       )
       .then((res) => {
-        setCon(res?.data);
+        setPageCount(pageCount + 1);
+        setTemporaryData(res?.data);
+        setConLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setConError(true);
+        setConLoading(false);
       });
   };
 
   useEffect(() => {
     fetchConData();
-  }, [currentChatUserEmail, user?.email]);
+  }, [currentChatUserEmail, user?.email, loadNew]);
+
+  // typing start data sent with socket
+  const typingStart = () =>
+    socket.current?.emit("typing", {
+      isTyping: true,
+      receiver: currentChatUserEmail,
+    });
+
+  // typing stop data sent with socket
+  const typingStop = () =>
+    socket.current?.emit("typing", {
+      isTyping: false,
+      receiver: currentChatUserEmail,
+    });
+
+  // send typing status in server
+  const handleTyping = (e) => {
+    if (e?.target?.value) {
+      typingStart();
+    } else {
+      typingStop();
+    }
+  };
 
   // handle sent new massages
   const handleSentNewMassages = async (e) => {
@@ -114,28 +176,17 @@ export default function SingleConversation() {
           setNewConversationAdd(false);
         } else if (data?.data?._id) {
           socket.current?.emit("sendMessage", data?.data);
-          socket.current?.emit("sentLestMessageUpdateConversationUserList", data?.data);
+          typingStop();
+          socket.current?.emit(
+            "sentLestMessageUpdateConversationUserList",
+            data?.data
+          );
           // setCon([...con, data?.data])
         }
       }
     } catch (err) {
       console.log(err);
       setCon({});
-    }
-  };
-
-  // send typing status in server
-  const handleTyping = (e) => {
-    if (e?.target?.value) {
-      socket.current?.emit("typing", {
-        isTyping: true,
-        receiver: currentChatUserEmail,
-      });
-    } else {
-      socket.current?.emit("typing", {
-        isTyping: false,
-        receiver: currentChatUserEmail,
-      });
     }
   };
 
@@ -146,6 +197,73 @@ export default function SingleConversation() {
     });
   }, [socket]);
 
+  // scroll related code hear
+  // scroll related code hear
+
+  useEffect(() => {
+    if (con?.length > 0 || con?.length <= 15) {
+      if (pageCount <= 2) {
+        console.log("enter");
+
+        specificComponentRef.current.scrollTop =
+          specificComponentRef.current.scrollHeight;
+      }
+    }
+  }, [specificComponentRef, con]);
+
+  // find scroll position
+  useEffect(() => {
+    const handleScroll = () => {
+      if (specificComponentRef.current) {
+        // Calculate the scroll position relative to the specific component
+        const componentScrollTop = specificComponentRef.current.scrollTop;
+        setCurrentPosition(componentScrollTop);
+        if (componentScrollTop === 0 && !conLoading) {
+          setLoadNew((e) => !e);
+        }
+      }
+    };
+    if (specificComponentRef.current) {
+      specificComponentRef.current.addEventListener("scroll", handleScroll);
+    }
+    return () => {
+      if (specificComponentRef.current) {
+        specificComponentRef.current.removeEventListener(
+          "scroll",
+          handleScroll
+        );
+      }
+    };
+  }, [temporaryData]);
+
+  // Function to calculate the time difference
+  const timeDifference = (timestamp) => {
+    const currentDateTime = new Date();
+    const timestampDateTime = new Date(timestamp);
+    return Math.abs(currentDateTime - timestampDateTime);
+  };
+
+  //
+  //
+  //
+
+  //
+  //
+  //
+  //
+
+  //
+  //
+  //
+  //
+
+  //
+  //
+  //
+  //
+  //
+  //
+
   let content;
   // if ((loading && !error && data?.messages?.length == 0) || !data) {
   //   content = <p>Loading...</p>;
@@ -155,32 +273,39 @@ export default function SingleConversation() {
   //   content = <div> data not Found !</div>;
   // }
   if (con?.length > 0) {
-    content = con?.map((msg) => {
-      const currentUser = msg?.sender == user?.email;
-      const msgLengthCheck = msg?.text?.length <= 26;
-      const text = msg?.text;
-      return (
-        <div key={msg?._id}>
-          <div
-            className={`flex ${
-              currentUser ? "justify-end my-[2px] " : "justify-start my-[2px]"
-            }`}
-          >
+    content = con
+      ?.sort((a, b) => {
+        const timeA = a.timestamp;
+        const timeB = b.timestamp;
+
+        return timeDifference(timeB) - timeDifference(timeA);
+      })
+      ?.map((msg) => {
+        const currentUser = msg?.sender == user?.email;
+        const msgLengthCheck = msg?.text?.length <= 26;
+        const text = msg?.text;
+        return (
+          <div key={msg?._id}>
             <div
-              className={`${
-                currentUser
-                  ? "bg-purple-600 text-white  break-words"
-                  : "bg-gray-200 text-black   break-words"
-              } ${
-                msgLengthCheck ? "rounded-full" : "rounded-xl"
-              }  mx-2 py-[5px] px-3 max-w-[65%]`}
+              className={`flex ${
+                currentUser ? "justify-end my-[2px] " : "justify-start my-[2px]"
+              }`}
             >
-              {text}
+              <div
+                className={`${
+                  currentUser
+                    ? "bg-purple-600 text-white  break-words"
+                    : "bg-gray-200 text-black   break-words"
+                } ${
+                  msgLengthCheck ? "rounded-full" : "rounded-xl"
+                }  mx-2 py-[5px] px-3 max-w-[65%]`}
+              >
+                {text}
+              </div>
             </div>
           </div>
-        </div>
-      );
-    });
+        );
+      });
   }
 
   const online = checkOnline(currentChatUserEmail);
@@ -221,7 +346,13 @@ export default function SingleConversation() {
       </div>
 
       {/* message body */}
-      <div className="h-[calc(100%_-_120px)] overflow-y-auto">
+      <div
+        ref={specificComponentRef}
+        style={{
+          height: "calc(100% - 120px)",
+          overflowY: "auto",
+        }}
+      >
         {content}
         {chatLoadingStatus && <ChatLoading />}
       </div>

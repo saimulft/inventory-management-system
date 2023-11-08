@@ -196,7 +196,7 @@ const run = async () => {
             totalMessageLength,
             currentMessageIndex,
           };
-          console.log("sent 5555", chunk?.length);
+          console.log(currentMessageIndex, {totalMessageLength, page_no});
           res.send(chunk);
         } else {
           console.log("page count not found");
