@@ -3,6 +3,7 @@ import { ChatContext } from "../../../Providers/ChatProvider";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
 import { AiOutlineClose } from "react-icons/ai";
+import ChatLoading from "../../ChatLoading/ChatLoading";
 
 export default function SingleConversation() {
   const [con, setCon] = useState([]);
@@ -21,19 +22,18 @@ export default function SingleConversation() {
   const { currentChatUserName, currentChatUserEmail } =
     currentChatUserInfo || {};
 
+  const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
+
+  // update single message update state with socket data
   useEffect(() => {
     if (socketData) {
       setCon([...con, socketData]);
     }
   }, [socketData]);
 
-  // get message data in client
+  /// get single message on socket
   useEffect(() => {
     socket?.current?.on("getMessage", (data) => {
-      console.log(
-        "🚀 ~ file: SingleConversation.jsx:26 ~ socket?.current?.on ~ data:",
-        data
-      );
       if (data) {
         setSocketData(data);
       }
@@ -102,21 +102,19 @@ export default function SingleConversation() {
             participants: [user?.email, currentChatUserEmail],
             full_name: message?.full_name,
             isMessageSeen: false,
-            messages: [
-              {
-                sender: message?.sender,
-                receiver: message?.receiver,
-                text: message?.text,
-                timestamp,
-              },
-            ],
+            lastMassages: {
+              sender: message?.sender,
+              receiver: message?.receiver,
+              text: message?.text,
+              timestamp,
+            },
           };
-
           socket.current?.emit("sendMessageFastTime", fastTimeData);
           fetchConData();
           setNewConversationAdd(false);
         } else if (data?.data?._id) {
           socket.current?.emit("sendMessage", data?.data);
+          socket.current?.emit("sentLestMessageUpdateConversationUserList", data?.data);
           // setCon([...con, data?.data])
         }
       }
@@ -126,20 +124,27 @@ export default function SingleConversation() {
     }
   };
 
-    // send typing status in server 
-    const handleTyping = (e) => {
-      if (e?.target?.value) {
-        socket.current?.emit("typing", {
-          isTyping: true,
-          receiver: currentChatUserEmail,
-        });
-      } else {
-        socket.current?.emit("typing", {
-          isTyping: false,
-          receiver: currentChatUserEmail,
-        });
-      }
-    };
+  // send typing status in server
+  const handleTyping = (e) => {
+    if (e?.target?.value) {
+      socket.current?.emit("typing", {
+        isTyping: true,
+        receiver: currentChatUserEmail,
+      });
+    } else {
+      socket.current?.emit("typing", {
+        isTyping: false,
+        receiver: currentChatUserEmail,
+      });
+    }
+  };
+
+  //  get typing status
+  useEffect(() => {
+    socket?.current?.on("getTyping", (status) => {
+      setChatLoadingStatus(status);
+    });
+  }, [socket]);
 
   let content;
   // if ((loading && !error && data?.messages?.length == 0) || !data) {
@@ -216,7 +221,10 @@ export default function SingleConversation() {
       </div>
 
       {/* message body */}
-      <div className="h-[calc(100%_-_120px)] overflow-y-auto">{content}</div>
+      <div className="h-[calc(100%_-_120px)] overflow-y-auto">
+        {content}
+        {chatLoadingStatus && <ChatLoading />}
+      </div>
 
       {/* sent message box  */}
       <form
@@ -225,6 +233,9 @@ export default function SingleConversation() {
       >
         <div className="flex items-center px-3 py-2 ">
           <input
+            onChange={(e) => {
+              handleTyping(e);
+            }}
             id="message_input"
             rows="1"
             className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"

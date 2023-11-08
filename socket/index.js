@@ -9,7 +9,7 @@ const io = new Server(9000, {
 let users = [];
 const addUser = (userData, socketId) => {
     !users.some(user => user?.email == userData?.email ) && users?.push({...userData, socketId})
-}
+}   
 
 const removeUser = (socketId) => {
     users = users.filter(user => user.socketId !== socketId);
@@ -24,29 +24,33 @@ io.on('connection',  (socket) => {
 
     // connect 
     socket.on('addUsers', userData => {
-        console.log(userData)
+        console.log(userData?.email)
         addUser(userData, socket.id)
         io.emit("getUsers", users);
     })
 
     // send message 
     socket.on('sendMessage',  (data) => {
-        console.log("my send message",data);
         const user =  getUser(data.receiver)
        {user && io.to(user?.socketId).emit('getMessage', data)}
     })
 
     // send message fast time
     socket.on('sendMessageFastTime',  (data) => {
-        console.log("my send message fast Time",data);
-        const user =  getUser(data.receiver)
+        const user =  getUser(data?.lastMassages?.receiver)
        {user && io.to(user?.socketId).emit('getMessageFastTime', data)}
+    })
+
+    // lest message update conversation user list
+    socket.on('sentLestMessageUpdateConversationUserList',  (data) => {
+        console.log("getLestMessageUpdateConversationUserList", data);
+        const user =  getUser(data?.receiver)
+       {user && io.to(user?.socketId).emit('getLestMessageUpdateConversationUserList', data)}
     })
 
     // typing status
     socket.on('typing',  ({isTyping: status, receiver}) => {
        const user =  getUser(receiver)
-      console.log(status);
       {user && io.to(user?.socketId).emit('getTyping', status)}
 
     })

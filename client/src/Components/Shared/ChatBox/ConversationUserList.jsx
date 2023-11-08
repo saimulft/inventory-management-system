@@ -26,21 +26,69 @@ export default function ConversationUserList() {
 
   const [search, setSearch] = useState("");
   const [socketData, setSocketData] = useState({});
+  const [
+    updateLestMessageUpdateConversationUserList,
+    setUpdateLestMessageUpdateConversationUserList,
+  ] = useState({});
 
   const { user } = useAuth();
+
+  // update every message in real time conversation user list
+  const newMessagesUpdateRealtime = (userConversationData, socketData) => {
+    const emailOne = socketData?.sender;
+    const emailTwo = socketData?.receiver;
+
+    const newList = userConversationData?.map((cd) => {
+      const existOne = cd.participants.includes(emailOne);
+      const existTwo = cd.participants.includes(emailTwo);
+
+      if (existOne && existTwo) {
+        const newLastMsg = {
+          ...cd,
+          lastMassages: socketData,
+          isMessageSeen: false,
+        };
+        return newLastMsg;
+      } else {
+        return cd;
+      }
+    });
+
+    return newList;
+  };
+
+  // get message every time data in conversation list in socket
+  useEffect(() => {
+    socket?.current?.on(
+      "getLestMessageUpdateConversationUserList",
+      (socketData) => {
+        console.log("getLestMessageUpdateConversationUserList", socketData);
+        setUpdateLestMessageUpdateConversationUserList(socketData);
+      }
+    );
+  }, [socket]);
+
+  useEffect(() => {
+    setData(
+      newMessagesUpdateRealtime(
+        data,
+        updateLestMessageUpdateConversationUserList
+      )
+    );
+  }, [updateLestMessageUpdateConversationUserList]);
 
   // get message fast time data in client
   useEffect(() => {
     socket?.current?.on("getMessageFastTime", (data) => {
-      console.log("jlkdsfkjsdklfjkds", data);
+      console.log("getMessageFastTime", data);
 
       if (data) {
         setSocketData(data);
         console.log(data);
       }
     });
-  }, []);
-
+  }, [socket]);
+  // fast time data in STATE with socket
   useEffect(() => {
     setData([...data, socketData]);
   }, [socketData]);
@@ -115,8 +163,9 @@ export default function ConversationUserList() {
         ? data?.lastMassages?.text
         : data?.lastMassages?.text.slice(0, 17) + "...";
 
-    const senderStatus = user.email == data?.lastMassages?.sender && "You:";
+    const senderStatus = user.email == data?.lastMassages?.sender ? "You:" : "";
     const result = senderStatus + " " + lastMsg;
+
     return result;
   };
 
