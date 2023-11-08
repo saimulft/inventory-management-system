@@ -126,6 +126,21 @@ export default function SingleConversation() {
     }
   };
 
+    // send typing status in server 
+    const handleTyping = (e) => {
+      if (e?.target?.value) {
+        socket.current?.emit("typing", {
+          isTyping: true,
+          receiver: currentChatUserEmail,
+        });
+      } else {
+        socket.current?.emit("typing", {
+          isTyping: false,
+          receiver: currentChatUserEmail,
+        });
+      }
+    };
+
   let content;
   // if ((loading && !error && data?.messages?.length == 0) || !data) {
   //   content = <p>Loading...</p>;
