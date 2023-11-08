@@ -404,7 +404,7 @@ export default function StoreOutOfStockTable() {
                   return (
 
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`}
+                      className={`${index % 2 == 1 && ""}`}
                       key={index}
                     >
                       <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
@@ -447,7 +447,7 @@ export default function StoreOutOfStockTable() {
                     return (
 
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        className={`${index % 2 == 1 && ""}`}
                         key={index}
                       >
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>

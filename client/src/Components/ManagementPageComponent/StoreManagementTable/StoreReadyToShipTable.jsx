@@ -318,7 +318,7 @@ export default function StorePreparingRequestTable() {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                      className={`${index % 2 == 1 && ""} py-2`}
                       key={index} >
                       <th>{format(new Date(d.date), "y/MM/d")}</th>
                       <th className="font-normal">{d.store_name}</th>
@@ -343,7 +343,7 @@ export default function StorePreparingRequestTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                        className={`${index % 2 == 1 && ""} py-2`}
                         key={index} >
                         <th>{format(new Date(d.date), "y/MM/d")}</th>
                         <th className="font-normal">{d.store_name}</th>

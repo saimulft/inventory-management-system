@@ -334,7 +334,7 @@ export default function StoreMissingArrivalTable() {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`}
+                      className={`${index % 2 == 1 && ""}`}
                       key={index}>
                       <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
                       <th className="font-normal">{d.store_name}</th>
@@ -377,7 +377,7 @@ export default function StoreMissingArrivalTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        className={`${index % 2 == 1 && ""}`}
                         key={index}>
                         <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
                         <th className="font-normal">{d.store_name}</th>

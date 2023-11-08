@@ -315,7 +315,7 @@ export default function InventoryTotalASINTable() {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
+                      className={`${index % 2 == 1 && ""}`} key={index} >
                       <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                       <td>{d.asin_upc_code}</td>
                       <td className="text-[#8633FF]">{d.product_name}</td>
@@ -332,7 +332,7 @@ export default function InventoryTotalASINTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
+                        className={`${index % 2 == 1 && ""}`} key={index} >
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                         <td>{d.asin_upc_code}</td>
                         <td className="text-[#8633FF]">{d.product_name}</td>

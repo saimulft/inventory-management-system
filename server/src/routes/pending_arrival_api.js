@@ -211,12 +211,14 @@ const run = async () => {
                         }
 
                         else {
+                            const remainingPrice = parseInt(result.received_quantity) * result.unit_price;
+
                             const allStockData = {
                                 ...result,
                                 stock: result.received_quantity,
                                 total_sold: 0,
                                 sold_price: 0,
-                                remaining_price: 0
+                                remaining_price: remainingPrice
                             }
                             const allStockIntertResult = await all_stock_collection.insertOne(allStockData)
                             if (allStockIntertResult.insertedId) {

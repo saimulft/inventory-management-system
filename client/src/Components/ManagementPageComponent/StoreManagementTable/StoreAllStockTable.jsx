@@ -188,7 +188,7 @@ export default function StoreAllStockTable() {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`}
+                      className={`${index % 2 == 1 && ""}`}
                       key={index}
                     >
                       <th>{d.store_name}</th>
@@ -209,7 +209,7 @@ export default function StoreAllStockTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        className={`${index % 2 == 1 && ""}`}
                         key={index}
                       >
                         <th>{d.store_name}</th>

@@ -317,7 +317,7 @@ export default function StoreShippedTable() {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`}
+                      className={`${index % 2 == 1 && ""}`}
                       key={index}
                     >
                       <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
@@ -348,7 +348,7 @@ export default function StoreShippedTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        className={`${index % 2 == 1 && ""}`}
                         key={index}
                       >
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>

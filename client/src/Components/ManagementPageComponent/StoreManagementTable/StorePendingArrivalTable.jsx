@@ -413,7 +413,7 @@ export default function StorePendingArrivalTable() {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`}
+                      className={`${index % 2 == 1 && ""}`}
                       key={index}
                     >
                       <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
@@ -460,7 +460,7 @@ export default function StorePendingArrivalTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        className={`${index % 2 == 1 && ""}`}
                         key={index}
                       >
                         <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>

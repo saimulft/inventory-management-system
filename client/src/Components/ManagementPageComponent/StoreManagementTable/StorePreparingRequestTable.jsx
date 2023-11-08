@@ -461,7 +461,7 @@ export default function StorePreparingRequestTable() {
                   return (
 
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                      className={`${index % 2 == 1 && ""} py-2`}
                       key={index}
                     >
                       <th>{format(new Date(d.date), "y/MM/d")}</th>
@@ -515,7 +515,7 @@ export default function StorePreparingRequestTable() {
                     return (
 
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                        className={`${index % 2 == 1 && ""} py-2`}
                         key={index}
                       >
                         <th>{format(new Date(d.date), "y/MM/d")}</th>

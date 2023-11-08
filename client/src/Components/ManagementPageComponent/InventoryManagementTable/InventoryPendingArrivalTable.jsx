@@ -420,7 +420,7 @@ export default function InventoryPendingArrivalTable() {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`}
+                      className={`${index % 2 == 1 && ""}`}
                       key={index}
                     >
                       <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
@@ -467,7 +467,7 @@ export default function InventoryPendingArrivalTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        className={`${index % 2 == 1 && ""}`}
                         key={index}
                       >
                         <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
