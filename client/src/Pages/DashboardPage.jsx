@@ -90,7 +90,7 @@ export default function DashboardPage() {
               : "border border-slate-500 text-black"}`}><BiTable size={20} />Table View</button>
           </div>
         </div>
-       {view === "Graph" && <div className="mt-10 flex gap-5 items-center">
+        {view === "Graph" && <div className="mt-10 flex gap-5 items-center">
           <div className="bg-blue-100 p-4 rounded-lg w-40">
             <div className="h-8 w-8 flex justify-center items-center rounded-full bg-sky-400 text-white">
               <BiSolidStore />
@@ -255,39 +255,84 @@ export default function DashboardPage() {
           <table className="table table-sm">
             <thead>
               <tr className="bg-gray-200">
-                <th>Date</th>
-                <th>Amazon Order ID</th>
-                <th>Amazon Quantity</th>
-                <th>CWalmart Quantity</th>
-                <th>Customer Name</th>
-                <th>Amazon Price</th>
-                <th>Amazon Shipping</th>
-                <th>Amazon Fee</th>
-                <th>Average Price</th>
-                <th>Supplier Price</th>
-                <th>Shipping Cost</th>
-                <th>EDAverage TaxA</th>
-                <th>Tax</th>
-                <th>Handling Cost</th>
-                <th>Cost of Goods</th>
-                <th>Cash Profit</th>
-                <th>ROI</th>
+                <th className="border-r border-gray-200">Date</th>
+                <th className="border-r border-gray-200">Amazon Order ID</th>
+                <th className="border-r border-gray-200">Amazon Quantity</th>
+                <th className="border-r border-gray-200">Walmart Quantity</th>
+                <th className="border-r border-gray-200">Customer Name</th>
+                <th className="border-r border-gray-200">Amazon Price</th>
+                <th className="border-r border-gray-200">Amazon Shipping</th>
+                <th className="border-r border-gray-200">Amazon Fee</th>
+                <th className="border-r border-gray-200">Average Price</th>
+                <th className="border-r border-gray-200">Supplier Price</th>
+                <th className="border-r border-gray-200">Shipping Cost</th>
+                <th className="border-r border-gray-200">Average Tax</th>
+                <th className="border-r border-gray-200">Tax</th>
+                <th className="border-r border-gray-200">Handling Cost</th>
+                <th className="border-r border-gray-200">Cost of Goods</th>
+                <th className="border-r border-gray-200">Cash Profit</th>
+                <th className="">ROI</th>
               </tr>
             </thead>
             <tbody className="relative">
-
-              <tr className="bg-gray-200" >
-                {/* <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th>
-                <th></th> */}
+              <tr className="" >
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="">ssfsfsdf</td>
               </tr>
-
-
+              <tr className="bg-gray-200" >
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="">ssfsfsdf</td>
+              </tr>
+              <tr className="" >
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="border-r border-gray-200">ssfsfsdf</td>
+                <td className="">ssfsfsdf</td>
+              </tr>
+             
             </tbody>
           </table>
 

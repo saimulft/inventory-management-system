@@ -33,7 +33,7 @@ export default function InventoryPreparingRequestTable() {
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
+        const res = await axios.post('/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
