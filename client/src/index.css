@@ -11,6 +11,36 @@
     }
 }
 
+/* hide notification box scroll bar  */
+.notifications_box::-webkit-scrollbar{
+    display: none;
+    }
+
+/* hide chat box scroll bar  */
+.add_chat_box::-webkit-scrollbar{
+display: none;
+}
+
+.chat_list::-webkit-scrollbar {
+    width: 10px!important;
+    height: 6px!important;
+  }
+  .chat_list::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.2);
+  }
+  .chat_list::-webkit-scrollbar-track {
+    background: hsla(0,0%,100%,.1);
+  }
+
+.new_conversation::-webkit-scrollbar {
+    width: 10px!important;
+    height: 6px!important;
+  }
+  .new_conversation::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.2);
+  }
+  .new_conversation::-webkit-scrollbar-track {
+    background: hsla(0,0%,100%,.1);}
 body {
     overflow-y: scroll;
 }

@@ -1,4 +1,8 @@
+<<<<<<< HEAD
+import { useContext, useState } from "react";
+=======
 import { useState } from "react";
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
 import { AiOutlineSearch } from "react-icons/ai";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
@@ -7,6 +11,32 @@ import Swal from "sweetalert2";
 import ToastMessage from "../../Shared/ToastMessage";
 import { FaSpinner } from "react-icons/fa";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
+<<<<<<< HEAD
+// import { LiaGreaterThanSolid } from "react-icons/lia";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
+import axios from "axios";
+import { format } from "date-fns"
+import Swal from "sweetalert2";
+import { useQuery } from "@tanstack/react-query";
+
+
+export default function StorePreparingRequestTable() {
+
+  const { isSidebarOpen } = useContext(GlobalContext);
+  const [singleData, setSingleData] = useState()
+
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
+  const { data: preparingRequestData = [], refetch } = useQuery({
+    queryKey: ['preparing_request_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
+        if (res.status === 200) {
+          return res.data.data
+        }
+      } catch (error) {
+        console.log(error)
+=======
 import { useQuery } from "@tanstack/react-query";
 import FileDownload from "../../Shared/FileDownload";
 import Loading from "../../Shared/Loading";
@@ -59,14 +89,21 @@ export default function StorePreparingRequestTable() {
         return [];
       } catch (error) {
         return [];
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
       }
     }
   })
 
+<<<<<<< HEAD
+  const data = preparingRequestData
+  const handleDelete = (_id) => {
+
+=======
   const handleDelete = (_id, invoice_file, shipping_file) => {
     const deleteData = {
       id: _id, invoice_file, shipping_file
     }
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -77,16 +114,38 @@ export default function StorePreparingRequestTable() {
       confirmButtonText: 'Delete'
     }).then((result) => {
       if (result.isConfirmed) {
+<<<<<<< HEAD
+        axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data?id=${_id}`)
+          .then(res => {
+            if (res.status === 200) {
+=======
         axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data`, { data: deleteData })
           .then(res => {
             if (res.status === 200) {
               refetch()
               setCountsRefetch(true)
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
               Swal.fire(
                 'Deleted!',
                 'Data has been deleted.',
                 'success'
               )
+<<<<<<< HEAD
+              refetch()
+            }
+          }).catch(err => console.log(err))
+
+
+
+      }
+    })
+  }
+  console.log(import.meta.env.VITE_IMAGE_BASE_URL)
+  return (
+    <div className="px-8 py-12">
+      <h3 className="text-center text-2xl font-medium">
+        Preparing Request : {preparingRequestData?.length}
+=======
             }
           }).catch(err => console.log(err))
       }
@@ -359,6 +418,7 @@ export default function StorePreparingRequestTable() {
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
         Preparing Request : {data?.length}
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
@@ -434,7 +494,11 @@ export default function StorePreparingRequestTable() {
         </form>
       </div>
 
+<<<<<<< HEAD
+      <div className="overflow-x-auto overflow-y-auto mt-8">
+=======
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
@@ -455,6 +519,59 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
+<<<<<<< HEAD
+            {data.map((d, index) => {
+              return (
+                <tr
+                  className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                  key={index}
+                >
+                  <th>{format(new Date(d.date), "y/MM/d")}</th>
+                  <th className="font-normal">{d.store_name}</th>
+                  <td>{d.code}</td>
+                  <td>{d.code_type}</td>
+                  <td>{d.product_name}</td>
+                  <td>{d.order_id}</td>
+                  <td>{d.upin}</td>
+                  <td>{d.quantity}</td>
+                  <td>{d.courier}</td>
+                  <td>{d.tracking_number}</td>
+                  <td>{d.invoice_file && <button  className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.shipping_file && <button  className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
+                  <td>{d.notes}</td>
+                  <td>
+                    <div className="dropdown dropdown-end">
+                      <label
+                        tabIndex={0}
+                      >
+                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
+
+                        <li>
+                          <button onClick={() => {
+                            document.getElementById("my_modal_2").showModal()
+
+                          }
+                          }>Edit</button>
+                        </li>
+                        <li>
+                          <button onClick={() => handleDelete(d._id)}>Delete</button>
+                        </li>
+                      </ul>
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+
+=======
             {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
@@ -596,17 +713,72 @@ export default function StorePreparingRequestTable() {
             return pageNumber === "..." ? "ellipsis" : "";
           }}
         />}
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
       </div>
 
       {/* modal content  */}
+
       <dialog id="my_modal_2" className="modal">
+<<<<<<< HEAD
+        <div style={{ marginLeft }} className="modal-box py-10 px-10">
+          <div className="flex">
+            <div className="w-100">
+=======
         <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
           <div className="flex gap-10">
             <div className="w-1/2">
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
               <div className="flex items-center mb-6 gap-2">
                 {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
+<<<<<<< HEAD
+              <p className="mt-2">
+                <p className="font-bold">Date: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData && format(new Date(singleData?.date), "y/MM/d")} />
+              </p>
+              <p className="mt-2">
+                <p className="font-bold">Store Name: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.store_name} />
+              </p>
+              <p className="mt-2">
+                <p className="font-bold">ASIN: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.code_type} />
+              </p>
+              <p className="mt-2">
+                <p className="font-bold">Quantity: </p>
+                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="number" defaultValue={singleData?.quantity} />
+              </p>
+
+              <p className="mt-2">
+                <p className="font-bold">Courier: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.courier ? singleData?.courier : ""} />
+              </p>
+
+              <p className="mt-2">
+                <p className="font-bold">UPIN: </p>
+                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.upin} />
+              </p>
+
+              <p className="mt-2">
+                <p className="font-bold">Product Name: </p>
+                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.product_name} />
+              </p>
+
+              <p className="mt-2">
+                <p className="font-bold">Supplier Tracking: </p>
+                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.tracking_number ? singleData?.tracking_number : ""} />
+              </p>
+
+              <p className="mt-2">
+                <span className="font-bold">Shipping Label: </span>
+                <span className="text-[#8633FF] cursor-pointer">Click</span>
+              </p>
+              <p className="mt-2">
+                <span className="font-bold">Invoice: </span>
+                <span className="text-[#8633FF] cursor-pointer">Click</span>
+              </p>
+=======
 
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold ">Quantity : </label>
@@ -619,6 +791,7 @@ export default function StorePreparingRequestTable() {
                   className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
               </div>
 
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
             </div>
             <div className="w-1/2">
               <h3 className="text-2xl mb-6 font-medium">Update</h3>
@@ -682,8 +855,12 @@ export default function StorePreparingRequestTable() {
                         className="hidden"
                       />
                       <div className="ml-5">
+<<<<<<< HEAD
+
+=======
                         {InvoiceImageFile && <p className="font-bold text-lg">{InvoiceImageFile.name}</p>}
                         {!InvoiceImageFile && <p className=" text-sm">Select PNG , JPEG or PDF</p>}
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                       </div>
                     </label>
                   </div>
@@ -723,8 +900,12 @@ export default function StorePreparingRequestTable() {
                         className="hidden"
                       />
                       <div className="ml-5">
+<<<<<<< HEAD
+
+=======
                         {shippingImageFile && <p className="font-bold text-lg">{shippingImageFile.name}</p>}
                         {!shippingImageFile && <p className=" text-sm">Select PNG , JPEG or PDF</p>}
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                       </div>
                     </label>
                   </div>
@@ -741,9 +922,13 @@ export default function StorePreparingRequestTable() {
                     name="note"
                   />
                 </div>
+<<<<<<< HEAD
+                <button type="submit" className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+=======
                 <ToastMessage errorMessage={formError} successMessage={successMessage} />
                 <button type="submit" disabled={loading} className="bg-[#8633FF] mt-4 flex gap-2 py-2 justify-center items-center text-white rounded-lg w-full">
                   {loading && <FaSpinner size={20} className="animate-spin" />}
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   Update
                 </button>
               </form>
@@ -754,6 +939,9 @@ export default function StorePreparingRequestTable() {
           <button>close</button>
         </form>
       </dialog>
+<<<<<<< HEAD
+
+=======
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
         <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
@@ -781,6 +969,7 @@ export default function StorePreparingRequestTable() {
           <button>close</button>
         </form>
       </dialog>
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
     </div>
   );
 }

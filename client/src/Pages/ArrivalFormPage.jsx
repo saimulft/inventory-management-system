@@ -90,6 +90,9 @@ const ArrivalFormPage = () => {
 
 
 
+  const { user } = useAuth();
+  const [inputError, setInputError] = useState('')
+
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -431,6 +434,8 @@ const ArrivalFormPage = () => {
             </div>
 
             <div className="mt-5">{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
+
+            <div>{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center mt-5 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
 
             <div className="flex items-center justify-center mt-8">
               <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-full capitalize">

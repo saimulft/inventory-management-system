@@ -10,14 +10,20 @@ import { GlobalContext } from "../../Providers/GlobalProviders";
 import { NavLink, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Cookies from "js-cookie";
+<<<<<<< HEAD
+=======
 import useGlobal from "../../hooks/useGlobal";
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
 
 export default function Sidebar() {
   const [settingActive, setSettingActive] = useState(false);
   const url = useLocation();
   const route = url?.pathname?.split("/")[2];
   const { user, setUser } = useAuth()
+<<<<<<< HEAD
+=======
   const { setPageName } = useGlobal()
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
 
   useEffect(() => {
     if (route?.includes("settings")) {
@@ -59,6 +65,14 @@ export default function Sidebar() {
           {
             user?.role === 'Admin' || user?.role === 'Admin VA' ?
               <>
+<<<<<<< HEAD
+                <NavLink to="/dashboard/home"
+                  className={({ isActive }) =>
+                    isActive
+                      ? `bg-[#8633FF] text-white rounded ps-3 pe-3 ${isSidebarOpen ? "w-56" : ""
+                      } py-[10px] border-b border-[#3e3e41] flex items-center gap-2 text-sm rounded-t`
+                      : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100  ps-3 ${isSidebarOpen ? "w-56" : ""
+=======
                 <NavLink
                   onClick={() => setPageName('Dashboard')}
                   to="/dashboard/home"
@@ -67,6 +81,7 @@ export default function Sidebar() {
                       ? `bg-[#8633FF] text-white rounded ps-3 pe-3 my-2 ${isSidebarOpen ? "w-56" : ""
                       } py-[10px] border-b border-[#3e3e41] flex items-center gap-2 text-sm rounded-t`
                       : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 ps-3 ${isSidebarOpen ? "w-56" : ""
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                       } pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t`
                   }
                 >
@@ -75,12 +90,20 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
+<<<<<<< HEAD
+                  to="/dashboard/management"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
                   onClick={() => setPageName('Management')}
                   to="/dashboard/management"
                   className={({ isActive }) =>
                     isActive
                       ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] my-2 border-b border-[#38383c] flex items-center gap-2 text-sm"
                       : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }
                 >
                   <PiWarehouseDuotone size={24} />
@@ -88,6 +111,49 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
+<<<<<<< HEAD
+                  to="/dashboard/all-stores"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <BsHouseCheck size={24} />
+                  {isSidebarOpen && <p>All stores</p>}
+                </NavLink>
+
+                <NavLink
+                  to="/dashboard/add-store"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <BsPlusCircle size={24} />
+                  {isSidebarOpen && <p>Add store</p>}
+                </NavLink>
+
+                <NavLink
+                  to="/dashboard/profit-tracker"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <GiProgression size={24} />
+                  {isSidebarOpen && <p>Profit tracker</p>}
+                </NavLink>
+
+                <NavLink
+                  to="/dashboard/pending-arrival-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
                   onClick={() => setPageName('All Stores')}
                   to="/dashboard/all-stores"
                   className={({ isActive }) =>
@@ -133,6 +199,7 @@ export default function Sidebar() {
                     isActive
                       ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                       : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }
                 >
                   <GoChecklist size={24} />
@@ -142,12 +209,20 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
+<<<<<<< HEAD
+                  to="/dashboard/preparing-request-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
                   onClick={() => setPageName('Preparing Request')}
                   to="/dashboard/preparing-request-from"
                   className={({ isActive }) =>
                     isActive
                       ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                       : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }
                 >
                   <GoChecklist size={24} />
@@ -157,12 +232,20 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
+<<<<<<< HEAD
+                  to="/dashboard/add-ASIN-UPC-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
+=======
                   onClick={() => setPageName('Add ASIN/UPC')}
                   to="/dashboard/add-ASIN-UPC-from"
                   className={({ isActive }) =>
                     isActive
                       ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm rounded-b"
                       : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }
                 >
                   <GoChecklist size={24} />
@@ -176,12 +259,20 @@ export default function Sidebar() {
           {
             user?.role === 'Store Owner' &&
             <NavLink
+<<<<<<< HEAD
+              to="/dashboard/profit-tracker"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
               onClick={() => setPageName('Profit Tracker')}
               to="/dashboard/profit-tracker"
               className={({ isActive }) =>
                 isActive
                   ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                   : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
               }
             >
               <GiProgression size={24} />
@@ -193,12 +284,20 @@ export default function Sidebar() {
             user?.role === 'Store Manager Admin' || user?.role === 'Store Manager VA' ?
               <>
                 <NavLink
+<<<<<<< HEAD
+                  to="/dashboard/management"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
                   onClick={() => setPageName('Management')}
                   to="/dashboard/management"
                   className={({ isActive }) =>
                     isActive
                       ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                       : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }
                 >
                   <PiWarehouseDuotone size={24} />
@@ -206,12 +305,20 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
+<<<<<<< HEAD
+                  to="/dashboard/pending-arrival-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
                   onClick={() => setPageName('Pending Arrival')}
                   to="/dashboard/pending-arrival-from"
                   className={({ isActive }) =>
                     isActive
                       ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                       : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }
                 >
                   <GoChecklist size={24} />
@@ -221,12 +328,20 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
+<<<<<<< HEAD
+                  to="/dashboard/preparing-request-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
                   onClick={() => setPageName('Preparing Request')}
                   to="/dashboard/preparing-request-from"
                   className={({ isActive }) =>
                     isActive
                       ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                       : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }
                 >
                   <GoChecklist size={24} />
@@ -236,12 +351,20 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
+<<<<<<< HEAD
+                  to="/dashboard/add-ASIN-UPC-from"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
+=======
                   onClick={() => setPageName('Add ASIN/UPC')}
                   to="/dashboard/add-ASIN-UPC-from"
                   className={({ isActive }) =>
                     isActive
                       ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm rounded-b"
                       : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }
                 >
                   <GoChecklist size={24} />
@@ -255,12 +378,20 @@ export default function Sidebar() {
           {
             user?.role === 'Warehouse Admin' || user?.role === 'Warehouse Manager VA' ?
               <NavLink
+<<<<<<< HEAD
+                to="/dashboard/management"
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                    : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
                 onClick={() => setPageName('Management')}
                 to="/dashboard/management"
                 className={({ isActive }) =>
                   isActive
                     ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                     : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                 }
               >
                 <PiWarehouseDuotone size={24} />
@@ -277,9 +408,15 @@ export default function Sidebar() {
               to="/dashboard/support"
               className={({ isActive }) =>
                 isActive
+<<<<<<< HEAD
+                  ? `bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t ${isSidebarOpen ? "w-56" : ""
+                  }`
+                  : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t ${isSidebarOpen ? "w-56" : ""
+=======
                   ? `bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm rounded-t ${isSidebarOpen ? "w-56" : ""
                   }`
                   : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t ${isSidebarOpen ? "w-56" : ""
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                   }`
               }
             >
@@ -293,8 +430,13 @@ export default function Sidebar() {
               }}
               to="/dashboard/settings/profile"
               className={`${settingActive
+<<<<<<< HEAD
+                ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+=======
                 ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                 : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                 }`}
             >
               <AiOutlineSetting size={24} />
@@ -307,8 +449,13 @@ export default function Sidebar() {
               : <NavLink to="/login"
                 className={({ isActive }) =>
                   isActive
+<<<<<<< HEAD
+                    ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                    : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+=======
                     ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm rounded-b"
                     : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+>>>>>>> 2e9db3508a05cd7365c8a78178db439779237df8
                 }
               >
                 <BiLogIn size={24} />

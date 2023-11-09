@@ -87,7 +87,6 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
-
     //delete a pending arrival data
     router.delete('/delete_pending_arrival_data', async (req, res) => {
         try {
