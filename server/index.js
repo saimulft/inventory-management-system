@@ -4,7 +4,6 @@ const PORT = process.env.PORT || 5000
 const app = express()
 const cors = require("cors")
 
-app.use(express.json())
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true, limit: '5mb' }))
 
@@ -12,7 +11,6 @@ app.use(cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 }))
-
 
 const global_api = require("./src/routes/global_api")
 const authentication_api = require("./src/routes/authentication_api")
@@ -35,6 +33,11 @@ const out_of_stock_api = require("./src/routes/out_of_stock_api")
 const shipped_api = require("./src/routes/shipped_data")
 const warehouse_api = require("./src/routes/warehouse_api")
 const profit_tracker_api = require("./src/routes/profit_tracker_api")
+
+const payment_api = require("./src/routes/payment_api")
+
+app.use('/api/v1/payment_api', payment_api)
+app.use(express.json())
 
 app.use('/api/v1/global_api', global_api)
 app.use('/api/v1/authentication_api', authentication_api)

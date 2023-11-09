@@ -1,17 +1,38 @@
 import { BsArrowLeftCircle } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import useStore from "../../hooks/useStore";
+import axios from "axios";
 
 export default function SendPaymentLink() {
+  const { storeDetails, paymentLink } = useStore()
+  const navigate = useNavigate()
   const handleSendPaymentLink = (e) => {
     e.preventDefault();
-    Swal.fire({
-      position: "center",
-      icon: "success",
-      title: "Your work has been saved",
-      showConfirmButton: false,
-      timer: 1500,
-    });
+    const form = e.target;
+    const email = form.email.value;
+    const name = form.name.value;
+    axios.post('api/v1/payment_api/send-payment-link', {
+      email: email,
+      name: name,
+      store_name: storeDetails?.store_name,
+      paymentLink: paymentLink
+    })
+      .then(function (response) {
+        if (response.data.message == 'Email sent') {
+          Swal.fire({
+            position: "center",
+            icon: "success",
+            title: "Link has been send",
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          navigate('/dashboard/add-store', { replace: true })
+        }
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
   };
   return (
     <div className="flex justify-center items-center h-[calc(100vh-74px)]">
@@ -26,7 +47,7 @@ export default function SendPaymentLink() {
           <p className="mt-2 text-slate-400">
             Please fill out this form to send a payment link to your client
           </p>
-          <form className="flex flex-col gap-3 mt-10">
+          <form onSubmit={handleSendPaymentLink} className="flex flex-col gap-3 mt-10">
             <div className="flex flex-col">
               <label className="text-slate-700" htmlFor="">
                 What is your name?
@@ -53,7 +74,6 @@ export default function SendPaymentLink() {
               />
             </div>
             <button
-              onClick={(e) => handleSendPaymentLink(e)}
               className="bg-[#8633FF] py-3 rounded text-white mt-4"
             >
               Send
