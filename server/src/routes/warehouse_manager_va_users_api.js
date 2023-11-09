@@ -17,40 +17,43 @@ const run = async () => {
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }
-            
+
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
-            const warehouse_manager_va_user_data = {
-                admin_id: req.body.admin_id,
-                warehouse_manager_va_id: req.body.warehouse_manager_va_id,
-                full_name: req.body.full_name,
-                email: req.body.email,
-                username: req.body.username,
-                role: req.body.role,
-                phone: null,
-                address: null,
-                city: null,
-                state: null,
-                zip: null,
-                country: null,
-                whatsapp_number: null
-            }
             const login_data = {
-                id: req.body.warehouse_manager_va_id,
-                creator_email: user?.email,
+                admin_id: req.body.admin_id,
+                full_name: req.body.full_name,
+                creator_email: req.body.creator_email,
                 email: req.body.email,
                 password: hashed_password,
                 role: req.body.role,
                 email_verified: false,
             }
-            const result = await warehouse_manager_va_users_collection.insertOne(warehouse_manager_va_user_data)
+            const result = await all_users_collection.insertOne(login_data)
 
             if (result.acknowledged) {
-                const response = await all_users_collection.insertOne(login_data)
+                const warehouse_manager_va_user_data = {
+                    admin_id: req.body.admin_id,
+                    warehouse_manager_va_id: result.insertedId.toString(),
+                    warehouse_admin_id: req.body.warehouse_admin_id,
+                    warehouse_id: req.body.warehouse_id,
+                    full_name: req.body.full_name,
+                    email: req.body.email,
+                    username: req.body.username,
+                    role: req.body.role,
+                    phone: null,
+                    address: null,
+                    city: null,
+                    state: null,
+                    zip: null,
+                    country: null,
+                    whatsapp_number: null
+                }
+                const response = await warehouse_manager_va_users_collection.insertOne(warehouse_manager_va_user_data)
                 if (response.acknowledged) {
                     const send_email_data = {
                         email: req.body.email,
-                        subject: "Verify your email",
+                        subject: `Hi ${req.body.full_name}, Verify your email`,
                         html: `
                         <div class="container">
                             <h2>Your login credentials</h2>
@@ -61,7 +64,7 @@ const run = async () => {
                             </div>
                             <hr />
                             <h2>Please verify your email before login to your account</h2>
-                            <p>To verify your email <a href="http://localhost:5173/verify_email?id=${req.body.warehouse_manager_va_id}">Click here</a></p>
+                            <p>To verify your email <a href="http://localhost:5173/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
                         </div>`
                     }
 

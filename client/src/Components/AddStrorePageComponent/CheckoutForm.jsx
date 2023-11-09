@@ -1,9 +1,13 @@
 import Swal from "sweetalert2";
+import countries from "../../Utilities/countries";
+import useStore from "../../hooks/useStore";
 
 export default function CheckoutForm() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.5)",
   };
+
+  const {storeDetails} = useStore()
 
   const handlePayment = (e) => {
     e.preventDefault();
@@ -15,6 +19,9 @@ export default function CheckoutForm() {
       timer: 1500,
     });
   };
+
+  console.log(storeDetails)
+
   return (
     <div className="relative w-full  h-full flex justify-center items-center py-16 ">
       <div
@@ -33,6 +40,7 @@ export default function CheckoutForm() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="email"
                 name="email"
+                defaultValue={storeDetails?.additional_payment_details[0]?.email}
               />
             </div>
 
@@ -46,6 +54,7 @@ export default function CheckoutForm() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="cardName"
                 name="cardName"
+                defaultValue={storeDetails?.additional_payment_details[0]?.cardName}
               />
             </div>
             {/* cart information  */}
@@ -57,6 +66,7 @@ export default function CheckoutForm() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="cardInfo"
                 name="cardInfo"
+                defaultValue={storeDetails?.additional_payment_details[0]?.cardInfo}
               />
             </div>
 
@@ -70,6 +80,7 @@ export default function CheckoutForm() {
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="date"
                   name="date"
+                  defaultValue={storeDetails?.additional_payment_details[0]?.date}
                 />
               </div>
               <div className="w-1/2">
@@ -80,6 +91,7 @@ export default function CheckoutForm() {
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="cvc"
                   name="cvc"
+                  defaultValue={storeDetails?.additional_payment_details[0]?.cvc}
                 />
               </div>
             </div>
@@ -94,6 +106,7 @@ export default function CheckoutForm() {
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="billingAddress"
                   name="billingAddress"
+                  defaultValue={storeDetails?.additional_payment_details[0]?.billingAddress}
                 />
               </div>
               <div className="w-1/2">
@@ -104,6 +117,7 @@ export default function CheckoutForm() {
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="city"
                   name="city"
+                  defaultValue={storeDetails?.additional_payment_details[0]?.city}
                 />
               </div>
             </div>
@@ -118,6 +132,7 @@ export default function CheckoutForm() {
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="state"
                   name="state"
+                  defaultValue={storeDetails?.additional_payment_details[0]?.state}
                 />
               </div>
               <div className="w-1/2">
@@ -128,17 +143,18 @@ export default function CheckoutForm() {
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="zipCode"
                   name="zipCode"
+                  defaultValue={storeDetails?.additional_payment_details[0]?.zipCode}
                 />
               </div>
             </div>
 
             <div className="mt-2 flex flex-col w-full">
               <label className="text-sm text-slate-500">Country</label>
-              <select className="select select-primary w-full mt-2">
-                <option selected>Open this select menu</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+              <select name="country" id="country" className="select select-primary w-full mt-2">
+                <option defaultValue="Select your country">
+                  Select your country
+                </option>
+                {countries}
               </select>
             </div>
             <div className="mt-8 flex items-center gap-2">
