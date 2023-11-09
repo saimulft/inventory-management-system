@@ -40,7 +40,7 @@ const run = async () => {
     const changeSub = async (subscription) => {
         const document = await all_stores_collection.findOne({ customer: subscription.customer });
         if (document) {
-            if (subscription.plan.amount == 1449900 && !subscription.cancellation_details.reason)
+            if (subscription.plan.amount == 149900 && !subscription.cancellation_details.reason)
                 await all_stores_collection.updateOne({ customer: subscription.customer }, {
                     $set: {
                         subscription_plan: "Basic",
