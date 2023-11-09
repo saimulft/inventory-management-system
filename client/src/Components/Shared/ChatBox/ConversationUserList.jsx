@@ -62,7 +62,6 @@ export default function ConversationUserList() {
     socket?.current?.on(
       "getLestMessageUpdateConversationUserList",
       (socketData) => {
-        console.log("getLestMessageUpdateConversationUserList", socketData);
         setUpdateLestMessageUpdateConversationUserList(socketData);
       }
     );
@@ -80,11 +79,9 @@ export default function ConversationUserList() {
   // get message fast time data in client
   useEffect(() => {
     socket?.current?.on("getMessageFastTime", (data) => {
-      console.log("getMessageFastTime", data);
 
       if (data) {
         setSocketData(data);
-        console.log(data);
       }
     });
   }, [socket]);
@@ -214,7 +211,7 @@ export default function ConversationUserList() {
               );
             }}
             key={userData?._id}
-            className=" flex gap-3 items-center text-xs font-medium hover:bg-gray-100 tr  py-2 px-4 cursor-pointer "
+            className=" flex gap-3 items-center text-xs font-medium hover:bg-gray-100   py-2 px-4 cursor-pointer "
           >
             <div className="w-14 h-14  rounded-full relative">
               <img
@@ -224,18 +221,18 @@ export default function ConversationUserList() {
               />
               <div
                 className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${
-                  online ? "bg-green-500" : "bg-gray-400"
+                  online &&  "bg-green-500" 
                 }    `}
               ></div>
             </div>
 
             <div>
-              <p className="font-medium text-base">{userData?.full_name}</p>
+              <p className=" text-base">{userData?.full_name}</p>
               <div className="text-sm flex items-center">
-                <span className="">
+                <span className={`${user.email == userData?.lastMassages?.sender ? "text-slate-500" :""}`}>
                   {massagesSliceAndSenderStatus(userData)}
                 </span>
-                <span className="pl-2">
+                <span className={`${user.email == userData?.lastMassages?.sender ? "text-slate-500" :""} pl-2 `}>
                   {calculateAgeTime(userData?.lastMassages?.timestamp)}
                 </span>
               </div>

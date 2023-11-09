@@ -25,7 +25,6 @@ export default function SingleConversation() {
 
   // all state
   const [conversation, setConversation] = useState([]);
-  console.log(JSON.stringify(conversation));
   const [noSms, setNoSms] = useState(0);
   const [loadNew, setLoadNew] = useState(true);
   const [pageCount, setPageCount] = useState(1);
@@ -36,10 +35,11 @@ export default function SingleConversation() {
   const [calcScrollHeight, setCalcScrollHeight] = useState(0);
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
   const [switchLick, setSwitchLick] = useState("");
-  const [input, setInput] = useState("");
 
-
-  // switch lick and sent button
+// render message data first time 
+ useEffect(()=>{
+  setConversation([])
+ },[])
 
   // scroll calculate
   const scrollPositionSet = () => {
@@ -67,7 +67,7 @@ export default function SingleConversation() {
         setPageCount(pageCount + 1);
 
         // setConversation()
-        setTemporaryData(res?.data);
+        setTemporaryData(res?.data?.message);
         setConversationLoading(false);
       })
       .catch((err) => {
@@ -108,6 +108,7 @@ export default function SingleConversation() {
   const handleSentNewMassages = async (e, text = "") => {
     try {
       e.preventDefault();
+      
       let msg = document.getElementById("message_input")?.value;
       if (msg || text) {
         const date = new Date();
@@ -128,6 +129,7 @@ export default function SingleConversation() {
             100000 + Math.random() * 9000000000000000
           );
           setConversation([...conversation, { ...message, _id: randomId }]);
+          specificComponentRef.current.scrollTop = specificComponentRef.current.scrollHeight
         }
 
         document.getElementById("message_input").value = "";
@@ -267,7 +269,6 @@ export default function SingleConversation() {
       })
       ?.map((msg, key) => {
         const currentUser = msg?.sender == user?.email;
-        console.log({ currentChatUserEmail });
 
         const msgLengthCheck = msg?.text?.length <= 26;
         const text = msg?.text == "*like**" ? "👍" : msg?.text;
@@ -275,9 +276,9 @@ export default function SingleConversation() {
           return;
         }
         return (
-          <div key={key}>
+          <div id="messages_text" key={key}>
             <div
-              className={`flex my-[8px]  ${
+              className={`flex my-[8px] px-2 ${
                 currentUser ? "justify-end " : "justify-start items-end "
               } ${
                 conversation?.length - 1 == key && !chatLoadingStatus && " mb-5"
@@ -297,13 +298,13 @@ export default function SingleConversation() {
                   currentUser
                     ? msg?.text == "*like**"
                       ? "bg-transparent  text-4xl"
-                      : "bg-purple-600 text-white  break-words"
+                      : "bg-purple-600 text-white rounded-s-lg rounded-b-lg break-words"
                     : msg?.text == "*like**"
                     ? "bg-transparent text-4xl"
-                    : "bg-gray-200 text-black   break-words"
+                    : "bg-gray-200 text-black rounded-e-lg rounded-b-lg  break-words"
                 } ${
-                  msgLengthCheck ? "rounded-full" : "rounded-xl"
-                }  mx-0.5  py-[5px] px-3 max-w-[65%]`}
+                  msgLengthCheck ? "px-3 py-2" : " p-2 "
+                }  max-w-[70%]`}
               >
                 {text}
               </div>

@@ -1,81 +1,21 @@
-import {
-  AiOutlineMessage,
-  AiOutlineSearch,
-} from "react-icons/ai";
+import { AiOutlineMessage, AiOutlineSearch } from "react-icons/ai";
 import { BsBell } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
 import { useContext, useState } from "react";
 import { ChatContext } from "../../Providers/ChatProvider";
 
-export default function Navbar({ data}) {
+export default function Navbar({ data }) {
   const {
-    isMessageBoxOpen,
-    setIsMessageBoxOpen,
-
     setAddNewConversation,
-
-     isChatBoxOpen, setIsChatBoxOpen
+    isChatBoxOpen,
+    setIsChatBoxOpen,
+    addNewConversation,
+    singleConversationShow,
+    setSingleConversationShow
   } = useContext(ChatContext);
 
-  
   const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false);
-  const [isAddChatOpen, setIsAddChatOpen] = useState(false);
-
-
   const { user } = useAuth();
-
-  // const allUsers = allUsersSearchData.filter(
-  //   (singleUser) => singleUser.email != user.email && singleUser.email_verified
-  // );
-
-  // const handleInputFocus = () => {
-  //   setInputFocused(true);
-  // };
-
-  // const handleInputBlur = () => {
-  //   setInputFocused(false);
-  // };
-
-  // useEffect(() => {
-  //   setConversationData(messagesData);
-  // }, []);
-  // // },[messagesData])
-
-  // useEffect(() => {
-  //   setAllUsersSearchData(allUsersData);
-  // }, []);
-
-  // const handleAddUsersSearch = (e) => {
-  //   if (e.target.value == "") {
-  //     setConversationData(messagesData);
-  //   }
-  //   setTimeout(() => {
-  //     const addUsersSearch = allUsersData?.filter((userData) =>
-  //       userData?.email
-  //         .match(/[^@]*/)[0]
-  //         ?.split(".")[0]
-  //         .includes(e.target.value)
-  //     );
-  //     setAllUsersSearchData(addUsersSearch);
-  //   }, 800);
-  // };
-  // const handleCoversationSearch = (e) => {
-  //   if (e.target.value == "") {
-  //     setUserMessagesList(userMessagesList);
-  //   }
-  //   setTimeout(() => {
-  //     const userMessagesListSearchData = userMessagesList?.filter(
-  //       (messageList) =>
-  //         messageList?.participants
-  //           ?.find((participant) => participant != user?.email)
-  //           .match(/[^@]*/)[0]
-  //           ?.split(".")[0]
-  //           .includes(e.target.value)
-  //     );
-  //     setUserMessagesList(userMessagesListSearchData);
-  //   }, 800);
-  // };
-  
 
   return (
     <>
@@ -171,17 +111,19 @@ export default function Navbar({ data}) {
           <div className="relative">
             <div
               onClick={() => {
-                if (isNotificationBoxOpen) {
-                  setIsNotificationBoxOpen(!isNotificationBoxOpen);
+                if (
+                  isChatBoxOpen ||
+                  singleConversationShow ||
+                  addNewConversation
+                ) {
+                  //
+                  setIsChatBoxOpen(false);
+                  setAddNewConversation(false);
+                  setSingleConversationShow(false);
+                  setAddNewConversation(false);
+                  return;
                 }
-                if (isAddChatOpen) {
-                  setIsAddChatOpen(!isAddChatOpen);
-                }
-                if (isMessageBoxOpen) {
-                  setIsMessageBoxOpen(!isMessageBoxOpen);
-                }
-                setAddNewConversation(false)
-                setIsChatBoxOpen(!isChatBoxOpen);
+                setIsChatBoxOpen(true);
               }}
               className="bg-[#454547] hover:bg-[#3f3f41] cursor-pointer transition-all duration-15 p-3 rounded relative"
             >

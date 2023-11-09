@@ -44,6 +44,7 @@ const run = async () => {
     }
   });
 
+
   router.post("/send_message", async (req, res) => {
     try {
       const request = req || {};
@@ -52,10 +53,24 @@ const run = async () => {
       const text = request.body.text;
       const timestamp = request.body.timestamp;
       const full_name = request.body.full_name;
-      const prepairMessage = {
+
+
+      const seenMassageStatus = (sender, receiver) => {
+        const emailToUsername = (email) => email.split('@')[0];
+      
+        const userVale = {
+          [emailToUsername(sender)]: true,
+          [emailToUsername(receiver)]: false,
+        };
+      
+        return userVale;
+      };
+
+ 
+      const prepareMessage = {
         participants: [sender, receiver],
         full_name,
-        isMessageSeen: false,
+        isMessageSeen: seenMassageStatus(sender, receiver),
         messages: [
           {
             _id: new ObjectId(),
@@ -88,7 +103,7 @@ const run = async () => {
           res.send(newMessage);
         }
       } else {
-        const result = await conversationsCollection.insertOne(prepairMessage, {
+        const result = await conversationsCollection.insertOne(prepareMessage, {
           upsert: true,
         });
         res.send(result);
@@ -224,7 +239,7 @@ const run = async () => {
           };
 
           console.log(currentMessageIndex, { totalMessageLength, page_no });
-          res.send(chunk);
+          res.status(200).send({message: chunk, isMessageSeen: singleConversationsData?.isMessageSeen});
         } else {
           console.log("page count not found");
           res.status(200).send({});

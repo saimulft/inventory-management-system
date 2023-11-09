@@ -17,7 +17,6 @@ export const ChatProvider = ({ children }) => {
   const { user } = useAuth();
   const [activeUsers, setActiveUsers] = useState([]);
 
-
   // socket install
   const socket = useRef();
 
@@ -45,6 +44,8 @@ export const ChatProvider = ({ children }) => {
   const [addNewConversation, setAddNewConversation] = useState(false);
   const [newConversationAdd, setNewConversationAdd] = useState(false);
 
+  console.log({ isChatBoxOpen, singleConversationShow, addNewConversation });
+
   // message box open close handle function
   // single conversation show
   const handleOpenSingleConversationShow = () => {
@@ -56,8 +57,8 @@ export const ChatProvider = ({ children }) => {
   //add New Conversation
   const handleNewConversation = () => {
     setAddNewConversation(!addNewConversation);
-    setSingleConversationShow(!singleConversationShow);
-    setIsChatBoxOpen(!isChatBoxOpen);
+    setSingleConversationShow(false);
+    setIsChatBoxOpen(false);
   };
 
   //add New Conversation text box
@@ -89,8 +90,6 @@ export const ChatProvider = ({ children }) => {
     setAlreadyConversationUserLoading,
     setAlreadyConversationUserError,
   ];
-
- 
 
   // chat info
   const chatInfo = {
