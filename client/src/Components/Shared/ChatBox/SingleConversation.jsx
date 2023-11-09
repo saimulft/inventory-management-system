@@ -365,7 +365,7 @@ export default function SingleConversation() {
           </div>
         )}
         {content}
-        {chatLoadingStatus && <ChatLoading />}
+        {chatLoadingStatus && online && <ChatLoading />}
       </div>
 
       {/* sent message box  */}
