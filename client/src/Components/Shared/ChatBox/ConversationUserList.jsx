@@ -159,7 +159,9 @@ export default function ConversationUserList() {
   // last message slice defined sender status
   const massagesSliceAndSenderStatus = (data) => {
     const lastMsg =
-      data?.lastMassages?.text.length <= 17
+      data?.lastMassages?.text == "*like**"
+        ? "👍"
+        : data?.lastMassages?.text.length <= 17
         ? data?.lastMassages?.text
         : data?.lastMassages?.text.slice(0, 17) + "...";
 

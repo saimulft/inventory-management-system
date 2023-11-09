@@ -11,29 +11,33 @@ const run = async () => {
   // get all all users
   router.get("/add_users_list", async (req, res) => {
     try {
-      const loginUser = req?.query?.user || {}
+      const loginUser = req?.query?.user || {};
 
       const allConversations = await conversationsCollection
-      .find({
-        participants: { $all: [loginUser] },
-      })
-      .toArray();
+        .find({
+          participants: { $all: [loginUser] },
+        })
+        .toArray();
 
-      let alreadyExistUserEmail = [loginUser,]
-      allConversations?.filter(u => {
-       const existEmail =  u.participants.find(e=> e != loginUser)
-        alreadyExistUserEmail.push(existEmail)
-      })
+      let alreadyExistUserEmail = [loginUser];
+      allConversations?.filter((u) => {
+        const existEmail = u.participants.find((e) => e != loginUser);
+        alreadyExistUserEmail.push(existEmail);
+      });
 
-     const alreadyConversationExistJoin = alreadyExistUserEmail.join("")
+      const alreadyConversationExistJoin = alreadyExistUserEmail.join("");
 
       const result = await all_users_collection.find({}).toArray();
-      const newResult = result.filter(e => !alreadyConversationExistJoin.includes(e.email))
+      const newResult = result.filter(
+        (e) => !alreadyConversationExistJoin.includes(e.email)
+      );
 
       if (result.length) {
         res.status(200).json(newResult);
       } else {
-        res.status(500).json({ message: "Failed to get conversation users list" });
+        res
+          .status(500)
+          .json({ message: "Failed to get conversation users list" });
       }
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error" });
@@ -110,6 +114,24 @@ const run = async () => {
   router.get("/user_messages_list", async (req, res) => {
     try {
       const { sender } = req.query;
+
+      if (!sender) {
+        const conversationDemo = {
+          _id: "demo",
+          full_name: "demo",
+          isMessageSeen: "demo",
+          participants: "demo",
+          lastMassages: {
+            _id: "demo",
+            sender: "demo",
+            receiver: "demo",
+            text: "demo",
+            timestamp: "demo",
+          },
+        };
+        res.status(200).send([conversationDemo]);
+      }
+
       const allConversations = await conversationsCollection
         .find({
           participants: { $all: [sender] },
@@ -176,13 +198,24 @@ const run = async () => {
         const totalMessageLength = singleConversationsData.messages.length;
         let start;
         let end;
+        let startFilter;
 
         const sentMsgGroupCount = 15;
         if (page_no) {
           const prepareCount = (page_no - 1) * sentMsgGroupCount;
 
-          end = totalMessageLength - prepareCount;
-          start = totalMessageLength - prepareCount - sentMsgGroupCount;
+          end =
+            totalMessageLength - prepareCount <= 0
+              ? 0
+              : totalMessageLength - prepareCount;
+          start =
+            totalMessageLength - prepareCount - sentMsgGroupCount <= 0
+              ? 0
+              : totalMessageLength - prepareCount - sentMsgGroupCount;
+
+          if (start == 0 && end == 0) {
+            res.status(200)
+          }
 
           const chunk = singleConversationsData.messages.slice(start, end);
           const currentMessageIndex = {
@@ -190,13 +223,7 @@ const run = async () => {
             end,
           };
 
-          const messagesChunk = {
-            ...singleConversationsData,
-            messages: [...chunk],
-            totalMessageLength,
-            currentMessageIndex,
-          };
-          console.log(currentMessageIndex, {totalMessageLength, page_no});
+          console.log(currentMessageIndex, { totalMessageLength, page_no });
           res.send(chunk);
         } else {
           console.log("page count not found");
@@ -204,7 +231,16 @@ const run = async () => {
         }
       } else {
         console.log("user not found");
-        res.status(200).send({});
+        const demoData = [
+          {
+            _id: "demo",
+            sender: "demo",
+            receiver: "demo",
+            text: "demo",
+            timestamp: "demo",
+          },
+        ];
+        res.status(200).send(demoData);
       }
     } catch (err) {
       res.status(500).send({ error: "server error" });

@@ -4,85 +4,77 @@ import {
 } from "react-icons/ai";
 import { BsBell } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { ChatContext } from "../../Providers/ChatProvider";
 
-export default function Navbar({ data, setParticipants }) {
+export default function Navbar({ data}) {
   const {
     isMessageBoxOpen,
     setIsMessageBoxOpen,
-    handleCurrentReciver,
-    handleSeenMessage,
-    allUsersData,
-    messagesData,
-    userMessagesList,
-    setUserMessagesList,
+
     setAddNewConversation,
-    activeUsers,
-     setAddNewChat,
+
      isChatBoxOpen, setIsChatBoxOpen
   } = useContext(ChatContext);
 
   
   const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false);
   const [isAddChatOpen, setIsAddChatOpen] = useState(false);
-  const [isInputFocused, setInputFocused] = useState(false);
-  const [conversationData, setConversationData] = useState([]);
-  const [allUsersSearchData, setAllUsersSearchData] = useState([]);
+
 
   const { user } = useAuth();
 
-  const allUsers = allUsersSearchData.filter(
-    (singleUser) => singleUser.email != user.email && singleUser.email_verified
-  );
+  // const allUsers = allUsersSearchData.filter(
+  //   (singleUser) => singleUser.email != user.email && singleUser.email_verified
+  // );
 
-  const handleInputFocus = () => {
-    setInputFocused(true);
-  };
+  // const handleInputFocus = () => {
+  //   setInputFocused(true);
+  // };
 
-  const handleInputBlur = () => {
-    setInputFocused(false);
-  };
+  // const handleInputBlur = () => {
+  //   setInputFocused(false);
+  // };
 
-  useEffect(() => {
-    setConversationData(messagesData);
-  }, []);
-  // },[messagesData])
+  // useEffect(() => {
+  //   setConversationData(messagesData);
+  // }, []);
+  // // },[messagesData])
 
-  useEffect(() => {
-    setAllUsersSearchData(allUsersData);
-  }, []);
+  // useEffect(() => {
+  //   setAllUsersSearchData(allUsersData);
+  // }, []);
 
-  const handleAddUsersSearch = (e) => {
-    if (e.target.value == "") {
-      setConversationData(messagesData);
-    }
-    setTimeout(() => {
-      const addUsersSearch = allUsersData?.filter((userData) =>
-        userData?.email
-          .match(/[^@]*/)[0]
-          ?.split(".")[0]
-          .includes(e.target.value)
-      );
-      setAllUsersSearchData(addUsersSearch);
-    }, 800);
-  };
-  const handleCoversationSearch = (e) => {
-    if (e.target.value == "") {
-      setUserMessagesList(userMessagesList);
-    }
-    setTimeout(() => {
-      const userMessagesListSearchData = userMessagesList?.filter(
-        (messageList) =>
-          messageList?.participants
-            ?.find((participant) => participant != user?.email)
-            .match(/[^@]*/)[0]
-            ?.split(".")[0]
-            .includes(e.target.value)
-      );
-      setUserMessagesList(userMessagesListSearchData);
-    }, 800);
-  };
+  // const handleAddUsersSearch = (e) => {
+  //   if (e.target.value == "") {
+  //     setConversationData(messagesData);
+  //   }
+  //   setTimeout(() => {
+  //     const addUsersSearch = allUsersData?.filter((userData) =>
+  //       userData?.email
+  //         .match(/[^@]*/)[0]
+  //         ?.split(".")[0]
+  //         .includes(e.target.value)
+  //     );
+  //     setAllUsersSearchData(addUsersSearch);
+  //   }, 800);
+  // };
+  // const handleCoversationSearch = (e) => {
+  //   if (e.target.value == "") {
+  //     setUserMessagesList(userMessagesList);
+  //   }
+  //   setTimeout(() => {
+  //     const userMessagesListSearchData = userMessagesList?.filter(
+  //       (messageList) =>
+  //         messageList?.participants
+  //           ?.find((participant) => participant != user?.email)
+  //           .match(/[^@]*/)[0]
+  //           ?.split(".")[0]
+  //           .includes(e.target.value)
+  //     );
+  //     setUserMessagesList(userMessagesListSearchData);
+  //   }, 800);
+  // };
   
 
   return (
