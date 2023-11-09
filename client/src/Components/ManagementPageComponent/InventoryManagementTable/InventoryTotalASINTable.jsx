@@ -111,6 +111,7 @@ export default function InventoryTotalASINTable() {
     const filteredData = data.filter(item =>
     (item.asin_upc_code?.toLowerCase().includes(searchText) ||
       item.product_name?.toLowerCase().includes(searchText) ||
+      item.store_manager_name?.toLowerCase().includes(searchText) ||
       item.code_type?.toLowerCase().includes(searchText))
     );
     if (!filteredData.length) {
@@ -309,12 +310,12 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
+                      className={`${index % 2 == 1 && ""}`} key={index} >
                       <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                       <td>{d.asin_upc_code}</td>
                       <td className="text-[#8633FF]">{d.product_name}</td>
@@ -331,7 +332,7 @@ export default function InventoryTotalASINTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
+                        className={`${index % 2 == 1 && ""}`} key={index} >
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                         <td>{d.asin_upc_code}</td>
                         <td className="text-[#8633FF]">{d.product_name}</td>

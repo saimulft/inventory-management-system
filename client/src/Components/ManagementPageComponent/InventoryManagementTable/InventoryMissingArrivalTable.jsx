@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
+import { BiDotsVerticalRounded } from "react-icons/bi";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
@@ -16,7 +16,6 @@ import useGlobal from "../../../hooks/useGlobal";
 export default function InventoryMissingArrivalTable() {
   const [activeTab, setActiveTab] = useState('active');
   const [singleData, setSingleData] = useState({})
-  const [isEditable, setIsEditable] = useState(false)
   const [successMessage, setSuccessMessage] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
   const [loading, setLoading] = useState()
@@ -107,19 +106,15 @@ export default function InventoryMissingArrivalTable() {
     setErrorMessage('')
 
     const form = event.target;
-    const productName = form.productName.value;
-    const quantity = form.quantity.value;
-    const upin = form.upin.value;
-    const eda = form.eda.value;
     const missingStatus = form.missingStatus.value;
     const notes = form.notes.value;
 
+    // const productName = form.productName.value;
+    // const eda = form.eda.value;
+    // product_name: productName,
+    // eda: eda ? new Date(eda).toISOString() : '',
 
     const updatedData = {
-      product_name: productName,
-      quantity: quantity,
-      upin: upin,
-      eda: eda ? new Date(eda).toISOString() : '',
       missing_status: missingStatus,
       notes: notes
     }
@@ -133,7 +128,17 @@ export default function InventoryMissingArrivalTable() {
       return;
     }
 
-    if (!productName && !quantity && !upin && !eda && !missingStatus && !notes) {
+    if (singleData.missing_status === 'active' && missingStatus === 'active') {
+      setLoading(false)
+      setErrorMessage("This missing arrival status already active!")
+      setTimeout(() => {
+        setErrorMessage('')
+      }, 2000);
+      return;
+    }
+
+    if (missingStatus === 'Select Status' && !notes) {
+      setLoading(false)
       return setErrorMessage('No data entered')
     }
 
@@ -330,12 +335,12 @@ export default function InventoryMissingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`}
+                      className={`${index % 2 == 1 && ""}`}
                       key={index}>
                       <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
                       <th className="font-normal">{d.store_name}</th>
@@ -378,7 +383,7 @@ export default function InventoryMissingArrivalTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        className={`${index % 2 == 1 && ""}`}
                         key={index}>
                         <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
                         <th className="font-normal">{d.store_name}</th>
@@ -453,9 +458,9 @@ export default function InventoryMissingArrivalTable() {
 
       {/* modal content */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
+        <div style={{ marginLeft, maxWidth: '450px' }} className="modal-box py-10 px-10">
           <form onSubmit={(event) => handleUpdate(event, singleData._id)} className="flex gap-10">
-            <div className="w-1/2">
+            {/* <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
                 {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
                 <h3 className="text-2xl font-medium">Details</h3>
@@ -466,23 +471,13 @@ export default function InventoryMissingArrivalTable() {
                   className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="productName" name="productName" readOnly={!isEditable} />
               </div>
               <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">Quantity: </label>
-                <input type="text" defaultValue={singleData.quantity}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="quantity" name="quantity" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">UPIN: </label>
-                <input type="text" defaultValue={singleData.upin}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none w-full'} py-1 pl-2 rounded`} id="upin" name="upin" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
                 <label className="font-bold">EDA: </label>
                 <input type={isEditable ? 'date' : 'text'} defaultValue={isEditable ? '' : singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}
                   className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[191px] py-1 pl-2 rounded`} id="eda" name="eda" readOnly={!isEditable} />
               </div>
-            </div>
+            </div> */}
 
-            <div className="w-1/2">
+            <div className="w-full">
               <h3 className="text-2xl font-medium mb-6">Update</h3>
               <div>
                 <div className="flex flex-col mt-2">

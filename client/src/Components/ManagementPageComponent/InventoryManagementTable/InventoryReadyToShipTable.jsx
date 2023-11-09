@@ -32,7 +32,7 @@ export default function InventoryReadyToShipTable() {
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post(`/api/v1/ready_to_ship_api/get_all_RTS_data`,{user})
+        const res = await axios.post(`/api/v1/ready_to_ship_api/get_all_RTS_data`, { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -340,34 +340,34 @@ export default function InventoryReadyToShipTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                    className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
-                    key={index}
-                  >
-                    <th>{format(new Date(d.date), "y/MM/d")}</th>
-                    <th className="font-normal">{d.store_name}</th>
-                    <td>{d.asin_upc_code}</td>
-                    <td>{d.code_type}</td>
-                    <td>{d.product_name}</td>
-                    <td>{d.order_id}</td>
-                    <td>{d.upin}</td>
-                    <td>{d.quantity}</td>
-                    <td>{d.courier}</td>
-                    <td>{d.tracking_number}</td>
-                    <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
-                    <td className="flex gap-2">
-                      <button onClick={() => {
-                        handleShipment(d._id)
-                      }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
-                        <FiCheckCircle />
-                        <p>Complete Shipment</p>
-                      </button>
-                    </td>
-                  </tr>
+                      className={`${index % 2 == 1 && ""} py-2`}
+                      key={index}
+                    >
+                      <th>{format(new Date(d.date), "y/MM/d")}</th>
+                      <th className="font-normal">{d.store_name}</th>
+                      <td>{d.asin_upc_code}</td>
+                      <td>{d.code_type}</td>
+                      <td>{d.product_name}</td>
+                      <td>{d.order_id}</td>
+                      <td>{d.upin}</td>
+                      <td>{d.quantity}</td>
+                      <td>{d.courier}</td>
+                      <td>{d.tracking_number}</td>
+                      <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
+                      <td className="flex gap-2">
+                        <button onClick={() => {
+                          handleShipment(d._id)
+                        }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
+                          <FiCheckCircle />
+                          <p>Complete Shipment</p>
+                        </button>
+                      </td>
+                    </tr>
                   )
                 })
 
@@ -376,7 +376,7 @@ export default function InventoryReadyToShipTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                        className={`${index % 2 == 1 && ""} py-2`}
                         key={index}
                       >
                         <th>{format(new Date(d.date), "y/MM/d")}</th>

@@ -33,7 +33,7 @@ export default function InventoryPreparingRequestTable() {
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
+        const res = await axios.post('/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -396,13 +396,13 @@ export default function InventoryPreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
 
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                      className={`${index % 2 == 1 && ""} py-2`}
                       key={index}
                     >
                       <th>{format(new Date(d.date), "y/MM/d")}</th>
@@ -423,9 +423,9 @@ export default function InventoryPreparingRequestTable() {
                           handleRTS(d._id, d.quantity, d.upin)
 
                         }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
-                          
-                             <LiaShippingFastSolid />
-                          
+
+                          <LiaShippingFastSolid />
+
                           <p>RTS</p>
                         </button>
 
@@ -447,7 +447,7 @@ export default function InventoryPreparingRequestTable() {
                     return (
 
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                        className={`${index % 2 == 1 && ""} py-2`}
                         key={index}
                       >
                         <th>{format(new Date(d.date), "y/MM/d")}</th>
@@ -468,10 +468,10 @@ export default function InventoryPreparingRequestTable() {
                             handleRTS(d._id, d.quantity, d.upin)
 
                           }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
-                           <LiaShippingFastSolid />
+                            <LiaShippingFastSolid />
                             <p>RTS</p>
                           </button>
-                          
+
                           <button disabled={loading} onClick={() => {
                             handleOOS(d._id)
                           }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">

@@ -182,16 +182,16 @@ const AddASINForm = () => {
 
 
   return (
-    <div className="my-20 rounded-lg h-full">
+    <div className="my-20 rounded-lg mx-auto w-[60%] h-full">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg  w-fit m-auto rounded-xl"
+        className="border border-[#8633FF] shadow-lg  m-auto rounded-xl"
       >
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Add ASIN or UPC</p>
         </div>
         <div className="px-20 py-10 w-full">
-          <form onSubmit={handleAsinUpcForm}>
+          <form className="w-full" onSubmit={handleAsinUpcForm}>
             <div className="flex gap-7">
               <div className="w-full">
 
@@ -261,7 +261,7 @@ const AddASINForm = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Min Price</label>
                   <input required
-                    type="text"
+                    type="number"
                     placeholder="Enter min price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="minPrice"

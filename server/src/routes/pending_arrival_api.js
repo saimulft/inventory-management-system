@@ -11,24 +11,35 @@ const run = async () => {
 
     // insert pending arrival data
     router.post('/insert_pending_arrival_form_data', async (req, res) => {
-        const data = {
-            admin_id: req.body.admin_id,
-            date: req.body.date,
-            creator_email: req.body.creator_email,
-            store_name: req.body.store_name,
-            store_id: req.body.store_id,
-            asin_upc_code: req.body.asin_upc_code,
-            code_type: req.body.code_type,
-            supplier_id: req.body.supplier_id,
-            product_name: req.body.product_name,
-            upin: req.body.upin,
-            quantity: req.body.quantity,
-            unit_price: req.body.unit_price,
-            eda: req.body.eda,
-            warehouse_name: req.body.warehouse_name,
-            warehouse_id: req.body.warehouse_id,
-        }
         try {
+            const data = {
+                admin_id: req.body.admin_id,
+                date: req.body.date,
+                creator_email: req.body.creator_email,
+                store_name: req.body.store_name,
+                store_id: req.body.store_id,
+                asin_upc_code: req.body.asin_upc_code,
+                code_type: req.body.code_type,
+                supplier_id: req.body.supplier_id,
+                product_name: req.body.product_name,
+                upin: req.body.upin,
+                quantity: req.body.quantity,
+                unit_price: req.body.unit_price,
+                eda: req.body.eda,
+                warehouse_name: req.body.warehouse_name,
+                warehouse_id: req.body.warehouse_id,
+
+                amazon_quantity: req.body.amazon_quantity,
+                customer_name: req.body.customer_name,
+                amazon_shipping: req.body.amazon_shipping,
+                shipping_cost: req.body.shipping_cost,
+                handling_cost: req.body.handling_cost,
+                walmart_quantity: req.body.walmart_quantity,
+                amazon_price: req.body.amazon_price,
+                average_price: req.body.average_price,
+                average_tax: req.body.average_tax,
+                order_number: req.body.order_number,
+            }
 
             const result = await pending_arrival_collection.insertOne(data)
 
@@ -200,12 +211,14 @@ const run = async () => {
                         }
 
                         else {
+                            const remainingPrice = parseInt(result.received_quantity) * result.unit_price;
+
                             const allStockData = {
                                 ...result,
                                 stock: result.received_quantity,
                                 total_sold: 0,
                                 sold_price: 0,
-                                remaining_price: 0
+                                remaining_price: remainingPrice
                             }
                             const allStockIntertResult = await all_stock_collection.insertOne(allStockData)
                             if (allStockIntertResult.insertedId) {
@@ -216,7 +229,7 @@ const run = async () => {
                             }
                         }
                     }
-                    else{
+                    else {
                         return res.status(201).json({ status: 'success', message: 'Data update successful' });
                     }
                 }

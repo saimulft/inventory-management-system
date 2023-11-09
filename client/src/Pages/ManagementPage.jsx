@@ -8,9 +8,7 @@ import useGlobal from "../hooks/useGlobal";
 import Loading2 from "../Components/Shared/Loading2";
 
 export default function ManagementPage() {
-  const boxShadowStyle = {
-    boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.2)",
-  };
+  const boxShadowStyle = { boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)"};
   const [loading, setLoading] = useState(false)
   const { user } = useAuth()
   const { countsRefetch, setCountsRefetch } = useGlobal()
@@ -45,7 +43,7 @@ export default function ManagementPage() {
   return (
     <div className="relative">
       {
-        loading || isLoading ? <Loading2 contentHeight="74px" /> : <div className="space-y-8 my-10 mx-8">
+        loading || isLoading ? <Loading2 contentHeight="74px" /> : <div className="space-y-10 my-10 mx-10">
           {
             user?.role === 'Admin' || user?.role === 'Admin VA' || user?.role === 'Store Manager Admin' || user?.role === 'Store Manager VA' ?
               <div style={boxShadowStyle} className="p-16 bg-white rounded-lg">

@@ -18,7 +18,7 @@ import useGlobal from "../../../hooks/useGlobal";
 export default function StorePreparingRequestTable() {
   const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const [filterDays, setFilterDays] = useState('')
-  const [singleData, setSingleData] = useState()
+  const [singleData, setSingleData] = useState({})
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
   const [InvoiceImageFile, setInvoiceImageFile] = useState(null)
@@ -52,7 +52,7 @@ export default function StorePreparingRequestTable() {
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('http://localhost:5000/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
+        const res = await axios.post('/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -455,13 +455,13 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
 
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                      className={`${index % 2 == 1 && ""} py-2`}
                       key={index}
                     >
                       <th>{format(new Date(d.date), "y/MM/d")}</th>
@@ -515,7 +515,7 @@ export default function StorePreparingRequestTable() {
                     return (
 
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                        className={`${index % 2 == 1 && ""} py-2`}
                         key={index}
                       >
                         <th>{format(new Date(d.date), "y/MM/d")}</th>

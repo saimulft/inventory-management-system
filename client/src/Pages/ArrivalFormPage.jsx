@@ -13,7 +13,7 @@ const ArrivalFormPage = () => {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
   const { user } = useAuth();
-  const {setCountsRefetch} = useGlobal()
+  const { setCountsRefetch } = useGlobal()
   const [inputError, setInputError] = useState('')
   const [asinUpcOption, setAsinUpcOption] = useState(null)
   const [storeOption, setStoreOption] = useState(null)
@@ -26,7 +26,7 @@ const ArrivalFormPage = () => {
     if (storeOption?.label && asinUpcOption) {
 
       const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
-      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`,{user})
+      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then(res => {
           if (res.status === 200) {
             setProductName(res.data.data.product_name)
@@ -38,13 +38,13 @@ const ArrivalFormPage = () => {
           console.log(error)
         })
     }
-  }, [storeOption?.label, asinUpcOption, asinUpc,user]);
+  }, [storeOption?.label, asinUpcOption, asinUpc, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
     queryKey: ['asin_upc_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', {user})
+        const res = await axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -60,7 +60,7 @@ const ArrivalFormPage = () => {
     queryKey: ['get_all_stores_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', {user})
+        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -71,7 +71,7 @@ const ArrivalFormPage = () => {
       }
     }
   })
-  
+
   const { data: warehouseData = [], isLoading: warehouseLoading } = useQuery({
     queryKey: ['get_warehouse_data'],
     queryFn: async () => {
@@ -97,6 +97,13 @@ const ArrivalFormPage = () => {
     }
   };
 
+  const handlePriceKeyDown = (event) => {
+    const alphabetKeys = /^[0-9]*\.*$/;
+    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
+      event.preventDefault();
+    }
+  };
+
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (arrivalFormData) => {
       return axios.post('/api/v1/pending_arrival_api/insert_pending_arrival_form_data', arrivalFormData)
@@ -115,6 +122,17 @@ const ArrivalFormPage = () => {
     const quantity = form.quantity.value;
     const eda = form.eda.value;
 
+    const amazonQuantity = form.amazonQuantity.value;
+    const customerName = form.customerName.value;
+    const amazonShipping = form.amazonShipping.value;
+    const shippingCost = form.shippingCost.value;
+    const handlingCost = form.handlingCost.value;
+    const walmartQuantity = form.walmartQuantity.value;
+    const amazonPrice = form.amazonPrice.value;
+    const averagePrice = form.averagePrice.value;
+    const averageTax = form.averageTax.value;
+    const orderNumber = form.orderNumber.value;
+
     if (!warehouseOption?.label) {
       setInputError('Select a warehouse')
       return;
@@ -124,12 +142,13 @@ const ArrivalFormPage = () => {
       setInputError('Select ASIN or UPC')
       return;
     }
+
     if (!storeOption) {
       setInputError('Select Store')
       return;
     }
 
-    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda ) {
+    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda) {
       setInputError('Please fill out all the inputs in order to submit the form')
       return;
     }
@@ -150,7 +169,9 @@ const ArrivalFormPage = () => {
       unit_price: unitPrice,
       eda: isoEda,
       warehouse_name: warehouseOption?.label,
-      warehouse_id: warehouseOption?.value
+      warehouse_id: warehouseOption?.value,
+      amazon_quantity: amazonQuantity, customer_name: customerName, amazon_shipping: amazonShipping, shipping_cost: shippingCost, handling_cost: handlingCost,
+      walmart_quantity: walmartQuantity, amazon_price: amazonPrice, average_price: averagePrice, average_tax: averageTax, order_number: orderNumber
     }
 
     try {
@@ -174,15 +195,15 @@ const ArrivalFormPage = () => {
   }
 
   return (
-    <div className="bg-white py-20 rounded-lg w-full">
+    <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl">
+        className="border border-[#8633FF] shadow-lg h-full w-full m-auto rounded-xl">
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Pending Arrival Form</p>
         </div>
         <div className="lg:py-10 lg:px-20 w-full flex justify-center">
-          <form onSubmit={handleArrivalForm}>
+          <form className="w-[100%]" onSubmit={handleArrivalForm}>
             <div className="flex gap-7">
               <div className="w-full">
                 <div>
@@ -222,11 +243,71 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Unit Price</label>
                   <input
-                    type="text"
+                    type="number"
                     placeholder="Enter unit price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="unitPrice"
                     name="unitPrice"
+                  />
+                </div>
+
+                {/* left side new input fields */}
+                <div className="mt-4">
+                  <label className="text-slate-500">Amazon Quantity</label>
+                  <input
+                    onKeyDown={handleKeyDown}
+                    type="text"
+                    placeholder="Enter amazon quantity"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="amazonQuantity"
+                    name="amazonQuantity"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Customer Name</label>
+                  <input
+                    type="text"
+                    placeholder="Enter customer name"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="customerName"
+                    name="customerName"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Amazon Shipping</label>
+                  <input
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
+                    placeholder="Enter amazon shipping"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="amazonShipping"
+                    name="amazonShipping"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Shipping Cost</label>
+                  <input
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
+                    placeholder="Enter shipping cost"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="shippingCost"
+                    name="shippingCost"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Handling Cost</label>
+                  <input
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
+                    placeholder="Enter handling cost"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="handlingCost"
+                    name="handlingCost"
                   />
                 </div>
               </div>
@@ -286,13 +367,73 @@ const ArrivalFormPage = () => {
                     name="eda"
                   />
                 </div>
+
+                {/* right side new input fields */}
+                <div className="mt-4">
+                  <label className="text-slate-500">Walmart Quantity</label>
+                  <input
+                    onKeyDown={handleKeyDown}
+                    type="text"
+                    placeholder="Enter walmart quantity"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="walmartQuantity"
+                    name="walmartQuantity"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Amazon Price</label>
+                  <input
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
+                    placeholder="Enter amazon price"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="amazonPrice"
+                    name="amazonPrice"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Average Price</label>
+                  <input
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
+                    placeholder="Enter average price"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="averagePrice"
+                    name="averagePrice"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Average Tax</label>
+                  <input
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
+                    placeholder="Enter average tax"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="averageTax"
+                    name="averageTax"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <label className="text-slate-500">Order Number</label>
+                  <input
+                    type="text"
+                    placeholder="Enter order number"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    id="orderNumber"
+                    name="orderNumber"
+                  />
+                </div>
               </div>
             </div>
 
             <div className="mt-5">{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
 
             <div className="flex items-center justify-center mt-8">
-              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-72 capitalize">
+              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-full capitalize">
                 {isLoading && <FaSpinner size={20} className="animate-spin" />}
                 <p>Pending Arrival Request</p>
               </button>

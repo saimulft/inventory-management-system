@@ -3,7 +3,6 @@ require("dotenv").config()
 const PORT = process.env.PORT || 5000
 const app = express()
 const cors = require("cors")
-const bodyParser = require('body-parser');
 
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true, limit: '5mb' }))
@@ -33,6 +32,7 @@ const missing_arrival_api = require("./src/routes/missing_arrival_api")
 const out_of_stock_api = require("./src/routes/out_of_stock_api")
 const shipped_api = require("./src/routes/shipped_data")
 const warehouse_api = require("./src/routes/warehouse_api")
+const profit_tracker_api = require("./src/routes/profit_tracker_api")
 
 const payment_api = require("./src/routes/payment_api")
 
@@ -59,6 +59,7 @@ app.use('/api/v1/missing_arrival_api', missing_arrival_api)
 app.use('/api/v1/out_of_stock_api', out_of_stock_api)
 app.use('/api/v1/shipped_api', shipped_api)
 app.use('/api/v1/warehouse_api', warehouse_api)
+app.use('/api/v1/profit_tracker_api', profit_tracker_api)
 
 app.get('/', (req, res) => {
 

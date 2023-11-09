@@ -98,7 +98,7 @@ export default function Checkout() {
         "Unlimited order",
         "Dedicated support",
       ],
-      lookup_key: 454545
+      // lookup_key: 454545
     },
   ];
 

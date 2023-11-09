@@ -20,7 +20,7 @@ export default function InventoryTotalASINTable() {
   const [imageSrc, setImageSrc] = useState(null)
   const [imageFile, setImageFile] = useState(null)
   const [imageError, setImageError] = useState('')
-  const [singleData, setSingleData] = useState()
+  const [singleData, setSingleData] = useState({})
   const [loading, setLoding] = useState(false)
   const [success, setSuccess] = useState()
   const { user } = useAuth()
@@ -124,6 +124,7 @@ export default function InventoryTotalASINTable() {
     const filteredData = data.filter(item =>
     (item.asin_upc_code?.toLowerCase().includes(searchText) ||
       item.product_name?.toLowerCase().includes(searchText) ||
+      item.store_manager_name?.toLowerCase().includes(searchText) ||
       item.code_type?.toLowerCase().includes(searchText))
     );
     if (!filteredData.length) {
@@ -178,7 +179,7 @@ export default function InventoryTotalASINTable() {
             const asinInfo = {
               productImage: url, minPrice
             }
-            axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData._id}`, asinInfo)
+            axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData?._id}`, asinInfo)
               .then(res => {
                 if (res.status === 200) {
                   setImageSrc(null)
@@ -239,7 +240,6 @@ export default function InventoryTotalASINTable() {
             const asinInfo = {
               productImage: productImage, minPrice
             }
-            console.log(asinInfo)
             axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData._id}`, asinInfo)
 
               .then(res => {
@@ -492,12 +492,12 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
+                      className={`${index % 2 == 1 && ""}`} key={index} >
                       <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                       <td>{d.asin_upc_code}</td>
                       <td className="text-[#8633FF]">{d.product_name}</td>
@@ -533,7 +533,7 @@ export default function InventoryTotalASINTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`} key={index} >
+                        className={`${index % 2 == 1 && ""}`} key={index} >
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                         <td>{d.asin_upc_code}</td>
                         <td className="text-[#8633FF]">{d.product_name}</td>
@@ -618,7 +618,7 @@ export default function InventoryTotalASINTable() {
                   <input
                     type="number"
                     placeholder="Enter new min price"
-                    className="input input-bordered input-primary w-full input-sm mt-2"
+                    className="input input-bordered input-primary w-full  mt-2"
                     id="minPrice"
                     name="minPrice"
                   />

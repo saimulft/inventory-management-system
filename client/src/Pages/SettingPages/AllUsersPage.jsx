@@ -14,7 +14,12 @@ export default function AllUsersPage() {
       try {
         const res = await axios.post('/api/v1/admin_api/get_all_users_list', { user })
         if (res.status === 200) {
-          return res.data
+          if (user.role === 'Admin VA') {
+            const filterData = res.data.filter(u => user.role !== u.role)
+            return filterData
+          } else {
+            return res.data
+          }
         }
         if (res.status === 204) {
           return []
@@ -73,7 +78,8 @@ export default function AllUsersPage() {
           </tr>
         </thead>
         <tbody className="relative">
-          {isLoading ? <Loading /> : data?.map((user, index) => {
+          {!isLoading && !data.length ? <p className="absolute top-[230px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">User not added yet!</p> : <></>}
+          {isLoading ? <Loading top="230px" /> : data?.map((user, index) => {
             return (
               <tr key={index} className={`${index % 2 == 1 && "bg-gray-100"}`}>
                 <td>{user.full_name}</td>
@@ -82,8 +88,7 @@ export default function AllUsersPage() {
                   user?.role
                 }
                 </td>
-                <td className="flex gap-2">
-
+                <td>
                   <button onClick={() => handleDeleteUser(user)} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-red-500 hover:text-white transition-all duration-150">
                     <FiTrash />
                     Delete

@@ -26,12 +26,12 @@ export default function StoreShippedTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
-  
+
   const { data = [], isLoading } = useQuery({
     queryKey: ['ready_to_ship_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post(`/api/v1/shipped_api/get_all_shipped_data`,{user})
+        const res = await axios.post(`/api/v1/shipped_api/get_all_shipped_data`, { user })
         if (res.status === 200) {
           return res.data.data;
         }
@@ -312,12 +312,12 @@ export default function StoreShippedTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"}`}
+                      className={`${index % 2 == 1 && ""}`}
                       key={index}
                     >
                       <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
@@ -348,7 +348,7 @@ export default function StoreShippedTable() {
                   isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"}`}
+                        className={`${index % 2 == 1 && ""}`}
                         key={index}
                       >
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
