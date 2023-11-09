@@ -5,25 +5,25 @@ import AdditionalPaymentInputList from "./AdditionalPaymentInputList";
 import { BsArrowRightShort } from "react-icons/bs";
 import { Navigate, useNavigate } from "react-router-dom";
 import useStore from "../../hooks/useStore";
-import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
-import Swal from "sweetalert2";
+// import { useMutation } from "@tanstack/react-query";
+// import axios from "axios";
+// import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
 import { FaSpinner } from "react-icons/fa";
-import useGlobal from "../../hooks/useGlobal";
+// import useGlobal from "../../hooks/useGlobal";
 
 export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
   const { storeDetails, setStoreDetails, supplierInfoInputList, setSupplierInfoInputList, additionalPaymentInputList, setAdditionalPaymentInputList } = useStore()
   const { user } = useAuth()
-  const {setStoreRefetch} = useGlobal()
+  // const { setStoreRefetch } = useGlobal()
   const navigate = useNavigate()
 
-  const { mutateAsync, isLoading } = useMutation({
-    mutationFn: (storeData) => {
-      return axios.post('/api/v1/store_api/add_new_store', storeData)
-    },
-  })
+  // const { mutateAsync, isLoading } = useMutation({
+  //   mutationFn: (storeData) => {
+  //     return axios.post('/api/v1/store_api/add_new_store', storeData)
+  //   },
+  // })
 
   if (!storeDetails) {
     return <Navigate to="/dashboard/add-store" />
@@ -45,35 +45,35 @@ export default function AddSupplier() {
   const handleAddStore = async () => {
     const date = new Date().toISOString();
 
-    const storeData = {
+    setStoreDetails({
       ...storeDetails,
       supplier_information: supplierInfoInputList,
       additional_payment_details: additionalPaymentInputList,
       admin_id: user.admin_id,
       date: date,
       creator_email: user?.email,
-    }
+    })
 
-    try {
-      const { status } = await mutateAsync(storeData)
+    // try {
+    //   const { status } = await mutateAsync(storeData)
 
-      if (status === 201) {
-        setStoreDetails(null)
-        setSupplierInfoInputList([{ supplier_name: "", username: "", password: "" }])
-        setAdditionalPaymentInputList([{ email: "", card_name: "", card_info: "", date: "", cvc: "", billing_address: "", city: "", state: "", zip_code: "", country: ""}])
+    //   if (status === 201) {
+    //     setStoreDetails(null)
+    //     setSupplierInfoInputList([{ supplier_name: "", username: "", password: "" }])
+    //     setAdditionalPaymentInputList([{ email: "", card_name: "", card_info: "", date: "", cvc: "", billing_address: "", city: "", state: "", zip_code: "", country: ""}])
 
-        setStoreRefetch(true)
-        Swal.fire(
-          'Added',
-          'New store has been added.',
-          'success'
-        )
-        navigate("/dashboard/all-stores")
-      }
-    } catch (error) {
-      console.log(error)
-    }
-    // navigate("/dashboard/add-store/add-supplier/select-payment")
+    //     setStoreRefetch(true)
+    //     Swal.fire(
+    //       'Added',
+    //       'New store has been added.',
+    //       'success'
+    //     )
+    //     navigate("/dashboard/all-stores")
+    //   }
+    // } catch (error) {
+    //   console.log(error)
+    // }
+    navigate("/dashboard/add-store/add-supplier/select-payment")
   }
 
   return (
@@ -150,10 +150,10 @@ export default function AddSupplier() {
         );
       })}
       {/* next btn  */}
-      <button onClick={handleAddStore} disabled={isLoading} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
-        {isLoading && <FaSpinner size={20} className="animate-spin mr-[6px]" />}
+      <button onClick={handleAddStore} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
+        {/* {isLoading && <FaSpinner size={20} className="animate-spin mr-[6px]" />} */}
         <p>Add Store</p>
-        {!isLoading && <BsArrowRightShort className="mt-[1px]" size={28} />}
+        {/* {!isLoading && <BsArrowRightShort className="mt-[1px]" size={28} />} */}
       </button>
     </div>
   );

@@ -57,6 +57,7 @@ import AdminRoute from "./AdminRoute";
 import StoreManagerRoute from "./StoreManagerRoute";
 import StoreOwnerRoute from "./StoreOwnerRoute";
 import ProfitTrackerStatsPage from "../Pages/ProfitTrackerStatsPage";
+import PaymentStatusPage from "../Components/AddStrorePageComponent/PaymentStatusPage";
 
 export const router = createBrowserRouter([
   {
@@ -163,6 +164,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/add-store",
         element: <AdminRoute><AddStorePage /></AdminRoute>,
+      },
+      {
+        path: "/dashboard/payment-status",
+        element: <AdminRoute><PaymentStatusPage /></AdminRoute>,
       },
       {
         path: "/dashboard/profit-tracker",
@@ -296,6 +301,10 @@ export const router = createBrowserRouter([
   {
     path: "/update_password",
     element: <AuthRoute><UpdatePassword /></AuthRoute>,
+  },
+  {
+    path: "/payment-status",
+    element: <PaymentStatusPage />,
   },
   {
     path: '*',
