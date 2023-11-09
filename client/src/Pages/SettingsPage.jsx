@@ -6,9 +6,7 @@ import useAuth from "../hooks/useAuth";
 export default function SettingsPage() {
   const { setIsActiveSetting, isActiveSetting } = useContext(GlobalContext);
   const { user } = useAuth()
-  const boxShadowStyle = {
-    boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
-  };
+  const boxShadowStyle = { boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)"};
 
   return (
     <div

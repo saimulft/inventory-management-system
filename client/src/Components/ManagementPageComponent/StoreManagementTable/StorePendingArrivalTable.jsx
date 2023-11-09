@@ -408,7 +408,7 @@ export default function StorePendingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (

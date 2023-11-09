@@ -161,7 +161,7 @@ export default function DashboardPage() {
                 </div>}
 
                 {view === "Table" && <div className="mt-12">
-                    <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
+                    <div className="overflow-x-auto mt-8 min-h-[calc(100vh-335px)] max-h-full">
                         <table className="table table-sm border border-gray-300 border-collapse">
                             <thead>
                                 <tr className="bg-gray-200 text-black">
@@ -199,18 +199,18 @@ export default function DashboardPage() {
                                         <td className="border border-gray-300">{d.amazon_quantity}</td>
                                         <td className="border border-gray-300">{d.walmart_quantity}</td>
                                         <td className="border border-gray-300">{d.customer_name}</td>
-                                        <td className="border border-gray-300">{d.amazon_price}</td>
-                                        <td className="border border-gray-300">{d.amazon_shipping}</td>
-                                        <td className="border border-gray-300">{amazonFee.toFixed(2)}</td>
-                                        <td className="border border-gray-300">{d.average_price}</td>
-                                        <td className="border border-gray-300">{supplierPrice.toFixed(2)}</td>
-                                        <td className="border border-gray-300">{d.shipping_cost}</td>
-                                        <td className="border border-gray-300">{d.average_tax}</td>
-                                        <td className="border border-gray-300">{tax.toFixed(2)}</td>
-                                        <td className="border border-gray-300">{d.handling_cost}</td>
-                                        <td className="border border-gray-300">{costOfGoods.toFixed(2)}</td>
-                                        <td className="border border-gray-300">{cashProfit.toFixed(2)}</td>
-                                        <td className="border border-gray-300">{roi.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${d.amazon_price}</td>
+                                        <td className="border border-gray-300">${d.amazon_shipping}</td>
+                                        <td className="border border-gray-300">${amazonFee.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${d.average_price}</td>
+                                        <td className="border border-gray-300">${supplierPrice.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${d.shipping_cost}</td>
+                                        <td className="border border-gray-300">${d.average_tax}</td>
+                                        <td className="border border-gray-300">${tax.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${d.handling_cost}</td>
+                                        <td className="border border-gray-300">${costOfGoods.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${cashProfit.toFixed(2)}</td>
+                                        <td className="border border-gray-300">{roi.toFixed(2)}%</td>
                                     </tr>
                                 })}
                             </tbody>
