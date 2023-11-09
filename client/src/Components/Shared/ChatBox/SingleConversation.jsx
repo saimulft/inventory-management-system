@@ -36,6 +36,8 @@ export default function SingleConversation() {
   const [calcScrollHeight, setCalcScrollHeight] = useState(0);
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
   const [switchLick, setSwitchLick] = useState("");
+  const [input, setInput] = useState("");
+
 
   // switch lick and sent button
 

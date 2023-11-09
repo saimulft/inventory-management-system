@@ -8,18 +8,17 @@ export default function ChatBox() {
   const { isChatBoxOpen, singleConversationShow, addNewConversation } =
     useContext(ChatContext);
 
-  const data = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
   return (
     <div>
       {/* conversation user list show */}
-      {isChatBoxOpen && <ConversationUserList data={data} />}
+      {isChatBoxOpen && <ConversationUserList />}
 
       {/* single conversation show  */}
-      {singleConversationShow && <SingleConversation data={data} />}
+      {singleConversationShow && <SingleConversation />}
 
       {/* add new conversation  */}
-      {addNewConversation && <AddNewConversation data={data} />}
+      {addNewConversation && <AddNewConversation />}
     </div>
   );
 }

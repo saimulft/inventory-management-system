@@ -19,7 +19,6 @@ export const ChatProvider = ({ children }) => {
 
 
   // socket install
-  const sendMessageRef = useRef();
   const socket = useRef();
 
   useEffect(() => {
