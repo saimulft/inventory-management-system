@@ -1,38 +1,217 @@
 import { useState } from "react";
+import { AiOutlineCloudUpload } from 'react-icons/ai';
+import axios from "axios"
+import { FaSpinner } from "react-icons/fa";
+import Swal from "sweetalert2";
+import useAuth from "../hooks/useAuth";
+import { MdErrorOutline } from "react-icons/md";
+import Compressor from "compressorjs"
+import useGlobal from "../hooks/useGlobal";
 
 const AddASINForm = () => {
-  const [photoUploadType, setPhotoUploadType] = useState(null);
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
+  const [photoUploadType, setPhotoUploadType] = useState(null);
+  const [imageSrc, setImageSrc] = useState(null)
+  const [imageFile, setImageFile] = useState(null)
+  const [imageError, setImageError] = useState('')
+  const [loading, setLoding] = useState(false)
+  const [inputError, setInputError] = useState('')
+
+  const { user } = useAuth()
+  const {setCountsRefetch} = useGlobal()
+
+  // handler function for adding ASIN or UPC
+  const handleAsinUpcForm = async (event) => {
+    setImageError("")
+    setInputError("")
+    event.preventDefault()
+    const form = event.target;
+    const date = new Date().toISOString()
+    const asinUpc = form.upin.value;
+    const storeManagerName = form.storeManagerName.value;
+    const productName = form.productName.value;
+    const minPrice = form.minPrice.value;
+    const codeType = form.codeType.value;
+
+    async function checkImageUrlValidity(url) {
+      try {
+        setLoding(true)
+        const response = await fetch(url, { method: 'HEAD' });
+        if (response.ok) {
+          const contentType = response.headers.get('Content-Type');
+          if (contentType && contentType.startsWith('image/')) {
+
+
+            const asinInfo = {
+              adminId: user?.admin_id, creatorEmail: user?.email, date, asinUpc, storeManagerName, productName, productImage: url, minPrice, codeType
+            }
+            axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
+              .then(res => {
+                if (res.status === 201) {
+                  setCountsRefetch(true)
+                  setImageSrc(null)
+                  setImageFile(null)
+                  form.reset()
+                  setLoding(false)
+                  setInputError("")
+                  Swal.fire(
+                    'Added',
+                    'ASIN or UPC has been added.',
+                    'success'
+                  )
+                }
+              })
+              .catch(() => {
+                setLoding(false)
+              })
+            return; // It's a valid image URL
+          }
+        }
+        setImageError("Image url is not valid")
+        setLoding(false)
+       
+        return
+      } catch (error) {
+        setLoding(false)
+        setImageError("Image url is not valid")
+       
+      }
+    }
+    if (form?.inputImageUrl?.value) {
+
+      checkImageUrlValidity(form?.inputImageUrl.value)
+    }
+
+    if (photoUploadType === "Select Upload Option" || !photoUploadType) {
+      setInputError("Select image option")
+      setLoding(false)
+      return;
+    }
+    if (photoUploadType === "file" && !imageFile) {
+
+      setInputError("Select image")
+      setLoding(false)
+      return;
+    }
+
+    if (codeType === "Pick Code Type" || !codeType) {
+      setInputError('Select code type')
+      setLoding(false)
+      return;
+    }
+
+    if (!date || !asinUpc || !storeManagerName || !productName || !minPrice || !codeType) {
+      setLoding(false)
+      return;
+    }
+
+    if (imageFile) {
+      setLoding(true)
+      const formData = new FormData()
+      await new Promise((resolve, reject) => {
+        new Compressor(imageFile, {
+          quality: 0.5,
+          success: (result) => {
+            const compressed = new File([result], result.name, { type: 'image/jpeg' });
+            formData.append('file', compressed);
+            resolve(compressed);
+          },
+          error: (error) => {
+            reject(error);
+          },
+        });
+      });
+
+      await axios.post('/api/v1/asin_upc_api/asin_upc_image_upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
+        .then(res => {
+          if (res.status === 201) {
+            const productImage = res.data.imageURL;
+            const asinInfo = {
+              adminId: user?.admin_id, creatorEmail: user?.email, date, asinUpc, storeManagerName, productName, productImage, minPrice, codeType
+            }
+            axios.post('/api/v1/asin_upc_api/insert_asin_upc', asinInfo)
+
+              .then(res => {
+                if (res.status === 201) {
+                  setCountsRefetch(true)
+                  form.reset()
+                  setImageSrc(null)
+                  setImageFile(null)
+                  setInputError("")
+                  setLoding(false)
+                  Swal.fire(
+                    'Added',
+                    'ASIN or UPC has been added.',
+                    'success'
+                  )
+                }
+              })
+              .catch(() => {
+                setLoding(false)
+              })
+          }
+        })
+        .catch(err => {
+          console.log(err)
+          setLoding(false)
+        })
+    }
+  }
+
+  const handleImage = (e) => {
+    if (e.target.files[0]) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+      if (e.target.files[0].size > maxSizeInBytes) {
+        setImageError("Image file size must be less than 5 MB")
+        return;
+
+      } else {
+        setImageError('')
+        setImageSrc(URL.createObjectURL(e.target.files[0]))
+        setImageFile(e.target.files[0])
+      }
+    }
+  }
+
 
   return (
-    <div className="mt-20 rounded-lg h-screen">
+    <div className="my-20 rounded-lg mx-auto w-[60%] h-full">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg  w-fit m-auto rounded-xl"
+        className="border border-[#8633FF] shadow-lg  m-auto rounded-xl"
       >
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Add ASIN or UPC</p>
         </div>
         <div className="px-20 py-10 w-full">
-          <form>
+          <form className="w-full" onSubmit={handleAsinUpcForm}>
             <div className="flex gap-7">
               <div className="w-full">
+
                 <div>
-                  <label className="text-slate-500">Date</label>
-                  <input
-                    type="date"
-                    placeholder="Enter store name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="fromDate"
-                    name="fromDate"
-                  />
+                  <label className="text-slate-500">Code type</label>
+                  <select
+                    className="select select-primary w-full mt-2 shadow-lg"
+                    name="codeType"
+                    id="codeType"
+                  >
+                    <option defaultValue="Pick Code Type">Pick Code Type </option>
+                    <option value="ASIN">ASIN</option>
+                    <option value="UPC">UPC</option>
+                  </select>
                 </div>
+
 
                 <div className="mt-4">
                   <label className="text-slate-500">Store Manager Name</label>
-                  <input
+                  <input required
                     type="text"
                     placeholder="Enter your store manager name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -43,27 +222,23 @@ const AddASINForm = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">Product Image</label>
-                  <select
+                  <select disabled={imageSrc}
                     onChange={(e) => {
                       setPhotoUploadType(e.target.value);
                     }}
                     className="select select-primary w-full mt-2 shadow-lg"
-                    name="CodeType"
-                    id="CodeType"
                   >
-                    <option disabled selected>
-                      Select Upload Option
-                    </option>
-                    <option value="url">Add URL</option>
-                    <option value="file">File Upload</option>
+                    <option defaultValue="Select Upload Option"> Select Upload Option </option>
+                    <option value="url"> Image URL</option>
+                    <option value="file">Upload image</option>
                   </select>
                 </div>
               </div>
 
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">ASIN or UPIN Code</label>
-                  <input
+                  <label className="text-slate-500">ASIN or UPC Code</label>
+                  <input required
                     type="text"
                     placeholder="Enter ASIN or UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -74,7 +249,7 @@ const AddASINForm = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">Product Name</label>
-                  <input
+                  <input required
                     type="text"
                     placeholder="Enter your product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -85,12 +260,12 @@ const AddASINForm = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">Min Price</label>
-                  <input
-                    type="text"
+                  <input required
+                    type="number"
                     placeholder="Enter min price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="trackingNumber"
-                    name="trackingNumber"
+                    id="minPrice"
+                    name="minPrice"
                   />
                 </div>
               </div>
@@ -98,15 +273,17 @@ const AddASINForm = () => {
 
             {photoUploadType == "url" && (
               <div className="mt-4">
-                <label className="text-slate-500">Add Photo</label>
-                <input
+                <label className="text-slate-500">Image URL</label>
+                <input required
                   type="text"
-                  placeholder="Enter your photo link"
+                  placeholder="Enter your image URL link"
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                  id="storeManagerName"
-                  name="storeManagerName"
+                  id="inputImageUrl"
+                  name="inputImageUrl"
                 />
+                 {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
               </div>
+              
             )}
 
             {photoUploadType == "file" && (
@@ -115,40 +292,35 @@ const AddASINForm = () => {
                 <div className="flex items-center w-full mt-2">
                   <label
                     htmlFor="invoice-dropzone"
-                    className="flex justify-between items-center px-5 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                    className="flex justify-between items-center px-5 w-full h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                   >
                     <div className="flex items-center gap-5 py-[6.5px]">
-                      <svg
-                        className="w-6 h-6 text-gray-500 dark:text-gray-400"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 20 16"
-                      >
-                        <path
-                          stroke="currentColor"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                        />
-                      </svg>
+                      {imageSrc ? <img src={imageSrc} className="h-8" alt="" /> :
+                        <AiOutlineCloudUpload size={26} />}
                       <div>
-                        <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
+                        {imageFile && <p className="text-md font-semibold">{imageFile.name.slice(0, 32)}</p>}
+                        {!imageFile && <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
                           Select a file or drag and drop
-                        </p>
+                        </p>}
                         <p className="text-xs text-gray-500 dark:text-gray-400">
-                          PNG or JPG file size no more than 10MB
+                          PNG or JPG file size no more than 5MB
                         </p>
                       </div>
                     </div>
                     <input
+
                       id="invoice-dropzone"
                       name="invoice-dropzone"
                       type="file"
                       className="hidden"
+                      accept='image/*'
+                      onChange={handleImage}
                     />
                     <div>
+                      {imageSrc && <button onClick={() => {
+                        setImageSrc(null)
+                        setImageFile(null)
+                      }} className="btn btn-outline btn-primary btn-xs mx-2">Cancel image</button>}
                       <button
                         onClick={() => {
                           document.getElementById("invoice-dropzone").click();
@@ -156,33 +328,23 @@ const AddASINForm = () => {
                         type="button"
                         className="btn btn-outline btn-primary btn-xs"
                       >
-                        select file
+                        Select image
                       </button>
                     </div>
                   </label>
                 </div>
+                {imageError && <p className="text-xs mt-2 font-medium text-rose-500">{imageError}</p>}
+
               </div>
             )}
 
-            <div className="mt-4">
-              <label className="text-slate-500">Code type</label>
-              <select
-                className="select select-primary w-full mt-2 shadow-lg"
-                name="CodeType"
-                id="CodeType"
-              >
-                <option disabled selected>
-                  Pick Code Type
-                </option>
-                <option value="ASIN">ASIN</option>
-                <option value="UPC">UPC</option>
-              </select>
-            </div>
 
-            <div className="flex items-center justify-center mt-8"></div>
+            <div>{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center mt-5 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
+
             <div className="flex items-center justify-center mt-8">
-              <button className="bg-[#8633FF] flex py-3 justify-center items-center text-white capitalize rounded-lg w-72 ">
-                Preparing Request
+              <button type="submit" disabled={loading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">
+                {loading && <FaSpinner size={20} className="animate-spin" />}
+                Add ASIN/UPC
               </button>
             </div>
           </form>

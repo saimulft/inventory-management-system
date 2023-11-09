@@ -26,22 +26,43 @@ import StoreOwnerPage from "../Pages/SettingPages/StoreOwnerPage";
 import StoreManagerAdminPage from "../Pages/SettingPages/StoreManagerAdminPage";
 import WareHouseAdminPage from "../Pages/SettingPages/WarehouseAdminPage";
 import DashboardPage from "../Pages/DashboardPage";
-import AllStockTable from "../Components/ManagementPageComponent/ManagementTable/AllStockTable";
-import PreparingRequestTable from "../Components/ManagementPageComponent/ManagementTable/PreparingRequestTable";
-import ReadyToShipTable from "../Components/ManagementPageComponent/ManagementTable/ReadyToShipTable";
-import ShippedTable from "../Components/ManagementPageComponent/ManagementTable/ShippedTable";
-import OutOfStockTable from "../Components/ManagementPageComponent/ManagementTable/OutOfStockTable";
-import MissingArrivalTable from "../Components/ManagementPageComponent/ManagementTable/MissingArrivalTable";
-import TotalASINTable from "../Components/ManagementPageComponent/ManagementTable/TotalASINTable";
-import PendingArrivalTable from "../Components/ManagementPageComponent/ManagementTable/PendingArrivalTable";
 import StoreEditPage from "../Pages/StoreEditPage";
 import LoginPage from "../Pages/LoginPage";
 import SignUPPage from "../Pages/SignUpPage";
+import ProtectedRoute from "./ProtectedRoute";
+import VerifyEmail from "../Pages/verifyEmail";
+import ResetPassword from "../Pages/ResetPassword";
+import UpdatePassword from "../Pages/UpdatePassword";
+import StoreAllStockTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreAllStockTable";
+import StorePreparingRequestTable from "../Components/ManagementPageComponent/StoreManagementTable/StorePreparingRequestTable";
+import StorePendingArrivalTable from "../Components/ManagementPageComponent/StoreManagementTable/StorePendingArrivalTable";
+import StoreReadyToShipTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreReadyToShipTable";
+import StoreShippedTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreShippedTable";
+import StoreOutOfStockTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreOutOfStockTable";
+import StoreMissingArrivalTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreMissingArrivalTable";
+import StoreTotalASINTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreTotalASINTable";
+import InventoryAllStockTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryAllStockTable";
+import InventoryPendingArrivalTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryPendingArrivalTable";
+import InventoryPreparingRequestTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryPreparingRequestTable";
+import InventoryReadyToShipTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryReadyToShipTable";
+import InventoryShippedTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryShippedTable";
+import InventoryOutOfStockTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryOutOfStockTable";
+import InventoryMissingArrivalTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryMissingArrivalTable";
+import InventoryTotalASINTable from "../Components/ManagementPageComponent/InventoryManagementTable/InventoryTotalASINTable";
+import AllAdminUsers from "../Pages/SettingPages/AllAdminUsers";
+import StoreManagerVAPage from "../Pages/SettingPages/StoreManagerVAPage";
+import WarehouseManagerVAPage from "../Pages/SettingPages/WarehouseManagerVAPage";
+import AuthRoute from "./AuthRoute";
+import AdminRoute from "./AdminRoute";
+import StoreManagerRoute from "./StoreManagerRoute";
+import StoreOwnerRoute from "./StoreOwnerRoute";
+import ProfitTrackerStatsPage from "../Pages/ProfitTrackerStatsPage";
+import PaymentStatusPage from "../Components/AddStrorePageComponent/PaymentStatusPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <DashboardLayout />,
+    element: <ProtectedRoute><DashboardLayout /></ProtectedRoute>,
     children: [
       {
         path: "/",
@@ -49,65 +70,112 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/home",
-        element: <DashboardPage />,
+        element: <AdminRoute><DashboardPage /></AdminRoute>,
       },
       {
         path: "/dashboard/management",
         element: <ManagementPage />,
       },
-      // management tables route
+      //store management tables route
       {
-        path: "/dashboard/management/all-stock",
-        element: <AllStockTable />,
+        path: "/dashboard/management/store/all-stock",
+        element: <StoreAllStockTable />,
       },
       {
-        path: "/dashboard/management/pending-arrival",
-        element: <PendingArrivalTable />,
+        path: "/dashboard/management/store/pending-arrival",
+        element: <StorePendingArrivalTable />,
       },
       {
-        path: "/dashboard/management/preparing-request",
-        element: <PreparingRequestTable />,
+        path: "/dashboard/management/store/preparing-request",
+        element: <StorePreparingRequestTable />,
       },
       {
-        path: "/dashboard/management/ready-to-ship",
-        element: <ReadyToShipTable />,
+        path: "/dashboard/management/store/ready-to-ship",
+        element: <StoreReadyToShipTable />,
       },
       {
-        path: "/dashboard/management/shipped",
-        element: <ShippedTable />,
+        path: "/dashboard/management/store/shipped",
+        element: <StoreShippedTable />,
       },
       {
-        path: "/dashboard/management/shipped",
-        element: <ShippedTable />,
+        path: "/dashboard/management/store/shipped",
+        element: <StoreShippedTable />,
       },
       {
-        path: "/dashboard/management/out-of-stock",
-        element: <OutOfStockTable />,
+        path: "/dashboard/management/store/out-of-stock",
+        element: <StoreOutOfStockTable />,
       },
       {
-        path: "/dashboard/management/missing-arrival",
-        element: <MissingArrivalTable />,
+        path: "/dashboard/management/store/missing-arrival",
+        element: <StoreMissingArrivalTable />,
       },
       {
-        path: "/dashboard/management/total-asin",
-        element: <TotalASINTable />,
+        path: "/dashboard/management/store/total-asin",
+        element: <StoreTotalASINTable />,
+      },
+
+      // inventory management table
+
+      {
+        path: "/dashboard/management/inventory/all-stock",
+        element: <InventoryAllStockTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/pending-arrival",
+        element: <InventoryPendingArrivalTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/preparing-request",
+        element: <InventoryPreparingRequestTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/ready-to-ship",
+        element: <InventoryReadyToShipTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/shipped",
+        element: <InventoryShippedTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/shipped",
+        element: <InventoryShippedTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/out-of-stock",
+        element: <InventoryOutOfStockTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/missing-arrival",
+        element: <InventoryMissingArrivalTable />,
+      },
+      {
+        path: "/dashboard/management/inventory/total-asin",
+        element: <InventoryTotalASINTable />,
       },
 
       {
         path: "/dashboard/all-stores",
-        element: <AllStoresPage />,
+        element: <AdminRoute><AllStoresPage /></AdminRoute>,
       },
       {
-        path: "/dashboard/all-stores/store-edit",
-        element: <StoreEditPage />,
+        path: "/dashboard/all-stores/store-edit/:id",
+        element: <AdminRoute><StoreEditPage /></AdminRoute>,
       },
       {
         path: "/dashboard/add-store",
-        element: <AddStorePage />,
+        element: <AdminRoute><AddStorePage /></AdminRoute>,
+      },
+      {
+        path: "/dashboard/payment-status",
+        element: <AdminRoute><PaymentStatusPage /></AdminRoute>,
       },
       {
         path: "/dashboard/profit-tracker",
-        element: <ProfitTrackerPage />,
+        element: <StoreOwnerRoute><ProfitTrackerPage /></StoreOwnerRoute>,
+      },
+      {
+        path: "/dashboard/profit-tracker/store/:id",
+        element: <StoreOwnerRoute><ProfitTrackerStatsPage /></StoreOwnerRoute>,
       },
       {
         path: "/dashboard/support",
@@ -124,15 +192,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/pending-arrival-from",
-        element: <ArrivalFormPage />,
+        element: <StoreManagerRoute><ArrivalFormPage /></StoreManagerRoute>,
       },
       {
         path: "/dashboard/preparing-request-from",
-        element: <PreparingFormPage />,
+        element: <StoreManagerRoute><PreparingFormPage /></StoreManagerRoute>,
       },
       {
         path: "/dashboard/add-ASIN-UPC-from",
-        element: <AddASINForm />,
+        element: <StoreManagerRoute><AddASINForm /></StoreManagerRoute>,
       },
       {
         path: "/dashboard/add-store/add-supplier",
@@ -168,7 +236,7 @@ export const router = createBrowserRouter([
           },
 
           {
-            path: "/dashboard/settings/add-users/admin-vr",
+            path: "/dashboard/settings/add-users/admin-va",
             element: <AdminVRPage />,
           },
           {
@@ -180,13 +248,26 @@ export const router = createBrowserRouter([
             element: <StoreManagerAdminPage />,
           },
           {
+            path: "/dashboard/settings/add-users/store-manager-va",
+            element: <StoreManagerVAPage />,
+          },
+          {
             path: "/dashboard/settings/add-users/warehouse-admin",
             element: <WareHouseAdminPage />,
+          },
+          {
+            path: "/dashboard/settings/add-users/warehouse-manager-va",
+            element: <WarehouseManagerVAPage />,
           },
 
           {
             path: "/dashboard/settings/all-users",
             element: <AllUsersPage />,
+          },
+
+          {
+            path: "/dashboard/settings/all-admin-users",
+            element: <AllAdminUsers />,
           },
 
           {
@@ -203,10 +284,30 @@ export const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <LoginPage />,
+    element: <AuthRoute><LoginPage /></AuthRoute>,
   },
   {
     path: "/signup",
-    element: <SignUPPage />,
+    element: <AuthRoute><SignUPPage /></AuthRoute>,
   },
+  {
+    path: "/verify_email",
+    element: <AuthRoute><VerifyEmail /></AuthRoute>,
+  },
+  {
+    path: "/reset_password",
+    element: <AuthRoute><ResetPassword /></AuthRoute>,
+  },
+  {
+    path: "/update_password",
+    element: <AuthRoute><UpdatePassword /></AuthRoute>,
+  },
+  {
+    path: "/payment-status",
+    element: <PaymentStatusPage />,
+  },
+  {
+    path: '*',
+    element: <Navigate to="/dashboard/home"></Navigate>
+  }
 ]);

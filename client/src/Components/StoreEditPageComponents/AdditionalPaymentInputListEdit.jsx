@@ -1,20 +1,44 @@
 import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
+import countries from "../../Utilities/countries";
 
-export default function AdditionalPaymentInputListEdit() {
-  const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([
-    {
-      email: "",
-      cardName: "",
-      cardInfo: "",
-      date: "",
-      cvc: "",
-      billingAddress: "",
-      city: "",
-      state: "",
-      zipCode: "",
-    },
+export default function AdditionalPaymentInputListEdit({additionalPaymentInputList, setAdditionalPaymentInputList}) {
+  const [isOpen, setIsOpen] = useState([
+    { class: "collapse-open", trackNO: 0 },
   ]);
+
+  const aco = (e, track) => {
+    console.log(e.target);
+    e.stopPropagation();
+    if (e.target.id == "aco") {
+      isOpen.map((singleAco) => {
+        if (singleAco.trackNO == track) {
+          const withOutTargetArray = isOpen.filter((f) => f.trackNO != track);
+          if (singleAco.class == "collapse-open") {
+            const newTargetObj = { class: "collapse-close", trackNO: track };
+            setIsOpen([...withOutTargetArray, newTargetObj]);
+          } else {
+            const newTargetObj = { class: "collapse-open", trackNO: track };
+            setIsOpen([...withOutTargetArray, newTargetObj]);
+          }
+        }
+      });
+    }
+  };
+  // const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([
+  //   {
+  //     email: "",
+  //     card_name: "",
+  //     card_info: "",
+  //     date: "",
+  //     cvc: "",
+  //     billing_address: "",
+  //     city: "",
+  //     state: "",
+  //     zip_code: "",
+  //     country: ""
+  //   },
+  // ]);
 
   const handleAdditionalPaymentInputChange = (event, index) => {
     const { name, value } = event.target;
@@ -28,16 +52,18 @@ export default function AdditionalPaymentInputListEdit() {
       ...additionalPaymentInputList,
       {
         email: "",
-        cardName: "",
-        cardInfo: "",
+        card_name: "",
+        card_info: "",
         date: "",
         cvc: "",
-        billingAddress: "",
+        billing_address: "",
         city: "",
         state: "",
-        zipCode: "",
+        zip_code: "",
+        country: ""
       },
     ]);
+    setIsOpen([...isOpen, { class: "collapse-open", trackNO: isOpen.length }]);
   };
 
   const handleAdditionalPaymentRemoveField = (index) => {
@@ -50,12 +76,22 @@ export default function AdditionalPaymentInputListEdit() {
 
   return (
     <>
-      {additionalPaymentInputList.map((a, index) => {
+      {additionalPaymentInputList.map((i, index) => {
+        const decideAcoIsOpenOrClose = isOpen.find((f) => f.trackNO == index);
+
         return (
           <div key={index} className="relative w-full mt-6 ">
             <div className=" border border-[#8633FF] rounded-lg">
-              <div className="collapse  collapse-arrow bg-white ">
-                <input type="checkbox" />
+              <div
+                id="aco"
+                onClick={(e) => aco(e, index)}
+                className={`collapse ${decideAcoIsOpenOrClose?.class} collapse-arrow bg-white `}
+              >
+                <input
+                  type="checkbox"
+                  id="aco"
+                  onClick={(e) => aco(e, index)}
+                />
                 <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
                   Additional payment Details
                   <span className="text-sm text-slate-400">(Optional)</span>
@@ -68,13 +104,15 @@ export default function AdditionalPaymentInputListEdit() {
                         Email Address*
                       </label>
                       <input
-                        className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                        className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                         placeholder="Enter email address"
                         type="text"
                         name="email"
+                        id="email"
                         onChange={(e, i) =>
                           handleAdditionalPaymentInputChange(e, i)
                         }
+                        defaultValue={i?.email}
                       />
                     </div>
 
@@ -84,13 +122,15 @@ export default function AdditionalPaymentInputListEdit() {
                         Name on card
                       </label>
                       <input
-                        className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
-                        placeholder="Name"
+                        className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
+                        placeholder="Card Name"
                         type="text"
-                        name="cartName"
+                        name="card_name"
+                        id="card_name"
                         onChange={(e, i) =>
                           handleAdditionalPaymentInputChange(e, i)
                         }
+                        defaultValue={i?.card_name}
                       />
                     </div>
 
@@ -100,13 +140,15 @@ export default function AdditionalPaymentInputListEdit() {
                         Card Information
                       </label>
                       <input
-                        className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                        className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                         placeholder="0000 0000 0000 0000"
                         type="text"
-                        name="cardInfo"
+                        name="card_info"
+                        id="card_info"
                         onChange={(e, i) =>
                           handleAdditionalPaymentInputChange(e, i)
                         }
+                        defaultValue={i?.card_info}
                       />
                     </div>
 
@@ -114,24 +156,28 @@ export default function AdditionalPaymentInputListEdit() {
                     <div className="flex gap-2 mt-1">
                       <div className="mt-2 w-1/2">
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="MM/YY"
                           type="text"
                           name="date"
+                          id="date"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
+                          defaultValue={i?.date}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="CVC"
                           type="text"
                           name="cvc"
+                          id="cvc"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
+                          defaultValue={i?.cvc}
                         />
                       </div>
                     </div>
@@ -143,25 +189,29 @@ export default function AdditionalPaymentInputListEdit() {
                           Billing address
                         </label>
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="Billing address"
                           type="text"
-                          name="billingAddress"
+                          name="billing_address"
+                          id="billing_address"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
+                          defaultValue={i?.billing_address}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
                         <label className="text-sm text-slate-500">City</label>
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="Enter your city"
                           type="text"
                           name="city"
+                          id="city"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
+                          defaultValue={i?.city}
                         />
                       </div>
                     </div>
@@ -171,13 +221,15 @@ export default function AdditionalPaymentInputListEdit() {
                       <div className="mt-2 w-1/2">
                         <label className="text-sm text-slate-500">State</label>
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="Enter your state"
                           type="text"
                           name="state"
+                          id="state"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
+                          defaultValue={i?.state}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
@@ -185,15 +237,27 @@ export default function AdditionalPaymentInputListEdit() {
                           ZIP Code
                         </label>
                         <input
-                          className="border outline-[#8633FF] text-xs border-gray-400 rounded py-3 px-2 w-full mt-1"
+                          className="border outline-[#8633FF] border-[#8633ff] text-xs  rounded py-3 px-2 w-full mt-1"
                           placeholder="Enter your zip code"
                           type="text"
-                          name="zipCode"
+                          name="zip_code"
+                          id="zip_code"
                           onChange={(e, i) =>
                             handleAdditionalPaymentInputChange(e, i)
                           }
+                          defaultValue={i?.zip_code}
                         />
                       </div>
+                    </div>
+
+                    <div className="mt-2 flex flex-col w-full">
+                      <label className="text-sm text-slate-500">Country</label>
+                      <select onChange={(e) => handleAdditionalPaymentInputChange(e, index)} defaultValue={i?.country} name="country" id="country" className="select select-primary w-full mt-2">
+                        <option defaultValue="Select your country">
+                          Select your country
+                        </option>
+                        {countries}
+                      </select>
                     </div>
                   </form>
                 </div>

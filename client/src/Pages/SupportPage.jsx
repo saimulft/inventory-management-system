@@ -3,7 +3,7 @@ export default function SupportPage() {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.3)",
   };
   return (
-    <div className="flex items-center justify-center h-screen px-4">
+    <div className="flex items-center justify-center p-20">
       <div
         style={boxShadowStyle}
         className="border border-[#8633FF] shadow-lg max-h-[600px] max-w-[600px] m-auto rounded-xl flex justify-center items-center py-16 px-10 "

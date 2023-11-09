@@ -8,7 +8,7 @@ export default function ProfileSetting() {
               <label className="text-slate-500">Your full name</label>
               <input
                 type="text"
-                placeholder="Your full name"
+                placeholder="Enter Your full name"
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="fullName"
                 name="fullName"

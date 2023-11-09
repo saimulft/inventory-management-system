@@ -3,10 +3,31 @@ import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import SupplierInfoInputList from "./SupplierInfoInputList";
 import AdditionalPaymentInputList from "./AdditionalPaymentInputList";
 import { BsArrowRightShort } from "react-icons/bs";
-import { Link } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
+import useStore from "../../hooks/useStore";
+// import { useMutation } from "@tanstack/react-query";
+// import axios from "axios";
+// import Swal from "sweetalert2";
+import useAuth from "../../hooks/useAuth";
+import { FaSpinner } from "react-icons/fa";
+// import useGlobal from "../../hooks/useGlobal";
 
 export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
+  const { storeDetails, setStoreDetails, supplierInfoInputList, setSupplierInfoInputList, additionalPaymentInputList, setAdditionalPaymentInputList } = useStore()
+  const { user } = useAuth()
+  // const { setStoreRefetch } = useGlobal()
+  const navigate = useNavigate()
+
+  // const { mutateAsync, isLoading } = useMutation({
+  //   mutationFn: (storeData) => {
+  //     return axios.post('/api/v1/store_api/add_new_store', storeData)
+  //   },
+  // })
+
+  if (!storeDetails) {
+    return <Navigate to="/dashboard/add-store" />
+  }
 
   const handleAddSupplierIncrementField = () => {
     setAddSupplier([...addSupplier, { id: 1 }]);
@@ -21,34 +42,70 @@ export default function AddSupplier() {
     setAddSupplier(list);
   };
 
+  const handleAddStore = async () => {
+    const date = new Date().toISOString();
+
+    setStoreDetails({
+      ...storeDetails,
+      supplier_information: supplierInfoInputList,
+      additional_payment_details: additionalPaymentInputList,
+      admin_id: user.admin_id,
+      date: date,
+      creator_email: user?.email,
+    })
+
+    // try {
+    //   const { status } = await mutateAsync(storeData)
+
+    //   if (status === 201) {
+    //     setStoreDetails(null)
+    //     setSupplierInfoInputList([{ supplier_name: "", username: "", password: "" }])
+    //     setAdditionalPaymentInputList([{ email: "", card_name: "", card_info: "", date: "", cvc: "", billing_address: "", city: "", state: "", zip_code: "", country: ""}])
+
+    //     setStoreRefetch(true)
+    //     Swal.fire(
+    //       'Added',
+    //       'New store has been added.',
+    //       'success'
+    //     )
+    //     navigate("/dashboard/all-stores")
+    //   }
+    // } catch (error) {
+    //   console.log(error)
+    // }
+    navigate("/dashboard/add-store/add-supplier/select-payment")
+  }
+
   return (
     <div className="p-10 bg-white rounded-lg">
       {/* option select  */}
       <div className=" border-2 border-[#8633FF]  rounded-lg">
-        <div className="collapse  collapse-arrow bg-white ">
+        <div className="collapse collapse-arrow bg-white ">
           <input type="checkbox" />
           <div className="collapse-title text-xl font-medium flex items-center gap-2 ">
-            Additional payment Details
-            <span className="text-sm text-slate-400">(Optional)</span>
+            General Information
           </div>
           <div className="collapse-content">
             <p>
-              <span className="font-bold text-slate-600">Store name:</span>{" "}
-              <span>Amazon</span>
+              <span className="font-bold text-slate-600">Store name: </span>
+              <span>{storeDetails.store_name}</span>
             </p>
             <p>
-              <span className="font-bold text-slate-600">
-                Store manager name:
-              </span>{" "}
-              <span>Saidul Basar</span>
+              <span className="font-bold text-slate-600">Store manager name: </span>
+              <span>{storeDetails.store_manager_name}</span>
             </p>
             <p>
-              <span className="font-bold text-slate-600">Store type:</span>{" "}
-              <span>fsdklfsdkllk</span>
+              <span className="font-bold text-slate-600">Store type: </span>
+              <span>{storeDetails.store_type}</span>
+            </p>
+            <p>
+              <span className="font-bold text-slate-600">Store status: </span>
+              <span>{storeDetails.store_status}</span>
             </p>
           </div>
         </div>
       </div>
+
       {/* add information  */}
       {addSupplier.map((a, index) => {
         return (
@@ -93,12 +150,11 @@ export default function AddSupplier() {
         );
       })}
       {/* next btn  */}
-      <Link to="/dashboard/add-store/add-supplier/select-payment">
-        <button className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-2 rounded-md text-[#8633FF] font-medium">
-          <p>Next</p>
-          <BsArrowRightShort className="mt-[1px]" size={28} />
-        </button>
-      </Link>
+      <button onClick={handleAddStore} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
+        {/* {isLoading && <FaSpinner size={20} className="animate-spin mr-[6px]" />} */}
+        <p>Add Store</p>
+        {/* {!isLoading && <BsArrowRightShort className="mt-[1px]" size={28} />} */}
+      </button>
     </div>
   );
 }

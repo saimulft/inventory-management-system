@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 
-export default function SupplierInfoInputListEdit() {
-  const [supplierInfoInputList, setSupplierInfoInputList] = useState([
-    { supplierName: "", userID: "", password: "" },
-  ]);
+export default function SupplierInfoInputListEdit({supplierInfoInputList, setSupplierInfoInputList}) {
+  // const [supplierInfoInputList, setSupplierInfoInputList] = useState([
+  //   { supplier_name: "", username: "", password: "" },
+  // ]);
 
   const handleSupplierInfoInputChange = (event, index) => {
     const { name, value } = event.target;
@@ -17,7 +16,7 @@ export default function SupplierInfoInputListEdit() {
   const handleSupplierInfoIncrementField = () => {
     setSupplierInfoInputList([
       ...supplierInfoInputList,
-      { supplierName: "", userID: "", password: "" },
+      { supplier_name: "", username: "", password: "" },
     ]);
   };
 
@@ -37,27 +36,33 @@ export default function SupplierInfoInputListEdit() {
       <h5 className="text-xl font-medium">Add Supplier Information</h5>
       {supplierInfoInputList.map((i, index) => {
         return (
-          <div key={index} className="flex gap-2 my-8">
+          <form key={index} className="flex gap-2 my-8">
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs "
+              className="border border-gray-400 outline-[#8633FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="Supplier name"
               type="text"
-              name="supplierName"
+              name="supplier_name"
+              id="supplier_name"
+              defaultValue={i?.supplier_name}
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs "
-              placeholder="User ID"
+              className="border border-gray-400 outline-[#8633FF] rounded py-3 px-2 w-1/3 text-xs "
+              placeholder="Username"
               type="text"
-              name="userID"
+              name="username"
+              id="username"
+              defaultValue={i?.username}
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
-              className="border border-gray-400 rounded py-3 px-2 w-1/3 text-xs"
+              className="border border-gray-400 outline-[#8633FF] rounded py-3 px-2 w-1/3 text-xs"
               placeholder="Password"
               type="text"
               name="password"
+              id="password"
+              defaultValue={i?.password}
             />
             <button
               onClick={() => handleSupplierInfoRemoveField(index)}
@@ -65,7 +70,7 @@ export default function SupplierInfoInputListEdit() {
             >
               <AiOutlineCloseCircle size={20} />
             </button>
-          </div>
+          </form>
         );
       })}
 

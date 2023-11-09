@@ -1,17 +1,23 @@
 import { AiOutlineMessage, AiOutlineSearch } from "react-icons/ai";
 import { BsBell } from "react-icons/bs";
+import useAuth from "../../hooks/useAuth";
+import useGlobal from "../../hooks/useGlobal";
 
 export default function Navbar() {
+  const { user } = useAuth()
+  const {pageName} = useGlobal()
+  const defaultPageName = user?.role === 'Admin' || user?.role === 'Admin VA' ? 'Dashboard' : user?.role === 'Store Owner' ? 'Profit Tracker' : 'Management';
+
   return (
     <div className="flex items-center px-8 ps-3 pe-3 bg-[#2e2e30]  text-white shadow-sm py-3">
-      <div className="text-lg font-medium w-full ">Dashboard</div>
+      <div className="text-lg font-medium w-full ">{pageName ? pageName : defaultPageName}</div>
       <div className="w-full px-8 relative lg:block hidden">
         <div className="form-control w-full">
           <div className="input-group w-full">
             <input
               type="text"
-              placeholder="Search…"
-              className="input input-bordered w-full"
+              placeholder="Search here…"
+              className="input input-bordered w-full bg-transparent border-[#454547] focus:outline-none focus:ring-1 focus:ring-[#8633FF]"
             />
             <button className="btn btn-square">
               <svg
@@ -38,12 +44,12 @@ export default function Navbar() {
         <div className="bg-[#454547] p-3 rounded relative hidden">
           <AiOutlineSearch size={20} />
         </div>
-        <div className="bg-[#454547] hover:bg-[#3f3f41] cursor-pointer transition-all duration-15 p-3 rounded relative">
+        <div className="bg-[#454547] hover:bg-[#3f3f41]  transition-all duration-15 p-3 rounded relative">
           <BsBell size={20} />
           <span className="animate-ping absolute top-1 right-1 inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
           <span className="h-1 w-1 rounded-full bg-red-500 absolute inline top-2 right-2"></span>
         </div>
-        <div className="bg-[#454547] hover:bg-[#3f3f41] cursor-pointer transition-all duration-15 p-3 rounded relative">
+        <div className="bg-[#454547] hover:bg-[#3f3f41] transition-all duration-15 p-3 rounded relative">
           <AiOutlineMessage size={20} />
           <span className="animate-ping absolute top-1 right-1 inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
           <span className="h-1 w-1 rounded-full bg-red-500 absolute inline top-2 right-2"></span>
@@ -55,30 +61,14 @@ export default function Navbar() {
               className="btn btn-ghost btn-circle avatar w-12 border-2 border-[#8633FF]"
             >
               <div className="w-10 rounded-full">
-                <img src="https://media.istockphoto.com/id/1386479313/photo/happy-millennial-afro-american-business-woman-posing-isolated-on-white.webp?b=1&s=170667a&w=0&k=20&c=ahypUC_KTc95VOsBkzLFZiCQ0VJwewfrSV43BOrLETM=" />
+                <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png" />
               </div>
             </label>
-            <ul
-              tabIndex={0}
-              className="mt-3 z-[1] p-2 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-            >
-              <li>
-                <a className="justify-between">
-                  Profile
-                  <span className="badge">New</span>
-                </a>
-              </li>
-              <li>
-                <a>Settings</a>
-              </li>
-              <li>
-                <a>Logout</a>
-              </li>
-            </ul>
+           
           </div>
           <div>
-            <p>Musfiq</p>
-            <p className="text-[#767678]">Store Owner</p>
+            <p>{user?.full_name}</p>
+            <p className="text-[#767678]">{user?.role}</p>
           </div>
         </div>
       </div>
