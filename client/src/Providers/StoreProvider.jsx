@@ -4,6 +4,7 @@ export const StoreContext = createContext(null)
 
 const StoreProvider = ({ children }) => {
     const [storeDetails, setStoreDetails] = useState(null)
+    const [paymentLink, setPaymentLink] = useState(null)
     const [supplierInfoInputList, setSupplierInfoInputList] = useState([{ supplier_name: "", username: "", password: "" }]);
     const [additionalPaymentInputList, setAdditionalPaymentInputList] = useState([
         {
@@ -26,10 +27,9 @@ const StoreProvider = ({ children }) => {
         supplierInfoInputList,
         setSupplierInfoInputList,
         additionalPaymentInputList,
-        setAdditionalPaymentInputList
+        setAdditionalPaymentInputList,
+        paymentLink, setPaymentLink
     }
-
-    console.log(storeDetails)
 
     return (
         <StoreContext.Provider value={storeInfo}>

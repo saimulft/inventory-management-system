@@ -2,12 +2,18 @@ import Swal from "sweetalert2";
 import countries from "../../Utilities/countries";
 import useStore from "../../hooks/useStore";
 
+// import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
+// import { useState } from "react";
+
 export default function CheckoutForm() {
+  // const [clientSecret, setClientSecret] = useState("");
+
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.5)",
   };
 
-  const {storeDetails} = useStore()
+  const { storeDetails } = useStore()
 
   const handlePayment = (e) => {
     e.preventDefault();
