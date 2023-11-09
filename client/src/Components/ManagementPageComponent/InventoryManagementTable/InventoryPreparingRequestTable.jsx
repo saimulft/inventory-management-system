@@ -423,9 +423,9 @@ export default function InventoryPreparingRequestTable() {
                           handleRTS(d._id, d.quantity, d.upin)
 
                         }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
-                          
-                             <LiaShippingFastSolid />
-                          
+
+                          <LiaShippingFastSolid />
+
                           <p>RTS</p>
                         </button>
 
@@ -468,10 +468,10 @@ export default function InventoryPreparingRequestTable() {
                             handleRTS(d._id, d.quantity, d.upin)
 
                           }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">
-                           <LiaShippingFastSolid />
+                            <LiaShippingFastSolid />
                             <p>RTS</p>
                           </button>
-                          
+
                           <button disabled={loading} onClick={() => {
                             handleOOS(d._id)
                           }} className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]">

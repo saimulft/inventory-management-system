@@ -18,7 +18,7 @@ export default function InventoryAllStockTable() {
     queryKey: ['all_stock_data'],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/all_stock_api/get_all_stock_data', {user})
+        const res = await axios.post('/api/v1/all_stock_api/get_all_stock_data', { user })
         if (res.status === 200) {
           return res.data.data;
         }

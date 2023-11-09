@@ -4,10 +4,10 @@ import useStore from "../../hooks/useStore";
 
 export default function SelectPayment() {
   const navigate = useNavigate()
-  const {storeDetails, setStoreDetails} = useStore()
+  const { storeDetails, setStoreDetails } = useStore()
 
   const handleSelectPaymentOption = (option, route) => {
-    setStoreDetails({...storeDetails, payment_option: option})
+    setStoreDetails({ ...storeDetails, payment_option: option })
     navigate(route)
   }
 
@@ -28,7 +28,7 @@ export default function SelectPayment() {
               Pay by yourself
             </button>
 
-            <button onClick={() => handleSelectPaymentOption("client", "/dashboard/add-store/add-supplier/select-payment/send-payment-link")} className="border border-[#8633FF] hover:bg-purple-200 transition-all duration-200 py-3 px-4 rounded">
+            <button onClick={() => handleSelectPaymentOption("client", "/dashboard/add-store/add-supplier/select-payment/checkout")} className="border border-[#8633FF] hover:bg-purple-200 transition-all duration-200 py-3 px-4 rounded">
               Send payment link to your client
             </button>
           </div>
