@@ -16,7 +16,7 @@ const run = async () => {
             const storeResult = await all_stock_collection.find({ store_id: storeId }).toArray()
 
             const store = await all_stores_collection.findOne({ _id: new ObjectId(storeId) })
-          
+
             if (store) {
                 if (storeResult.length) {
 
@@ -27,7 +27,7 @@ const run = async () => {
                 }
             }
             else {
-                res.status(204).json({ message: "no data found" })
+                res.status(204).json({ message: "No data found" })
             }
         }
         catch (error) {
@@ -35,7 +35,24 @@ const run = async () => {
         }
     })
 
+    // get all store data for dashboard
+    router.get('/all_store_data', async (req, res) => {
+        try {
+            const adminId = req.query.id
 
+            const storeResult = await all_stock_collection.find({ admin_id: adminId }).toArray()
+
+            if (storeResult.length) {
+                return res.status(200).json({ data: storeResult, message: "Data successfully get" })
+            }
+            else {
+                res.status(204).json({ message: "No data found" })
+            }
+        }
+        catch (error) {
+            res.status(500).json({ message: "Internal server error" })
+        }
+    })
 }
 run()
 

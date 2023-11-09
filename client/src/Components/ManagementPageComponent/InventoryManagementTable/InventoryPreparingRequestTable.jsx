@@ -396,13 +396,13 @@ export default function InventoryPreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {searchError ? <p className="text-red-500 text-xl my-16">{searchError}</p> : <>
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (
 
                     <tr
-                      className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                      className={`${index % 2 == 1 && ""} py-2`}
                       key={index}
                     >
                       <th>{format(new Date(d.date), "y/MM/d")}</th>
@@ -447,7 +447,7 @@ export default function InventoryPreparingRequestTable() {
                     return (
 
                       <tr
-                        className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
+                        className={`${index % 2 == 1 && ""} py-2`}
                         key={index}
                       >
                         <th>{format(new Date(d.date), "y/MM/d")}</th>

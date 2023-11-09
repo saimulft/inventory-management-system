@@ -65,11 +65,10 @@ const ProfitTrackerStatsPage = () => {
         queryFn: async () => {
             try {
                 const res = await axios.get(`/api/v1/profit_tracker_api/single_store_data?storeId=${id}`)
-             
+
                 if (res.status === 200) {
                     setStoreName(res.data.store_name)
                     if (res.data.data) {
-
                         return res.data.data;
                     }
                     else {
@@ -92,7 +91,7 @@ const ProfitTrackerStatsPage = () => {
     return (
         <div className="p-10">
             {/* analytics  */}
-            <div style={boxShadowStyle} className="bg-white p-5 rounded-xl">
+            <div style={boxShadowStyle} className="bg-white p-10 rounded-xl">
                 <div className="flex gap-28 items-center">
                     <div>
                         <p className="text-lg font-medium">Analytics of {storeName && storeName}</p>
@@ -122,6 +121,7 @@ const ProfitTrackerStatsPage = () => {
                             : "border border-slate-500 text-black"}`}><BiTable size={20} />Table View</button>
                     </div>
                 </div>
+
                 {view === "Graph" && <div className="mt-10 flex gap-5 items-center">
                     <div className="bg-blue-100 p-4 rounded-lg w-40">
                         <div className="h-8 w-8 flex justify-center items-center rounded-full bg-sky-400 text-white">
@@ -166,6 +166,64 @@ const ProfitTrackerStatsPage = () => {
                         <h6 className="mt-2 text-xl font-medium">15</h6>
                         <p className="my-1 text-sm">New Customers</p>
                         <p className="text-xs text-purple-500">+6 from yesterday</p>
+                    </div>
+                </div>}
+
+                {view === "Table" && <div className="mt-12">
+                    <div className="overflow-x-auto mt-8 min-h-[calc(100vh-335px)] max-h-full">
+                        <table className="table table-sm border border-gray-300 border-collapse">
+                            <thead>
+                                <tr className="bg-gray-200 text-black">
+                                    <th className="border border-gray-300">Date</th>
+                                    <th className="border border-gray-300">Amazon Order ID</th>
+                                    <th className="border border-gray-300">Amazon Quantity</th>
+                                    <th className="border border-gray-300">Walmart Quantity</th>
+                                    <th className="border border-gray-300">Customer Name</th>
+                                    <th className="border border-gray-300">Amazon Price</th>
+                                    <th className="border border-gray-300">Amazon Shipping</th>
+                                    <th className="border border-gray-300">Amazon Fee</th>
+                                    <th className="border border-gray-300">Average Price</th>
+                                    <th className="border border-gray-300">Supplier Price</th>
+                                    <th className="border border-gray-300">Shipping Cost</th>
+                                    <th className="border border-gray-300">Average Tax</th>
+                                    <th className="border border-gray-300">Tax</th>
+                                    <th className="border border-gray-300">Handling Cost</th>
+                                    <th className="border border-gray-300">Cost of Goods</th>
+                                    <th className="border border-gray-300">Cash Profit</th>
+                                    <th className="border border-gray-300">ROI</th>
+                                </tr>
+                            </thead>
+                            <tbody className="relative">
+                                {storeData?.map((d, index) => {
+                                    const amazonFee = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) * 0.15
+                                    const supplierPrice = parseFloat(d.walmart_quantity) * parseFloat(d.average_price)
+                                    const tax = parseFloat(d.walmart_quantity) * parseFloat(d.average_tax)
+                                    const costOfGoods = supplierPrice + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost)
+                                    const cashProfit = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) - (supplierPrice + amazonFee + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost))
+                                    const roi = (cashProfit / costOfGoods) * 100;
+
+                                    return <tr key={d._id} className={`${index % 2 == 1 && ""}`} >
+                                        <td className="font-bold border border-gray-300">{format(new Date(d.date), 'y/MM/d')}</td>
+                                        <td className="border border-gray-300">{d.supplier_id}</td>
+                                        <td className="border border-gray-300">{d.amazon_quantity}</td>
+                                        <td className="border border-gray-300">{d.walmart_quantity}</td>
+                                        <td className="border border-gray-300">{d.customer_name}</td>
+                                        <td className="border border-gray-300">${d.amazon_price}</td>
+                                        <td className="border border-gray-300">${d.amazon_shipping}</td>
+                                        <td className="border border-gray-300">${amazonFee.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${d.average_price}</td>
+                                        <td className="border border-gray-300">${supplierPrice.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${d.shipping_cost}</td>
+                                        <td className="border border-gray-300">${d.average_tax}</td>
+                                        <td className="border border-gray-300">${tax.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${d.handling_cost}</td>
+                                        <td className="border border-gray-300">${costOfGoods.toFixed(2)}</td>
+                                        <td className="border border-gray-300">${cashProfit.toFixed(2)}</td>
+                                        <td className="border border-gray-300">{roi.toFixed(2)}%</td>
+                                    </tr>
+                                })}
+                            </tbody>
+                        </table>
                     </div>
                 </div>}
             </div>
@@ -279,58 +337,6 @@ const ProfitTrackerStatsPage = () => {
                             <Bar dataKey="uv" stackId="a" fill="#4ADE80" />
                         </BarChart>
                     </ResponsiveContainer>
-                </div>
-            </div>}
-
-            {view === "Table" && <div style={boxShadowStyle} className="mt-10">
-
-                <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
-                    <table className="table table-sm">
-                        <thead>
-                            <tr className="bg-gray-200">
-                                <th>Date</th>
-                                <th>Amazon Order ID</th>
-                                <th>Amazon Quantity</th>
-                                <th>Walmart Quantity</th>
-                                <th>Customer Name</th>
-                                <th>Amazon Price</th>
-                                <th>Amazon Shipping</th>
-                                <th>Amazon Fee</th>
-                                <th>Average Price</th>
-                                <th>Supplier Price</th>
-                                <th>Shipping Cost</th>
-                                <th>Average Tax</th>
-                                <th>Tax</th>
-                                <th>Handling Cost</th>
-                                <th>Cost of Goods</th>
-                                <th>Cash Profit</th>
-                                <th>ROI</th>
-                            </tr>
-                        </thead>
-                        <tbody className="relative">
-                            {storeData?.map((d, index) => <tr key={d._id} className={`${index % 2 == 1 && "bg-gray-200"}`} >
-                                <td className="font-bold">{format(new Date(d.date),'y/MM/d')}</td>
-                                <td>{d.supplier_id}</td>
-                                <td>{d.amazon_quantity}</td>
-                                <td>{d.walmart_quantity}</td>
-                                <td>{d.customer_name}</td>
-                                <td>{d.amazon_price}</td>
-                                <td>{d.amazon_shipping}</td>
-                                <td>cal</td>
-                                <td>{d.average_price}</td>
-                                <td>cal</td>
-                                <td>{d.shipping_cost}</td>
-                                <td>{d.average_tax}</td>
-                                <td>cal</td>
-                                <td>{d.handling_cost}</td>
-                                <td>Cal</td>
-                                <td>cal</td>
-                                <td>cal</td>
-
-                            </tr>)}
-
-                        </tbody>
-                    </table>
                 </div>
             </div>}
         </div>

@@ -97,6 +97,13 @@ const ArrivalFormPage = () => {
     }
   };
 
+  const handlePriceKeyDown = (event) => {
+    const alphabetKeys = /^[0-9]*\.*$/;
+    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
+      event.preventDefault();
+    }
+  };
+
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (arrivalFormData) => {
       return axios.post('/api/v1/pending_arrival_api/insert_pending_arrival_form_data', arrivalFormData)
@@ -271,6 +278,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Amazon Shipping</label>
                   <input
+                    onKeyDown={handlePriceKeyDown}
                     type="text"
                     placeholder="Enter amazon shipping"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -282,6 +290,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Shipping Cost</label>
                   <input
+                    onKeyDown={handlePriceKeyDown}
                     type="text"
                     placeholder="Enter shipping cost"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -293,6 +302,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Handling Cost</label>
                   <input
+                    onKeyDown={handlePriceKeyDown}
                     type="text"
                     placeholder="Enter handling cost"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -374,7 +384,8 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Amazon Price</label>
                   <input
-                    type="number"
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
                     placeholder="Enter amazon price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="amazonPrice"
@@ -385,7 +396,8 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Average Price</label>
                   <input
-                    type="number"
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
                     placeholder="Enter average price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="averagePrice"
@@ -396,6 +408,7 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Average Tax</label>
                   <input
+                    onKeyDown={handlePriceKeyDown}
                     type="text"
                     placeholder="Enter average tax"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
