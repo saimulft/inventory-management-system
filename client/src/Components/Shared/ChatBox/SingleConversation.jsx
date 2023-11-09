@@ -64,6 +64,7 @@ export default function SingleConversation() {
         }&receiver=${currentChatUserEmail}&page_no=${fastAdd ? 1 : pageCount}`
       )
       .then((res) => {
+        console.log("🚀 ~ file: SingleConversation.jsx:67 ~ .then ~ res:", res)
         setPageCount(pageCount + 1);
 
         // setConversation()
@@ -278,7 +279,7 @@ export default function SingleConversation() {
         return (
           <div id="messages_text" key={key}>
             <div
-              className={`flex my-[8px] px-2 ${
+              className={`flex my-[4px] px-2 ${
                 currentUser ? "justify-end " : "justify-start items-end "
               } ${
                 conversation?.length - 1 == key && !chatLoadingStatus && " mb-5"
@@ -298,13 +299,13 @@ export default function SingleConversation() {
                   currentUser
                     ? msg?.text == "*like**"
                       ? "bg-transparent  text-4xl"
-                      : "bg-purple-600 text-white rounded-s-lg rounded-b-lg break-words"
+                      : "bg-purple-600 text-white  break-words"
                     : msg?.text == "*like**"
                     ? "bg-transparent text-4xl"
-                    : "bg-gray-200 text-black rounded-e-lg rounded-b-lg  break-words"
+                    : "bg-gray-200 text-black break-words"
                 } ${
-                  msgLengthCheck ? "px-3 py-2" : " p-2 "
-                }  max-w-[70%]`}
+                  msgLengthCheck ? "rounded-full" : "rounded-xl"
+                }  mx-0.5  py-[5px] px-3 max-w-[65%]`}
               >
                 {text}
               </div>
