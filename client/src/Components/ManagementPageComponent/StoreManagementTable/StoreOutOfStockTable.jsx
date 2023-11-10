@@ -394,7 +394,7 @@ export default function StoreOutOfStockTable() {
               <th>Shipping label</th>
               <th>Status</th>
               <th>Notes</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody className="relative">

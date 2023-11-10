@@ -318,14 +318,14 @@ export default function StoreMissingArrivalTable() {
               <th>ASIN/UPC</th>
               <th>Code Type</th>
               <th>Product Name</th>
-              <th>Order ID</th>
+              <th>Supplier ID</th>
               <th>UPIN</th>
               <th>Expected Qnt.</th>
               <th>Receive Qnt.</th>
               <th>Missing Qnt.</th>
               <th>Supplier Tracking</th>
               <th>EDA</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody className="relative">
@@ -341,7 +341,7 @@ export default function StoreMissingArrivalTable() {
                       <td>{d.asin_upc_code}</td>
                       <td>{d.code_type}</td>
                       <td>{d.product_name}</td>
-                      <td>{d.order_id ? d.order_id : '-'}</td>
+                      <td>{d.supplier_id}</td>
                       <td>{d.upin}</td>
                       <td>{d.quantity}</td>
                       <td>{d.received_quantity}</td>
@@ -384,7 +384,7 @@ export default function StoreMissingArrivalTable() {
                         <td>{d.asin_upc_code}</td>
                         <td>{d.code_type}</td>
                         <td>{d.product_name}</td>
-                        <td>{d.order_id ? d.order_id : '-'}</td>
+                        <td>{d.supplier_id}</td>
                         <td>{d.upin}</td>
                         <td>{d.quantity}</td>
                         <td>{d.received_quantity}</td>
