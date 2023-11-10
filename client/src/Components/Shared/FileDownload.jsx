@@ -1,4 +1,5 @@
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function FileDownload({ fileName }) {
 
@@ -21,32 +22,13 @@ function FileDownload({ fileName }) {
                     console.error('File download error:', error);
                 });
         }
-        else {
-            const downloadImageFromUrl = (fileName) => {
-                axios.get(fileName, {
-                    responseType: 'blob',
-                })
-                    .then(response => {
-                        const url = window.URL.createObjectURL(new Blob([response.data]));
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = `product_image.png`;
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                    })
-                    .catch(error => {
-                        console.error('Image download error:', error);
-                    });
-            };
-            downloadImageFromUrl(fileName)
 
-        }
 
     };
 
     return (
         <div>
-            <button className="bg-[#8633FF] text-white px-3 py-1 text-xs" onClick={handleDownload}>Download</button>
+            {fileName.startsWith('file') ? <button className="bg-[#8633FF] w-[80px] text-white px-3 py-1 text-xs" onClick={handleDownload}>Download</button> : <Link target="_blank" to={fileName} ><button className="bg-[#8633FF] w-[80px] text-white px-3 py-1 text-xs">Visit Link</button></Link>}
         </div>
     );
 }

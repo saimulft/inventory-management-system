@@ -122,7 +122,7 @@ export default function InventoryTotalASINTable() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    
+
     setSearchError("")
     if (!searchText) {
       return
@@ -175,48 +175,36 @@ export default function InventoryTotalASINTable() {
     const form = event.target;
     const minPrice = form.minPrice.value
     const inputUrl = form.inputImageUrl?.value
-    async function checkImageUrlValidity(url) {
-      try {
-        setLoding(true)
-        const response = await fetch(url, { method: 'HEAD' });
-        if (response.ok) {
-          const contentType = response.headers.get('Content-Type');
-          if (contentType && contentType.startsWith('image/')) {
-            const asinInfo = {
-              productImage: url, minPrice
-            }
-            axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData?._id}`, asinInfo)
-              .then(res => {
-                if (res.status === 200) {
-                  setImageSrc(null)
-                  setImageFile(null)
-                  form.reset()
-                  setLoding(false)
-                  refetch()
-                  setCountsRefetch(true)
-                  setSuccess("Updated")
-                  setTimeout(() => {
-                    setSuccess("")
-                  }, 2000);
-                }
-              })
-              .catch(() => {
-                setLoding(false)
-              })
-            return; // It's a valid image URL
-          }
-        }
-        setImageError("Image url is not valid")
-        setLoding(false)
-        return
-      } catch (error) {
-        setLoding(false)
-        setImageError("Image url is not valid")
-      }
-    }
-    if (form?.inputImageUrl?.value) {
 
-      checkImageUrlValidity(form?.inputImageUrl.value)
+    try {
+      setLoding(true)
+
+      const asinInfo = {
+        productImage: inputUrl, minPrice
+      }
+      axios.put(`/api/v1/asin_upc_api/update_asin_upc?id=${singleData?._id}`, asinInfo)
+        .then(res => {
+          if (res.status === 200) {
+            setImageSrc(null)
+            setImageFile(null)
+            form.reset()
+            setLoding(false)
+            refetch()
+            setCountsRefetch(true)
+            setSuccess("Updated")
+            setTimeout(() => {
+              setSuccess("")
+            }, 2000);
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          setLoding(false)
+        })
+
+    } catch (error) {
+      setLoding(false)
+      console.log(error)
     }
     if (imageFile) {
       setLoding(true)
@@ -650,7 +638,7 @@ export default function InventoryTotalASINTable() {
                     <div className="mt-4">
                       <label className="text-slate-500">Image URL</label>
                       <input required
-                        type="text"
+                        type="url"
                         placeholder="Enter your image URL link"
                         className="input input-bordered input-primary w-full mt-2 shadow-lg"
                         id="inputImageUrl"
