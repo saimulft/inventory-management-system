@@ -308,7 +308,7 @@ export default function StoreShippedTable() {
               <th>Courier</th>
               <th>Supplier Tracking</th>
               <th>Shipping level</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody className="relative">

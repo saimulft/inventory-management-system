@@ -5,17 +5,19 @@ import AdditionalPaymentInputList from "./AdditionalPaymentInputList";
 import { BsArrowRightShort } from "react-icons/bs";
 import { Navigate, useNavigate } from "react-router-dom";
 import useStore from "../../hooks/useStore";
+import useAuth from "../../hooks/useAuth";
 // import { useMutation } from "@tanstack/react-query";
 // import axios from "axios";
 // import Swal from "sweetalert2";
-import useAuth from "../../hooks/useAuth";
-import { FaSpinner } from "react-icons/fa";
 // import useGlobal from "../../hooks/useGlobal";
 
 export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
   const { storeDetails, setStoreDetails, supplierInfoInputList, setSupplierInfoInputList, additionalPaymentInputList, setAdditionalPaymentInputList } = useStore()
   const { user } = useAuth()
+
+  const [inputError, setInputError] = useState('')
+
   // const { setStoreRefetch } = useGlobal()
   const navigate = useNavigate()
 
@@ -45,6 +47,29 @@ export default function AddSupplier() {
   const handleAddStore = async () => {
     const date = new Date().toISOString();
 
+    let isNext;
+
+    supplierInfoInputList.forEach(singleList => {
+      setInputError('')
+      isNext = undefined;
+
+      if (!singleList.supplier_name) {
+        return setInputError('Provide supplier name')
+      }
+      else if (!singleList.username) {
+        return setInputError('Provide supplier username')
+      }
+      else if (!singleList.password) {
+        return setInputError('Provide supplier password')
+      }
+
+      return isNext = true;
+    })
+
+    if(!isNext){
+      return;
+    }
+
     setStoreDetails({
       ...storeDetails,
       supplier_information: supplierInfoInputList,
@@ -73,6 +98,7 @@ export default function AddSupplier() {
     // } catch (error) {
     //   console.log(error)
     // }
+
     navigate("/dashboard/add-store/add-supplier/select-payment")
   }
 
@@ -151,9 +177,8 @@ export default function AddSupplier() {
       })}
       {/* next btn  */}
       <button onClick={handleAddStore} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
-        {/* {isLoading && <FaSpinner size={20} className="animate-spin mr-[6px]" />} */}
-        <p>Add Store</p>
-        {/* {!isLoading && <BsArrowRightShort className="mt-[1px]" size={28} />} */}
+        <p>Next</p>
+        <BsArrowRightShort className="mt-[1px]" size={28} />
       </button>
     </div>
   );

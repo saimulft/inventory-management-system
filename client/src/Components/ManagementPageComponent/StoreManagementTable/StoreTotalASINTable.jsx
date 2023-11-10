@@ -54,6 +54,12 @@ export default function InventoryTotalASINTable() {
     }
   })
 
+  const handlePriceKeyDown = (event) => {
+    const alphabetKeys = /^[0-9]*\.*$/;
+    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
+      event.preventDefault();
+    }
+  };
 
   const handleCustomDateSearch = () => {
     setSearchError("")
@@ -488,7 +494,7 @@ export default function InventoryTotalASINTable() {
               <th>Code Type</th>
               <th>Store Manager</th>
               <th>Product Image</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody className="relative">
@@ -616,7 +622,8 @@ export default function InventoryTotalASINTable() {
                 <div className="flex flex-col mt-4">
                   <label className="text-slate-500">New Min Price</label>
                   <input
-                    type="number"
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
                     placeholder="Enter new min price"
                     className="input input-bordered input-primary w-full  mt-2"
                     id="minPrice"

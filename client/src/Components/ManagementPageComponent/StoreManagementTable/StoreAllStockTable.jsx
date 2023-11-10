@@ -141,7 +141,7 @@ export default function StoreAllStockTable() {
   const displayAllData = data.slice(startIndex, endIndex);
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">All Stocks</h3>
+      <h3 className="text-center text-2xl font-medium">All Stocks: {data.length}</h3>
 
       <div className="relative flex justify-end mt-4">
         <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
