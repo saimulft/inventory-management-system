@@ -4,56 +4,55 @@ import { MdOutlineDiscount, MdPendingActions } from "react-icons/md";
 import { LiaShippingFastSolid } from "react-icons/lia";
 import { RiCalendarCloseFill, RiFileCloseLine } from "react-icons/ri";
 import { Link } from "react-router-dom";
-
-export default function StoreManagement({documentCounts}) {
+export default function storeManagement() {
   const shadowStyle = {
     boxShadow: "0px 0px 15px -8px rgba(0,0,0,0.75)",
   };
   const storeManagementData = [
     {
-      quantity: documentCounts.all_stock,
+      quantity: "2,554",
       Icon: FaDropbox,
       title: "All Stock",
       tablePath: "all-stock",
     },
     {
-      quantity: documentCounts.pending_arrival,
+      quantity: "584",
       Icon: MdPendingActions,
       title: "Pending Arrival",
       tablePath: "pending-arrival",
     },
     {
-      quantity: documentCounts.preparing_form_data,
+      quantity: "343",
       Icon: AiOutlineSetting,
       title: "Preparing Request",
       tablePath: "preparing-request",
     },
     {
-      quantity: documentCounts.ready_to_ship_data,
+      quantity: "3,452",
       Icon: AiOutlineShoppingCart,
       title: "Ready To Ship",
       tablePath: "ready-to-ship",
     },
     {
-      quantity: documentCounts.shipped_data,
+      quantity: "16,245",
       Icon: LiaShippingFastSolid,
       title: "Shipped",
       tablePath: "shipped",
     },
     {
-      quantity: documentCounts.out_of_stock,
+      quantity: "46",
       Icon: RiCalendarCloseFill,
       title: "Out Of Stock",
       tablePath: "out-of-stock",
     },
     {
-      quantity: documentCounts.missing_arrival,
+      quantity: "149",
       Icon: RiFileCloseLine,
       title: "Missing Arrival",
       tablePath: "missing-arrival",
     },
     {
-      quantity: documentCounts.asin_upc,
+      quantity: "8,451",
       Icon: MdOutlineDiscount,
       title: "Total ASIN/UPC",
       tablePath: "total-asin",

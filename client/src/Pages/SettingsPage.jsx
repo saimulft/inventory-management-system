@@ -6,7 +6,9 @@ import useAuth from "../hooks/useAuth";
 export default function SettingsPage() {
   const { setIsActiveSetting, isActiveSetting } = useContext(GlobalContext);
   const { user } = useAuth()
-  const boxShadowStyle = { boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)"};
+  const boxShadowStyle = {
+    boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
+  };
 
   return (
     <div
@@ -14,11 +16,11 @@ export default function SettingsPage() {
       className="flex flex-col justify-center h-full my-16 pt-10 rounded-lg  max-w-[80%] mx-auto px-20  bg-white shadow-lg"
     >
       <div className="border-b-2 border-slate-500 w-full flex justify-center items-center">
-        <div className="flex mb-6 rounded overflow-hidden">
+        <div className="flex mb-6 ">
           <Link to="/dashboard/settings/profile">
             <button
               onClick={() => setIsActiveSetting("profile")}
-              className={`border border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-s ${isActiveSetting == "profile" && "bg-[#8633FF] text-white"
+              className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-s ${isActiveSetting == "profile" && "bg-[#8633FF] text-white"
                 }`}
             >
               Profile
@@ -30,7 +32,7 @@ export default function SettingsPage() {
               <Link to="/dashboard/settings/add-users">
                 <button
                   onClick={() => setIsActiveSetting("add-users")}
-                  className={`border border-l-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "add-users" && "bg-[#8633FF] text-white"
+                  className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "add-users" && "bg-[#8633FF] text-white"
                     }`}
                 >
                   Add Users
@@ -43,7 +45,7 @@ export default function SettingsPage() {
               <Link to="/dashboard/settings/all-users">
                 <button
                   onClick={() => setIsActiveSetting("all-users")}
-                  className={`border border-l-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "all-users" && "bg-[#8633FF] text-white"
+                  className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "all-users" && "bg-[#8633FF] text-white"
                     }`}
                 >
                   All Users
@@ -80,7 +82,7 @@ export default function SettingsPage() {
               <Link to="/dashboard/settings/billing-subscription">
                 <button
                   onClick={() => setIsActiveSetting("billing-subscription")}
-                  className={`border border-l-0  border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-e ${isActiveSetting == "billing-subscription" &&
+                  className={`border  border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-e ${isActiveSetting == "billing-subscription" &&
                     "bg-[#8633FF] text-white"
                     }`}
                 >

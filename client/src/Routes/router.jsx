@@ -53,10 +53,6 @@ import AllAdminUsers from "../Pages/SettingPages/AllAdminUsers";
 import StoreManagerVAPage from "../Pages/SettingPages/StoreManagerVAPage";
 import WarehouseManagerVAPage from "../Pages/SettingPages/WarehouseManagerVAPage";
 import AuthRoute from "./AuthRoute";
-import AdminRoute from "./AdminRoute";
-import StoreManagerRoute from "./StoreManagerRoute";
-import StoreOwnerRoute from "./StoreOwnerRoute";
-import ProfitTrackerStatsPage from "../Pages/ProfitTrackerStatsPage";
 
 export const router = createBrowserRouter([
   {
@@ -69,7 +65,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/home",
-        element: <AdminRoute><DashboardPage /></AdminRoute>,
+        element: <DashboardPage />,
       },
       {
         path: "/dashboard/management",
@@ -154,23 +150,19 @@ export const router = createBrowserRouter([
 
       {
         path: "/dashboard/all-stores",
-        element: <AdminRoute><AllStoresPage /></AdminRoute>,
+        element: <AllStoresPage />,
       },
       {
-        path: "/dashboard/all-stores/store-edit/:id",
-        element: <AdminRoute><StoreEditPage /></AdminRoute>,
+        path: "/dashboard/all-stores/store-edit",
+        element: <StoreEditPage />,
       },
       {
         path: "/dashboard/add-store",
-        element: <AdminRoute><AddStorePage /></AdminRoute>,
+        element: <AddStorePage />,
       },
       {
         path: "/dashboard/profit-tracker",
-        element: <StoreOwnerRoute><ProfitTrackerPage /></StoreOwnerRoute>,
-      },
-      {
-        path: "/dashboard/profit-tracker/store/:id",
-        element: <StoreOwnerRoute><ProfitTrackerStatsPage /></StoreOwnerRoute>,
+        element: <ProfitTrackerPage />,
       },
       {
         path: "/dashboard/support",
@@ -187,15 +179,15 @@ export const router = createBrowserRouter([
       },
       {
         path: "/dashboard/pending-arrival-from",
-        element: <StoreManagerRoute><ArrivalFormPage /></StoreManagerRoute>,
+        element: <ArrivalFormPage />,
       },
       {
         path: "/dashboard/preparing-request-from",
-        element: <StoreManagerRoute><PreparingFormPage /></StoreManagerRoute>,
+        element: <PreparingFormPage />,
       },
       {
         path: "/dashboard/add-ASIN-UPC-from",
-        element: <StoreManagerRoute><AddASINForm /></StoreManagerRoute>,
+        element: <AddASINForm />,
       },
       {
         path: "/dashboard/add-store/add-supplier",
@@ -287,18 +279,14 @@ export const router = createBrowserRouter([
   },
   {
     path: "/verify_email",
-    element: <AuthRoute><VerifyEmail /></AuthRoute>,
+    element: <VerifyEmail />,
   },
   {
     path: "/reset_password",
-    element: <AuthRoute><ResetPassword /></AuthRoute>,
+    element: <ResetPassword />,
   },
   {
     path: "/update_password",
-    element: <AuthRoute><UpdatePassword /></AuthRoute>,
+    element: <UpdatePassword />,
   },
-  {
-    path: '*',
-    element: <Navigate to="/dashboard/home"></Navigate>
-  }
 ]);

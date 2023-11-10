@@ -1,33 +1,16 @@
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { v4 as uuidv4 } from 'uuid';
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import countries from "../../Utilities/countries";
 import ToastMessage from "../../Components/Shared/ToastMessage";
 import { FaSpinner } from "react-icons/fa";
-import SearchDropdown from "../../Utilities/SearchDropdown";
 
 const WarehouseManagerVAPage = () => {
     const { user } = useAuth();
     const [errorMessage, setErrorMessage] = useState('')
     const [successMessage, setSuccessMessage] = useState('')
-    const [warehouseAdminOption, setWarehouseAdminOption] = useState(null)
-
-    const { data: allWarehouseAdmin = [], isLoading: warehouseAdminLoading } = useQuery({
-        queryKey: ['get_all_warehouse_admin'],
-        queryFn: async () => {
-            try {
-                const res = await axios.get(`/api/v1/warehouse_admin_api/get_all_warehouse_admin?id=${user.admin_id}`)
-                if (res.status === 200) {
-                    return res.data.data;
-                }
-                return [];
-            } catch (error) {
-                console.log(error);
-                return [];
-            }
-        }
-    })
 
     const { mutateAsync, isLoading } = useMutation({
         mutationFn: (warehouseManagerVA) => {
@@ -41,35 +24,33 @@ const WarehouseManagerVAPage = () => {
         setSuccessMessage('')
 
         const form = event.target;
-        const name = form.name.value;
+        const name = form.ownerName.value;
         const email = form.email.value;
         const password = form.password.value;
         const confirmPassword = form.confirmPassword.value;
         const username = form.username.value;
 
+        const warehouseName = form.warehouseName.value;
+        const address = form.address.value;
+        const city = form.city.value;
+        const state = form.state.value;
+        const zipCode = form.zipCode.value;
+        const country = form.country.value;
+
         if (password !== confirmPassword) {
             return setErrorMessage('Password and confirm password must be same!')
         }
 
-        if (password.length < 6) {
+        else if (password.length < 6) {
             return setErrorMessage("Password must be at least 6 characters or longer!")
         }
 
-        if (user.role !== 'Warehouse Admin' && !warehouseAdminOption) {
-            return setErrorMessage('Please select warehouse admin')
-        }
-
-        const warehouseManagerVA = {
-            admin_id: user.admin_id, creator_email: user?.email, warehouse_manager_va_id: uuidv4(), full_name: name, email, username, password, role: 'Warehouse Manager VA',
-            warehouse_admin_id: user.role === 'Warehouse Admin' ? user.warehouse_admin_id : warehouseAdminOption.warehouse_admin_id,
-            warehouse_id: user.role === 'Warehouse Admin' ? user.warehouse_id : warehouseAdminOption.value
-        }
+        const warehouseManagerVA = { admin_id: user.admin_id, creator_email: user?.email, warehouse_manager_va_id: uuidv4(), full_name: name, email, username, password, role: 'Warehouse Manager VA', warehouse_name: warehouseName, address, city, state, zip: zipCode, country }
 
         try {
             const { status } = await mutateAsync(warehouseManagerVA)
             if (status === 201) {
                 form.reset()
-                setWarehouseAdminOption(null)
                 setSuccessMessage(`Successfully created a new warehouse manager VA and sent an invitation mail to ${email} with login credentials`)
             }
             else if (status === 200) {
@@ -93,13 +74,74 @@ const WarehouseManagerVAPage = () => {
                     <div className="flex gap-4 w-full mt-5">
                         <div className="w-1/2">
                             <div className="mt-3">
-                                <label className="text-slate-500">Name*</label>
+                                <label className="text-slate-500">Warehouse Name*</label>
                                 <input
                                     type="text"
                                     placeholder="Enter name"
                                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                    id="name"
-                                    name="name"
+                                    id="warehouseName"
+                                    name="warehouseName"
+                                    required
+                                />
+                            </div>
+                            <div className="mt-3">
+                                <label className="text-slate-500">Username*</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter username"
+                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                    id="username"
+                                    name="username"
+                                    required
+                                />
+                            </div>
+
+                            <div className="mt-3">
+                                <label className="text-slate-500">Password*</label>
+                                <input
+                                    type="password"
+                                    placeholder="Enter password"
+                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                    id="password"
+                                    name="password"
+                                    required
+                                />
+                            </div>
+
+                            <div className="mt-4">
+                                <label className="text-slate-500">Address*</label>
+                                <input
+                                    type="text"
+                                    placeholder="Street Address, P.O.Box, apartment, suit, building, floor"
+                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                    id="address"
+                                    name="address"
+                                    required
+                                />
+                            </div>
+
+                            <div className="mt-4">
+                                <label className="text-slate-500">State*</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter state"
+                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                    id="state"
+                                    name="state"
+                                    required
+                                />
+                            </div>
+                        </div>
+
+                        <div className="w-1/2">
+                            <div className="mt-3">
+                                <label className="text-slate-500">Owner Name*</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter owner name"
+                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                    id="ownerName"
+                                    name="ownerName"
                                     required
                                 />
                             </div>
@@ -125,40 +167,46 @@ const WarehouseManagerVAPage = () => {
                                     required
                                 />
                             </div>
-                        </div>
 
-                        <div className="w-1/2">
-                            <div className="mt-3">
-                                <label className="text-slate-500">Username*</label>
+                            <div className="mt-4">
+                                <label className="text-slate-500">City*</label>
                                 <input
                                     type="text"
-                                    placeholder="Enter username"
+                                    placeholder="Enter your city"
                                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                    id="username"
-                                    name="username"
+                                    id="city"
+                                    name="city"
                                     required
                                 />
                             </div>
 
-                            <div className="mt-3">
-                                <label className="text-slate-500">Password*</label>
+                            <div className="mt-4">
+                                <label className="text-slate-500">ZIP Code*</label>
                                 <input
-                                    type="password"
-                                    placeholder="Enter password"
+                                    type="text"
+                                    placeholder="Enter zip code"
                                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                    id="password"
-                                    name="password"
+                                    id="zipCode"
+                                    name="zipCode"
                                     required
                                 />
                             </div>
-
-                            {
-                                user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-3">
-                                    <label className="text-slate-500">Warehouse Admin</label>
-                                    <SearchDropdown isLoading={warehouseAdminLoading} isMulti={false} option={warehouseAdminOption} optionData={allWarehouseAdmin} placeholder="Select warehouse admin" setOption={setWarehouseAdminOption} />
-                                </div> : ''
-                            }
                         </div>
+                    </div>
+
+                    <div className="mt-3 flex flex-col">
+                        <label className="text-slate-500">Country*</label>
+                        <select
+                            className="select select-primary w-full mt-2 shadow-lg"
+                            name="country"
+                            id="country"
+                            required
+                        >
+                            <option disabled selected>
+                                Select your country
+                            </option>
+                            {countries}
+                        </select>
                     </div>
 
                     <ToastMessage successMessage={successMessage} errorMessage={errorMessage} />

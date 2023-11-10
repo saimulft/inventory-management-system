@@ -5,9 +5,6 @@ import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
 import ToastMessage from "../Components/Shared/ToastMessage";
-import SearchDropdown from "../Utilities/SearchDropdown";
-import { useQuery } from "@tanstack/react-query";
-import useGlobal from "../hooks/useGlobal";
 const PreparingFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
@@ -20,135 +17,67 @@ const PreparingFormPage = () => {
   const [shippingImageError, setShippingImageError] = useState('')
   const [formError, setFormError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [storeOption, setStoreOption] = useState(null)
-  const [warehouseOption, setWarehouseOption] = useState(null)
-  const [asinUpcOption, setAsinUpcOption] = useState()
-  const [productName, setProductName] = useState('')
+  const [asinUpcOption, setAsinUpcOption] = useState(null)
   const { user } = useAuth()
-  const {setCountsRefetch} = useGlobal()
-  const asinId = asinUpcOption?.value
-  const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
 
   useEffect(() => {
-    if (storeOption?.label && asinUpcOption) {
-      const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
-
-      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`,{user})
-        .then(res => {
-          if (res.status === 200) {
-            setProductName(res.data.data.product_name)
-          }
-          if (res.status === 204) {
-
-            setProductName("")
-          }
-        }).catch(err => console.log(err))
-    }
-  }, [storeOption?.label, asinUpcOption,user]);
-
-  const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
-    queryKey: ['asin_upc_data'],
-    queryFn: async () => {
-      try {
-        const res = await axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', {user})
+    axios.get(`/api/v1/asin_upc_api/get_asin_upc_by_email?email=${user?.email}`)
+      .then(res => {
         if (res.status === 200) {
-          return res.data.data;
+          setAsinUpcOption(res.data.data)
         }
-        return []
-      } catch (error) {
-        console.log(error)
-        return []
-      }
-    }
-  })
-  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
-    queryKey: ['get_all_stores_data'],
-    queryFn: async () => {
-      try {
-        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', {user})
-        if (res.status === 200) {
-          return res.data.data;
-        }
-        return [];
-      } catch (error) {
-        console.log(error);
-        return [];
-      }
-    }
-  })
+      }).catch(err => console.log(err))
+  }, [user?.email])
 
-  const { data: warehouseData = [], isLoading: warehouseLoading } = useQuery({
-    queryKey: ['get_warehouse_data'],
-    queryFn: async () => {
-      try {
-        const res = await axios.get(`/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`)
-        if (res.status === 200) {
-          return res.data.data;
-        }
-        return [];
-      } catch (error) {
-        console.log(error);
-        return [];
-      }
-    }
-  })
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
       event.preventDefault();
     }
   };
-
   const hadnlePreparingForm = (event) => {
     setInvoiceImageError('')
     setShippingImageError('')
     setFormError('')
     event.preventDefault()
     const form = event.target
-    const date = new Date(form.date.value).toISOString();
-    const createdAt = new Date().toISOString();
+    const date = new Date(form.date.value).toISOString()
+    const code = form.code.value
+    const productName = form.productName.value
     const orderID = form.orderID.value
     const courier = form.courier.value
-    const upin = `${storeOption?.label}_${asinUpcOption?.label}`
+    const storeName = form.storeName.value
+    const codeType = form.codeType.value
+    const upin = form.upin.value
     const quantity = form.quantity.value
     const trackingNumber = form.trackingNumber.value
+    const warehouse = form.warehouse.value
 
-
-    if (!warehouseOption?.label) {
+    if (code === 'Select ASIN or UPC' || !code) {
+      setFormError("Missing ASIN or UPC")
+      return
+    }
+    if (warehouse === 'Select Warehouse' || !warehouse) {
       setFormError("Missing warehouse")
       return
     }
-    if (!storeOption?.label) {
-      setFormError("Select  Store")
+
+    if (storeName === 'Pick Store Name' || !storeName) {
+      setFormError("Missing  store name")
       return
     }
-    if (!productName) {
-      setFormError(`No product available under UPIN ${upin}`)
+    if (codeType === 'Pick Code Type' || !codeType) {
+      setFormError("Missing code type")
       return
     }
-    if (!date || !asinUpcOption.label || !orderID || !upin || !quantity) {
+    if (!date || !code || !orderID || !productName || !storeName || !codeType || !upin || !quantity) {
       setFormError("Missing form field detected")
       return;
     }
 
     const formData = new FormData()
     let preparingFormvalue = {
-      adminId: user?.admin_id,
-      creatorEmail: user?.email,
-      date,
-      asin_upc_code: asinUpcOption.label,
-      createdAt,
-      orderID,
-      courier,
-      productName,
-      storeName: storeOption?.label,
-      storeId: storeOption?.value,
-      codeType: asinUpc && asinUpc[0].code_type,
-      upin,
-      quantity,
-      trackingNumber,
-      warehouseName: warehouseOption?.label,
-      warehouseId: warehouseOption?.value
+      adminId: user?.admin_id, creatorEmail: user?.email, date, code, orderID, courier, productName, storeName, codeType, upin, quantity, trackingNumber, warehouse
     }
     for (const key in preparingFormvalue) {
       formData.append(key, preparingFormvalue[key]);
@@ -174,20 +103,15 @@ const PreparingFormPage = () => {
     })
       .then(res => {
         if (res.status === 201) {
-          setCountsRefetch(true)
           Swal.fire(
             'Added',
             'Preparing form request has been added.',
             'success'
           )
           form.reset()
-          setProductName("")
-          setWarehouseOption(null)
-          setStoreOption(null)
-          setAsinUpcOption(null)
           setInvoiceImageFile(null)
-          setShippingImageFile(null)
           setInvoiceImageSrc(null)
+          setShippingImageFile(null)
           setShippingImageSrc(null)
           setLoading(false)
         }
@@ -196,14 +120,12 @@ const PreparingFormPage = () => {
           setFormError("Something went wrong to send preparing form request")
         }
       })
-      .catch((err) => {
-        console.log(err)
+      .catch(() => {
         setLoading(false)
         setFormError("Something went wrong to send preparing form request")
 
       })
   }
-
   const handleInvoiceImage = (e) => {
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
@@ -219,7 +141,6 @@ const PreparingFormPage = () => {
       }
     }
   }
-
   const handleShippingImage = (e) => {
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
@@ -237,24 +158,25 @@ const PreparingFormPage = () => {
   }
 
 
+
   return (
-    <div className="py-20 rounded-lg w-[60%] mx-auto">
+    <div className="py-20 rounded-lg">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] bg-white shadow-lg h-fit w-full m-auto rounded-xl"
+        className="border border-[#8633FF] bg-white shadow-lg h-fit w-fit m-auto rounded-xl"
       >
         <div className="text-center mt-10">
-          <p className="text-2xl font-bold">Preparing Request Form</p>
+          <p className="text-2xl font-bold">Preparing Request From</p>
         </div>
         <div className="lg:py-10 lg:px-20 w-full">
-          <form className="w-full" onSubmit={hadnlePreparingForm}>
+          <form onSubmit={hadnlePreparingForm}>
             <div className="flex gap-7">
               <div className="w-full">
-                <div >
+                <div>
                   <label className="text-slate-500">Date</label>
                   <input
+                    required
                     type="date"
-                    placeholder="Enter store name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="date"
                     name="date"
@@ -262,19 +184,30 @@ const PreparingFormPage = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500 mb-2">ASIN/UPC</label>
-                  <SearchDropdown isLoading={asinLoading} option={asinUpcOption} placeholder="Select ASIN or UPC" optionData={asinUpcData} setOption={setAsinUpcOption} />
+                  <label className="text-slate-500">ASIN/UPC</label>
+                  <select
+
+                    className="select select-primary w-full mt-2 shadow-lg"
+                    name="code"
+                    id="code"
+                  >
+                    <option defaultValue="Select ASIN or UPC">Select ASIN or UPC</option>
+                    {asinUpcOption?.map((asin, index) =>
+                      <>
+                        <option key={index} value={asin.asin_upc_code}>{asin.asin_upc_code}</option>
+                      </>
+
+                    )}
+                  </select>
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
-                    readOnly
-                    value={productName}
                     required
                     placeholder="Enter product name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="productName"
                     name="productName"
                   />
@@ -312,7 +245,7 @@ const PreparingFormPage = () => {
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="invoice-dropzone"
-                      className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                      className="flex justify-between items-center px-4 w-max h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                     >
                       <div className="flex items-center gap-8 py-[6.5px]">
                         {InvoieImageSrc ? <img src={InvoieImageSrc} className="h-8" alt="" /> :
@@ -358,33 +291,41 @@ const PreparingFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <SearchDropdown isLoading={storeLoading} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                  <select
+                    className="select select-primary w-full mt-2 shadow-lg"
+                    name="storeName"
+                    id="storeName"
+                  >
+                    <option defaultValue="Pick Store Name">
+                      Pick Store Name
+                    </option>
+                    <option value="Amazon">Amazon</option>
+                    <option value="Daraz">Daraz</option>
+                    <option value="Alibaba">Alibaba</option>
+                  </select>
                 </div>
-
-
                 <div className="mt-4">
                   <label className="text-slate-500">Code type</label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={asinUpc && asinUpc[0].code_type}
-
-                    placeholder="Enter product name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="code"
-                    name="code"
-                  />
+                  <select
+                    className="select select-primary w-full mt-2 shadow-lg"
+                    name="codeType"
+                    id="codeType"
+                  >
+                    <option defaultValue="Pick Code Type">
+                      Pick Code Type
+                    </option>
+                    <option value="ASIN">ASIN</option>
+                    <option value="UPC">UPC</option>
+                  </select>
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">UPIN</label>
                   <input
                     required
-                    readOnly
-                    value={storeOption?.label && asinUpcOption && `${storeOption?.label}_${asinUpcOption.label}`}
                     type="text"
                     placeholder="Enter UPIN"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="upin"
                     name="upin"
                   />
@@ -419,7 +360,7 @@ const PreparingFormPage = () => {
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="shippingLabel-dropzone"
-                      className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                      className="flex justify-between items-center px-4 w-full h-[70px] border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[6.5px]">
                         {shippingImageSrc ? <img src={shippingImageSrc} className="h-8" alt="" /> :
@@ -457,14 +398,22 @@ const PreparingFormPage = () => {
                       </div>
                     </label>
                   </div>
-
                   {shippingImageError && <p className="text-xs mt-2 font-medium text-rose-500">{shippingImageError}</p>}
                 </div>
+
               </div>
             </div>
             <div className="mt-4">
               <label className="text-slate-500">Warehouse</label>
-              <SearchDropdown isLoading={warehouseLoading} option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
+              <select
+                className="select select-primary w-full mt-2 shadow-lg"
+                name="warehouse"
+                id="warehouse"
+              >
+                <option defaultValue="Select Warehouse">Select Warehouse</option>
+                <option value="Test-1">Test-1</option>
+                <option value="Test-2">Test-2</option>
+              </select>
             </div>
             <ToastMessage errorMessage={formError} />
             <div className="flex items-center justify-center mt-8">

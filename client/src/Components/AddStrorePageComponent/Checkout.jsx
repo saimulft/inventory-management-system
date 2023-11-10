@@ -1,12 +1,8 @@
 import { useState } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
-import { useNavigate } from "react-router-dom";
-import useStore from "../../hooks/useStore";
+import { Link } from "react-router-dom";
 export default function Checkout() {
   const [isToggleActive, setIsToggleActive] = useState(true);
-  const { storeDetails, setStoreDetails } = useStore()
-  const navigate = useNavigate()
-
   const yearlyPlanData = [
     {
       category: "For individuals",
@@ -48,7 +44,6 @@ export default function Checkout() {
       ],
     },
   ];
-
   const monthlyPlanData = [
     {
       category: "For individuals",
@@ -90,13 +85,6 @@ export default function Checkout() {
       ],
     },
   ];
-
-  const handleGetStarted = (plan) => {
-    setStoreDetails({ ...storeDetails, subscription_plan: plan, subscription_type: isToggleActive ? 'yearly' : 'monthly' })
-    navigate("/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form")
-  }
-
-  console.log(isToggleActive)
   return (
     <div className="flex justify-center items-center h-screen my-10   ">
       {isToggleActive && (
@@ -136,9 +124,10 @@ export default function Checkout() {
                     style={{
                       boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
                     }}
-                    className={`p-8 rounded-lg ${plan.plan == "Pro" &&
+                    className={`p-8 rounded-lg ${
+                      plan.plan == "Pro" &&
                       "relative -top-9 bg-[#8633FF] text-white"
-                      } `}
+                    } `}
                   >
                     {plan.plan == "Basic" && (
                       <div className="flex gap-4">
@@ -197,16 +186,18 @@ export default function Checkout() {
                     <div className="flex mt-2">
                       <h1 className="text-3xl font-bold flex items-center">
                         <span
-                          className={`${plan.offer_price == "Custom" ? "hidden" : "block"
-                            }`}
+                          className={`${
+                            plan.offer_price == "Custom" ? "hidden" : "block"
+                          }`}
                         >
                           $
                         </span>
                         {plan.offer_price}
                       </h1>
                       <p
-                        className={`mt-auto ${plan.offer_price == "Custom" ? "hidden" : "block"
-                          } `}
+                        className={`mt-auto ${
+                          plan.offer_price == "Custom" ? "hidden" : "block"
+                        } `}
                       >
                         /Year
                       </p>
@@ -220,10 +211,11 @@ export default function Checkout() {
                         return (
                           <div key={index} className="flex items-center gap-2">
                             <div
-                              className={`${plan.plan == "Pro"
-                                ? "bg-white text-[#8633FF]"
-                                : "bg-[#8633FF] text-white"
-                                }  h-5 w-5 flex justify-center items-center rounded-full  text-xs`}
+                              className={`${
+                                plan.plan == "Pro"
+                                  ? "bg-white text-[#8633FF]"
+                                  : "bg-[#8633FF] text-white"
+                              }  h-5 w-5 flex justify-center items-center rounded-full  text-xs`}
                             >
                               <AiOutlineCheck />
                             </div>
@@ -232,18 +224,20 @@ export default function Checkout() {
                         );
                       })}
                     </div>
-
-                    <button onClick={() => handleGetStarted(plan.plan)}
-                      className={` ${plan.plan === "Pro"
-                        ? "bg-white text-[#8633FF]"
-                        : "bg-[#8633FF] text-white"
+                    <Link to="/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form">
+                      <button
+                        className={` ${
+                          plan.plan === "Pro"
+                            ? "bg-white text-[#8633FF]"
+                            : "bg-[#8633FF] text-white"
                         }  w-full mt-8 py-2 rounded font-medium`}
-                    >
-                      Get started
-                    </button>
-                    <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
-                      Popular
-                    </p>
+                      >
+                        Get started
+                      </button>
+                      <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
+                        Popular
+                      </p>
+                    </Link>
                   </div>
                 );
               })}
@@ -289,9 +283,10 @@ export default function Checkout() {
                     style={{
                       boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
                     }}
-                    className={`p-8 rounded-lg ${plan.plan == "Pro" &&
+                    className={`p-8 rounded-lg ${
+                      plan.plan == "Pro" &&
                       "relative -top-9 bg-[#8633FF] text-white"
-                      } `}
+                    } `}
                   >
                     {plan.plan == "Basic" && (
                       <div className="flex gap-4">
@@ -350,16 +345,18 @@ export default function Checkout() {
                     <div className="flex mt-2">
                       <h1 className="text-3xl font-bold flex items-center">
                         <span
-                          className={`${plan.offer_price == "Custom" ? "hidden" : "block"
-                            }`}
+                          className={`${
+                            plan.offer_price == "Custom" ? "hidden" : "block"
+                          }`}
                         >
                           $
                         </span>
                         {plan.offer_price}
                       </h1>
                       <p
-                        className={`mt-auto ${plan.offer_price == "Custom" ? "hidden" : "block"
-                          } `}
+                        className={`mt-auto ${
+                          plan.offer_price == "Custom" ? "hidden" : "block"
+                        } `}
                       >
                         /month
                       </p>
@@ -373,10 +370,11 @@ export default function Checkout() {
                         return (
                           <div key={index} className="flex items-center gap-2">
                             <div
-                              className={`${plan.plan == "Pro"
-                                ? "bg-white text-[#8633FF]"
-                                : "bg-[#8633FF] text-white"
-                                }  h-5 w-5 flex justify-center items-center rounded-full  text-xs`}
+                              className={`${
+                                plan.plan == "Pro"
+                                  ? "bg-white text-[#8633FF]"
+                                  : "bg-[#8633FF] text-white"
+                              }  h-5 w-5 flex justify-center items-center rounded-full  text-xs`}
                             >
                               <AiOutlineCheck />
                             </div>
@@ -385,18 +383,20 @@ export default function Checkout() {
                         );
                       })}
                     </div>
-
-                    <button onClick={() => handleGetStarted(plan.plan)}
-                      className={` ${plan.plan === "Pro"
-                        ? "bg-white text-[#8633FF]"
-                        : "bg-[#8633FF] text-white"
+                    <Link to="/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form">
+                      <button
+                        className={` ${
+                          plan.plan === "Pro"
+                            ? "bg-white text-[#8633FF]"
+                            : "bg-[#8633FF] text-white"
                         }  w-full mt-8 py-2 rounded font-medium`}
-                    >
-                      Get started
-                    </button>
-                    <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
-                      Popular
-                    </p>
+                      >
+                        Get started
+                      </button>
+                      <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
+                        Popular
+                      </p>
+                    </Link>
                   </div>
                 );
               })}

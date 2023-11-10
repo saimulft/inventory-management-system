@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 @layer base {
-
     input[type="number"]::-webkit-inner-spin-button,
     input[type="number"]::-webkit-outer-spin-button {
         -webkit-appearance: none;
@@ -40,72 +39,5 @@ display: none;
     background-color: rgba(0,0,0,.2);
   }
   .new_conversation::-webkit-scrollbar-track {
-    background: hsla(0,0%,100%,.1);}
-body {
-    overflow-y: scroll;
-}
-
-input,
-select {
-    outline: none !important;
-}
-
-.css-13cymwt-control,
-.css-t3ipsp-control {
-    border: 0.6px solid #8633FF !important;
-    margin-top: 8px !important;
-    cursor: pointer !important;
-    border-radius: 8px !important;
-    min-height: 48px !important;
-}
-
-.css-art2ul-ValueContainer2 {
-    padding: 7px 16px !important;
-}
-
-
-/* css for pagination */
-/* Pagination.css */
-.pagination {
-    margin-top: 40px;
-    display: flex;
-    list-style: none;
-    padding: 0;
-    user-select: none;
-}
-
-.pagination li {
-    margin: 0 5px;
-}
-
-.pagination a {
-    text-decoration: none;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.pagination .active a {
-    background-color: #8633FF;
-    color: #fff;
-    border: 1px solid #8633FF;
-}
-.pagination .ellipsis {
-    display: none;
-  }
-  
-  .pagination .active + .ellipsis {
-    display: inline-block;
-  }
-  
-  /* table styles */
-  table{
-    border: 1px solid rgba(209, 213, 219);
-    border-collapse: collapse;
-  }
-  th{
-    color: black;
-  }
-  th, td{
-    border: 1px solid rgba(209, 213, 219);
+    background: hsla(0,0%,100%,.1);
   }

@@ -1,10 +1,11 @@
+import { useState } from "react";
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 
-export default function SupplierInfoInputListEdit({supplierInfoInputList, setSupplierInfoInputList}) {
-  // const [supplierInfoInputList, setSupplierInfoInputList] = useState([
-  //   { supplier_name: "", username: "", password: "" },
-  // ]);
+export default function SupplierInfoInputListEdit() {
+  const [supplierInfoInputList, setSupplierInfoInputList] = useState([
+    { supplierName: "", userID: "", password: "" },
+  ]);
 
   const handleSupplierInfoInputChange = (event, index) => {
     const { name, value } = event.target;
@@ -16,7 +17,7 @@ export default function SupplierInfoInputListEdit({supplierInfoInputList, setSup
   const handleSupplierInfoIncrementField = () => {
     setSupplierInfoInputList([
       ...supplierInfoInputList,
-      { supplier_name: "", username: "", password: "" },
+      { supplierName: "", userID: "", password: "" },
     ]);
   };
 
@@ -42,18 +43,14 @@ export default function SupplierInfoInputListEdit({supplierInfoInputList, setSup
               className="border border-gray-400 outline-[#8633FF] rounded py-3 px-2 w-1/3 text-xs "
               placeholder="Supplier name"
               type="text"
-              name="supplier_name"
-              id="supplier_name"
-              defaultValue={i?.supplier_name}
+              name="supplierName"
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
               className="border border-gray-400 outline-[#8633FF] rounded py-3 px-2 w-1/3 text-xs "
-              placeholder="Username"
+              placeholder="User ID"
               type="text"
-              name="username"
-              id="username"
-              defaultValue={i?.username}
+              name="userID"
             />
             <input
               onChange={(e, i) => handleSupplierInfoInputChange(e, i)}
@@ -61,8 +58,6 @@ export default function SupplierInfoInputListEdit({supplierInfoInputList, setSup
               placeholder="Password"
               type="text"
               name="password"
-              id="password"
-              defaultValue={i?.password}
             />
             <button
               onClick={() => handleSupplierInfoRemoveField(index)}

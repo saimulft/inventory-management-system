@@ -58,7 +58,7 @@ export default function AdminVRPage() {
 
   return (
     <div className="py-10 ">
-      <h3 className="text-2xl font-bold text-center">Add New Admin VA</h3>
+      <h3 className="text-2xl font-bold text-center">Add New Admin</h3>
       <form onSubmit={handleCreateAdminVA}>
         <div className="flex gap-4 w-full mt-5">
           <div className="w-1/2">
@@ -128,7 +128,7 @@ export default function AdminVRPage() {
         <div className="flex justify-center">
           <button type="submit" disabled={isLoading} className="flex gap-2 items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white">
             {isLoading && <FaSpinner size={20} className="animate-spin" />}
-            <p>Create Admin VA</p>
+            <p>Create Admin</p>
           </button>
         </div>
       </form>

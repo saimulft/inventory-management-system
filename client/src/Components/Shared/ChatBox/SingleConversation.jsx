@@ -25,6 +25,7 @@ export default function SingleConversation() {
 
   // all state
   const [conversation, setConversation] = useState([]);
+  console.log("🚀 ~ file: SingleConversation.jsx:28 ~ SingleConversation ~ conversation:", conversation)
   const [noSms, setNoSms] = useState(0);
   const [loadNew, setLoadNew] = useState(true);
   const [pageCount, setPageCount] = useState(1);
@@ -254,11 +255,6 @@ export default function SingleConversation() {
   let content;
   if (!conversationLoading && conversationError) {
     content = <p>Something is Wrong !</p>;
-  } else if (
-    (!conversationLoading && !conversationError && conversation?.length == 0) ||
-    !conversation
-  ) {
-    content = <div> data not Found !</div>;
   } else if (conversation?.length > 0 || !conversationError) {
     content = conversation
       ?.filter((message) => Object.keys(message).length > 0)
