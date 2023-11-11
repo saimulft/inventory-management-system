@@ -114,7 +114,7 @@ export default function DashboardLayout() {
           <div>
             <Outlet />
             {/* message box  */}
-            {<ChatBox />}
+            <ChatBox />
           </div>
         </Container>
       </div>

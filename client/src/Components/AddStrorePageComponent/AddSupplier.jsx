@@ -66,7 +66,7 @@ export default function AddSupplier() {
       return isNext = true;
     })
 
-    if(!isNext){
+    if (!isNext) {
       return;
     }
 
@@ -135,7 +135,7 @@ export default function AddSupplier() {
       {/* add information  */}
       {addSupplier.map((a, index) => {
         return (
-          <div key={index} className="relative z-10">
+          <div key={index} className="relative z-0">
             <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">
               {/* supplier information  */}
               <div className="w-1/2 p-8">
