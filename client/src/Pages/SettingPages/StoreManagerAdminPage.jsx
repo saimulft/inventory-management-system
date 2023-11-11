@@ -1,0 +1,165 @@
+import axios from "axios";
+import { FaSpinner } from "react-icons/fa";
+import useAuth from "../../hooks/useAuth";
+import { v4 as uuidv4 } from 'uuid';
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import ToastMessage from "../../Components/Shared/ToastMessage";
+import SearchDropdown from "../../Utilities/SearchDropdown";
+
+export default function StoreManagerAdminPage() {
+  const { user } = useAuth();
+  const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  const [storeOption, setStoreOption] = useState(null)
+  const { mutateAsync, isLoading } = useMutation({
+    mutationFn: (storeManagerAdmin) => {
+      return axios.post('/api/v1/store_manager_admin_api/create_store_manager_admin', storeManagerAdmin)
+    },
+  })
+
+  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
+    queryKey: ['get_all_stores_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', { user })
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
+  const storeIDS = []
+  storeOption?.map(store => storeIDS.push(store.value))
+  
+  const handleCreateStoreManagerAdmin = async (event) => {
+    event.preventDefault()
+    setErrorMessage('')
+    setSuccessMessage('')
+    const form = event.target;
+    const name = form.name.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const confirmPassword = form.confirmPassword.value;
+    const username = form.username.value;
+
+    if (password !== confirmPassword) {
+      return setErrorMessage('Password and confirm password must be same!')
+    }
+
+    else if (password.length < 6) {
+      return setErrorMessage("Password must be at least 6 characters or longer!")
+    }
+
+    if (!storeOption?.length) {
+      return setErrorMessage('Please select store')
+    }
+
+    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager Admin' }
+
+    try {
+      const { status } = await mutateAsync(storeManagerAdmin)
+      if (status === 201) {
+        form.reset()
+        setStoreOption(null)
+        setSuccessMessage(`Successfully created a new store manager admin and sent an invitation mail to ${email} with login credentials`)
+      }
+      else if (status === 200) {
+        setSuccessMessage('')
+        setErrorMessage('Email already exist!')
+      }
+    } catch (error) {
+      setSuccessMessage('')
+      setErrorMessage('Failed to create new store manager admin!')
+      console.log(error)
+    }
+  }
+
+  return (
+    <div className="py-10 ">
+      <h3 className="text-2xl font-bold text-center">Add New Store Manager Admin</h3>
+      <form onSubmit={handleCreateStoreManagerAdmin}>
+        <div className="flex gap-4 w-full mt-5">
+          <div className="w-1/2">
+            <div className="mt-3">
+              <label className="text-slate-500">Name*</label>
+              <input
+                type="text"
+                placeholder="Enter name"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="name"
+                name="name"
+                required
+              />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Email*</label>
+              <input
+                type="email"
+                placeholder="Enter email"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Confirm password*</label>
+              <input
+                type="password"
+                placeholder="Confirm password"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="w-1/2">
+            <div className="mt-3">
+              <label className="text-slate-500">Username*</label>
+              <input
+                type="text"
+                placeholder="Enter username"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="username"
+                name="username"
+                required
+              />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Password*</label>
+              <input
+                type="password"
+                placeholder="Enter password"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="password"
+                name="password"
+                required
+              />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Select Store</label>
+              <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+            </div>
+          </div>
+        </div>
+
+        <ToastMessage successMessage={successMessage} errorMessage={errorMessage} />
+
+        <div className="flex justify-center">
+          <button type="submit" disabled={isLoading} className="flex gap-2 items-center justify-center bg-[#8633FF] px-36 w-fit mt-8 py-3 rounded-md text-white">
+            {isLoading && <FaSpinner size={20} className="animate-spin" />}
+            <p>Create Store Manager Admin</p>
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
