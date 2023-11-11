@@ -1,8 +1,17 @@
 import { useState } from "react";
 import { AiOutlineCheck } from "react-icons/ai";
-import { Link } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
+import useStore from "../../hooks/useStore";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 export default function Checkout() {
   const [isToggleActive, setIsToggleActive] = useState(true);
+  const [isLoading, setIsloading] = useState(false);
+  const [planSelected, setPlanSelected] = useState(false);
+  const { storeDetails, setPaymentLink } = useStore()
+  const navigate = useNavigate()
+  // const navigate = useNavigate()
+
   const yearlyPlanData = [
     {
       category: "For individuals",
@@ -16,6 +25,7 @@ export default function Checkout() {
         "Up to 300 orders",
         "Normal support",
       ],
+      lookup_key: "0101"
     },
     {
       category: "For startups",
@@ -29,6 +39,7 @@ export default function Checkout() {
         "Up to 1000 orders",
         "Premium support",
       ],
+      lookup_key: "454545"
     },
     {
       category: "For big companies",
@@ -42,8 +53,10 @@ export default function Checkout() {
         "Unlimited order",
         "Dedicated support",
       ],
+      // lookup_key: 454545
     },
   ];
+
   const monthlyPlanData = [
     {
       category: "For individuals",
@@ -57,6 +70,7 @@ export default function Checkout() {
         "Up to 300 orders",
         "Normal support",
       ],
+      lookup_key: "1012"
     },
     {
       category: "For startups",
@@ -70,6 +84,7 @@ export default function Checkout() {
         "Up to 1000 orders",
         "Premium support",
       ],
+      lookup_key: "1013"
     },
     {
       category: "For big companies",
@@ -83,8 +98,35 @@ export default function Checkout() {
         "Unlimited order",
         "Dedicated support",
       ],
+      // lookup_key: 454545
     },
   ];
+
+  const handleGetStarted = async (data) => {
+    setIsloading(true)
+    setPlanSelected(data.subscription_plan)
+    const allData = { ...storeDetails, subscription_plan: data.subscription_plan, subscription_type: data.subscription_type, lookup_key: data.lookup_key }
+    axios.post('api/v1/payment_api/create-checkout-session', allData)
+      .then(function (response) {
+        if (response.status === 201) {
+          // console.log(response.data)
+          if (storeDetails.payment_option == 'yourself') {
+            window.location.href = response.data.url;
+            setIsloading(false)
+          } else {
+            setPaymentLink(response.data.url)
+            setIsloading(false)
+            navigate('/dashboard/add-store/add-supplier/select-payment/send-payment-link')
+          }
+        } else {
+          // Handle other responses here
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   return (
     <div className="flex justify-center items-center h-screen my-10   ">
       {isToggleActive && (
@@ -124,10 +166,9 @@ export default function Checkout() {
                     style={{
                       boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
                     }}
-                    className={`p-8 rounded-lg ${
-                      plan.plan == "Pro" &&
+                    className={`p-8 rounded-lg ${plan.plan == "Pro" &&
                       "relative -top-9 bg-[#8633FF] text-white"
-                    } `}
+                      } `}
                   >
                     {plan.plan == "Basic" && (
                       <div className="flex gap-4">
@@ -186,18 +227,16 @@ export default function Checkout() {
                     <div className="flex mt-2">
                       <h1 className="text-3xl font-bold flex items-center">
                         <span
-                          className={`${
-                            plan.offer_price == "Custom" ? "hidden" : "block"
-                          }`}
+                          className={`${plan.offer_price == "Custom" ? "hidden" : "block"
+                            }`}
                         >
                           $
                         </span>
                         {plan.offer_price}
                       </h1>
                       <p
-                        className={`mt-auto ${
-                          plan.offer_price == "Custom" ? "hidden" : "block"
-                        } `}
+                        className={`mt-auto ${plan.offer_price == "Custom" ? "hidden" : "block"
+                          } `}
                       >
                         /Year
                       </p>
@@ -211,11 +250,10 @@ export default function Checkout() {
                         return (
                           <div key={index} className="flex items-center gap-2">
                             <div
-                              className={`${
-                                plan.plan == "Pro"
-                                  ? "bg-white text-[#8633FF]"
-                                  : "bg-[#8633FF] text-white"
-                              }  h-5 w-5 flex justify-center items-center rounded-full  text-xs`}
+                              className={`${plan.plan == "Pro"
+                                ? "bg-white text-[#8633FF]"
+                                : "bg-[#8633FF] text-white"
+                                }  h-5 w-5 flex justify-center items-center rounded-full  text-xs`}
                             >
                               <AiOutlineCheck />
                             </div>
@@ -224,20 +262,19 @@ export default function Checkout() {
                         );
                       })}
                     </div>
-                    <Link to="/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form">
-                      <button
-                        className={` ${
-                          plan.plan === "Pro"
-                            ? "bg-white text-[#8633FF]"
-                            : "bg-[#8633FF] text-white"
-                        }  w-full mt-8 py-2 rounded font-medium`}
-                      >
-                        Get started
-                      </button>
-                      <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
-                        Popular
-                      </p>
-                    </Link>
+                    <button disabled={isLoading} onClick={() => plan.plan != 'Enterprise' ? handleGetStarted({ subscription_plan: plan.plan, subscription_type: 'yearly', lookup_key: plan.lookup_key }) : navigate('/dashboard/support')}
+                      className={` ${plan.plan === "Pro"
+                        ? "bg-white text-[#8633FF]"
+                        : "bg-[#8633FF] text-white"
+                        }  w-full mt-8 py-2 rounded font-medium flex items-center justify-center gap-2`}
+                    >
+                      {plan.plan != 'Enterprise' && <span>Get started</span>}
+                      {plan.plan == 'Enterprise' && <span>Contact Us</span>}
+                      {(isLoading && planSelected == plan.plan) && <span className="loading loading-spinner loading-sm"></span>}
+                    </button>
+                    <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
+                      Popular
+                    </p>
                   </div>
                 );
               })}
@@ -283,10 +320,9 @@ export default function Checkout() {
                     style={{
                       boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
                     }}
-                    className={`p-8 rounded-lg ${
-                      plan.plan == "Pro" &&
+                    className={`p-8 rounded-lg ${plan.plan == "Pro" &&
                       "relative -top-9 bg-[#8633FF] text-white"
-                    } `}
+                      } `}
                   >
                     {plan.plan == "Basic" && (
                       <div className="flex gap-4">
@@ -345,18 +381,16 @@ export default function Checkout() {
                     <div className="flex mt-2">
                       <h1 className="text-3xl font-bold flex items-center">
                         <span
-                          className={`${
-                            plan.offer_price == "Custom" ? "hidden" : "block"
-                          }`}
+                          className={`${plan.offer_price == "Custom" ? "hidden" : "block"
+                            }`}
                         >
                           $
                         </span>
                         {plan.offer_price}
                       </h1>
                       <p
-                        className={`mt-auto ${
-                          plan.offer_price == "Custom" ? "hidden" : "block"
-                        } `}
+                        className={`mt-auto ${plan.offer_price == "Custom" ? "hidden" : "block"
+                          } `}
                       >
                         /month
                       </p>
@@ -370,11 +404,10 @@ export default function Checkout() {
                         return (
                           <div key={index} className="flex items-center gap-2">
                             <div
-                              className={`${
-                                plan.plan == "Pro"
-                                  ? "bg-white text-[#8633FF]"
-                                  : "bg-[#8633FF] text-white"
-                              }  h-5 w-5 flex justify-center items-center rounded-full  text-xs`}
+                              className={`${plan.plan == "Pro"
+                                ? "bg-white text-[#8633FF]"
+                                : "bg-[#8633FF] text-white"
+                                }  h-5 w-5 flex justify-center items-center rounded-full  text-xs`}
                             >
                               <AiOutlineCheck />
                             </div>
@@ -383,20 +416,20 @@ export default function Checkout() {
                         );
                       })}
                     </div>
-                    <Link to="/dashboard/add-store/add-supplier/select-payment/checkout/checkout-form">
-                      <button
-                        className={` ${
-                          plan.plan === "Pro"
-                            ? "bg-white text-[#8633FF]"
-                            : "bg-[#8633FF] text-white"
-                        }  w-full mt-8 py-2 rounded font-medium`}
-                      >
-                        Get started
-                      </button>
-                      <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
-                        Popular
-                      </p>
-                    </Link>
+
+                    <button onClick={() => plan.plan != 'Enterprise' ? handleGetStarted({ subscription_plan: plan.plan, subscription_type: 'monthly', lookup_key: plan.lookup_key }) : navigate('/dashboard/support')}
+                      className={` ${plan.plan === "Pro"
+                        ? "bg-white text-[#8633FF]"
+                        : "bg-[#8633FF] text-white"
+                        }  w-full mt-8 py-2 rounded font-medium flex items-center justify-center gap-2`}
+                    >
+                      {plan.plan != 'Enterprise' && <span>Get started</span>}
+                      {plan.plan == 'Enterprise' && <span>Contact Us</span>}
+                      {(isLoading && plan.plan == storeDetails?.subscription_plan) && <span className="loading loading-spinner loading-sm"></span>}
+                    </button>
+                    <p className="absolute bg-yellow-500 text-xs text-black py-[6px] px-4 rounded top-2 right-2 ">
+                      Popular
+                    </p>
                   </div>
                 );
               })}

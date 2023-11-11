@@ -145,7 +145,7 @@ export default function StoreOutOfStockTable() {
               <th>Supplier Tracking</th>
               <th>Shipping label</th>
               <th>Notes</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>

@@ -93,7 +93,7 @@ export default function StorePreparingRequestTable() {
               <th>Invoice level</th>
               <th>Shipping level</th>
               <th>Notes</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>

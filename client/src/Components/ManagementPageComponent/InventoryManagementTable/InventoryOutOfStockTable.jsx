@@ -145,7 +145,7 @@ export default function InventoryOutOfStockTable() {
               <th>Supplier Tracking</th>
               <th>Shipping label</th>
               <th>Notes</th>
-              <th></th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody>
