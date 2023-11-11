@@ -2,26 +2,45 @@ import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
 import { v4 as uuidv4 } from 'uuid';
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import ToastMessage from "../../Components/Shared/ToastMessage";
+import SearchDropdown from "../../Utilities/SearchDropdown";
 
 export default function StoreManagerAdminPage() {
   const { user } = useAuth();
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
-  console.log(user)
+  const [storeOption, setStoreOption] = useState(null)
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (storeManagerAdmin) => {
       return axios.post('/api/v1/store_manager_admin_api/create_store_manager_admin', storeManagerAdmin)
     },
   })
 
+  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
+    queryKey: ['get_all_stores_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', { user })
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
+  const storeIDS = []
+  storeOption?.map(store => storeIDS.push(store.value))
+  
   const handleCreateStoreManagerAdmin = async (event) => {
     event.preventDefault()
     setErrorMessage('')
     setSuccessMessage('')
-
     const form = event.target;
     const name = form.name.value;
     const email = form.email.value;
@@ -37,12 +56,17 @@ export default function StoreManagerAdminPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Store Manager Admin' }
+    if (!storeOption?.length) {
+      return setErrorMessage('Please select store')
+    }
+
+    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager Admin' }
 
     try {
       const { status } = await mutateAsync(storeManagerAdmin)
       if (status === 201) {
         form.reset()
+        setStoreOption(null)
         setSuccessMessage(`Successfully created a new store manager admin and sent an invitation mail to ${email} with login credentials`)
       }
       else if (status === 200) {
@@ -119,6 +143,10 @@ export default function StoreManagerAdminPage() {
                 name="password"
                 required
               />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Select Store</label>
+              <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
             </div>
           </div>
         </div>

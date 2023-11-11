@@ -1,93 +1,73 @@
-import { FiEdit, FiTrash } from "react-icons/fi";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { FiTrash } from "react-icons/fi";
+import useAuth from "../../hooks/useAuth";
+import Swal from "sweetalert2";
+import Loading from "../../Components/Shared/Loading";
 
 export default function AllUsersPage() {
+  const { user } = useAuth()
 
-  // table data
-  const data = [
-    {
-      id: 1,
-      full_name: "Nabil",
-      email: "dlldf@gmail.com",
-      role: "Admin"
-    },
-    {
-      id: 2,
-      full_name: "Toukir",
-      email: "demo.email@testdomain.net",
-      role: "Store Manager Admin"
-    },
-    // Repeat the structure for additional objects with different roles
-    {
-      id: 3,
-      full_name: "John",
-      email: "john@example.com",
-      role: "Admin VA"
-    },
-    {
-      id: 4,
-      full_name: "Alice",
-      email: "alice@example.com",
-      role: "Store Owner"
-    },
-    {
-      id: 5,
-      full_name: "Bob",
-      email: "bob@example.com",
-      role: "Warehouse Admin"
-    },
-    {
-      id: 6,
-      full_name: "Ella",
-      email: "ella@example.com",
-      role: "Warehouse VA"
-    },
-    {
-      id: 7,
-      full_name: "Mike",
-      email: "mike@example.com",
-      role: "Store Manager VA"
-    },
-    {
-      id: 8,
-      full_name: "Sara",
-      email: "sara@example.com",
-      role: "Store Manager Admin"
-    },
-    {
-      id: 9,
-      full_name: "David",
-      email: "david@example.com",
-      role: "Admin VA"
-    },
-    {
-      id: 10,
-      full_name: "Grace",
-      email: "grace@example.com",
-      role: "Store Owner"
+  const { data = [], refetch, isLoading } = useQuery({
+    queryKey: ['all_users_list'],
+    queryFn: async () => {
+      try {
+        const res = await axios.post('/api/v1/admin_api/get_all_users_list', { user })
+        if (res.status === 200) {
+          if (user.role === 'Admin VA') {
+            const filterData = res.data.filter(u => user.role !== u.role)
+            return filterData
+          } else {
+            return res.data
+          }
+        }
+        if (res.status === 204) {
+          return []
+        }
+      } catch (error) {
+        console.log(error)
+        return []
+      }
     }
-  ];
+  })
 
-  // user roles
-  const roles = [
-    "Admin",
-    "Admin VA",
-    "Store Owner",
-    "Store Manager Admin",
-    "Store Manager VA",
-    "Warehouse Admin",
-    "Warehouse VA",
-  ];
+  const handleDeleteUser = (user) => {
+    Swal.fire({
+      title: 'Are you sure?',
+      text: "You won't be able to revert this!",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#8633FF',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Delete'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios.post(`/api/v1/admin_api/delete_user`, { user })
+          .then(res => {
+            if (res.status === 200) {
+              refetch()
+              Swal.fire(
+                'Deleted!',
+                'Data has been deleted.',
+                'success'
+              )
 
-  const handleEditUserRole = (id) => {
-    console.log(id)
+            }
+            if (res.status === 204) {
+              Swal.fire(
+                'Something went wrong!',
+                'Something went wrong when deleting user.',
+                'warning'
+              )
+            }
+          }).catch(err => console.log(err))
+      }
+    })
+
   }
 
-  const handleDeleteUser = (id) => {
-    console.log(id)
-  } 
-
   return (
-    <div className="overflow-x-auto py-10">
+    <div className="overflow-x-auto py-10 min-h-[calc(100vh-310px)] max-h-full">
       <table className="table table-md">
         <thead>
           <tr className="bg-gray-100">
@@ -97,29 +77,19 @@ export default function AllUsersPage() {
             <th>Action</th>
           </tr>
         </thead>
-        <tbody>
-          {data.map((user, index) => {
+        <tbody className="relative">
+          {!isLoading && !data.length ? <p className="absolute top-[230px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">User not added yet!</p> : <></>}
+          {isLoading ? <Loading top="230px" /> : data?.map((user, index) => {
             return (
               <tr key={index} className={`${index % 2 == 1 && "bg-gray-100"}`}>
                 <td>{user.full_name}</td>
                 <td>{user.email}</td>
-                <td>
-                  <select
-                    style={{ borderRadius: "2px" }}
-                    className="select select-bordered w-full select-xs max-w-xs select-primary"
-                  >
-                    <option defaultValue={user.role}>{user.role}</option>
-                    {roles.map((role, index) => (
-                      <option key={index}>{role}</option>
-                    ))}
-                  </select>
+                <td>{
+                  user?.role
+                }
                 </td>
-                <td className="flex gap-2">
-                  <button onClick={() => handleEditUserRole(user.id)} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
-                    <FiEdit />
-                    <p>Edit</p>
-                  </button>
-                  <button onClick={() => handleDeleteUser(user.id)} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-red-500 hover:text-white transition-all duration-150">
+                <td>
+                  <button onClick={() => handleDeleteUser(user)} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-red-500 hover:text-white transition-all duration-150">
                     <FiTrash />
                     Delete
                   </button>

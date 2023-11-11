@@ -18,8 +18,8 @@ const run = async () => {
             if (result) {
                 res.status(200).json({ message: "Successfully get stores data" })
             }
-            else {
-                res.status(500).json({ message: "Error to geting stores data" })
+            else{
+                res.status(204).json({ message: "No content" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });

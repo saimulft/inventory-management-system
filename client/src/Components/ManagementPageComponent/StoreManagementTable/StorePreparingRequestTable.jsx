@@ -1,37 +1,72 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
-import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
-// import { LiaGreaterThanSolid } from "react-icons/lia";
-import { GlobalContext } from "../../../Providers/GlobalProviders";
+import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
 import { format } from "date-fns"
 import Swal from "sweetalert2";
+import ToastMessage from "../../Shared/ToastMessage";
+import { FaSpinner } from "react-icons/fa";
+import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import { useQuery } from "@tanstack/react-query";
+import FileDownload from "../../Shared/FileDownload";
+import Loading from "../../Shared/Loading";
+import ReactPaginate from "react-paginate";
+import { DateRange } from "react-date-range";
+import useGlobal from "../../../hooks/useGlobal";
 
 
 export default function StorePreparingRequestTable() {
+  const { isSidebarOpen, setCountsRefetch } = useGlobal()
+  const [filterDays, setFilterDays] = useState('')
+  const [singleData, setSingleData] = useState({})
+  const [loading, setLoading] = useState(false)
+  const [formError, setFormError] = useState('')
+  const [InvoiceImageFile, setInvoiceImageFile] = useState(null)
+  const [shippingImageFile, setShippingImageFile] = useState(null)
+  const [InvoiceImageError, setInvoiceImageError] = useState('')
+  const [shippingImageError, setShippingImageError] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
+  const [isEditable, setIsEditable] = useState(false)
+  const [quantity, setQuantity] = useState('')
+  const [productName, setProductName] = useState('')
+  const { user } = useAuth()
+  const [searchText, setSearchText] = useState('');
+  const [searchError, setSearchError] = useState('');
+  const [searchResults, setSearchResults] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [filteredDataPage, setFilteredDataPage] = useState(0);
+  const [rangeDate, setRangeDate] = useState([{
+    startDate: new Date(),
+    endDate: new Date(),  //addDays(new Date(), 7)
+    key: 'selection'
+  }]);
 
-  const { isSidebarOpen } = useContext(GlobalContext);
-  const [singleData, setSingleData] = useState()
+  const handleKeyDown = (event) => {
+    const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
+    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
+      event.preventDefault();
+    }
+  };
 
-  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const { data: preparingRequestData = [], refetch } = useQuery({
+  const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['preparing_request_data'],
     queryFn: async () => {
       try {
-        const res = await axios.get('/api/v1/preparing_form_api/get_all_preparing_request_data')
+        const res = await axios.post('/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
         if (res.status === 200) {
-          return res.data.data
+          return res.data.data;
         }
+        return [];
       } catch (error) {
-        console.log(error)
+        return [];
       }
     }
   })
 
-  const data = preparingRequestData
-  const handleDelete = (_id) => {
-
+  const handleDelete = (_id, invoice_file, shipping_file) => {
+    const deleteData = {
+      id: _id, invoice_file, shipping_file
+    }
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
@@ -42,41 +77,364 @@ export default function StorePreparingRequestTable() {
       confirmButtonText: 'Delete'
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data?id=${_id}`)
+        axios.delete(`/api/v1/preparing_form_api/delete_preparing_request_data`, { data: deleteData })
           .then(res => {
             if (res.status === 200) {
+              refetch()
+              setCountsRefetch(true)
               Swal.fire(
                 'Deleted!',
                 'Data has been deleted.',
                 'success'
               )
-              refetch()
             }
           }).catch(err => console.log(err))
-
-
-
       }
     })
   }
-  console.log(import.meta.env.VITE_IMAGE_BASE_URL)
+
+  const handleUpdateRequestForm = (event) => {
+    setSuccessMessage('')
+    event.preventDefault()
+    const form = event.target
+    const courier = form.courier.value
+    const supplierTracker = form.supplierTracker.value
+    const note = form.note.value
+
+    let preparingFormvalue = {
+
+      courier, trackingNumber: supplierTracker, notes: note, id: singleData._id, quantity, productName,
+    }
+
+    const formData = new FormData()
+    for (const key in preparingFormvalue) {
+      formData.append(key, preparingFormvalue[key]);
+    }
+    const Invoice = InvoiceImageFile?.name.split('.').pop();
+    const shipping = shippingImageFile?.name.split('.').pop();
+
+    if (InvoiceImageFile && !shippingImageFile) {
+      formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
+    }
+    if (shippingImageFile && !InvoiceImageFile) {
+      formData.append('file', shippingImageFile, `shipping.${shipping}`)
+    }
+    if (InvoiceImageFile && shippingImageFile) {
+      formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
+      formData.append('file', shippingImageFile, `shipping.${shipping}`)
+    }
+    setLoading(true)
+    axios.put('/api/v1/preparing_form_api/preparing_form_update', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+    })
+      .then(res => {
+        if (res.status === 200) {
+          form.reset()
+          setInvoiceImageFile(null)
+          setShippingImageFile(null)
+          setLoading(false)
+          setSuccessMessage("Data Updated")
+          refetch()
+          setCountsRefetch(true)
+          setTimeout(() => {
+            setSuccessMessage("")
+          }, 1000);
+        }
+        else {
+          setLoading(false)
+          setFormError("Already up to date")
+          setTimeout(() => {
+            setFormError("A")
+          }, 1000);
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+        setLoading(false)
+        setFormError("Already up to date")
+        setTimeout(() => {
+          setFormError("")
+        }, 1000);
+      })
+  }
+  const handleInvoiceImage = (e) => {
+    if (e.target.files[0]) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+
+      if (e.target.files[0].size > maxSizeInBytes) {
+        setInvoiceImageError("Max 5 MB")
+        return;
+      } else {
+        setInvoiceImageError('')
+        setInvoiceImageFile(e.target.files[0])
+      }
+    }
+  }
+  const handleShippingImage = (e) => {
+
+    if (e.target.files[0]) {
+      const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
+      if (e.target.files[0].size > maxSizeInBytes) {
+        setShippingImageError("Max 5 MB")
+        return;
+      } else {
+        setShippingImageError('')
+        setShippingImageFile(e.target.files[0])
+      }
+    }
+  }
+  const handleSearch = (e) => {
+    e.preventDefault()
+    setSearchError("")
+    if (!searchText) {
+      return
+    }
+    const filteredData = data.filter(item =>
+    (item.asin_upc_code?.toLowerCase().includes(searchText) ||
+      item.product_name?.toLowerCase().includes(searchText) ||
+      item.upin?.toLowerCase().includes(searchText) ||
+      item.courier?.toLowerCase().includes(searchText) ||
+      item.store_name?.toLowerCase().includes(searchText) ||
+      item.code_type?.toLowerCase().includes(searchText))
+    );
+    if (!filteredData.length) {
+      setFilterDays(null)
+      setSearchError(`No data found for "${searchText}"`)
+      return
+    }
+    setFilterDays(null)
+    setSearchResults(filteredData)
+  }
+  const handleDateSearch = (day) => {
+    setSearchError("")
+    const currentDate = new Date();
+    const endDate = new Date();
+    let startDate;
+    if (day === "today") {
+      startDate = new Date(currentDate);
+      startDate.setHours(0, 0, 0, 0); // Set to midnight
+    }
+    else {
+      const previousDate = new Date();
+      previousDate.setDate(currentDate.getDate() - day);
+      startDate = previousDate;
+    }
+    const filteredDateResults = data.filter((item) => {
+      const itemDate = new Date(item.date);
+      return itemDate >= startDate && itemDate <= endDate;
+    });
+
+    if (!filteredDateResults.length) {
+      setSearchResults([]);
+      if (day === "today") {
+        return setSearchError("No data found for today");
+      } else if (day === 365) {
+        return setSearchError("No data found for the past 1 year");
+      } else if (day === 30) {
+        return setSearchError("No data found for the past 1 month");
+      } else {
+        return setSearchError(`No data found for the past ${day} days`);
+      }
+    }
+
+    setSearchResults(filteredDateResults);
+  }
+
+  const handleCustomDateSearch = () => {
+    setSearchError("")
+    const startDate = rangeDate[0].startDate
+    const endDate = rangeDate[0].endDate
+    if (startDate !== endDate) {
+      const filteredDateResults = data.filter((item) => {
+        const itemDate = new Date(item.date);
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+      if (!filteredDateResults.length) {
+
+        return setSearchError(`No data found for selected date range`)
+      }
+      if (filteredDateResults.length) {
+        setSearchResults(filteredDateResults);
+      }
+    }
+
+  }
+  const generatePageNumbers = (currentPage, pageCount, maxVisiblePages) => {
+    if (pageCount <= maxVisiblePages) {
+      // If the total page count is less than or equal to the maximum visible pages, show all pages.
+      return Array.from({ length: pageCount }, (_, i) => i + 1);
+    } else {
+      const halfVisible = Math.floor(maxVisiblePages / 2);
+      const firstPage = Math.max(currentPage - halfVisible, 1);
+      const lastPage = Math.min(currentPage + halfVisible, pageCount);
+
+      const pageNumbers = [];
+
+      if (firstPage > 1) {
+        pageNumbers.push(1);
+        if (firstPage > 2) {
+          pageNumbers.push("..."); // Show ellipsis
+        }
+      }
+
+      for (let i = firstPage; i <= lastPage; i++) {
+        pageNumbers.push(i);
+      }
+
+      if (lastPage < pageCount) {
+        if (lastPage < pageCount - 1) {
+          pageNumbers.push("..."); // Show ellipsis
+        }
+        pageNumbers.push(pageCount);
+      }
+
+      return pageNumbers;
+    }
+  }
+  const generatePageNumbersFilter = (currentPage, pageCount, maxVisiblePages) => {
+    if (pageCount <= maxVisiblePages) {
+      // If the total page count is less than or equal to the maximum visible pages, show all pages.
+      return Array.from({ length: pageCount }, (_, i) => i + 1);
+    } else {
+      const halfVisible = Math.floor(maxVisiblePages / 2);
+      const firstPage = Math.max(currentPage - halfVisible, 1);
+      const lastPage = Math.min(currentPage + halfVisible, pageCount);
+
+      const pageNumbers = [];
+
+      if (firstPage > 1) {
+        pageNumbers.push(1);
+        if (firstPage > 2) {
+          pageNumbers.push("..."); // Show ellipsis
+        }
+      }
+
+      for (let i = firstPage; i <= lastPage; i++) {
+        pageNumbers.push(i);
+      }
+
+      if (lastPage < pageCount) {
+        if (lastPage < pageCount - 1) {
+          pageNumbers.push("..."); // Show ellipsis
+        }
+        pageNumbers.push(pageCount);
+      }
+
+      return pageNumbers;
+    }
+  }
+  const itemsPerPage = 15;
+  const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
+  const pageCount = Math.ceil(data.length / itemsPerPage);
+  const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
+
+  generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
+  generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
+
+  // pagination code 
+
+  const handleFilteredDataPageChange = ({ selected }) => {
+    setFilteredDataPage(selected);
+
+  };
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected);
+  };
+  // filter pagination calculation
+  const startIndexFilter = filteredDataPage * itemsPerPage;
+  const endIndexFilter = startIndexFilter + itemsPerPage;
+  const displayedDataFilter = searchResults.slice(startIndexFilter, endIndexFilter);
+
+
+  //  ALl data pagination calculation
+  const startIndex = currentPage * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const displayAllData = data.slice(startIndex, endIndex);
+
+
+  const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Preparing Request : {preparingRequestData?.length}
+        Preparing Request : {data?.length}
       </h3>
-      <div className="relative flex justify-end">
-        <input
-          className="border bg-white shadow-md border-[#8633FF] outline-none w-1/4 cursor-pointer  py-2 rounded-md px-2 text-sm"
-          placeholder="Search Here"
-          type="text"
-        />
-        <div className="absolute bottom-[6px] cursor-pointer p-[2px] rounded right-[6px] bg-[#8633FF]  text-white ">
-          <AiOutlineSearch size={20} />
+
+      <div className="relative flex justify-between items-center mt-4">
+        <div>
+          <div className="flex gap-4 text-sm items-center">
+            <p onClick={() => {
+              setSearchResults([])
+              setSearchText("")
+              setSearchError("")
+              setFilterDays("all")
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'all' && 'bg-[#8633FF] text-white'}`}>
+              All
+            </p>
+            <p onClick={() => {
+              handleDateSearch("today")
+              setFilterDays('today')
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
+              Today
+            </p>
+            <p onClick={() => {
+              handleDateSearch(7)
+              setFilterDays(7)
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && 'bg-[#8633FF] text-white'}`}>
+              7 Days
+            </p>
+            <p onClick={() => {
+              handleDateSearch(15)
+              setFilterDays(15)
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && 'bg-[#8633FF] text-white'}`}>
+              15 Days
+            </p>
+            <p onClick={() => {
+              handleDateSearch(30)
+              setFilterDays(1)
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && 'bg-[#8633FF] text-white'}`}>
+              1 Month
+            </p>
+            <p onClick={() => {
+              handleDateSearch(365)
+              setFilterDays('year')
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
+              Year
+            </p>
+            <p onClick={() => {
+              setFilterDays('custom')
+              document.getElementById("date_range_modal").showModal()
+            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
+              Custom
+            </p>
+          </div>
         </div>
+        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
+          <input
+            className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
+            placeholder="Search Here"
+            value={searchText}
+            type="text"
+            onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
+          />
+          <div className="w-[40%] flex items-center justify-evenly">
+            <button type="submit" onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+              <AiOutlineSearch size={24} />
+            </button>
+            <button onClick={() => {
+              setSearchResults([])
+              setSearchText("")
+              setSearchError("")
+              setFilterDays("all")
+            }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+              Clear
+            </button>
+          </div>
+        </form>
       </div>
 
-      <div className="overflow-x-auto overflow-y-auto mt-8">
+      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
@@ -97,117 +455,174 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {data.map((d, index) => {
-              return (
-                <tr
-                  className={`${index % 2 == 1 && "bg-gray-200"} py-2`}
-                  key={index}
-                >
-                  <th>{format(new Date(d.date), "y/MM/d")}</th>
-                  <th className="font-normal">{d.store_name}</th>
-                  <td>{d.code}</td>
-                  <td>{d.code_type}</td>
-                  <td>{d.product_name}</td>
-                  <td>{d.order_id}</td>
-                  <td>{d.upin}</td>
-                  <td>{d.quantity}</td>
-                  <td>{d.courier}</td>
-                  <td>{d.tracking_number}</td>
-                  <td>{d.invoice_file && <button  className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
-                  <td>{d.shipping_file && <button  className="bg-[#8633FF] w-full rounded text-white font-medium">Image</button>}</td>
-                  <td>{d.notes}</td>
-                  <td>
-                    <div className="dropdown dropdown-end">
-                      <label
-                        tabIndex={0}
+            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
+              {
+                searchResults.length ? displayedDataFilter.map((d, index) => {
+                  return (
+
+                    <tr
+                      className={`${index % 2 == 1 && ""} py-2`}
+                      key={index}
+                    >
+                      <th>{format(new Date(d.date), "y/MM/d")}</th>
+                      <th className="font-normal">{d.store_name}</th>
+                      <td>{d.asin_upc_code}</td>
+                      <td>{d.code_type}</td>
+                      <td>{d.product_name}</td>
+                      <td>{d.order_id}</td>
+                      <td>{d.upin}</td>
+                      <td>{d.quantity}</td>
+                      <td>{d.courier}</td>
+                      <td>{d.tracking_number}</td>
+                      <td>{d.invoice_file && <FileDownload fileName={d.invoice_file} />}</td>
+                      <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
+                      <td>{d.notes}</td>
+                      <td>
+                        <div className="dropdown dropdown-end">
+                          <label
+                            tabIndex={0}
+                          >
+                            <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+
+                          </label>
+                          <ul
+                            tabIndex={0}
+                            className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                          >
+
+                            <li>
+                              <button onClick={() => {
+                                document.getElementById("my_modal_2").showModal()
+
+                              }
+                              }>Edit</button>
+                            </li>
+                            {
+                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
+                              </li> : ''
+                            }
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  )
+                })
+
+                  :
+
+                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+                    return (
+
+                      <tr
+                        className={`${index % 2 == 1 && ""} py-2`}
+                        key={index}
                       >
-                        <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+                        <th>{format(new Date(d.date), "y/MM/d")}</th>
+                        <th className="font-normal">{d.store_name}</th>
+                        <td>{d.asin_upc_code}</td>
+                        <td>{d.code_type}</td>
+                        <td>{d.product_name}</td>
+                        <td>{d.order_id}</td>
+                        <td>{d.upin}</td>
+                        <td>{d.quantity}</td>
+                        <td>{d.courier}</td>
+                        <td>{d.tracking_number}</td>
+                        <td>{d.invoice_file && <FileDownload fileName={d.invoice_file} />}</td>
+                        <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
+                        <td>{d.notes}</td>
+                        <td>
+                          <div className="dropdown dropdown-end">
+                            <label
+                              tabIndex={0}
+                            >
+                              <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
 
-                      </label>
-                      <ul
-                        tabIndex={0}
-                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                      >
+                            </label>
+                            <ul
+                              tabIndex={0}
+                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                            >
 
-                        <li>
-                          <button onClick={() => {
-                            document.getElementById("my_modal_2").showModal()
+                              <li>
+                                <button onClick={() => {
+                                  document.getElementById("my_modal_2").showModal()
 
-                          }
-                          }>Edit</button>
-                        </li>
-                        <li>
-                          <button onClick={() => handleDelete(d._id)}>Delete</button>
-                        </li>
-                      </ul>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+                                }
+                                }>Edit</button>
+                              </li>
+                              {
+                                user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                                  <button onClick={() => handleDelete(d._id, d.invoice_file, d.shipping_file)}>Delete</button>
+                                </li> : ''
+                              }
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+              }
+            </>}
           </tbody>
         </table>
 
-      </div>
-      {/* modal content  */}
+        {/* pagination */}
+        {!isLoading && !searchError && !searchResults.length && data?.length > 15 && < div >
+          <ReactPaginate
+            pageCount={Math.ceil(data.length / itemsPerPage)}
 
+            marginPagesDisplayed={1}
+            pageRangeDisplayed={maxVisiblePages}
+            onPageChange={handlePageChange}
+            containerClassName="pagination"
+            activeClassName="active"
+            breakLabel={"..."}
+            pageLinkClassName={(pageNumber) => {
+              return pageNumber === "..." ? "ellipsis" : "";
+            }}
+          />
+        </div>
+        }
+        {!isLoading && !searchError && searchResults.length > 15 && <ReactPaginate
+          pageCount={Math.ceil(searchResults.length / itemsPerPage)}
+          pageRangeDisplayed={maxVisiblePages}
+          marginPagesDisplayed={1}
+          onPageChange={handleFilteredDataPageChange}
+          containerClassName="pagination"
+          activeClassName="active"
+          breakLabel={"..."}
+          pageLinkClassName={(pageNumber) => {
+            return pageNumber === "..." ? "ellipsis" : "";
+          }}
+        />}
+      </div>
+
+      {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft }} className="modal-box py-10 px-10">
-          <div className="flex">
-            <div className="w-100">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
+          <div className="flex gap-10">
+            <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
-                <BiSolidEdit size={24} />
+                {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
-              <p className="mt-2">
-                <p className="font-bold">Date: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData && format(new Date(singleData?.date), "y/MM/d")} />
-              </p>
-              <p className="mt-2">
-                <p className="font-bold">Store Name: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.store_name} />
-              </p>
-              <p className="mt-2">
-                <p className="font-bold">ASIN: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.code_type} />
-              </p>
-              <p className="mt-2">
-                <p className="font-bold">Quantity: </p>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="number" defaultValue={singleData?.quantity} />
-              </p>
 
-              <p className="mt-2">
-                <p className="font-bold">Courier: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.courier ? singleData?.courier : ""} />
-              </p>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold ">Quantity : </label>
+                <input onKeyDown={handleKeyDown} onChange={(e) => setQuantity(e.target.value)} type="number" defaultValue={singleData?.quantity}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
+              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
+                <label className="font-bold ">Product name : </label>
+                <input onChange={(e) => setProductName(e.target.value)} type="text" defaultValue={singleData?.product_name}
+                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="date" name="date" readOnly={!isEditable} />
+              </div>
 
-              <p className="mt-2">
-                <p className="font-bold">UPIN: </p>
-                <input readOnly disabled className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.upin} />
-              </p>
-
-              <p className="mt-2">
-                <p className="font-bold">Product Name: </p>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.product_name} />
-              </p>
-
-              <p className="mt-2">
-                <p className="font-bold">Supplier Tracking: </p>
-                <input className="border border-[#8633FF] outline-[#8633FF] p-1 rounded" type="text" defaultValue={singleData?.tracking_number ? singleData?.tracking_number : ""} />
-              </p>
-
-              <p className="mt-2">
-                <span className="font-bold">Shipping Label: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
-              </p>
-              <p className="mt-2">
-                <span className="font-bold">Invoice: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
-              </p>
             </div>
-            <div className="w-1/2 px-4">
+            <div className="w-1/2">
               <h3 className="text-2xl mb-6 font-medium">Update</h3>
-              <form>
+              <form onSubmit={handleUpdateRequestForm}>
                 <div className="flex flex-col mt-2">
                   <label className=" font-bold mb-1">Courier</label>
                   <select
@@ -215,12 +630,12 @@ export default function StorePreparingRequestTable() {
                     id="courier"
                     name="courier"
                   >
-                    <option value="none" selected>
-                      USPS
+                    <option value="Select courier">
+                      Select courier
                     </option>
-                    <option value="male">Courier-1</option>
-                    <option value="female">Courier-2</option>
-                    <option value="other">Courier-3</option>
+                    <option value="Courier-1">Courier-1</option>
+                    <option value="Courier-2">Courier-2</option>
+                    <option value="Courier-3">Courier-3</option>
                   </select>
                 </div>
                 <div className="flex flex-col mt-2">
@@ -238,7 +653,7 @@ export default function StorePreparingRequestTable() {
                   <label className="font-bold mb-1">Invoice </label>
                   <div className="flex items-center w-full mt-2">
                     <label
-                      htmlFor="shippingLabel-dropzone"
+                      htmlFor="invoice-dropzone"
                       className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[4px]">
@@ -261,14 +676,19 @@ export default function StorePreparingRequestTable() {
                       <input
                         id="invoice-dropzone"
                         name="invoice-dropzone"
+                        accept="image/*,application/pdf"
                         type="file"
+                        onChange={handleInvoiceImage}
                         className="hidden"
                       />
                       <div className="ml-5">
-
+                        {InvoiceImageFile && <p className="font-bold text-lg">{InvoiceImageFile.name}</p>}
+                        {!InvoiceImageFile && <p className=" text-sm">Select PNG , JPEG or PDF</p>}
                       </div>
                     </label>
                   </div>
+                  {InvoiceImageError && <p className="text-xs mt-2 font-medium text-rose-500">{InvoiceImageError}</p>}
+
                 </div>
                 <div className="mt-2">
                   <label className="font-bold mb-1">Shipping Label</label>
@@ -298,16 +718,20 @@ export default function StorePreparingRequestTable() {
                         id="shippingLabel-dropzone"
                         name="shippingLabel-dropzone"
                         type="file"
+                        accept="image/*,application/pdf"
+                        onChange={handleShippingImage}
                         className="hidden"
                       />
                       <div className="ml-5">
-
+                        {shippingImageFile && <p className="font-bold text-lg">{shippingImageFile.name}</p>}
+                        {!shippingImageFile && <p className=" text-sm">Select PNG , JPEG or PDF</p>}
                       </div>
                     </label>
                   </div>
+                  {shippingImageError && <p className="text-xs mt-2 font-medium text-rose-500">{shippingImageError}</p>}
                 </div>
 
-                <div className="flex flex-col mt-2">
+                <div className="flex flex-col mt-2 mb-2">
                   <label className=" font-bold mb-1">Note</label>
                   <input
                     type="text"
@@ -317,7 +741,9 @@ export default function StorePreparingRequestTable() {
                     name="note"
                   />
                 </div>
-                <button type="submit" className="bg-[#8633FF] mt-5 w-full py-[6px] rounded text-white font-medium">
+                <ToastMessage errorMessage={formError} successMessage={successMessage} />
+                <button type="submit" disabled={loading} className="bg-[#8633FF] mt-4 flex gap-2 py-2 justify-center items-center text-white rounded-lg w-full">
+                  {loading && <FaSpinner size={20} className="animate-spin" />}
                   Update
                 </button>
               </form>
@@ -328,7 +754,33 @@ export default function StorePreparingRequestTable() {
           <button>close</button>
         </form>
       </dialog>
+      {/* date range modal */}
+      <dialog id="date_range_modal" className="modal">
+        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
+          <div className='mb-10'>
+            <DateRange
+              editableDateInputs={true}
+              onChange={item => {
 
+                setRangeDate([item.selection])
+              }}
+              moveRangeOnFirstSelection={false}
+              months={2}
+              ranges={rangeDate}
+              direction="horizontal"
+              rangeColors={["#8633FF"]}
+              color="#8633FF"
+            />
+          </div>
+          <button onClick={() => {
+            handleCustomDateSearch()
+            document.getElementById("date_range_modal").close()
+          }} className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded">Select</button>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button>close</button>
+        </form>
+      </dialog>
     </div>
   );
 }

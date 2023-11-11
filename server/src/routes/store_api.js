@@ -49,7 +49,7 @@ const run = async () => {
                     store_status: req.body.storeStatus !== "Select Status" ? req.body.storeStatus : existData.store_status,
                 }
                 const updateResult = await all_stores_collection.updateOne({ admin_id: admin_id }, { $set: updateData })
-
+               
                 if (updateResult.modifiedCount) {
                     return res.status(200).json({ message: "Store data updated" })
                 }
@@ -64,7 +64,7 @@ const run = async () => {
             res.status(500).json({ message: "Internal server error" })
         }
     })
-
+    
     // get all stores
     router.get('/get_all_stores', async (req, res) => {
         try {

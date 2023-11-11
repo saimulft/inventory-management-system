@@ -109,7 +109,7 @@ const run = async () => {
                             return res.status(203).json({ status: 'failed', message: 'Data not modified' })
                         }
                     }
-                    else {
+                    else{
                         return res.status(200).json({ status: 'success', message: 'Data modified successful' });
                     }
                 }

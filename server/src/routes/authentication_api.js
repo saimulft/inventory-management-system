@@ -5,6 +5,7 @@ const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const verifyJWT = require("../middlewares/verifyJWT")
 const sendEmail = require("../utilities/send_email")
+const { ObjectId } = require("mongodb")
 const run = async () => {
     const db = await connectDatabase()
     const all_users_collection = db.collection("all_users")
@@ -108,9 +109,7 @@ const run = async () => {
                     subject: "Visit this link in order to reset your password",
                     html: `
                     <h1 style='text-align:center'>Hi, To reset your password </h1> <br/>
-                    <button> <a style='color:red,text-decoration:none,' href="http://localhost:5173/update_password?id=${data.id}">Click here</a></button>
-                    
-                    `
+                    <button> <a style='color:red,text-decoration:none,' href="http://localhost:5173/update_password?id=${data._id}">Click here</a></button>`
                 }
 
                 sendEmail(send_email_data);
@@ -127,18 +126,16 @@ const run = async () => {
 
     // reset  password api
     router.post('/reset_password', async (req, res) => {
-
         try {
-
             const id = req.body.id
 
             const new_password = req.body.newPassword
             const hash_passwrod = await bcrypt.hash(new_password, 10)
-            const user = await all_users_collection.findOne({ id: id })
+            const user = await all_users_collection.findOne({ _id: new ObjectId(id) })
 
             if (user) {
                 const result = await all_users_collection.updateOne(
-                    { id: id },
+                    { _id: new ObjectId(id) },
                     {
                         $set: {
                             password: hash_passwrod
@@ -167,19 +164,18 @@ const run = async () => {
             },
         };
         try {
-            const result = await all_users_collection.findOne({ id: id })
+            const result = await all_users_collection.findOne({ _id: new ObjectId(id) })
             if (result) {
-
                 if (result.email_verified === true) {
                     return res.status(203).json({ message: "Email already verified" })
-
                 }
+
                 const updateEmailStatus = await all_users_collection.updateOne(
-                    { id: id },
+                    { _id: new ObjectId(id) },
                     update
                 )
-                if (updateEmailStatus.modifiedCount) {
 
+                if (updateEmailStatus.modifiedCount) {
                     res.status(200).json({ message: "Email verified successfully " })
                 }
             }
@@ -200,7 +196,6 @@ const run = async () => {
             const current_email = req.body.current_email;
             const current_password = req.body.current_password;
             const role = req.body.role;
-
             const data = await all_users_collection.findOne({ email: current_email });
 
             if (data) {
@@ -235,7 +230,7 @@ const run = async () => {
                     country: req.body.country,
                     whatsapp_number: req.body.whatsapp_number
                 }
-
+                const nameUpdate = await all_users_collection.updateOne({ email: current_email }, { $set: { full_name: req.body.full_name } })
                 if (role === 'Admin') {
                     const result = await admin_users_collection.findOneAndUpdate(
                         { email: current_email },
@@ -290,12 +285,15 @@ const run = async () => {
                         { $set: updatedData },
                         { returnDocument: "after" }
                     );
+
                     return res.status(200).json(result);
                 }
             }
+
             else {
                 return res.status(404).json({ message: 'User not found' });
             }
+
         } catch (error) {
             return res.status(500).json({ message: 'Internal server error' });
         }

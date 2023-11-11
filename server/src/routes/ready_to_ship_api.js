@@ -70,7 +70,7 @@ const run = async () => {
             }
 
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
-                query = { warehouse_id: user.warehouse_id }
+                query = { warehouse_id: user.warehouse_id}
             }
 
             const data = await ready_to_ship_collection.find(query).sort({ date: -1 }).toArray()
