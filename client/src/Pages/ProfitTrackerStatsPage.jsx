@@ -10,51 +10,37 @@ import { format } from "date-fns";
 
 const data = [
     {
-        name: "Page A",
-        uv: 4000,
-        pv: 2400,
-        amt: 2400,
+        name: "Week 1",
+        "Net Profit": 2400,
     },
     {
-        name: "Page B",
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
+        name: "Week 2",
+        "Net Profit": 1398,
     },
     {
-        name: "Page C",
-        uv: 2000,
-        pv: 9800,
-        amt: 2290,
+        name: "Week 3",
+        "Net Profit": 9800,
     },
     {
-        name: "Page D",
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
+        name: "Week 4",
+        "Net Profit": 3908,
     },
     {
-        name: "Page E",
-        uv: 1890,
-        pv: 4800,
-        amt: 2181,
+        name: "Week 5",
+        "Net Profit": 4800,
     },
     {
-        name: "Page F",
-        uv: 2390,
-        pv: 3800,
-        amt: 2500,
+        name: "Week 6",
+        "Net Profit": 3800,
     },
     {
-        name: "Page G",
-        uv: 3490,
-        pv: 4300,
-        amt: 2100,
+        name: "Week 7",
+        "Net Profit": 4300,
     },
 ];
 
 const ProfitTrackerStatsPage = () => {
-    const [analyticsDays, setAnalyticsDays] = useState()
+    const [analyticsDays, setAnalyticsDays] = useState(7)
     const [view, setView] = useState('Graph')
     const [storeName, setStoreName] = useState('')
 
@@ -85,9 +71,31 @@ const ProfitTrackerStatsPage = () => {
         }
     })
 
+    const { data: storeGraphData = [] } = useQuery({
+        queryKey: ['single_store_graph_data'],
+        queryFn: async () => {
+            try {
+                const res = await axios.get(`/api/v1/profit_tracker_api/single_store_graph_data?storeId=${id}`)
+
+                if (res.status === 200) {
+                    return res.data.data;
+                }
+                if (res.status === 204) {
+                    return []
+                }
+            } catch (error) {
+                console.log(error);
+                return [];
+            }
+        }
+    })
+
     const boxShadowStyle = {
         boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
     };
+
+    console.log(storeGraphData)
+
     return (
         <div className="p-10">
             {/* analytics  */}
@@ -230,8 +238,7 @@ const ProfitTrackerStatsPage = () => {
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey="pv" fill="#3D9CF0" />
-                            <Bar dataKey="uv" fill="#4ADE80" />
+                            <Bar dataKey="Net Profit" fill="#8633FF" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
@@ -261,7 +268,6 @@ const ProfitTrackerStatsPage = () => {
                                 stroke="#8884d8"
                                 activeDot={{ r: 8 }}
                             />
-                            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
@@ -287,13 +293,6 @@ const ProfitTrackerStatsPage = () => {
                             <XAxis dataKey="name" />
                             <YAxis />
                             <Tooltip />
-                            <Area
-                                type="monotone"
-                                dataKey="uv"
-                                stackId="1"
-                                stroke="#3D9CF0"
-                                fill="#3D9CF0"
-                            />
                             <Area
                                 type="monotone"
                                 dataKey="pv"
@@ -325,7 +324,6 @@ const ProfitTrackerStatsPage = () => {
                             <Tooltip />
                             <Legend />
                             <Bar dataKey="pv" stackId="a" fill="#3D9CF0" />
-                            <Bar dataKey="uv" stackId="a" fill="#4ADE80" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

@@ -8,7 +8,7 @@ const run = async () => {
     const all_stock_collection = db.collection("all_stock")
     const all_stores_collection = db.collection("all_stores")
 
-    // get details for specific store 
+    // get specific store data for profit tracker
     router.get('/single_store_data', async (req, res) => {
         try {
             const storeId = req.query.storeId
@@ -51,6 +51,17 @@ const run = async () => {
         }
         catch (error) {
             res.status(500).json({ message: "Internal server error" })
+        }
+    })
+
+    // get specific store graph data for profit tracker
+    router.get('/single_store_graph_data', async(req, res) => {
+        try {
+            const storeId = req.query.storeId;
+            console.log(storeId);
+
+        } catch (error) {
+            res.status(500).json({message: "Internal server error"})
         }
     })
 }
