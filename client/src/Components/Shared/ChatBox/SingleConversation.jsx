@@ -36,6 +36,8 @@ export default function SingleConversation() {
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
   const [switchLick, setSwitchLick] = useState("");
   const [seenUnseenStatus, setSeenUnseenStatus] = useState(false);
+  const [messageSend, setMessageSend] = useState(false)
+  const [messageSendSocket, setMessageSendSocket] = useState(false)
 
   // render message data first time
   useEffect(() => {
@@ -44,6 +46,16 @@ export default function SingleConversation() {
 
   // scroll calculate
   const scrollPositionSet = () => {
+      
+      if(messageSendSocket){
+      setMessageSendSocket(false)
+      return
+      }
+    if(messageSend){
+      specificComponentRef.current.scrollTop =   specificComponentRef.current.scrollHeight ;
+      setMessageSend(false)
+      return
+    }
     setCalcScrollHeight(specificComponentRef.current.scrollHeight);
     if (conversation?.length > 16) {
       const goTo =
@@ -107,7 +119,7 @@ export default function SingleConversation() {
   const handleSentNewMassages = async (e, text = "") => {
     try {
       e.preventDefault();
-
+      setMessageSend(true)
       let msg = document.getElementById("message_input")?.value;
       if (msg || text) {
         const date = new Date();
@@ -211,6 +223,7 @@ export default function SingleConversation() {
   //  get typing status
   useEffect(() => {
     socket?.current?.on("getTyping", (status) => {
+      setMessageSendSocket(true)
       setChatLoadingStatus(status);
     });
   }, [socket]);
@@ -301,7 +314,7 @@ export default function SingleConversation() {
                 <div className="w-[30px] h-[30px] rounded-full bg-black ml-1 mr-0.5 overflow-hidden">
                   <img
                     className="w-full h-full"
-                    src="https://www.google.com/url?sa=i&url=https%3A%2F%2Freputationprotectiononline.com%2Freputation-score-survey%2F78-786207_user-avatar-png-user-avatar-icon-png-transparent%2F&psig=AOvVaw04DJKdroV2oI6yIBdZ0DXD&ust=1699574490607000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPjazb_OtYIDFQAAAAAdAAAAABAEhttps://reputationprotectiononline.com/wp-content/uploads/2022/04/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
                     alt="user"
                   />
                 </div>
@@ -339,7 +352,7 @@ export default function SingleConversation() {
         <div className="flex gap-3 items-center">
           <img
             className="w-10  rounded-full"
-            src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
             alt=""
           />
           <div>

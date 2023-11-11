@@ -1,10 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineClose, AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
-import { BsDot } from 'react-icons/bs';
-
+import { BsDot } from "react-icons/bs";
 
 export default function ConversationUserList() {
   // chat context
@@ -17,6 +16,7 @@ export default function ConversationUserList() {
     checkOnline,
     currentReceiverFind,
     socket,
+    setIsChatBoxOpen
   } = useContext(ChatContext);
 
   //set current Chat User Info
@@ -81,7 +81,6 @@ export default function ConversationUserList() {
   // get message fast time data in client
   useEffect(() => {
     socket?.current?.on("getMessageFastTime", (data) => {
-
       if (data) {
         setSocketData(data);
       }
@@ -218,12 +217,12 @@ export default function ConversationUserList() {
             <div className="w-14 h-14  rounded-full relative">
               <img
                 className="w-14  rounded-full"
-                src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no"
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
                 alt=""
               />
               <div
                 className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${
-                  online &&  "bg-green-500" 
+                  online && "bg-green-500"
                 }    `}
               ></div>
             </div>
@@ -231,11 +230,24 @@ export default function ConversationUserList() {
             <div>
               <p className=" text-base">{userData?.full_name}</p>
               <div className="text-sm flex items-center">
-                <span className={`${user.email == userData?.lastMassages?.sender ? "text-[#8C8D90]" :""} text-xs`}>
+                <span
+                  className={`${
+                    user.email == userData?.lastMassages?.sender
+                      ? "text-[#8C8D90]"
+                      : ""
+                  } text-xs`}
+                >
                   {massagesSliceAndSenderStatus(userData)}
                 </span>
-                <span className={`${user.email == userData?.lastMassages?.sender ? "text-[#8C8D90]" :""} pl-2 flex items-center text-xs ` }>
-                 <BsDot/> {calculateAgeTime(userData?.lastMassages?.timestamp)}
+                <span
+                  className={`${
+                    user.email == userData?.lastMassages?.sender
+                      ? "text-[#8C8D90]"
+                      : ""
+                  } pl-2 flex items-center text-xs `}
+                >
+                  <BsDot />{" "}
+                  {calculateAgeTime(userData?.lastMassages?.timestamp)}
                 </span>
               </div>
             </div>
@@ -250,12 +262,19 @@ export default function ConversationUserList() {
       {/* chat head  */}
       <div className="p-3 flex justify-between items-center pt-3  border-gray-300">
         <p className="font-bold text-2xl">Chats</p>
-        <button
-          onClick={handleNewConversation}
-          className="px-3 py-[6px] text-sm rounded-full bg-gray-200 transition hover:bg-purple-500 hover:text-white flex items-center gap-1  cursor-pointer"
-        >
-          <AiOutlinePlus /> <p>Add</p>
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleNewConversation}
+            className="px-3 py-[5px] text-sm rounded-full bg-purple-50  transition hover:bg-purple-100 text-purple-500  flex items-center gap-1  cursor-pointer"
+          >
+            <AiOutlinePlus /> <p>Add</p>
+          </button>
+          <div className="flex items-center">
+            <button onClick={() => setIsChatBoxOpen(false)} className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100">
+              <AiOutlineClose size={20} />
+            </button>
+          </div>
+        </div>
       </div>
       {/* search bar  */}
       <div className="relative px-3">
@@ -273,6 +292,7 @@ export default function ConversationUserList() {
       {/* user chat list  */}
       <div className="chat_list h-[calc(100%_-_126px)] overflow-y-scroll">
         {content}
+       {data.length < 1 && <p className="text-center mt-4 text-lg font-medium text-purple-500">Let's begin conversation!</p>}
       </div>
     </div>
   );
