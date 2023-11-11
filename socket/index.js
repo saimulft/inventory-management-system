@@ -24,7 +24,6 @@ io.on('connection',  (socket) => {
 
     // connect 
     socket.on('addUsers', userData => {
-        console.log(userData?.email)
         addUser(userData, socket.id)
         io.emit("getUsers", users);
     })
@@ -43,7 +42,6 @@ io.on('connection',  (socket) => {
 
     // lest message update conversation user list
     socket.on('sentLestMessageUpdateConversationUserList',  (data) => {
-        console.log("getLestMessageUpdateConversationUserList", data);
         const user =  getUser(data?.receiver)
        {user && io.to(user?.socketId).emit('getLestMessageUpdateConversationUserList', data)}
     })
@@ -52,8 +50,15 @@ io.on('connection',  (socket) => {
     socket.on('typing',  ({isTyping: status, receiver}) => {
        const user =  getUser(receiver)
       {user && io.to(user?.socketId).emit('getTyping', status)}
-
     })
+
+    // seen unseen status 
+    socket.on("seenUnseenStatus", ({status, receiver}) => {
+        const user =  getUser(receiver)
+        console.log("🚀 ~ file: index.js:60 ~ socket.on ~ user:", user)
+      {user && io.to(user?.socketId).emit('getSeenUnseenStatus', status)}
+
+    } )
 
     //disconnect
     socket.on('disconnect', () => {

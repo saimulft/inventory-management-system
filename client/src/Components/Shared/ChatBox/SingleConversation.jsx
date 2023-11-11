@@ -25,7 +25,6 @@ export default function SingleConversation() {
 
   // all state
   const [conversation, setConversation] = useState([]);
-  console.log("🚀 ~ file: SingleConversation.jsx:28 ~ SingleConversation ~ conversation:", conversation)
   const [noSms, setNoSms] = useState(0);
   const [loadNew, setLoadNew] = useState(true);
   const [pageCount, setPageCount] = useState(1);
@@ -36,11 +35,12 @@ export default function SingleConversation() {
   const [calcScrollHeight, setCalcScrollHeight] = useState(0);
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
   const [switchLick, setSwitchLick] = useState("");
+  const [seenUnseenStatus, setSeenUnseenStatus] = useState(false);
 
-// render message data first time 
- useEffect(()=>{
-  setConversation([])
- },[])
+  // render message data first time
+  useEffect(() => {
+    setConversation([]);
+  }, []);
 
   // scroll calculate
   const scrollPositionSet = () => {
@@ -65,11 +65,8 @@ export default function SingleConversation() {
         }&receiver=${currentChatUserEmail}&page_no=${fastAdd ? 1 : pageCount}`
       )
       .then((res) => {
-        console.log("🚀 ~ file: SingleConversation.jsx:67 ~ .then ~ res:", res)
         setPageCount(pageCount + 1);
-
-        // setConversation()
-        setTemporaryData(res?.data?.message);
+        setTemporaryData(res?.data?.message ? res?.data?.message : []);
         setConversationLoading(false);
       })
       .catch((err) => {
@@ -110,7 +107,7 @@ export default function SingleConversation() {
   const handleSentNewMassages = async (e, text = "") => {
     try {
       e.preventDefault();
-      
+
       let msg = document.getElementById("message_input")?.value;
       if (msg || text) {
         const date = new Date();
@@ -131,7 +128,8 @@ export default function SingleConversation() {
             100000 + Math.random() * 9000000000000000
           );
           setConversation([...conversation, { ...message, _id: randomId }]);
-          specificComponentRef.current.scrollTop = specificComponentRef.current.scrollHeight
+          specificComponentRef.current.scrollTop =
+            specificComponentRef.current.scrollHeight;
         }
 
         document.getElementById("message_input").value = "";
@@ -171,7 +169,7 @@ export default function SingleConversation() {
       }
     } catch (err) {
       console.log(err);
-      setConversation();
+      setConversation([]);
     }
   };
 
@@ -251,6 +249,24 @@ export default function SingleConversation() {
       }
     };
   }, [temporaryData]);
+
+  //  handle seen unseen status
+  const handleSeenUnseen = (e) => {
+    if (e.type == "focus") {
+      socket?.current?.emit("seenUnseenStatus", {
+        status: true,
+        receiver: currentChatUserEmail,
+      });
+    }
+  };
+
+  // get seen unseen status
+  useEffect(() => {
+    setSeenUnseenStatus(false);
+    socket.current.on("getSeenUnseenStatus", (status) => {
+      setSeenUnseenStatus(status);
+    });
+  }, []);
 
   let content;
   if (!conversationLoading && conversationError) {
@@ -351,7 +367,7 @@ export default function SingleConversation() {
       {/* message body */}
       <div
         ref={specificComponentRef}
-        className="text-base"
+        className="text-base message_body"
         style={{
           height: "calc(100% - 120px)",
           overflowY: "auto",
@@ -364,6 +380,7 @@ export default function SingleConversation() {
         )}
         {content}
         {chatLoadingStatus && online && <ChatLoading />}
+        {/* {seenUnseenStatus && <p className="text-right text-xs mb-1 mr-4 relative bottom-[6px]">seen</p> } */}
       </div>
 
       {/* sent message box  */}
@@ -373,6 +390,8 @@ export default function SingleConversation() {
       >
         <div className="flex items-center px-3 py-2 ">
           <input
+            autoFocus
+            onFocus={handleSeenUnseen}
             onChange={(e) => {
               handleTyping(e);
               setSwitchLick(e.target.value);
@@ -399,7 +418,10 @@ export default function SingleConversation() {
               </svg>
             </button>
           ) : (
-            <button onClick={(e) => handleSentNewMassages(e, "*like**")} className="text-[20px] hover:text-[22px] transition-all	duration-100">
+            <button
+              onClick={(e) => handleSentNewMassages(e, "*like**")}
+              className="text-[20px] hover:text-[22px] transition-all	duration-100"
+            >
               👍
             </button>
           )}

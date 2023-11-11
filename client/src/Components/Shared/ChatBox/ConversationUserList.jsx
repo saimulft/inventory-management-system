@@ -3,6 +3,8 @@ import { AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
+import { BsDot } from 'react-icons/bs';
+
 
 export default function ConversationUserList() {
   // chat context
@@ -158,9 +160,9 @@ export default function ConversationUserList() {
     const lastMsg =
       data?.lastMassages?.text == "*like**"
         ? "👍"
-        : data?.lastMassages?.text.length <= 17
+        : data?.lastMassages?.text.length <= 11
         ? data?.lastMassages?.text
-        : data?.lastMassages?.text.slice(0, 17) + "...";
+        : data?.lastMassages?.text.slice(0, 11) + "...";
 
     const senderStatus = user.email == data?.lastMassages?.sender ? "You:" : "";
     const result = senderStatus + " " + lastMsg;
@@ -229,11 +231,11 @@ export default function ConversationUserList() {
             <div>
               <p className=" text-base">{userData?.full_name}</p>
               <div className="text-sm flex items-center">
-                <span className={`${user.email == userData?.lastMassages?.sender ? "text-slate-500" :""}`}>
+                <span className={`${user.email == userData?.lastMassages?.sender ? "text-[#8C8D90]" :""} text-xs`}>
                   {massagesSliceAndSenderStatus(userData)}
                 </span>
-                <span className={`${user.email == userData?.lastMassages?.sender ? "text-slate-500" :""} pl-2 `}>
-                  {calculateAgeTime(userData?.lastMassages?.timestamp)}
+                <span className={`${user.email == userData?.lastMassages?.sender ? "text-[#8C8D90]" :""} pl-2 flex items-center text-xs ` }>
+                 <BsDot/> {calculateAgeTime(userData?.lastMassages?.timestamp)}
                 </span>
               </div>
             </div>

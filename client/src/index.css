@@ -31,6 +31,27 @@ display: none;
     background: hsla(0,0%,100%,.1);
   }
 
+
+.message_body::-webkit-scrollbar {
+    width: 10px!important;
+    height: 6px!important;
+  }
+  .message_body::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,.2);
+  }
+  .message_body::-webkit-scrollbar-track {
+    background: hsla(0,0%,100%,.1);
+  }
+
+
+  
+
+
+
+
+
+
+
 .new_conversation::-webkit-scrollbar {
     width: 10px!important;
     height: 6px!important;

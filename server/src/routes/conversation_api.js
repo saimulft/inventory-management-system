@@ -56,7 +56,7 @@ const run = async () => {
 
 
       const seenMassageStatus = (sender, receiver) => {
-        const emailToUsername = (email) => email.split('@')[0];
+        const emailToUsername = (email) => email.split('@')[0]
       
         const userVale = {
           [emailToUsername(sender)]: true,
