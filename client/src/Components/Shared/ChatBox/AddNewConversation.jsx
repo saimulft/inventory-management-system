@@ -22,6 +22,24 @@ export default function AddNewConversation() {
   const [data, loading, error] = allUsersState;
   const [setData, setLoading, setError] = allUsersSetState;
   const [addConversationSearch, setAddConversationSearch] = useState("")
+  const [addConversationSearchData, setAddConversationSearchData] = useState([...data])
+
+  // set default data 
+  useEffect(()=>{
+  setAddConversationSearchData(data)
+  },[data])
+
+  // add conversation search 
+  const handleAddConversationSearch = (e) =>{
+    const search = e?.target?.value?.toLowerCase()
+if(search){
+  const searchData = data.filter(d => d?.full_name?.toLowerCase().includes(search))
+  setAddConversationSearchData(searchData)
+}
+else{
+  setAddConversationSearchData(data)
+}
+  }
 
   useEffect(() => {
     setError(false);
@@ -51,7 +69,7 @@ export default function AddNewConversation() {
   } else if (!loading && error) {
     content = <p>Something is Wrong !</p>;
   } else if (!loading && !error && data.length > 0) {
-    content = data?.map((user) => {
+    content = addConversationSearchData?.map((user) => {
       return (
         <div
           onClick={() => {
@@ -65,7 +83,7 @@ export default function AddNewConversation() {
         >
           <img
             className="w-12  rounded-full"
-            src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
             alt=""
           />
           <div>
@@ -99,7 +117,10 @@ export default function AddNewConversation() {
         {/* search bar  */}
         <div className="relative px-3">
         <input
-          onChange={(e) => setAddConversationSearch(e?.target?.value)}
+          onChange={(e) => {
+            setAddConversationSearch(e?.target?.value)
+            handleAddConversationSearch(e)
+          }}
           type="text"
           value={addConversationSearch}
           placeholder="Search users"
@@ -113,6 +134,7 @@ export default function AddNewConversation() {
       {/* add new conversation list  */}
       <div className="new_conversation  h-[calc(100%_-_56px)] overflow-y-scroll">
         {content}
+        {(data.length && loading) < 1 && <p className="text-center mt-4 text-lg font-medium text-purple-500">No user available!</p>}
       </div>
     </div>
   );
