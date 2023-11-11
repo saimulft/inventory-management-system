@@ -44,7 +44,7 @@ export const ChatProvider = ({ children }) => {
   const [addNewConversation, setAddNewConversation] = useState(false);
   const [newConversationAdd, setNewConversationAdd] = useState(false);
 
-  console.log({ isChatBoxOpen, singleConversationShow, addNewConversation });
+  // console.log({ isChatBoxOpen, singleConversationShow, addNewConversation });
 
   // message box open close handle function
   // single conversation show

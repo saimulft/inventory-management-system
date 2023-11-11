@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiSolidFoodMenu, BiSolidStore, BiTable } from "react-icons/bi";
 import { BsFileBarGraphFill, BsGraphUp } from "react-icons/bs";
 import { AiTwotoneTag } from "react-icons/ai";
@@ -8,39 +8,9 @@ import axios from "axios";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
 
-const data = [
-    {
-        name: "Week 1",
-        "Net Profit": 2400,
-    },
-    {
-        name: "Week 2",
-        "Net Profit": 1398,
-    },
-    {
-        name: "Week 3",
-        "Net Profit": 9800,
-    },
-    {
-        name: "Week 4",
-        "Net Profit": 3908,
-    },
-    {
-        name: "Week 5",
-        "Net Profit": 4800,
-    },
-    {
-        name: "Week 6",
-        "Net Profit": 3800,
-    },
-    {
-        name: "Week 7",
-        "Net Profit": 4300,
-    },
-];
 
 const ProfitTrackerStatsPage = () => {
-    const [analyticsDays, setAnalyticsDays] = useState(7)
+    const [analyticsDays, setAnalyticsDays] = useState(1)
     const [view, setView] = useState('Graph')
     const [storeName, setStoreName] = useState('')
 
@@ -71,11 +41,11 @@ const ProfitTrackerStatsPage = () => {
         }
     })
 
-    const { data: storeGraphData = [] } = useQuery({
+    const { data: storeGraphData = [], refetch } = useQuery({
         queryKey: ['single_store_graph_data'],
         queryFn: async () => {
             try {
-                const res = await axios.get(`/api/v1/profit_tracker_api/single_store_graph_data?storeId=${id}`)
+                const res = await axios.get(`/api/v1/profit_tracker_api/single_store_graph_data?storeId=${id}&day=${analyticsDays}`)
 
                 if (res.status === 200) {
                     return res.data.data;
@@ -89,13 +59,14 @@ const ProfitTrackerStatsPage = () => {
             }
         }
     })
+    useEffect(() => {
 
+        refetch()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [analyticsDays])
     const boxShadowStyle = {
         boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
     };
-
-    console.log(storeGraphData)
-
     return (
         <div className="p-10">
             {/* analytics  */}
@@ -106,21 +77,22 @@ const ProfitTrackerStatsPage = () => {
                         <p className="text-gray-400">All Report</p>
                     </div>
                     <div className="flex gap-4 text-sm">
+                        <p onClick={() => setAnalyticsDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 1 && 'bg-[#8633FF] text-white'}`}>
+                            Daily
+                        </p>
                         <p onClick={() => setAnalyticsDays(7)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 7 && 'bg-[#8633FF] text-white'}`}>
                             7 Days
                         </p>
                         <p onClick={() => setAnalyticsDays(15)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 15 && 'bg-[#8633FF] text-white'}`}>
                             15 Days
                         </p>
-                        <p onClick={() => setAnalyticsDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 1 && 'bg-[#8633FF] text-white'}`}>
+                        <p onClick={() => setAnalyticsDays(30)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 30 && 'bg-[#8633FF] text-white'}`}>
                             1 Month
                         </p>
-                        <p onClick={() => setAnalyticsDays('year')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 'year' && 'bg-[#8633FF] text-white'}`}>
+                        <p onClick={() => setAnalyticsDays(365)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 365 && 'bg-[#8633FF] text-white'}`}>
                             Year
                         </p>
-                        <p onClick={() => setAnalyticsDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
-                            Custom
-                        </p>
+
                     </div>
                     <div className="flex gap-5 ml-auto">
                         <button onClick={() => setView('Graph')} className={`flex items-center gap-1.5 px-3 rounded-md py-2 cursor-pointer ${view === 'Graph' ? "bg-[#8633FF] text-white"
@@ -194,6 +166,7 @@ const ProfitTrackerStatsPage = () => {
                             </thead>
                             <tbody className="relative">
                                 {storeData?.map((d, index) => {
+
                                     const amazonFee = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) * 0.15
                                     const supplierPrice = parseFloat(d.walmart_quantity) * parseFloat(d.average_price)
                                     const tax = parseFloat(d.walmart_quantity) * parseFloat(d.average_tax)
@@ -232,7 +205,7 @@ const ProfitTrackerStatsPage = () => {
                 <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
                     <h6 className="text-lg font-medium my-4 ml-8">Net Profit</h6>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={data}>
+                        <BarChart data={storeGraphData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" />
                             <YAxis />
@@ -249,7 +222,7 @@ const ProfitTrackerStatsPage = () => {
                         <LineChart
                             width={500}
                             height={300}
-                            data={data}
+                            data={storeGraphData}
                             margin={{
                                 top: 5,
                                 right: 30,
@@ -264,7 +237,7 @@ const ProfitTrackerStatsPage = () => {
                             <Legend />
                             <Line
                                 type="monotone"
-                                dataKey="pv"
+                                dataKey="Total Expenses"
                                 stroke="#8884d8"
                                 activeDot={{ r: 8 }}
                             />
@@ -281,7 +254,7 @@ const ProfitTrackerStatsPage = () => {
                         <AreaChart
                             width={500}
                             height={300}
-                            data={data}
+                            data={storeGraphData}
                             margin={{
                                 top: 10,
                                 right: 30,
@@ -293,9 +266,10 @@ const ProfitTrackerStatsPage = () => {
                             <XAxis dataKey="name" />
                             <YAxis />
                             <Tooltip />
+                            <Legend />
                             <Area
                                 type="monotone"
-                                dataKey="pv"
+                                dataKey="Total Sales"
                                 stackId="1"
                                 stroke="#4ADE80"
                                 fill="#4ADE80"
@@ -310,7 +284,7 @@ const ProfitTrackerStatsPage = () => {
                         <BarChart
                             width={500}
                             height={300}
-                            data={data}
+                            data={storeGraphData}
                             margin={{
                                 top: 20,
                                 right: 30,
@@ -323,7 +297,7 @@ const ProfitTrackerStatsPage = () => {
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey="pv" stackId="a" fill="#3D9CF0" />
+                            <Bar dataKey="ROI" stackId="a" fill="#3D9CF0" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

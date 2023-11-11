@@ -9,7 +9,6 @@ export default function ChatBox() {
   const { isChatBoxOpen, singleConversationShow, addNewConversation } =
     useContext(ChatContext);
 
-  console.log(isChatBoxOpen)
 
   return (
     <div>
