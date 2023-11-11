@@ -1,5 +1,5 @@
-import { BiSolidFoodMenu, BiSolidStore, BiTable } from "react-icons/bi";
-import { BsFileBarGraphFill, BsGraphUp } from "react-icons/bs";
+import { BiSolidFoodMenu, BiSolidStore } from "react-icons/bi";
+import { BsFileBarGraphFill } from "react-icons/bs";
 import { AiTwotoneTag } from "react-icons/ai";
 import { BarChart, Bar, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, LineChart, Line } from "recharts";
 import { useState } from "react";
@@ -105,12 +105,12 @@ export default function DashboardPage() {
                             Custom
                         </p>
                     </div>
-                    <div className="flex gap-5 ml-auto">
+                    {/* <div className="flex gap-5 ml-auto">
                         <button onClick={() => setView('Graph')} className={`flex items-center gap-1.5 px-3 rounded-md py-2 cursor-pointer ${view === 'Graph' ? "bg-[#8633FF] text-white"
                             : "border border-slate-500 text-black"}`}><BsGraphUp size={18} /><span>Graph View</span></button>
                         <button onClick={() => setView('Table')} className={`flex items-center gap-1.5 px-3 rounded py-2 cursor-pointer ${view === 'Table' ? "bg-[#8633FF] text-white"
                             : "border border-slate-500 text-black"}`}><BiTable size={20} />Table View</button>
-                    </div>
+                    </div> */}
                 </div>
 
                 {view === "Graph" && <div className="mt-10 flex gap-5 items-center">
@@ -127,18 +127,18 @@ export default function DashboardPage() {
                         <div className="h-8 w-8 flex justify-center items-center rounded-full bg-rose-400 text-white">
                             <BsFileBarGraphFill />
                         </div>
-                        <h6 className="mt-2 text-xl font-medium">$ 1k</h6>
+                        <h6 className="mt-2 text-xl font-medium">$1k</h6>
                         <p className="my-1 text-sm">Total Sales</p>
                         <p className="text-xs text-rose-500">+8 from yesterday</p>
                     </div>
 
-                    <div className="bg-yellow-50 p-4 rounded-lg w-40">
-                        <div className="h-8 w-8 flex justify-center items-center rounded-full bg-yellow-400 text-white">
+                    <div className="bg-purple-100 p-4 rounded-lg w-40">
+                        <div className="h-8 w-8 flex justify-center items-center rounded-full bg-purple-400 text-white">
                             <BiSolidFoodMenu />
                         </div>
                         <h6 className="mt-2 text-xl font-medium">10</h6>
-                        <p className="my-1 text-sm">Total Store</p>
-                        <p className="text-xs text-yellow-500">+3 from yesterday</p>
+                        <p className="my-1 text-sm">Total Order</p>
+                        <p className="text-xs text-purple-500">+3 from yesterday</p>
                     </div>
 
                     <div className="bg-green-100 p-4 rounded-lg w-40">
@@ -148,15 +148,6 @@ export default function DashboardPage() {
                         <h6 className="mt-2 text-xl font-medium">42</h6>
                         <p className="my-1 text-sm">Product Sold</p>
                         <p className="text-xs text-green-500">+12 from yesterday</p>
-                    </div>
-
-                    <div className="bg-purple-100 p-4 rounded-lg w-40">
-                        <div className="h-8 w-8 flex justify-center items-center rounded-full bg-purple-400 text-white">
-                            <BiSolidStore />
-                        </div>
-                        <h6 className="mt-2 text-xl font-medium">15</h6>
-                        <p className="my-1 text-sm">New Customers</p>
-                        <p className="text-xs text-purple-500">+6 from yesterday</p>
                     </div>
                 </div>}
 
@@ -180,7 +171,7 @@ export default function DashboardPage() {
                                     <th className="border border-gray-300">Tax</th>
                                     <th className="border border-gray-300">Handling Cost</th>
                                     <th className="border border-gray-300">Cost of Goods</th>
-                                    <th className="border border-gray-300">Cash Profit</th>
+                                    <th className="border border-gray-300">Net Profit</th>
                                     <th className="border border-gray-300">ROI</th>
                                 </tr>
                             </thead>

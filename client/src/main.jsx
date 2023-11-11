@@ -9,6 +9,7 @@ import AuthProvider from "./Providers/AuthProvider.jsx";
 import StoreProvider from "./Providers/StoreProvider.jsx";
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
+import { ChatProvider } from "./Providers/ChatProvider.jsx";
 const queryClient = new QueryClient()
 
 axios.defaults.baseURL = "http://localhost:5000"
@@ -18,9 +19,11 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
         <GlobalProvider>
-          <StoreProvider>
-            <App />
-          </StoreProvider>
+          <ChatProvider>
+            <StoreProvider>
+              <App />
+            </StoreProvider>
+          </ChatProvider>
         </GlobalProvider>
       </AuthProvider>
     </QueryClientProvider>

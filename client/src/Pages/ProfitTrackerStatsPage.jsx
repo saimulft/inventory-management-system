@@ -136,18 +136,18 @@ const ProfitTrackerStatsPage = () => {
                         <div className="h-8 w-8 flex justify-center items-center rounded-full bg-rose-400 text-white">
                             <BsFileBarGraphFill />
                         </div>
-                        <h6 className="mt-2 text-xl font-medium">$ 1k</h6>
+                        <h6 className="mt-2 text-xl font-medium">$1k</h6>
                         <p className="my-1 text-sm">Total Sales</p>
                         <p className="text-xs text-rose-500">+8 from yesterday</p>
                     </div>
 
-                    <div className="bg-yellow-50 p-4 rounded-lg w-40">
-                        <div className="h-8 w-8 flex justify-center items-center rounded-full bg-yellow-400 text-white">
+                    <div className="bg-purple-100 p-4 rounded-lg w-40">
+                        <div className="h-8 w-8 flex justify-center items-center rounded-full bg-purple-400 text-white">
                             <BiSolidFoodMenu />
                         </div>
                         <h6 className="mt-2 text-xl font-medium">10</h6>
-                        <p className="my-1 text-sm">Total Store</p>
-                        <p className="text-xs text-yellow-500">+3 from yesterday</p>
+                        <p className="my-1 text-sm">Total Order</p>
+                        <p className="text-xs text-purple-500">+3 from yesterday</p>
                     </div>
 
                     <div className="bg-green-100 p-4 rounded-lg w-40">
@@ -157,15 +157,6 @@ const ProfitTrackerStatsPage = () => {
                         <h6 className="mt-2 text-xl font-medium">42</h6>
                         <p className="my-1 text-sm">Product Sold</p>
                         <p className="text-xs text-green-500">+12 from yesterday</p>
-                    </div>
-
-                    <div className="bg-purple-100 p-4 rounded-lg w-40">
-                        <div className="h-8 w-8 flex justify-center items-center rounded-full bg-purple-400 text-white">
-                            <BiSolidStore />
-                        </div>
-                        <h6 className="mt-2 text-xl font-medium">15</h6>
-                        <p className="my-1 text-sm">New Customers</p>
-                        <p className="text-xs text-purple-500">+6 from yesterday</p>
                     </div>
                 </div>}
 
@@ -189,7 +180,7 @@ const ProfitTrackerStatsPage = () => {
                                     <th className="border border-gray-300">Tax</th>
                                     <th className="border border-gray-300">Handling Cost</th>
                                     <th className="border border-gray-300">Cost of Goods</th>
-                                    <th className="border border-gray-300">Cash Profit</th>
+                                    <th className="border border-gray-300">Net Profit</th>
                                     <th className="border border-gray-300">ROI</th>
                                 </tr>
                             </thead>
