@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import { format } from "date-fns";
+import { FaSpinner } from "react-icons/fa";
 
 
 const ProfitTrackerStatsPage = () => {
@@ -41,7 +42,7 @@ const ProfitTrackerStatsPage = () => {
         }
     })
 
-    const { data: storeGraphData = [], refetch } = useQuery({
+    const { data: storeGraphData = [], refetch ,isLoading} = useQuery({
         queryKey: ['single_store_graph_data'],
         queryFn: async () => {
             try {
@@ -200,109 +201,116 @@ const ProfitTrackerStatsPage = () => {
                 </div>}
             </div>
 
-            {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
+            {isLoading ?
+                <div className="flex justify-center items-center w-full h-[500px]"> <FaSpinner size={28} className="animate-spin text-[#8633FF]" /></div>
+                :
+                <>
+                    {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
 
-                <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
-                    <h6 className="text-lg font-medium my-4 ml-8">Net Profit</h6>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={storeGraphData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Bar dataKey="Net Profit" fill="#8633FF" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
+                        <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
+                            <h6 className="text-lg font-medium my-4 ml-8">Net Profit</h6>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <BarChart data={storeGraphData}>
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Bar dataKey="Net Profit" fill="#8633FF" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
 
-                <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
-                    <h6 className="text-lg font-medium my-4 ml-8">Total Expenses</h6>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <LineChart
-                            width={500}
-                            height={300}
-                            data={storeGraphData}
-                            margin={{
-                                top: 5,
-                                right: 30,
-                                left: 20,
-                                bottom: 5,
-                            }}
-                        >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Line
-                                type="monotone"
-                                dataKey="Total Expenses"
-                                stroke="#8884d8"
-                                activeDot={{ r: 8 }}
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>}
+                        <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
+                            <h6 className="text-lg font-medium my-4 ml-8">Total Expenses</h6>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <LineChart
+                                    width={500}
+                                    height={300}
+                                    data={storeGraphData}
+                                    margin={{
+                                        top: 5,
+                                        right: 30,
+                                        left: 20,
+                                        bottom: 5,
+                                    }}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Line
+                                        type="monotone"
+                                        dataKey="Total Expenses"
+                                        stroke="#8884d8"
+                                        activeDot={{ r: 8 }}
+                                    />
+                                </LineChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>}
 
-            {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
-                {/* sales Chart */}
-                <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
-                    <h6 className="text-lg font-medium my-4 ml-8">Sales</h6>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <AreaChart
-                            width={500}
-                            height={300}
-                            data={storeGraphData}
-                            margin={{
-                                top: 10,
-                                right: 30,
-                                left: 0,
-                                bottom: 0,
-                            }}
-                        >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Area
-                                type="monotone"
-                                dataKey="Total Sales"
-                                stackId="1"
-                                stroke="#4ADE80"
-                                fill="#4ADE80"
-                            />
-                        </AreaChart>
-                    </ResponsiveContainer>
-                </div>
 
-                <div style={boxShadowStyle} className="bg-white p-5  rounded-xl">
-                    <h6 className="text-lg font-medium my-4 ml-8">ROI</h6>
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart
-                            width={500}
-                            height={300}
-                            data={storeGraphData}
-                            margin={{
-                                top: 20,
-                                right: 30,
-                                left: 20,
-                                bottom: 5,
-                            }}
-                        >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Bar dataKey="ROI" stackId="a" fill="#3D9CF0" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-            </div>}
-        </div>
+                    {view === "Graph" && <div className="grid grid-cols-2 gap-8 mt-10">
+                        {/* sales Chart */}
+                        <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
+                            <h6 className="text-lg font-medium my-4 ml-8">Sales</h6>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <AreaChart
+                                    width={500}
+                                    height={300}
+                                    data={storeGraphData}
+                                    margin={{
+                                        top: 10,
+                                        right: 30,
+                                        left: 0,
+                                        bottom: 0,
+                                    }}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="Total Sales"
+                                        stackId="1"
+                                        stroke="#4ADE80"
+                                        fill="#4ADE80"
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+
+                        <div style={boxShadowStyle} className="bg-white p-5  rounded-xl">
+                            <h6 className="text-lg font-medium my-4 ml-8">ROI</h6>
+                            <ResponsiveContainer width="100%" height={300}>
+                                <BarChart
+                                    width={500}
+                                    height={300}
+                                    data={storeGraphData}
+                                    margin={{
+                                        top: 20,
+                                        right: 30,
+                                        left: 20,
+                                        bottom: 5,
+                                    }}
+                                >
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis dataKey="name" />
+                                    <YAxis />
+                                    <Tooltip />
+                                    <Legend />
+                                    <Bar dataKey="ROI" stackId="a" fill="#3D9CF0" />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>}
+                </>}
+
+        </div >
     );
 };
 
