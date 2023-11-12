@@ -650,15 +650,15 @@ export default function StorePreparingRequestTable() {
                 </div>
 
                 <div className="mt-2">
-                  <label className="font-bold mb-1">Invoice </label>
+                  <label className="font-bold mb-1">Invoice</label>
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="invoice-dropzone"
-                      className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                      className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 hover:bg-gray-100 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[4px]">
                         <svg
-                          className="w-6 h-6 text-gray-500 dark:text-gray-400"
+                          className="w-6 h-6 text-gray-500"
                           aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"
@@ -695,11 +695,11 @@ export default function StorePreparingRequestTable() {
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="shippingLabel-dropzone"
-                      className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                      className="flex justify-between items-center px-4 w-full h-fit border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800  hover:bg-gray-100 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[4px]">
                         <svg
-                          className="w-6 h-6 text-gray-500 dark:text-gray-400"
+                          className="w-6 h-6 text-gray-500"
                           aria-hidden="true"
                           xmlns="http://www.w3.org/2000/svg"
                           fill="none"

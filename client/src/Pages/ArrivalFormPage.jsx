@@ -148,7 +148,7 @@ const ArrivalFormPage = () => {
       return;
     }
 
-    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda) {
+    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda || !amazonQuantity || !customerName || !amazonShipping || !shippingCost || !handlingCost || !walmartQuantity || !amazonPrice || !averagePrice || !averageTax || !orderNumber) {
       setInputError('Please fill out all the inputs in order to submit the form')
       return;
     }
