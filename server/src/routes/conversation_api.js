@@ -52,7 +52,7 @@ const run = async () => {
       const receiver = request.body.receiver;
       const text = request.body.text;
       const timestamp = request.body.timestamp;
-      const full_name = request.body.full_name;
+      const participants_name = request.body.participants_name;
 
 
       const seenMassageStatus = (sender, receiver) => {
@@ -69,7 +69,7 @@ const run = async () => {
  
       const prepareMessage = {
         participants: [sender, receiver],
-        full_name,
+        participants_name,
         isMessageSeen: seenMassageStatus(sender, receiver),
         messages: [
           {
@@ -156,7 +156,7 @@ const run = async () => {
       const messagesList = allConversations.map((con) => {
         const conversation = {
           _id: con?._id,
-          full_name: con?.full_name,
+          participants_name: con?.participants_name,
           isMessageSeen: con?.isMessageSeen,
           participants: con?.participants,
           lastMassages: {
@@ -238,14 +238,11 @@ const run = async () => {
             end,
           };
 
-          console.log(currentMessageIndex, { totalMessageLength, page_no });
           res.status(200).send({message: chunk, isMessageSeen: singleConversationsData?.isMessageSeen});
         } else {
-          console.log("page count not found");
           res.status(200).send({});
         }
       } else {
-        console.log("user not found");
         const demoData = [
           {
             _id: "demo",

@@ -24,6 +24,7 @@ export default function ConversationUserList() {
     currentChatUserSetInfo || {};
 
   const [data, loading, error] = alreadyConversationUserState;
+  console.log("🚀 ~ file: ConversationUserList.jsx:27 ~ ConversationUserList ~ data:", data)
   const [setData, setLoading, setError] = alreadyConversationUserSetState;
 
   const [search, setSearch] = useState("");
@@ -201,12 +202,13 @@ export default function ConversationUserList() {
     content = dataSortByTime(userConversationListSearch(data))?.map(
       (userData) => {
         const online = checkOnline(currentReceiverFind(userData?.participants));
-
+        const senderName = userData?.participants_name?.find(name => name != user?.full_name)
+        console.log("🚀 ~ file: ConversationUserList.jsx:207 ~ ConversationUserList ~ senderName:", senderName)
         return (
           <div
             onClick={(e) => {
               handleOpenSingleConversationShow(e);
-              setCurrentChatUserName(userData?.full_name);
+              setCurrentChatUserName(senderName);
               setCurrentChatUserEmail(
                 currentChatReceiver(userData?.participants)
               );
@@ -228,7 +230,7 @@ export default function ConversationUserList() {
             </div>
 
             <div>
-              <p className=" text-base">{userData?.full_name}</p>
+              <p className=" text-base">{senderName}</p>
               <div className="text-sm flex items-center">
                 <span
                   className={`${

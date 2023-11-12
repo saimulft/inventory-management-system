@@ -21,7 +21,9 @@ export default function SingleConversation() {
   } = useContext(ChatContext);
 
   const { currentChatUserName, currentChatUserEmail } =
-    currentChatUserInfo || {};
+  currentChatUserInfo || {};
+  console.log("🚀 ~ file: SingleConversation.jsx:24 ~ SingleConversation ~ currentChatUserEmail:", currentChatUserEmail)
+  console.log("🚀 ~ file: SingleConversation.jsx:24 ~ SingleConversation ~ currentChatUserName:", currentChatUserName)
 
   // all state
   const [conversation, setConversation] = useState([]);
@@ -35,7 +37,7 @@ export default function SingleConversation() {
   const [calcScrollHeight, setCalcScrollHeight] = useState(0);
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
   const [switchLick, setSwitchLick] = useState("");
-  const [seenUnseenStatus, setSeenUnseenStatus] = useState(false);
+  // const [seenUnseenStatus, setSeenUnseenStatus] = useState(false);
   const [messageSend, setMessageSend] = useState(false)
   const [messageSendSocket, setMessageSendSocket] = useState(false)
 
@@ -127,7 +129,7 @@ export default function SingleConversation() {
 
         // new message data
         const message = {
-          full_name: currentChatUserName,
+          participants_name: [user?.full_name, currentChatUserName],
           sender: user?.email,
           receiver: currentChatUserEmail,
           text: text ? text : msg,
@@ -158,7 +160,7 @@ export default function SingleConversation() {
           const fastTimeData = {
             _id: data.data.insertedId,
             participants: [user?.email, currentChatUserEmail],
-            full_name: message?.full_name,
+            participants_name: [user?.full_name, currentChatUserName],
             isMessageSeen: false,
             lastMassages: {
               sender: message?.sender,
@@ -274,12 +276,12 @@ export default function SingleConversation() {
   };
 
   // get seen unseen status
-  useEffect(() => {
-    setSeenUnseenStatus(false);
-    socket.current.on("getSeenUnseenStatus", (status) => {
-      setSeenUnseenStatus(status);
-    });
-  }, []);
+  // useEffect(() => {
+  //   setSeenUnseenStatus(false);
+  //   socket.current.on("getSeenUnseenStatus", (status) => {
+  //     setSeenUnseenStatus(status);
+  //   });
+  // }, []);
 
   let content;
   if (!conversationLoading && conversationError) {
@@ -357,7 +359,7 @@ export default function SingleConversation() {
           />
           <div>
             <p className="font-medium text-base">
-              {currentChatUserName ? currentChatUserName : "No Name"}
+              {currentChatUserName ? currentChatUserName : "Anonymous"}
             </p>
             <div className="text-sm flex items-center">
               <div

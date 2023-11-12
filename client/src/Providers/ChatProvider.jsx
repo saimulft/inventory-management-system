@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 
 export const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
-  // chat head infomation
+  // chat head information
   const [currentChatUserName, setCurrentChatUserName] = useState("");
   const [currentChatUserEmail, setCurrentChatUserEmail] = useState("");
   const currentChatUserInfo = { currentChatUserName, currentChatUserEmail };
@@ -49,6 +49,10 @@ export const ChatProvider = ({ children }) => {
   // message box open close handle function
   // single conversation show
   const handleOpenSingleConversationShow = () => {
+    socket.current?.emit("typing", {
+      isTyping: false,
+      receiver: currentChatUserEmail,
+    });
     setSingleConversationShow(!singleConversationShow);
     setIsChatBoxOpen(!isChatBoxOpen);
     setNewConversationAdd(false);

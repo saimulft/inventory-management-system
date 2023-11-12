@@ -70,6 +70,8 @@ else{
     content = <p>Something is Wrong !</p>;
   } else if (!loading && !error && data.length > 0) {
     content = addConversationSearchData?.map((user) => {
+      console.log("🚀 ~ file: AddNewConversation.jsx:73 ~ content=addConversationSearchData?.map ~ user:", user)
+      
       return (
         <div
           onClick={() => {
@@ -134,7 +136,7 @@ else{
       {/* add new conversation list  */}
       <div className="new_conversation  h-[calc(100%_-_56px)] overflow-y-scroll">
         {content}
-        {(data.length && loading) < 1 && <p className="text-center mt-4 text-lg font-medium text-purple-500">No user available!</p>}
+        {(data.length < 1 && !loading)  && <p className="text-center mt-4 text-lg font-medium text-purple-500">No user available!</p>}
       </div>
     </div>
   );
