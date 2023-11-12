@@ -60,22 +60,26 @@ select {
     color: #fff;
     border: 1px solid #8633FF;
 }
+
 .pagination .ellipsis {
     display: none;
-  }
-  
-  .pagination .active + .ellipsis {
+}
+
+.pagination .active+.ellipsis {
     display: inline-block;
-  }
-  
-  /* table styles */
-  table{
+}
+
+/* table styles */
+table {
     border: 1px solid rgba(209, 213, 219);
     border-collapse: collapse;
-  }
-  th{
+}
+
+th {
     color: black;
-  }
-  th, td{
+}
+
+th,
+td {
     border: 1px solid rgba(209, 213, 219);
-  }
+}
