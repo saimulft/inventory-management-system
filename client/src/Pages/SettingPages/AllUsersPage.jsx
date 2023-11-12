@@ -66,6 +66,7 @@ export default function AllUsersPage() {
 
   }
 
+
   return (
     <div className="overflow-x-auto py-10 min-h-[calc(100vh-310px)] max-h-full">
       <table className="table table-md">
@@ -83,7 +84,8 @@ export default function AllUsersPage() {
             return (
               <tr key={index} className={`${index % 2 == 1 && "bg-gray-100"}`}>
                 <td>{user.full_name}</td>
-                <td>{user.email}</td>
+
+                <td>{user.email}<span className="ml-3 py-1 px-2 rounded border text-xs border-[#8633FF] font-medium tracking-wide text-white bg-[#8533ff] ">{user.email_verified ? "Verified" : "Pending"}</span></td>
                 <td>{
                   user?.role
                 }
