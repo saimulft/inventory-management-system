@@ -2,59 +2,15 @@ import { BiSolidFoodMenu, BiSolidStore } from "react-icons/bi";
 import { BsFileBarGraphFill } from "react-icons/bs";
 import { AiTwotoneTag } from "react-icons/ai";
 import { BarChart, Bar, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis, Area, AreaChart, LineChart, Line } from "recharts";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { format } from "date-fns";
 import useAuth from "../hooks/useAuth";
 
-const data = [
-    {
-        name: "Page A",
-        uv: 4000,
-        pv: 2400,
-        amt: 2400,
-    },
-    {
-        name: "Page B",
-        uv: 3000,
-        pv: 1398,
-        amt: 2210,
-    },
-    {
-        name: "Page C",
-        uv: 2000,
-        pv: 9800,
-        amt: 2290,
-    },
-    {
-        name: "Page D",
-        uv: 2780,
-        pv: 3908,
-        amt: 2000,
-    },
-    {
-        name: "Page E",
-        uv: 1890,
-        pv: 4800,
-        amt: 2181,
-    },
-    {
-        name: "Page F",
-        uv: 2390,
-        pv: 3800,
-        amt: 2500,
-    },
-    {
-        name: "Page G",
-        uv: 3490,
-        pv: 4300,
-        amt: 2100,
-    },
-];
 
 export default function DashboardPage() {
-    const [analyticsDays, setAnalyticsDays] = useState()
+    const [analyticsDays, setAnalyticsDays] = useState(1)
     const [view, setView] = useState('Graph')
     const { user } = useAuth()
 
@@ -75,7 +31,29 @@ export default function DashboardPage() {
             }
         }
     })
+    const { data: storeGraphData = [], refetch } = useQuery({
+        queryKey: ['single_store_graph_data'],
+        queryFn: async () => {
+            try {
+                const res = await axios.get(`/api/v1/profit_tracker_api/single_store_graph_data?adminId=${user.admin_id}&day=${analyticsDays}&view=dashboard`)
 
+                if (res.status === 200) {
+                    return res.data.data;
+                }
+                if (res.status === 204) {
+                    return []
+                }
+            } catch (error) {
+                console.log(error);
+                return [];
+            }
+        }
+    })
+    useEffect(() => {
+
+        refetch()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [analyticsDays])
     const boxShadowStyle = {
         boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
     };
@@ -89,21 +67,22 @@ export default function DashboardPage() {
                         <p className="text-gray-400">All Report</p>
                     </div>
                     <div className="flex gap-4 text-sm">
+                        <p onClick={() => setAnalyticsDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 1 && 'bg-[#8633FF] text-white'}`}>
+                            Daily
+                        </p>
                         <p onClick={() => setAnalyticsDays(7)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 7 && 'bg-[#8633FF] text-white'}`}>
                             7 Days
                         </p>
                         <p onClick={() => setAnalyticsDays(15)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 15 && 'bg-[#8633FF] text-white'}`}>
                             15 Days
                         </p>
-                        <p onClick={() => setAnalyticsDays(1)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 1 && 'bg-[#8633FF] text-white'}`}>
+                        <p onClick={() => setAnalyticsDays(30)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 30 && 'bg-[#8633FF] text-white'}`}>
                             1 Month
                         </p>
-                        <p onClick={() => setAnalyticsDays('year')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 'year' && 'bg-[#8633FF] text-white'}`}>
+                        <p onClick={() => setAnalyticsDays(365)} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 365 && 'bg-[#8633FF] text-white'}`}>
                             Year
                         </p>
-                        <p onClick={() => setAnalyticsDays('custom')} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
-                            Custom
-                        </p>
+
                     </div>
                     {/* <div className="flex gap-5 ml-auto">
                         <button onClick={() => setView('Graph')} className={`flex items-center gap-1.5 px-3 rounded-md py-2 cursor-pointer ${view === 'Graph' ? "bg-[#8633FF] text-white"
@@ -215,14 +194,13 @@ export default function DashboardPage() {
                 <div style={boxShadowStyle} className=" bg-white p-5  rounded-xl">
                     <h6 className="text-lg font-medium my-4 ml-8">Net Profit</h6>
                     <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={data}>
+                        <BarChart data={storeGraphData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" />
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey="pv" fill="#3D9CF0" />
-                            <Bar dataKey="uv" fill="#4ADE80" />
+                            <Bar dataKey="Net Profit" fill="#8633FF" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
@@ -233,7 +211,7 @@ export default function DashboardPage() {
                         <LineChart
                             width={500}
                             height={300}
-                            data={data}
+                            data={storeGraphData}
                             margin={{
                                 top: 5,
                                 right: 30,
@@ -248,11 +226,10 @@ export default function DashboardPage() {
                             <Legend />
                             <Line
                                 type="monotone"
-                                dataKey="pv"
+                                dataKey="Total Expenses"
                                 stroke="#8884d8"
                                 activeDot={{ r: 8 }}
                             />
-                            <Line type="monotone" dataKey="uv" stroke="#82ca9d" />
                         </LineChart>
                     </ResponsiveContainer>
                 </div>
@@ -266,7 +243,7 @@ export default function DashboardPage() {
                         <AreaChart
                             width={500}
                             height={300}
-                            data={data}
+                            data={storeGraphData}
                             margin={{
                                 top: 10,
                                 right: 30,
@@ -278,16 +255,10 @@ export default function DashboardPage() {
                             <XAxis dataKey="name" />
                             <YAxis />
                             <Tooltip />
+                            <Legend />
                             <Area
                                 type="monotone"
-                                dataKey="uv"
-                                stackId="1"
-                                stroke="#3D9CF0"
-                                fill="#3D9CF0"
-                            />
-                            <Area
-                                type="monotone"
-                                dataKey="pv"
+                                dataKey="Total Sales"
                                 stackId="1"
                                 stroke="#4ADE80"
                                 fill="#4ADE80"
@@ -302,7 +273,7 @@ export default function DashboardPage() {
                         <BarChart
                             width={500}
                             height={300}
-                            data={data}
+                            data={storeGraphData}
                             margin={{
                                 top: 20,
                                 right: 30,
@@ -315,8 +286,7 @@ export default function DashboardPage() {
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Bar dataKey="pv" stackId="a" fill="#3D9CF0" />
-                            <Bar dataKey="uv" stackId="a" fill="#4ADE80" />
+                            <Bar dataKey="ROI" stackId="a" fill="#3D9CF0" />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
