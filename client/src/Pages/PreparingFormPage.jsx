@@ -430,7 +430,7 @@ const PreparingFormPage = () => {
                             Select a file or drag and drop
                           </p>}
                           <p className="text-xs  text-gray-500 dark:text-gray-400">
-                            PNG, JPG or PDF, file size no more than 10MB
+                            PNG, JPG or PDF, file size no more than 5MB
                           </p>
                         </div>
                       </div>

@@ -13,9 +13,9 @@ const run = async () => {
         try {
             const storeId = req.query.storeId
 
-            const storeResult = await all_stock_collection.find({ store_id: storeId }).toArray()
-
             const store = await all_stores_collection.findOne({ _id: new ObjectId(storeId) })
+
+            const storeResult = await all_stock_collection.find({ store_id: storeId }).toArray()
 
             if (store) {
                 if (storeResult.length) {
@@ -23,7 +23,7 @@ const run = async () => {
                     return res.status(200).json({ data: storeResult, store_name: store.store_name, message: "Data successfully get" })
                 }
                 else {
-                    return res.status(200).json({ store_name: store.store_name, message: "Data successfully get" })
+                    return res.status(200).json({ store_name: store.store_name, message: "Data got successfully" })
                 }
             }
             else {
@@ -38,12 +38,13 @@ const run = async () => {
     // get all store data for dashboard
     router.get('/all_store_data', async (req, res) => {
         try {
-            const adminId = req.query.id
+            const adminId = req.query.adminId;
 
-            const storeResult = await all_stock_collection.find({ admin_id: adminId }).toArray()
+            const stockData = await all_stock_collection.find({ admin_id: adminId }).toArray()
+            const totalStore = await all_stores_collection.countDocuments({admin_id: adminId})
 
-            if (storeResult.length) {
-                return res.status(200).json({ data: storeResult, message: "Data successfully get" })
+            if (stockData.length) {
+                return res.status(200).json({ data: stockData, total_store: totalStore, message: "Data got successfully" })
             }
             else {
                 res.status(204).json({ message: "No data found" })
@@ -54,7 +55,7 @@ const run = async () => {
         }
     })
 
-
+    // get store graph data for dashboard and profit tracker
     router.get('/single_store_graph_data', async (req, res) => {
         try {
             const storeId = req.query.storeId
@@ -153,8 +154,6 @@ const run = async () => {
             res.status(500).json({ message: "Internal server error" });
         }
     });
-
-
 
 }
 run()
