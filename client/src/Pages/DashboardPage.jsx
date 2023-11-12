@@ -74,7 +74,7 @@ export default function DashboardPage() {
     const totalSold = data?.data?.reduce((sum, d) => sum + parseFloat(d?.total_sold), 0);
 
     return (
-        <div className="p-10 relative">
+        <div className={`${initialLoading ? 'p-0' : 'p-10'} relative`}>
             {loading && <div className="absolute left-0 top-5 w-full items-center justify-center"><div className="text-center text-xs font-medium text-[#8533ff] bg-purple-100 border border-[#8533ff] py-2 px-3 rounded flex gap-2 w-fit mx-auto"><FaSpinner className="animate-spin text-[#8633FF]" size={16} />Prepering Graph Data</div></div>}
 
             {
