@@ -41,8 +41,8 @@ export default function ConversationUserList() {
     const emailTwo = socketData?.receiver;
 
     const newList = userConversationData?.map((cd) => {
-      const existOne = cd.participants.includes(emailOne);
-      const existTwo = cd.participants.includes(emailTwo);
+      const existOne = cd?.participants?.includes(emailOne);
+      const existTwo = cd?.participants?.includes(emailTwo);
 
       if (existOne && existTwo) {
         const newLastMsg = {

@@ -33,7 +33,7 @@ export default function AddNewConversation() {
   const handleAddConversationSearch = (e) =>{
     const search = e?.target?.value?.toLowerCase()
 if(search){
-  const searchData = data.filter(d => d?.full_name?.toLowerCase().includes(search))
+  const searchData = data.filter(d => d?.full_name?.toLowerCase()?.includes(search))
   setAddConversationSearchData(searchData)
 }
 else{
