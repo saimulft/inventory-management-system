@@ -54,19 +54,19 @@ export default function AddSupplier() {
       isNext = undefined;
 
       if (!singleList.supplier_name) {
-        return setInputError('Provide supplier name')
+        return setInputError('Missing supplier information')
       }
       else if (!singleList.username) {
-        return setInputError('Provide supplier username')
+        return setInputError('Missing supplier information')
       }
       else if (!singleList.password) {
-        return setInputError('Provide supplier password')
+        return setInputError('Missing supplier information')
       }
 
       return isNext = true;
     })
 
-    if(!isNext){
+    if (!isNext) {
       return;
     }
 
@@ -139,9 +139,10 @@ export default function AddSupplier() {
             <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">
               {/* supplier information  */}
               <div className="w-1/2 p-8">
-                <h5 className="text-xl font-medium">
-                  Add Supplier Information
-                </h5>
+                <div className="flex justify-between items-center">
+                  <h5 className="text-xl font-medium">Add Supplier Information</h5>
+                  {inputError && <p className="text-sm font-medium text-rose-500">{inputError}</p>}
+                </div>
 
                 <SupplierInfoInputList />
               </div>

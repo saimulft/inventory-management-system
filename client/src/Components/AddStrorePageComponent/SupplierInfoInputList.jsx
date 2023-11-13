@@ -22,11 +22,10 @@ export default function SupplierInfoInputList() {
   };
 
   const handleSupplierInfoRemoveField = (index) => {
-    const list = [...supplierInfoInputList];
-    if (index > 0 && index < list.length) {
-      list.splice(index, 1);
+    if (supplierInfoInputList.length > 1) {
+      const list = supplierInfoInputList.filter((item, idx) => idx !== index);
+      setSupplierInfoInputList([...list]);
     }
-    setSupplierInfoInputList(list);
   };
 
   return (
@@ -41,7 +40,7 @@ export default function SupplierInfoInputList() {
               type="text"
               name="supplier_name"
               id="supplier_name"
-              defaultValue={i?.supplier_name}
+              value={i?.supplier_name}
             />
             <input
               onChange={(e) => handleSupplierInfoInputChange(e, index)}
@@ -50,7 +49,7 @@ export default function SupplierInfoInputList() {
               type="text"
               name="username"
               id="username"
-              defaultValue={i?.username}
+              value={i?.username}
             />
             <input
               onChange={(e) => handleSupplierInfoInputChange(e, index)}
@@ -59,7 +58,7 @@ export default function SupplierInfoInputList() {
               type="text"
               name="password"
               id="password"
-              defaultValue={i?.password}
+              value={i?.password}
             />
             <button
               onClick={() => handleSupplierInfoRemoveField(index)}
