@@ -1,7 +1,7 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import { createContext, useEffect, useState } from "react";
-
+import CryptoJS from "crypto-js"
 export const AuthContext = createContext(null)
 
 const AuthProvider = ({ children }) => {
@@ -9,7 +9,19 @@ const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true)
 
     const authInfo = { user, setUser, loading }
-    const token = Cookies.get('loginToken')
+
+    const decryptToken = (encryptedToken, secretKey) => {
+        try {
+            const decryptedBytes = CryptoJS.AES.decrypt(encryptedToken, secretKey);
+            const decryptedToken = decryptedBytes.toString(CryptoJS.enc.Utf8);
+            return decryptedToken;
+        } catch (error) {
+            return undefined;
+        }
+    };
+
+    const encryptedTokenFromCookie = Cookies.get('imstoken');
+    const token = decryptToken(encryptedTokenFromCookie, "e74cca3d65c871d49a7508bac94a1a4c41b843528411a5823b04d5921d2bf6e0b016164cssdf");
 
     useEffect(() => {
         axios.get('/api/v1/authentication_api/get_user_profile_data', {
@@ -28,7 +40,7 @@ const AuthProvider = ({ children }) => {
                 }
             }).catch((err) => {
                 if (err.response?.status === 404 || err.response?.status === 403) {
-                    Cookies.remove('loginToken')
+                    Cookies.remove('imstoken')
                 }
                 setLoading(false)
             })
