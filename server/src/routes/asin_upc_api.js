@@ -39,7 +39,6 @@ const run = async () => {
     })
     
     router.put('/update_asin_upc', upload.single('file'), async (req, res) => {
-
         const id = req.query.id
         const exitsData = await asin_upc_collection.findOne({ _id: new ObjectId(id) })
         const updateData = {

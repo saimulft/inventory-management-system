@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const { ObjectId } = require("mongodb")
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
@@ -9,10 +10,10 @@ const run = async () => {
     const all_stock_collection = db.collection("all_stock")
 
     //get all missing arrival data
-    router.post('/get_all_missing_arrival_data', async (req, res) => {
+    router.post('/get_all_missing_arrival_data',verifyJWT, async (req, res) => {
         try {
             const user = req.body.user
-            const role = user.role
+            const role = req.role
             const missingStatus = req.query.status;
             let query;
 

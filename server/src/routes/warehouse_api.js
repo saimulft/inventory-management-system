@@ -1,12 +1,13 @@
 const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
     const warehouses_collection = db.collection("warehouses")
 
-    router.get('/get_warehouse_dropdown_data', async (req, res) => {
+    router.get('/get_warehouse_dropdown_data',verifyJWT, async (req, res) => {
         try {
             const admin_id = req.query.id;
             const allWarehouseData = await warehouses_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()

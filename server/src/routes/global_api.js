@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const path = require("path")
+const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
     const db = await connectDatabase()
     const all_stock_collection = db.collection("all_stock")
@@ -30,10 +31,10 @@ const run = async () => {
     // }
 
     // Define a route to get document counts for all collections
-    router.post('/collections-docs-counts', async (req, res) => {
+    router.post('/collections-docs-counts',verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
-            const role = user.role;
+            const role = req.role;
 
             const projection = { _id: 1 }
             let query;
