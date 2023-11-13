@@ -228,6 +228,23 @@ const run = async () => {
             response.send();
         }
     );
+
+    router.get('/get_all_stores_subscriptions', async (req, res) => {
+        try {
+            const adminId = req.query.adminId;
+
+            const result = await all_stores_collection.find({ admin_id: adminId }).sort({ date: -1 }).toArray()
+
+            if (result.length) {
+                res.status(200).json({ data: result, message: "Successfully get all stores subscriptions" })
+            }
+            else {
+                res.status(204).json({ message: "No data found" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal server error' })
+        }
+    })
 }
 run()
 
