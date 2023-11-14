@@ -12,14 +12,18 @@ import { FaSpinner } from "react-icons/fa";
 
 const ProfitTrackerStatsPage = () => {
     const [analyticsDays, setAnalyticsDays] = useState(1)
+    const [analyticsDaysTable, setAnalyticsDaysTable] = useState("all")
     const [view, setView] = useState('Graph')
     const [storeName, setStoreName] = useState('')
     const [storeData, setStoreData] = useState([])
     const [initialLoading, setInitialLoading] = useState(false)
     const [isRefetch, setIsRefetch] = useState(false)
     const [loading, setLoading] = useState(false)
-
+    const [searchError, setSearchError] = useState('');
+    const [searchResults, setSearchResults] = useState([]);
     const { id } = useParams()
+
+    console.log()
 
     useEffect(() => {
         setInitialLoading(true)
@@ -74,6 +78,43 @@ const ProfitTrackerStatsPage = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [analyticsDays])
 
+
+    const handleDateSearch = (day) => {
+        setSearchError("")
+        const currentDate = new Date();
+        const endDate = new Date();
+        let startDate;
+
+
+        if (day === "today") {
+            startDate = new Date(currentDate);
+            startDate.setHours(0, 0, 0, 0); // Set to midnight
+        }
+        else {
+            const previousDate = new Date();
+            previousDate.setDate(currentDate.getDate() - day);
+            startDate = previousDate;
+        }
+
+        const filteredDateResults = storeData.filter((item) => {
+            const itemDate = new Date(item.date);
+            return itemDate >= startDate && itemDate <= endDate;
+        });
+
+        if (!filteredDateResults.length) {
+            setSearchResults([]);
+            if (day === "today") {
+                return setSearchError("No data found for today");
+            } else if (day === 365) {
+                return setSearchError("No data found for the past 1 year");
+            } else if (day === 30) {
+                return setSearchError("No data found for the past 1 month");
+            }
+        }
+
+        setSearchResults(filteredDateResults);
+    }
+
     const boxShadowStyle = {
         boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.1)",
     };
@@ -94,7 +135,7 @@ const ProfitTrackerStatsPage = () => {
                                 <p className="text-lg font-medium">Analytics of {storeName && storeName}</p>
                                 <p className="text-gray-400">All Report</p>
                             </div>
-                            <div className="flex gap-4 text-sm">
+                            {view === "Graph" && <div className="flex gap-4 text-sm">
                                 <p onClick={() => {
                                     setAnalyticsDays(1)
                                     setIsRefetch(true)
@@ -126,7 +167,49 @@ const ProfitTrackerStatsPage = () => {
                                     Year
                                 </p>
 
-                            </div>
+                            </div>}
+                            {view === "Table" &&
+                                <div className="flex gap-4 text-sm">
+                                    <p onClick={() => {
+                                        setSearchResults([])
+                                        setSearchError("")
+                                        setAnalyticsDaysTable("all")
+                                    }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDaysTable === "all" && 'bg-[#8633FF] text-white'}`}>
+                                        All
+                                    </p>
+                                    <p onClick={() => {
+                                        setAnalyticsDaysTable(1)
+                                        handleDateSearch("today")
+                                    }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDaysTable === 1 && 'bg-[#8633FF] text-white'}`}>
+                                        Today
+                                    </p>
+                                    <p onClick={() => {
+                                        setAnalyticsDaysTable(7)
+                                        handleDateSearch(7)
+                                    }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDaysTable === 7 && 'bg-[#8633FF] text-white'}`}>
+                                        7 Days
+                                    </p>
+                                    <p onClick={() => {
+                                        setAnalyticsDaysTable(15)
+                                        handleDateSearch(15)
+                                    }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDaysTable === 15 && 'bg-[#8633FF] text-white'}`}>
+                                        15 Days
+                                    </p>
+                                    <p onClick={() => {
+                                        setAnalyticsDaysTable(30)
+                                        handleDateSearch(30)
+                                    }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDays === 30 && 'bg-[#8633FF] text-white'}`}>
+                                        1 Month
+                                    </p>
+                                    <p onClick={() => {
+                                        setAnalyticsDaysTable(365)
+                                        handleDateSearch(365)
+                                    }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${analyticsDaysTable === 365 && 'bg-[#8633FF] text-white'}`}>
+                                        Year
+                                    </p>
+
+                                </div>
+                            }
                             <div className="flex gap-5 ml-auto">
                                 <button onClick={() => setView('Graph')} className={`flex items-center gap-1.5 px-3 rounded-md py-2 cursor-pointer ${view === 'Graph' ? "bg-[#8633FF] text-white"
                                     : "border border-slate-500 text-black"}`}><BsGraphUp size={18} /><span>Graph View</span></button>
@@ -186,35 +269,69 @@ const ProfitTrackerStatsPage = () => {
                                         </tr>
                                     </thead>
                                     <tbody className="relative">
-                                        {storeData?.map((d, index) => {
+                                        {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
+                                            {
+                                                searchResults.length ? searchResults.map((d, index) => {
+                                                    const amazonFee = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) * 0.15
+                                                    const supplierPrice = parseFloat(d.walmart_quantity) * parseFloat(d.average_price)
+                                                    const tax = parseFloat(d.walmart_quantity) * parseFloat(d.average_tax)
+                                                    const costOfGoods = supplierPrice + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost)
+                                                    const cashProfit = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) - (supplierPrice + amazonFee + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost))
+                                                    const roi = (cashProfit / costOfGoods) * 100;
 
-                                            const amazonFee = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) * 0.15
-                                            const supplierPrice = parseFloat(d.walmart_quantity) * parseFloat(d.average_price)
-                                            const tax = parseFloat(d.walmart_quantity) * parseFloat(d.average_tax)
-                                            const costOfGoods = supplierPrice + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost)
-                                            const cashProfit = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) - (supplierPrice + amazonFee + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost))
-                                            const roi = (cashProfit / costOfGoods) * 100;
+                                                    return <tr key={d._id} className={`${index % 2 == 1 && ""}`} >
+                                                        <td className="font-bold border border-gray-300">{format(new Date(d.date), 'y/MM/d')}</td>
+                                                        <td className="border border-gray-300">{d.supplier_id}</td>
+                                                        <td className="border border-gray-300">{d.amazon_quantity}</td>
+                                                        <td className="border border-gray-300">{d.walmart_quantity}</td>
+                                                        <td className="border border-gray-300">{d.customer_name}</td>
+                                                        <td className="border border-gray-300">${d.amazon_price}</td>
+                                                        <td className="border border-gray-300">${d.amazon_shipping}</td>
+                                                        <td className="border border-gray-300">${amazonFee.toFixed(2)}</td>
+                                                        <td className="border border-gray-300">${d.average_price}</td>
+                                                        <td className="border border-gray-300">${supplierPrice.toFixed(2)}</td>
+                                                        <td className="border border-gray-300">${d.shipping_cost}</td>
+                                                        <td className="border border-gray-300">${d.average_tax}</td>
+                                                        <td className="border border-gray-300">${tax.toFixed(2)}</td>
+                                                        <td className="border border-gray-300">${d.handling_cost}</td>
+                                                        <td className="border border-gray-300">${costOfGoods.toFixed(2)}</td>
+                                                        <td className="border border-gray-300">${cashProfit.toFixed(2)}</td>
+                                                        <td className="border border-gray-300">{roi.toFixed(2)}%</td>
+                                                    </tr>
+                                                })
 
-                                            return <tr key={d._id} className={`${index % 2 == 1 && ""}`} >
-                                                <td className="font-bold border border-gray-300">{format(new Date(d.date), 'y/MM/d')}</td>
-                                                <td className="border border-gray-300">{d.supplier_id}</td>
-                                                <td className="border border-gray-300">{d.amazon_quantity}</td>
-                                                <td className="border border-gray-300">{d.walmart_quantity}</td>
-                                                <td className="border border-gray-300">{d.customer_name}</td>
-                                                <td className="border border-gray-300">${d.amazon_price}</td>
-                                                <td className="border border-gray-300">${d.amazon_shipping}</td>
-                                                <td className="border border-gray-300">${amazonFee.toFixed(2)}</td>
-                                                <td className="border border-gray-300">${d.average_price}</td>
-                                                <td className="border border-gray-300">${supplierPrice.toFixed(2)}</td>
-                                                <td className="border border-gray-300">${d.shipping_cost}</td>
-                                                <td className="border border-gray-300">${d.average_tax}</td>
-                                                <td className="border border-gray-300">${tax.toFixed(2)}</td>
-                                                <td className="border border-gray-300">${d.handling_cost}</td>
-                                                <td className="border border-gray-300">${costOfGoods.toFixed(2)}</td>
-                                                <td className="border border-gray-300">${cashProfit.toFixed(2)}</td>
-                                                <td className="border border-gray-300">{roi.toFixed(2)}%</td>
-                                            </tr>
-                                        })}
+                                                    :
+
+                                                    storeData?.map((d, index) => {
+                                                        const amazonFee = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) * 0.15
+                                                        const supplierPrice = parseFloat(d.walmart_quantity) * parseFloat(d.average_price)
+                                                        const tax = parseFloat(d.walmart_quantity) * parseFloat(d.average_tax)
+                                                        const costOfGoods = supplierPrice + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost)
+                                                        const cashProfit = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) - (supplierPrice + amazonFee + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost))
+                                                        const roi = (cashProfit / costOfGoods) * 100;
+
+                                                        return <tr key={d._id} className={`${index % 2 == 1 && ""}`} >
+                                                            <td className="font-bold border border-gray-300">{format(new Date(d.date), 'y/MM/d')}</td>
+                                                            <td className="border border-gray-300">{d.supplier_id}</td>
+                                                            <td className="border border-gray-300">{d.amazon_quantity}</td>
+                                                            <td className="border border-gray-300">{d.walmart_quantity}</td>
+                                                            <td className="border border-gray-300">{d.customer_name}</td>
+                                                            <td className="border border-gray-300">${d.amazon_price}</td>
+                                                            <td className="border border-gray-300">${d.amazon_shipping}</td>
+                                                            <td className="border border-gray-300">${amazonFee.toFixed(2)}</td>
+                                                            <td className="border border-gray-300">${d.average_price}</td>
+                                                            <td className="border border-gray-300">${supplierPrice.toFixed(2)}</td>
+                                                            <td className="border border-gray-300">${d.shipping_cost}</td>
+                                                            <td className="border border-gray-300">${d.average_tax}</td>
+                                                            <td className="border border-gray-300">${tax.toFixed(2)}</td>
+                                                            <td className="border border-gray-300">${d.handling_cost}</td>
+                                                            <td className="border border-gray-300">${costOfGoods.toFixed(2)}</td>
+                                                            <td className="border border-gray-300">${cashProfit.toFixed(2)}</td>
+                                                            <td className="border border-gray-300">{roi.toFixed(2)}%</td>
+                                                        </tr>
+                                                    })
+                                            }
+                                        </>}
                                     </tbody>
                                 </table>
                             </div>

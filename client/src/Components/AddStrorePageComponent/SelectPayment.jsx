@@ -6,6 +6,8 @@ export default function SelectPayment() {
   const navigate = useNavigate()
   const { storeDetails, setStoreDetails } = useStore()
 
+  console.log(storeDetails)
+
   const handleSelectPaymentOption = (option, route) => {
     setStoreDetails({ ...storeDetails, payment_option: option })
     navigate(route)

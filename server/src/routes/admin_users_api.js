@@ -4,6 +4,7 @@ const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const sendEmail = require("../utilities/send_email")
 const { ObjectId } = require("mongodb")
+const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
     const db = await connectDatabase()
     const all_users_collection = db.collection("all_users")
@@ -21,8 +22,7 @@ const run = async () => {
     router.post('/admin_signup', async (req, res) => {
         try {
 
-            const inputEmail = req.body.email
-            const isExist = await all_users_collection.findOne({ email: inputEmail })
+            const isExist = await all_users_collection.findOne({ email: req.body.email })
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }
@@ -95,11 +95,10 @@ const run = async () => {
     // delete admin user by admin id
     router.delete('/admin_users', async (req, res) => {
         try {
-            const admin_id = req.body.admin_id;
 
-            const result = await admin_users_collection.deleteOne({ admin_id: admin_id })
+            const result = await admin_users_collection.deleteOne({ admin_id:  req.body.admin_id })
             if (result.deletedCount) {
-                const response = await all_users_collection.deleteOne({ id: admin_id })
+                const response = await all_users_collection.deleteOne({ id:  req.body.admin_id })
                 if (response.deletedCount) {
                     res.status(200).json({ message: 'Admin  user deleted successfully', status: "success" });
                 }
@@ -113,19 +112,17 @@ const run = async () => {
     })
 
 
-    router.post('/get_all_users_list', async (req, res) => {
+    router.post('/get_all_users_list',verifyJWT, async (req, res) => {
         try {
-            const user = req.body.user;
-            const role = user.role;
-
+            const role = req.role;
             let query;
-
+            
             if (role === 'Admin' || 'Admin VA') {
-                query = { admin_id: user.admin_id }
+                query = { admin_id: req.body.user.admin_id }
             }
 
             if (role === 'Store Manager Admin' || role === 'Warehouse Admin') {
-                query = { creator_email: user.email };
+                query = { creator_email: req.body.user.email };
             }
 
             const result = await all_users_collection.find(query).toArray()

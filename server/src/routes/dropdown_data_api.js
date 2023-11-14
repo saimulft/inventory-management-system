@@ -12,9 +12,8 @@ const run = async () => {
     //   get stores by admin id
     router.get('/get_store_data', async (req, res) => {
 
-        const admin_id = req.query.admin_id
         try {
-            const result = await stores_collection.findOne({ admin_id: admin_id }).toArray()
+            const result = await stores_collection.findOne({ admin_id: req.query.admin_id }).toArray()
             if (result) {
                 res.status(200).json({ message: "Successfully get stores data" })
             }
@@ -29,9 +28,8 @@ const run = async () => {
     //   get asin or upc by admin id
     router.get('/get_asin_upc', async (req, res) => {
 
-        const admin_id = req.query.admin_id
         try {
-            const result = await asin_upc_collection.findOne({ admin_id: admin_id }).toArray()
+            const result = await asin_upc_collection.findOne({ admin_id: req.query.admin_id }).toArray()
             if (result) {
                 res.status(200).json({ message: "Successfully get asin_upc" })
             }
@@ -46,9 +44,8 @@ const run = async () => {
     //   get asin or upc by admin id
     router.get('/get_warehouse_data', async (req, res) => {
 
-        const admin_id = req.query.admin_id
         try {
-            const result = await warehouses_collection.findOne({ admin_id: admin_id }).toArray()
+            const result = await warehouses_collection.findOne({ admin_id: req.query.admin_id }).toArray()
             if (result) {
                 res.status(200).json({ message: "Successfully get warehouse data" })
             }

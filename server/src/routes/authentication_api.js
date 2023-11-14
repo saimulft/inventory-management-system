@@ -58,7 +58,7 @@ const run = async () => {
 
             if (user) {
                 const email = user.email;
-                const role = user.role;
+                const role = req.role;
 
                 if (role === 'Admin') {
                     const result = await admin_users_collection.findOne({ email: email })

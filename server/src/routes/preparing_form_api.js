@@ -5,6 +5,7 @@ const multer = require("multer")
 const path = require('path')
 const { ObjectId } = require("mongodb")
 const fs = require('fs')
+const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
 
     const db = await connectDatabase()
@@ -151,10 +152,10 @@ const run = async () => {
 
 
     // get all preparing request data
-    router.post('/get_all_preparing_request_data', async (req, res) => {
+    router.post('/get_all_preparing_request_data',verifyJWT,async (req, res) => {
         try {
             const user = req.body.user;
-            const role = user.role;
+            const role = req.role;
 
             let query;
 
