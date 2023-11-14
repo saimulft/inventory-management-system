@@ -1,7 +1,7 @@
 import { AiOutlineCloseCircle, AiOutlinePlusCircle } from "react-icons/ai";
 import { BiSolidEdit } from "react-icons/bi";
 
-export default function SupplierInfoInputListEdit({supplierInfoInputList, setSupplierInfoInputList}) {
+export default function SupplierInfoInputListEdit({ supplierInfoInputList, setSupplierInfoInputList }) {
   // const [supplierInfoInputList, setSupplierInfoInputList] = useState([
   //   { supplier_name: "", username: "", password: "" },
   // ]);
