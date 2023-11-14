@@ -15,8 +15,6 @@ const run = async () => {
     const store_manager_va_users_collection = db.collection("store_manager_va_users")
     const warehouse_manager_va_users_collection = db.collection("warehouse_manager_va_users")
 
-
-
     // create a new admin
     router.post('/admin_signup', async (req, res) => {
         try {
@@ -143,7 +141,6 @@ const run = async () => {
 
     router.post('/delete_user', async (req, res) => {
         try {
-
             const user = req.body.user
             const role = user.role
 
