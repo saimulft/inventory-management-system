@@ -149,7 +149,7 @@ export default function DashboardPage() {
                                 <div className="h-8 w-8 flex justify-center items-center rounded-full bg-green-400 text-white">
                                     <AiTwotoneTag />
                                 </div>
-                                <h6 className="mt-2 text-xl font-medium">{totalSold}</h6>
+                                <h6 className="mt-2 text-xl font-medium">{totalSold ? totalSold : 0}</h6>
                                 <p className="my-1 text-sm">Product Sold</p>
                             </div>
                         </div>

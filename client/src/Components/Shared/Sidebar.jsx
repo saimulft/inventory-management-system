@@ -30,7 +30,7 @@ export default function Sidebar() {
   const { isSidebarOpen, setIsSidebarOpen, setIsActiveSetting } = useContext(GlobalContext);
 
   const handleLogout = () => {
-    Cookies.remove('loginToken')
+    Cookies.remove('imstoken')
     setUser(null)
   }
 

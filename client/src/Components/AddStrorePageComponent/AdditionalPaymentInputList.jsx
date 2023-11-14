@@ -56,11 +56,10 @@ export default function AdditionalPaymentInputList() {
   };
 
   const handleAdditionalPaymentRemoveField = (index) => {
-    const list = [...additionalPaymentInputList];
-    if (index > 0 && index < list.length) {
-      list.splice(index, 1);
+    if (additionalPaymentInputList.length > 1) {
+      const list = additionalPaymentInputList.filter((item, idx) => idx !== index);
+      setAdditionalPaymentInputList(list);
     }
-    setAdditionalPaymentInputList(list);
   };
 
   return (
@@ -101,7 +100,7 @@ export default function AdditionalPaymentInputList() {
                         onChange={(e) =>
                           handleAdditionalPaymentInputChange(e, index)
                         }
-                        defaultValue={i?.email}
+                        value={i?.email}
                       />
                     </div>
 
@@ -119,7 +118,7 @@ export default function AdditionalPaymentInputList() {
                         onChange={(e) =>
                           handleAdditionalPaymentInputChange(e, index)
                         }
-                        defaultValue={i?.card_name}
+                        value={i?.card_name}
                       />
                     </div>
 
@@ -137,7 +136,7 @@ export default function AdditionalPaymentInputList() {
                         onChange={(e) =>
                           handleAdditionalPaymentInputChange(e, index)
                         }
-                        defaultValue={i?.card_info}
+                        value={i?.card_info}
                       />
                     </div>
 
@@ -153,7 +152,7 @@ export default function AdditionalPaymentInputList() {
                           onChange={(e) =>
                             handleAdditionalPaymentInputChange(e, index)
                           }
-                          defaultValue={i?.date}
+                          value={i?.date}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
@@ -166,7 +165,7 @@ export default function AdditionalPaymentInputList() {
                           onChange={(e) =>
                             handleAdditionalPaymentInputChange(e, index)
                           }
-                          defaultValue={i?.cvc}
+                          value={i?.cvc}
                         />
                       </div>
                     </div>
@@ -186,7 +185,7 @@ export default function AdditionalPaymentInputList() {
                           onChange={(e) =>
                             handleAdditionalPaymentInputChange(e, index)
                           }
-                          defaultValue={i?.billing_address}
+                          value={i?.billing_address}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
@@ -200,7 +199,7 @@ export default function AdditionalPaymentInputList() {
                           onChange={(e) =>
                             handleAdditionalPaymentInputChange(e, index)
                           }
-                          defaultValue={i?.city}
+                          value={i?.city}
                         />
                       </div>
                     </div>
@@ -218,7 +217,7 @@ export default function AdditionalPaymentInputList() {
                           onChange={(e) =>
                             handleAdditionalPaymentInputChange(e, index)
                           }
-                          defaultValue={i?.state}
+                          value={i?.state}
                         />
                       </div>
                       <div className="mt-2 w-1/2">
@@ -234,16 +233,16 @@ export default function AdditionalPaymentInputList() {
                           onChange={(e) =>
                             handleAdditionalPaymentInputChange(e, index)
                           }
-                          defaultValue={i?.zip_code}
+                          value={i?.zip_code}
                         />
                       </div>
                     </div>
 
                     <div className="mt-2 flex flex-col w-full">
                       <label className="text-sm text-slate-500">Country</label>
-                      <select onChange={(e) => handleAdditionalPaymentInputChange(e, index)} defaultValue={i?.country} name="country" id="country" className="select select-primary w-full mt-2">
-                        <option defaultValue="Select your country">
-                          Select your country
+                      <select onChange={(e) => handleAdditionalPaymentInputChange(e, index)} value={i?.country} name="country" id="country" className="select select-primary w-full mt-2">
+                        <option defaultValue="Select country">
+                          Select country
                         </option>
                         {countries}
                       </select>

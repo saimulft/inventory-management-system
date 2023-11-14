@@ -3,6 +3,7 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const sendEmail = require("../utilities/send_email")
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
@@ -105,7 +106,7 @@ const run = async () => {
 
 
     // get all warehouse admin
-    router.get('/get_all_warehouse_admin', async (req, res) => {
+    router.get('/get_all_warehouse_admin',verifyJWT, async (req, res) => {
         try {
             const admin_id = req.query.id;
 

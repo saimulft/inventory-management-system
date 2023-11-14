@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const { ObjectId } = require("mongodb")
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
@@ -9,7 +10,7 @@ const run = async () => {
     const all_stores_collection = db.collection("all_stores")
 
     // get specific store data for profit tracker
-    router.get('/single_store_data', async (req, res) => {
+    router.get('/single_store_data',verifyJWT, async (req, res) => {
         try {
             const storeId = req.query.storeId
 
@@ -36,7 +37,7 @@ const run = async () => {
     })
 
     // get all store data for dashboard
-    router.get('/all_store_data', async (req, res) => {
+    router.get('/all_store_data',verifyJWT, async (req, res) => {
         try {
             const adminId = req.query.adminId;
 
@@ -56,7 +57,7 @@ const run = async () => {
     })
 
     // get store graph data for dashboard and profit tracker
-    router.get('/single_store_graph_data', async (req, res) => {
+    router.get('/single_store_graph_data',verifyJWT, async (req, res) => {
         try {
             const storeId = req.query.storeId
             const adminId = req.query.adminId
