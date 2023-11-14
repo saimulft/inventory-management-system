@@ -35,7 +35,7 @@ export default function SupplierInfoInputList() {
           <div key={index} className="flex gap-2 mt-4">
             <input
               onChange={(e) => handleSupplierInfoInputChange(e, index)}
-              className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs "
+              className="border border-gray-400 outline-[#8833FF] rounded py-3 px-2 w-1/3 text-xs"
               placeholder="Supplier name"
               type="text"
               name="supplier_name"

@@ -5,7 +5,8 @@ const connectDatabase = require('../config/connectDatabase')
 const stripe = require('stripe')('sk_test_51M9AWiKa3gcPGhKTJaOAKnhWZgT7pA0dqch2kQ7uz7M5lXpt6dDckLjHdFIyYs1rgafA64sKm7eGH05O6aWWlo52006GcXLLcN');
 const YOUR_DOMAIN = 'http://localhost:5173';
 
-const sendEmail = require("../utilities/send_email")
+const sendEmail = require("../utilities/send_email");
+const verifyJWT = require("../middlewares/verifyJWT");
 
 const run = async () => {
     const db = await connectDatabase()
@@ -82,63 +83,75 @@ const run = async () => {
         }
     }
 
-    router.post('/create-checkout-session', express.json(), async (req, res) => {
-        const prices = await stripe.prices.list({
-            lookup_keys: [req.body.lookup_key],
-            expand: ['data.product'],
-        });
-        const session = await stripe.checkout.sessions.create({
-            billing_address_collection: 'auto',
-            line_items: [
-                {
-                    price: prices.data[0].id,
-                    // For metered billing, do not pass quantity
-                    quantity: 1,
-                },
-            ],
-            mode: 'subscription',
-            success_url: req.body.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}` : `${YOUR_DOMAIN}/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: req.body.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?canceled=true` : `${YOUR_DOMAIN}/payment-status?canceled=true`,
-        });
-        const data = { ...req.body, session_id: session.id }
-        const result = await temp_stores_collection.insertOne(data)
-        if (result.acknowledged) {
-            res.status(201).json(session);
-        }
-        else {
-            res.status(500).json({ message: "Internal server error while inserting store data" })
+    router.post('/create-checkout-session', express.json(), verifyJWT, async (req, res) => {
+        try {
+            const prices = await stripe.prices.list({
+                lookup_keys: [req.body.lookup_key],
+                expand: ['data.product'],
+            });
+            const session = await stripe.checkout.sessions.create({
+                billing_address_collection: 'auto',
+                line_items: [
+                    {
+                        price: prices.data[0].id,
+                        // For metered billing, do not pass quantity
+                        quantity: 1,
+                    },
+                ],
+                mode: 'subscription',
+                success_url: req.body.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}` : `${YOUR_DOMAIN}/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: req.body.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?canceled=true` : `${YOUR_DOMAIN}/payment-status?canceled=true`,
+            });
+            const data = { ...req.body, session_id: session.id }
+            const result = await temp_stores_collection.insertOne(data)
+            if (result.acknowledged) {
+                res.status(201).json(session);
+            }
+            else {
+                res.status(500).json({ message: "Internal server error while inserting store data" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error" })
         }
     });
 
-    router.post('/create-portal-session', express.json(), async (req, res) => {
-        // For demonstration purposes, we're using the Checkout session to retrieve the customer ID.
-        // Typically this is stored alongside the authenticated user in your database.
-        const { session_id } = req.body;
-        const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
+    router.post('/create-portal-session', express.json(), verifyJWT, async (req, res) => {
+        try {
+            // For demonstration purposes, we're using the Checkout session to retrieve the customer ID.
+            // Typically this is stored alongside the authenticated user in your database.
+            const { session_id } = req.body;
+            const checkoutSession = await stripe.checkout.sessions.retrieve(session_id);
 
-        // This is the url to which the customer will be redirected when they are done
-        // managing their billing with the portal.
-        const returnUrl = YOUR_DOMAIN;
+            // This is the url to which the customer will be redirected when they are done
+            // managing their billing with the portal.
+            const returnUrl = YOUR_DOMAIN;
 
-        const portalSession = await stripe.billingPortal.sessions.create({
-            customer: checkoutSession.customer,
-            return_url: returnUrl,
-        });
+            const portalSession = await stripe.billingPortal.sessions.create({
+                customer: checkoutSession.customer,
+                return_url: returnUrl,
+            });
 
-        res.send(portalSession.url);
+            res.send(portalSession.url);
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error" })
+        }
     });
 
-    router.post('/send-payment-link', express.json(), async (req, res) => {
-        const send_email_data = {
-            email: req.body.email,
-            subject: `Make Payment for Your Store - ${req.body.store_name}`,
-            html: `
-            <h1>Hi,${req.body.name} Go to link and make payment </h1> <br/>
-            <button> <a style='color:red,text-decoration:none,' href="${req.body.paymentLink}">Click here</a></button>`
-        }
+    router.post('/send-payment-link', express.json(), verifyJWT, async (req, res) => {
+        try {
+            const send_email_data = {
+                email: req.body.email,
+                subject: `Make Payment for Your Store - ${req.body.store_name}`,
+                html: `
+                <h1>Hi,${req.body.name} Go to link and make payment </h1> <br/>
+                <button> <a style='color:red,text-decoration:none,' href="${req.body.paymentLink}">Click here</a></button>`
+            }
 
-        sendEmail(send_email_data);
-        res.status(200).json({ message: 'Email sent' });
+            sendEmail(send_email_data);
+            res.status(200).json({ message: 'Email sent' });
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error" })
+        }
     })
 
     router.post('/webhook',
@@ -229,7 +242,7 @@ const run = async () => {
         }
     );
 
-    router.get('/get_all_stores_subscriptions', async (req, res) => {
+    router.get('/get_all_stores_subscriptions', verifyJWT, async (req, res) => {
         try {
             const adminId = req.query.adminId;
 

@@ -62,8 +62,6 @@ export default function AdditionalPaymentInputList() {
     }
   };
 
-  console.log(additionalPaymentInputList)
-
   return (
     <>
       {additionalPaymentInputList.map((i, index) => {
@@ -243,8 +241,8 @@ export default function AdditionalPaymentInputList() {
                     <div className="mt-2 flex flex-col w-full">
                       <label className="text-sm text-slate-500">Country</label>
                       <select onChange={(e) => handleAdditionalPaymentInputChange(e, index)} value={i?.country} name="country" id="country" className="select select-primary w-full mt-2">
-                        <option defaultValue="Select your country">
-                          Select your country
+                        <option defaultValue="Select country">
+                          Select country
                         </option>
                         {countries}
                       </select>

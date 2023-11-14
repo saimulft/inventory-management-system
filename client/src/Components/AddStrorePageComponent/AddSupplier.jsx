@@ -6,33 +6,23 @@ import { BsArrowRightShort } from "react-icons/bs";
 import { Navigate, useNavigate } from "react-router-dom";
 import useStore from "../../hooks/useStore";
 import useAuth from "../../hooks/useAuth";
-// import { useMutation } from "@tanstack/react-query";
-// import axios from "axios";
-// import Swal from "sweetalert2";
-// import useGlobal from "../../hooks/useGlobal";
+import { MdErrorOutline } from "react-icons/md";
 
 export default function AddSupplier() {
   const [addSupplier, setAddSupplier] = useState([{ id: 1 }]);
   const { storeDetails, setStoreDetails, supplierInfoInputList, setSupplierInfoInputList, additionalPaymentInputList, setAdditionalPaymentInputList } = useStore()
   const { user } = useAuth()
+  const [supplierInputError, setSupplierInputError] = useState('')
+  const [paymentInputError, setPaymentInputError] = useState('')
 
-  const [inputError, setInputError] = useState('')
-
-  // const { setStoreRefetch } = useGlobal()
   const navigate = useNavigate()
-
-  // const { mutateAsync, isLoading } = useMutation({
-  //   mutationFn: (storeData) => {
-  //     return axios.post('/api/v1/store_api/add_new_store', storeData)
-  //   },
-  // })
 
   if (!storeDetails) {
     return <Navigate to="/dashboard/add-store" />
   }
 
   const handleAddSupplierIncrementField = () => {
-    setAddSupplier([...addSupplier, { id: 1 }]);
+    setAddSupplier([...addSupplier, {}]);
   };
 
   const handleAddSupplierRemoveField = (index) => {
@@ -44,23 +34,42 @@ export default function AddSupplier() {
     setAddSupplier(list);
   };
 
-  const handleAddStore = async () => {
+  const handleNext = async () => {
     const date = new Date().toISOString();
 
     let isNext;
 
     supplierInfoInputList.forEach(singleList => {
-      setInputError('')
+      setSupplierInputError('')
       isNext = undefined;
 
-      if (!singleList.supplier_name) {
-        return setInputError('Missing supplier information')
+      if (!singleList.supplier_name || !singleList.username || !singleList.password) {
+        return setSupplierInputError('Missing supplier information')
       }
-      else if (!singleList.username) {
-        return setInputError('Missing supplier information')
+
+      return isNext = true;
+    })
+
+    if (!isNext) {
+      return;
+    }
+
+    additionalPaymentInputList.forEach(singleList => {
+      setPaymentInputError('')
+      isNext = undefined;
+
+      if (additionalPaymentInputList.length > 1) {
+        if (!singleList.email || !singleList.card_name || !singleList.card_info || !singleList.date || !singleList.cvc || !singleList.billing_address || !singleList.city || !singleList.state || !singleList.zip_code || !singleList.country) {
+          return setPaymentInputError('Missing additional payment details')
+        }
       }
-      else if (!singleList.password) {
-        return setInputError('Missing supplier information')
+      else {
+        if (singleList.email || singleList.card_name || singleList.card_info || singleList.date || singleList.cvc || singleList.billing_address || singleList.city || singleList.state || singleList.zip_code || singleList.country && singleList.country !== 'Select country') {
+
+          if (!singleList.email || !singleList.card_name || !singleList.card_info || !singleList.date || !singleList.cvc || !singleList.billing_address || !singleList.city || !singleList.state || !singleList.zip_code || !singleList.country) {
+            return setPaymentInputError('Missing additional payment details')
+          }
+        }
       }
 
       return isNext = true;
@@ -73,31 +82,11 @@ export default function AddSupplier() {
     setStoreDetails({
       ...storeDetails,
       supplier_information: supplierInfoInputList,
-      additional_payment_details: additionalPaymentInputList,
+      additional_payment_details: additionalPaymentInputList.length > 1 ? additionalPaymentInputList : additionalPaymentInputList.length === 1 && additionalPaymentInputList[0].email ? additionalPaymentInputList : [],
       admin_id: user.admin_id,
       date: date,
       creator_email: user?.email,
     })
-
-    // try {
-    //   const { status } = await mutateAsync(storeData)
-
-    //   if (status === 201) {
-    //     setStoreDetails(null)
-    //     setSupplierInfoInputList([{ supplier_name: "", username: "", password: "" }])
-    //     setAdditionalPaymentInputList([{ email: "", card_name: "", card_info: "", date: "", cvc: "", billing_address: "", city: "", state: "", zip_code: "", country: ""}])
-
-    //     setStoreRefetch(true)
-    //     Swal.fire(
-    //       'Added',
-    //       'New store has been added.',
-    //       'success'
-    //     )
-    //     navigate("/dashboard/all-stores")
-    //   }
-    // } catch (error) {
-    //   console.log(error)
-    // }
 
     navigate("/dashboard/add-store/add-supplier/select-payment")
   }
@@ -139,17 +128,19 @@ export default function AddSupplier() {
             <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">
               {/* supplier information  */}
               <div className="w-1/2 p-8">
-                <div className="flex justify-between items-center">
-                  <h5 className="text-xl font-medium">Add Supplier Information</h5>
-                  {inputError && <p className="text-sm font-medium text-rose-500">{inputError}</p>}
+                <div>
+                  <h5 className="text-xl font-medium">Add Supplier Information {index}</h5>
+                  {supplierInputError && <p className="w-full mt-3 flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {supplierInputError}</p>}
                 </div>
 
-                <SupplierInfoInputList />
+                <SupplierInfoInputList/>
               </div>
 
               {/* add payment details  */}
               <div className="w-1/2 p-4 pb-10">
-                <AdditionalPaymentInputList />
+                {paymentInputError && <p className="w-full mt-3 flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {paymentInputError}</p>}
+
+                <AdditionalPaymentInputList/>
               </div>
             </div>
 
@@ -177,7 +168,7 @@ export default function AddSupplier() {
         );
       })}
       {/* next btn  */}
-      <button onClick={handleAddStore} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
+      <button onClick={handleNext} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
         <p>Next</p>
         <BsArrowRightShort className="mt-[1px]" size={28} />
       </button>
