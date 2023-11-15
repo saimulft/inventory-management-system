@@ -3,19 +3,19 @@ import { BsBell } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
 import useGlobal from "../../hooks/useGlobal";
 import { ChatContext } from "../../Providers/ChatProvider";
-import { useContext, useState } from "react";
+import { useContext} from "react";
 
-export default function Navbar({ data }) {
+export default function Navbar() {
   const {
     setAddNewConversation,
     isChatBoxOpen,
     setIsChatBoxOpen,
     addNewConversation,
     singleConversationShow,
-    setSingleConversationShow
+    setSingleConversationShow,
+    isNotificationBoxOpen, setIsNotificationBoxOpen
   } = useContext(ChatContext);
 
-  const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false);
 
   const { user } = useAuth()
   const { pageName } = useGlobal()
@@ -61,7 +61,7 @@ export default function Navbar({ data }) {
         {/* notification btn  */}
         <div className="relative">
           <div
-            onClick={() => setIsChatBoxOpen(!isChatBoxOpen)}
+            onClick={() => setIsNotificationBoxOpen(!isNotificationBoxOpen)}
             className="bg-[#454547] hover:bg-[#3f3f41] cursor-pointer transition-all duration-15 p-3 rounded relative"
           >
             <BsBell size={20} />
@@ -70,7 +70,7 @@ export default function Navbar({ data }) {
           </div>
 
           {/* notifications box  */}
-          {isNotificationBoxOpen && (
+          {/* {isNotificationBoxOpen && (
             <div className=" notifications_box absolute -right-44 top-14 shadow-2xl z-10 bg-white overflow-y-scroll rounded-lg h-[590px] w-[350px] px-2 py-4">
               <div className="text-black px-2">
                 <h3 className="text-2xl font-bold">Notifications</h3>
@@ -107,8 +107,10 @@ export default function Navbar({ data }) {
                 );
               })}
             </div>
-          )}
+          )} */}
         </div>
+
+
         {/* message btn  */}
         <div className="relative">
           <div

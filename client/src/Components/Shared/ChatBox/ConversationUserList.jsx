@@ -24,11 +24,11 @@ export default function ConversationUserList() {
     currentChatUserSetInfo || {};
 
   const [data, loading, error] = alreadyConversationUserState;
-  console.log("🚀 ~ file: ConversationUserList.jsx:27 ~ ConversationUserList ~ data:", data)
   const [setData, setLoading, setError] = alreadyConversationUserSetState;
 
   const [search, setSearch] = useState("");
   const [socketData, setSocketData] = useState({});
+  const [filterData, setFilterData] = useState(Number)
   const [
     updateLestMessageUpdateConversationUserList,
     setUpdateLestMessageUpdateConversationUserList,
@@ -179,9 +179,11 @@ export default function ConversationUserList() {
   // user Conversation List Search
   const userConversationListSearch = (data) => {
     if (search) {
-      const result = data.filter((d) =>
-        d?.full_name.toLowerCase().includes(search.toLowerCase())
-      );
+      const result = data.filter((d) =>{
+        const messageSenderName = d?.participants_name?.find(name => name != user?.full_name)?.toLowerCase()
+        const filterData = messageSenderName?.includes(search?.toLocaleLowerCase())
+        return filterData
+      });
       return result;
     } else {
       return data;
@@ -199,11 +201,11 @@ export default function ConversationUserList() {
   } else if (!loading && error) {
     content = <p>Something is Wrong !</p>;
   } else if (!loading && !error && data.length > 0) {
+
     content = dataSortByTime(userConversationListSearch(data))?.map(
       (userData) => {
         const online = checkOnline(currentReceiverFind(userData?.participants));
         const senderName = userData?.participants_name?.find(name => name != user?.full_name)
-        console.log("🚀 ~ file: ConversationUserList.jsx:207 ~ ConversationUserList ~ senderName:", senderName)
         return (
           <div
             onClick={(e) => {
@@ -257,10 +259,11 @@ export default function ConversationUserList() {
         );
       }
     );
+    
   }
 
   return (
-    <div className="h-[550px] w-[350px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-20 bottom-0 rounded-t-xl">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-0 top-[73px] z-50 rounded">
       {/* chat head  */}
       <div className="p-3 flex justify-between items-center pt-3  border-gray-300">
         <p className="font-bold text-2xl">Chats</p>
@@ -269,7 +272,7 @@ export default function ConversationUserList() {
             onClick={handleNewConversation}
             className="px-3 py-[5px] text-sm rounded-full bg-purple-50  transition hover:bg-purple-100 text-purple-500  flex items-center gap-1  cursor-pointer"
           >
-            <AiOutlinePlus /> <p>Add</p>
+            <AiOutlinePlus /> <p>Users</p>
           </button>
           <div className="flex items-center">
             <button onClick={() => setIsChatBoxOpen(false)} className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100">
@@ -284,7 +287,7 @@ export default function ConversationUserList() {
           onChange={(e) => setSearch(e?.target?.value)}
           type="text"
           value={search}
-          placeholder="Search users"
+          placeholder="Search conversations"
           className={`w-full bg-gray-100 outline-none py-2 px-3 rounded-full  mb-2`}
         />
         <button className="bg-purple-500 p-2 rounded-full text-white absolute top-1 right-4 ">
@@ -294,7 +297,8 @@ export default function ConversationUserList() {
       {/* user chat list  */}
       <div className="chat_list h-[calc(100%_-_126px)] overflow-y-scroll">
         {content}
-       {data.length < 1 && <p className="text-center mt-4 text-lg font-medium text-purple-500">Let's begin conversation!</p>}
+       {(data.length < 1 && !loading && !search) && <p className="text-center mt-4 text-lg font-medium text-purple-500">Let's begin conversation!</p>}
+       {(filterData < 1 && !loading && search) &&  <p  className="text-center mt-4 text-lg font-medium text-purple-500">Search data not available!</p>}
       </div>
     </div>
   );

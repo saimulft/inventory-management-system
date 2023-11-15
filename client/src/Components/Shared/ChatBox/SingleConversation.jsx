@@ -22,8 +22,6 @@ export default function SingleConversation() {
 
   const { currentChatUserName, currentChatUserEmail } =
   currentChatUserInfo || {};
-  console.log("🚀 ~ file: SingleConversation.jsx:24 ~ SingleConversation ~ currentChatUserEmail:", currentChatUserEmail)
-  console.log("🚀 ~ file: SingleConversation.jsx:24 ~ SingleConversation ~ currentChatUserName:", currentChatUserName)
 
   // all state
   const [conversation, setConversation] = useState([]);
@@ -345,7 +343,7 @@ export default function SingleConversation() {
   const online = checkOnline(currentChatUserEmail);
 
   return (
-    <div className="h-[550px] w-[350px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-20 bottom-0 rounded-t-xl overflow-hidden">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-0 top-[73px] rounded z-50 overflow-hidden">
       {/* conversation header */}
       <div
         style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
@@ -367,7 +365,7 @@ export default function SingleConversation() {
                   online ? "bg-green-500" : "bg-gray-400"
                 } `}
               ></div>
-              <div className={` pl-1`}>{online ? "Online" : "Offline"}</div>
+              <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>{online ? "Online" : "Offline"}</div>
             </div>
           </div>
         </div>

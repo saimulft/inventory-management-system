@@ -31,9 +31,9 @@ export default function AddNewConversation() {
 
   // add conversation search 
   const handleAddConversationSearch = (e) =>{
-    const search = e?.target?.value?.toLowerCase()
+  const search = e?.target?.value?.toLowerCase()
 if(search){
-  const searchData = data.filter(d => d?.full_name?.toLowerCase()?.includes(search))
+    const searchData = data.filter(d => d?.full_name?.toLowerCase()?.includes(search))
   setAddConversationSearchData(searchData)
 }
 else{
@@ -70,8 +70,6 @@ else{
     content = <p>Something is Wrong !</p>;
   } else if (!loading && !error && data.length > 0) {
     content = addConversationSearchData?.map((user) => {
-      console.log("🚀 ~ file: AddNewConversation.jsx:73 ~ content=addConversationSearchData?.map ~ user:", user)
-      
       return (
         <div
           onClick={() => {
@@ -90,7 +88,7 @@ else{
           />
           <div>
             <p className="font-medium text-base">{user?.full_name}</p>
-            <span className="">{user?.email}</span>
+            <span className="text-[#8C8D90]">{user?.email}</span>
           </div>
         </div>
       );
@@ -98,7 +96,7 @@ else{
   }
 
   return (
-    <div className="h-[550px] w-[350px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-20 bottom-0 rounded-t-xl overflow-hidden">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-0 top-[73px] z-50 rounded overflow-hidden">
       {/* add new conversation user list */}
       <div className="px-3 py-4  flex gap-3 justify-between text-xs font-medium ">
         <p className="text-lg font-bold">New Conversation</p>
@@ -108,7 +106,6 @@ else{
               handleOpenSingleConversationShow()
               setAddNewConversation(false)
               setSingleConversationShow(false)
-
             }}
             size={22}
             className="cursor-pointer "
@@ -134,9 +131,10 @@ else{
       </div>
 
       {/* add new conversation list  */}
-      <div className="new_conversation  h-[calc(100%_-_56px)] overflow-y-scroll">
+      <div className="new_conversation  h-[489px] overflow-y-scroll">
         {content}
         {(data.length < 1 && !loading)  && <p className="text-center mt-4 text-lg font-medium text-purple-500">No user available!</p>}
+        {(addConversationSearchData < 1 && !loading) && <p className="text-center mt-4 text-lg font-medium text-purple-500">Search data not available!</p>}
       </div>
     </div>
   );

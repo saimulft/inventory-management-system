@@ -35,10 +35,10 @@ export default function AddSupplier() {
     setAddSupplier([...addSupplier, { id: 1 }]);
   };
 
+  
   const handleAddSupplierRemoveField = (index) => {
     const list = [...addSupplier];
-
-    if (index > 0 && index < list.length) {
+    if (index >= 0 && index < list.length) {
       list.splice(index, 1);
     }
     setAddSupplier(list);
@@ -62,7 +62,6 @@ export default function AddSupplier() {
       else if (!singleList.password) {
         return setInputError('Provide supplier password')
       }
-
       return isNext = true;
     })
 
@@ -134,6 +133,8 @@ export default function AddSupplier() {
 
       {/* add information  */}
       {addSupplier.map((a, index) => {
+        console.log(index);
+        
         return (
           <div key={index} className="relative z-10">
             <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">

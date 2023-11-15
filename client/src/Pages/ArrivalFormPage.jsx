@@ -1,14 +1,16 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from "react-icons/md";
 import Swal from "sweetalert2";
 import SearchDropdown from "../Utilities/SearchDropdown";
 import useGlobal from "../hooks/useGlobal";
+import { GlobalContext } from "../Providers/GlobalProviders";
 
 const ArrivalFormPage = () => {
+   const {socket} = useContext(GlobalContext)
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
@@ -24,7 +26,6 @@ const ArrivalFormPage = () => {
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
-
       const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
       axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then(res => {
@@ -177,6 +178,13 @@ const ArrivalFormPage = () => {
     try {
       const { status } = await mutateAsync(arrivalFormData)
       if (status === 201) {
+
+        // send real time notification data 
+        socket?.current?.emit("arrivalFormSubmit", {
+            user,
+            status: "submit a pending arrival form."
+        })   
+
         setCountsRefetch(true)
         form.reset()
         setAsinUpcOption('')
@@ -192,7 +200,37 @@ const ArrivalFormPage = () => {
     } catch (error) {
       console.log(error)
     }
+
   }
+  useEffect(()=>{
+    socket?.current?.on("getArrivalFormSubmit", (data) => {
+      console.log(data);
+      
+    })
+  },[socket])
+
+
+
+
+
+const handleTest = () => {
+  socket?.current?.emit("arrivalFormSubmit", {
+    user,
+    status: "submit a pending arrival form."
+})   
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <div className="py-20 mx-auto w-[60%] rounded-lg">
@@ -440,6 +478,7 @@ const ArrivalFormPage = () => {
             </div>
           </form>
         </div>
+              <button onClick={handleTest} className="bg-green-500 py-2 px-4 text-white">test</button>
       </div>
     </div>
   );
