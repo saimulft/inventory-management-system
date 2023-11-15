@@ -1,12 +1,14 @@
 import { BsArrowLeftCircle } from "react-icons/bs";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import useStore from "../../hooks/useStore";
 
 export default function SelectPayment() {
   const navigate = useNavigate()
   const { storeDetails, setStoreDetails } = useStore()
 
-  console.log(storeDetails)
+  if (!storeDetails) {
+    return <Navigate to="/dashboard/add-store/add-supplier" />
+  }
 
   const handleSelectPaymentOption = (option, route) => {
     setStoreDetails({ ...storeDetails, payment_option: option })

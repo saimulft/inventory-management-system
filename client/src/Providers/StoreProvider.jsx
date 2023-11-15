@@ -31,6 +31,8 @@ const StoreProvider = ({ children }) => {
         paymentLink, setPaymentLink
     }
 
+    console.log(storeDetails)
+
     return (
         <StoreContext.Provider value={storeInfo}>
             {children}

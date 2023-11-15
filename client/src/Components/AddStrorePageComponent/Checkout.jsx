@@ -3,7 +3,7 @@ import { AiOutlineCheck } from "react-icons/ai";
 // import { useNavigate } from "react-router-dom";
 import useStore from "../../hooks/useStore";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 export default function Checkout() {
   const [isToggleActive, setIsToggleActive] = useState(true);
   const [isLoading, setIsloading] = useState(false);
@@ -11,6 +11,10 @@ export default function Checkout() {
   const { storeDetails, setPaymentLink } = useStore()
   const navigate = useNavigate()
   // const navigate = useNavigate()
+
+  if (!storeDetails) {
+    return <Navigate to="/dashboard/add-store/add-supplier/select-payment" />
+  }
 
   const yearlyPlanData = [
     {
