@@ -211,6 +211,8 @@ export default function StoreEditPage() {
           setLoading(false)
           console.log(err)
         })
+    } else {
+      setLoading(false)
     }
 
     setInputError(error_data)
