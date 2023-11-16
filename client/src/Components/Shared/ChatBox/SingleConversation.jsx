@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useRef, useState } from "react";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import useAuth from "../../../hooks/useAuth";
@@ -35,7 +36,9 @@ export default function SingleConversation() {
   const [calcScrollHeight, setCalcScrollHeight] = useState(0);
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
   const [switchLick, setSwitchLick] = useState("");
-  const [seenUnseenStatus, setSeenUnseenStatus] = useState(false);
+  // const [seenUnseenStatus, setSeenUnseenStatus] = useState(false);
+  const [messageSend, setMessageSend] = useState(false)
+  const [messageSendSocket, setMessageSendSocket] = useState(false)
 
   // render message data first time
   useEffect(() => {
@@ -44,6 +47,16 @@ export default function SingleConversation() {
 
   // scroll calculate
   const scrollPositionSet = () => {
+
+    if (messageSendSocket) {
+      setMessageSendSocket(false)
+      return
+    }
+    if (messageSend) {
+      specificComponentRef.current.scrollTop = specificComponentRef.current.scrollHeight;
+      setMessageSend(false)
+      return
+    }
     setCalcScrollHeight(specificComponentRef.current.scrollHeight);
     if (conversation?.length > 16) {
       const goTo =
@@ -60,8 +73,7 @@ export default function SingleConversation() {
     setConversationLoading(true);
     await axios
       .get(
-        `/api/v1/conversations_api/single_conversation?sender=${
-          user?.email
+        `/api/v1/conversations_api/single_conversation?sender=${user?.email
         }&receiver=${currentChatUserEmail}&page_no=${fastAdd ? 1 : pageCount}`
       )
       .then((res) => {
@@ -78,6 +90,7 @@ export default function SingleConversation() {
 
   useEffect(() => {
     fetchConData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChatUserEmail, user?.email, loadNew]);
 
   // typing start data sent with socket
@@ -107,7 +120,7 @@ export default function SingleConversation() {
   const handleSentNewMassages = async (e, text = "") => {
     try {
       e.preventDefault();
-
+      setMessageSend(true)
       let msg = document.getElementById("message_input")?.value;
       if (msg || text) {
         const date = new Date();
@@ -115,7 +128,7 @@ export default function SingleConversation() {
 
         // new message data
         const message = {
-          full_name: currentChatUserName,
+          participants_name: [user?.full_name, currentChatUserName],
           sender: user?.email,
           receiver: currentChatUserEmail,
           text: text ? text : msg,
@@ -146,7 +159,7 @@ export default function SingleConversation() {
           const fastTimeData = {
             _id: data.data.insertedId,
             participants: [user?.email, currentChatUserEmail],
-            full_name: message?.full_name,
+            participants_name: [user?.full_name, currentChatUserName],
             isMessageSeen: false,
             lastMassages: {
               sender: message?.sender,
@@ -183,6 +196,7 @@ export default function SingleConversation() {
   // all useEffect
   useEffect(() => {
     scrollPositionSet();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation]);
 
   useEffect(() => {
@@ -191,6 +205,7 @@ export default function SingleConversation() {
     } else {
       setConversation([...temporaryData, ...conversation]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [temporaryData]);
 
   // update single message update state with socket data
@@ -211,6 +226,7 @@ export default function SingleConversation() {
   //  get typing status
   useEffect(() => {
     socket?.current?.on("getTyping", (status) => {
+      setMessageSendSocket(true)
       setChatLoadingStatus(status);
     });
   }, [socket]);
@@ -261,12 +277,12 @@ export default function SingleConversation() {
   };
 
   // get seen unseen status
-  useEffect(() => {
-    setSeenUnseenStatus(false);
-    socket.current.on("getSeenUnseenStatus", (status) => {
-      setSeenUnseenStatus(status);
-    });
-  }, []);
+  // useEffect(() => {
+  //   setSeenUnseenStatus(false);
+  //   socket.current.on("getSeenUnseenStatus", (status) => {
+  //     setSeenUnseenStatus(status);
+  //   });
+  // }, []);
 
   let content;
   if (!conversationLoading && conversationError) {
@@ -291,33 +307,29 @@ export default function SingleConversation() {
         return (
           <div id="messages_text" key={key}>
             <div
-              className={`flex my-[4px] px-2 ${
-                currentUser ? "justify-end " : "justify-start items-end "
-              } ${
-                conversation?.length - 1 == key && !chatLoadingStatus && " mb-5"
-              }`}
+              className={`flex my-[4px] px-2 ${currentUser ? "justify-end " : "justify-start items-end "
+                } ${conversation?.length - 1 == key && !chatLoadingStatus && " mb-5"
+                }`}
             >
               {!currentUser && (
                 <div className="w-[30px] h-[30px] rounded-full bg-black ml-1 mr-0.5 overflow-hidden">
                   <img
                     className="w-full h-full"
-                    src="https://www.google.com/url?sa=i&url=https%3A%2F%2Freputationprotectiononline.com%2Freputation-score-survey%2F78-786207_user-avatar-png-user-avatar-icon-png-transparent%2F&psig=AOvVaw04DJKdroV2oI6yIBdZ0DXD&ust=1699574490607000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCPjazb_OtYIDFQAAAAAdAAAAABAEhttps://reputationprotectiononline.com/wp-content/uploads/2022/04/78-786207_user-avatar-png-user-avatar-icon-png-transparent.png"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
                     alt="user"
                   />
                 </div>
               )}
               <div
-                className={`${
-                  currentUser
-                    ? msg?.text == "*like**"
-                      ? "bg-transparent  text-4xl"
-                      : "bg-purple-600 text-white  break-words"
-                    : msg?.text == "*like**"
+                className={`${currentUser
+                  ? msg?.text == "*like**"
+                    ? "bg-transparent  text-4xl"
+                    : "bg-purple-600 text-white  break-words"
+                  : msg?.text == "*like**"
                     ? "bg-transparent text-4xl"
                     : "bg-gray-200 text-black break-words"
-                } ${
-                  msgLengthCheck ? "rounded-full" : "rounded-xl"
-                }  mx-0.5  py-[5px] px-3 max-w-[65%]`}
+                  } ${msgLengthCheck ? "rounded-full" : "rounded-xl"
+                  }  mx-0.5  py-[5px] px-3 max-w-[65%]`}
               >
                 {text}
               </div>
@@ -330,7 +342,7 @@ export default function SingleConversation() {
   const online = checkOnline(currentChatUserEmail);
 
   return (
-    <div className="h-[550px] w-[350px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-20 bottom-0 rounded-t-xl overflow-hidden">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-[2%] bottom-[0%] rounded z-50 overflow-hidden">
       {/* conversation header */}
       <div
         style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
@@ -339,20 +351,19 @@ export default function SingleConversation() {
         <div className="flex gap-3 items-center">
           <img
             className="w-10  rounded-full"
-            src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
             alt=""
           />
           <div>
             <p className="font-medium text-base">
-              {currentChatUserName ? currentChatUserName : "No Name"}
+              {currentChatUserName ? currentChatUserName : "Anonymous"}
             </p>
             <div className="text-sm flex items-center">
               <div
-                className={`w-2.5 h-2.5 rounded-full ${
-                  online ? "bg-green-500" : "bg-gray-400"
-                } `}
+                className={`w-2.5 h-2.5 rounded-full ${online ? "bg-green-500" : "bg-gray-400"
+                  } `}
               ></div>
-              <div className={` pl-1`}>{online ? "Online" : "Offline"}</div>
+              <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>{online ? "Online" : "Offline"}</div>
             </div>
           </div>
         </div>

@@ -1,10 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
-import { AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineClose, AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
-import { BsDot } from 'react-icons/bs';
-
+import { BsDot } from "react-icons/bs";
 
 export default function ConversationUserList() {
   // chat context
@@ -17,6 +17,7 @@ export default function ConversationUserList() {
     checkOnline,
     currentReceiverFind,
     socket,
+    setIsChatBoxOpen
   } = useContext(ChatContext);
 
   //set current Chat User Info
@@ -41,8 +42,8 @@ export default function ConversationUserList() {
     const emailTwo = socketData?.receiver;
 
     const newList = userConversationData?.map((cd) => {
-      const existOne = cd.participants.includes(emailOne);
-      const existTwo = cd.participants.includes(emailTwo);
+      const existOne = cd?.participants?.includes(emailOne);
+      const existTwo = cd?.participants?.includes(emailTwo);
 
       if (existOne && existTwo) {
         const newLastMsg = {
@@ -81,7 +82,6 @@ export default function ConversationUserList() {
   // get message fast time data in client
   useEffect(() => {
     socket?.current?.on("getMessageFastTime", (data) => {
-
       if (data) {
         setSocketData(data);
       }
@@ -139,18 +139,18 @@ export default function ConversationUserList() {
       timeDifference < 60000
         ? "Just now"
         : timeDifference >= 60000 && timeDifference < 3600000
-        ? minutesDifference + "m"
-        : timeDifference >= 3600000 && timeDifference < 86400000
-        ? hoursDifference + "h"
-        : timeDifference >= 86400000 && timeDifference < 604800000
-        ? daysDifference + "d"
-        : timeDifference >= 604800000 && timeDifference < 2630016000
-        ? weeksDifference + "w"
-        : timeDifference >= 2630016000 && timeDifference < 31536000000
-        ? monthsDifference + "mo"
-        : timeDifference >= 31536000000
-        ? yearsDifference + "y"
-        : "";
+          ? minutesDifference + "m"
+          : timeDifference >= 3600000 && timeDifference < 86400000
+            ? hoursDifference + "h"
+            : timeDifference >= 86400000 && timeDifference < 604800000
+              ? daysDifference + "d"
+              : timeDifference >= 604800000 && timeDifference < 2630016000
+                ? weeksDifference + "w"
+                : timeDifference >= 2630016000 && timeDifference < 31536000000
+                  ? monthsDifference + "mo"
+                  : timeDifference >= 31536000000
+                    ? yearsDifference + "y"
+                    : "";
 
     return agoTime;
   };
@@ -161,8 +161,8 @@ export default function ConversationUserList() {
       data?.lastMassages?.text == "*like**"
         ? "👍"
         : data?.lastMassages?.text.length <= 11
-        ? data?.lastMassages?.text
-        : data?.lastMassages?.text.slice(0, 11) + "...";
+          ? data?.lastMassages?.text
+          : data?.lastMassages?.text.slice(0, 11) + "...";
 
     const senderStatus = user.email == data?.lastMassages?.sender ? "You:" : "";
     const result = senderStatus + " " + lastMsg;
@@ -179,9 +179,11 @@ export default function ConversationUserList() {
   // user Conversation List Search
   const userConversationListSearch = (data) => {
     if (search) {
-      const result = data.filter((d) =>
-        d?.full_name.toLowerCase().includes(search.toLowerCase())
-      );
+      const result = data.filter((d) => {
+        const messageSenderName = d?.participants_name?.find(name => name != user?.full_name)?.toLowerCase()
+        const filterData = messageSenderName?.includes(search?.toLocaleLowerCase())
+        return filterData
+      });
       return result;
     } else {
       return data;
@@ -197,17 +199,18 @@ export default function ConversationUserList() {
       </div>
     );
   } else if (!loading && error) {
-    content = <p>Something is Wrong !</p>;
+    content = <p></p>;
   } else if (!loading && !error && data.length > 0) {
+
     content = dataSortByTime(userConversationListSearch(data))?.map(
       (userData) => {
         const online = checkOnline(currentReceiverFind(userData?.participants));
-
+        const senderName = userData?.participants_name?.find(name => name != user?.full_name)
         return (
           <div
             onClick={(e) => {
               handleOpenSingleConversationShow(e);
-              setCurrentChatUserName(userData?.full_name);
+              setCurrentChatUserName(senderName);
               setCurrentChatUserEmail(
                 currentChatReceiver(userData?.participants)
               );
@@ -218,24 +221,34 @@ export default function ConversationUserList() {
             <div className="w-14 h-14  rounded-full relative">
               <img
                 className="w-14  rounded-full"
-                src="https://lh3.googleusercontent.com/a/ACg8ocLBE_Vz9xi-TA_vB8ZujrRCpMC8_lNvro8uM5KcGiu1MA=s504-c-no"
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
                 alt=""
               />
               <div
-                className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${
-                  online &&  "bg-green-500" 
-                }    `}
+                className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${online && "bg-green-500"
+                  }    `}
               ></div>
             </div>
 
             <div>
-              <p className=" text-base">{userData?.full_name}</p>
+              <p className=" text-base">{senderName}</p>
               <div className="text-sm flex items-center">
-                <span className={`${user.email == userData?.lastMassages?.sender ? "text-[#8C8D90]" :""} text-xs`}>
+                <span
+                  className={`${user.email == userData?.lastMassages?.sender
+                    ? "text-[#8C8D90]"
+                    : ""
+                    } text-xs`}
+                >
                   {massagesSliceAndSenderStatus(userData)}
                 </span>
-                <span className={`${user.email == userData?.lastMassages?.sender ? "text-[#8C8D90]" :""} pl-2 flex items-center text-xs ` }>
-                 <BsDot/> {calculateAgeTime(userData?.lastMassages?.timestamp)}
+                <span
+                  className={`${user.email == userData?.lastMassages?.sender
+                    ? "text-[#8C8D90]"
+                    : ""
+                    } pl-2 flex items-center text-xs `}
+                >
+                  <BsDot />{" "}
+                  {calculateAgeTime(userData?.lastMassages?.timestamp)}
                 </span>
               </div>
             </div>
@@ -243,19 +256,27 @@ export default function ConversationUserList() {
         );
       }
     );
+
   }
 
   return (
-    <div className="h-[550px] w-[350px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-20 bottom-0 rounded-t-xl">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-[2%] bottom-[0%] z-50 rounded">
       {/* chat head  */}
       <div className="p-3 flex justify-between items-center pt-3  border-gray-300">
         <p className="font-bold text-2xl">Chats</p>
-        <button
-          onClick={handleNewConversation}
-          className="px-3 py-[6px] text-sm rounded-full bg-gray-200 transition hover:bg-purple-500 hover:text-white flex items-center gap-1  cursor-pointer"
-        >
-          <AiOutlinePlus /> <p>Add</p>
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleNewConversation}
+            className="px-3 py-[5px] text-sm rounded-full bg-purple-50  transition hover:bg-purple-100 text-purple-500  flex items-center gap-1  cursor-pointer"
+          >
+            <AiOutlinePlus /> <p>Users</p>
+          </button>
+          <div className="flex items-center">
+            <button onClick={() => setIsChatBoxOpen(false)} className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100">
+              <AiOutlineClose size={20} />
+            </button>
+          </div>
+        </div>
       </div>
       {/* search bar  */}
       <div className="relative px-3">
@@ -263,7 +284,7 @@ export default function ConversationUserList() {
           onChange={(e) => setSearch(e?.target?.value)}
           type="text"
           value={search}
-          placeholder="Search users"
+          placeholder="Search conversations"
           className={`w-full bg-gray-100 outline-none py-2 px-3 rounded-full  mb-2`}
         />
         <button className="bg-purple-500 p-2 rounded-full text-white absolute top-1 right-4 ">
@@ -273,6 +294,8 @@ export default function ConversationUserList() {
       {/* user chat list  */}
       <div className="chat_list h-[calc(100%_-_126px)] overflow-y-scroll">
         {content}
+        {(data.length < 1 && !loading && !search) && <p className="text-center mt-4 text-lg font-medium text-purple-500">Let's begin conversation!</p>}
+        {(content?.length <= 0 && !loading && search) && <p className="text-center mt-4 text-lg font-medium text-purple-500">Search data not available!</p>}
       </div>
     </div>
   );

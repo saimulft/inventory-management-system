@@ -27,17 +27,33 @@ const run = async () => {
 
       const alreadyConversationExistJoin = alreadyExistUserEmail.join("");
 
-      const result = await all_users_collection.find({}).toArray();
-      const newResult = result.filter(
-        (e) => !alreadyConversationExistJoin.includes(e.email)
-      );
+      const user = await all_users_collection.findOne({ email: loginUser })
+      if (user?.role == 'Admin') {
+        const result = await all_users_collection.find({ admin_id: new ObjectId(user._id).toString() }).toArray();
+        const newResult = result.filter(
+          (e) => !alreadyConversationExistJoin.includes(e.email)
+        );
 
-      if (result.length) {
-        res.status(200).json(newResult);
+        if (result.length) {
+          res.status(200).json(newResult);
+        } else {
+          res
+            .status(500)
+            .json({ message: "Failed to get conversation users list" });
+        }
       } else {
-        res
-          .status(500)
-          .json({ message: "Failed to get conversation users list" });
+        const result = await all_users_collection.find({ $or: [{ admin_id: user?.admin_id }, { _id: new ObjectId(user?.admin_id) }] }).toArray();
+        const newResult = result.filter(
+          (e) => !alreadyConversationExistJoin.includes(e.email)
+        );
+
+        if (result.length) {
+          res.status(200).json(newResult);
+        } else {
+          res
+            .status(500)
+            .json({ message: "Failed to get conversation users list" });
+        }
       }
     } catch (error) {
       res.status(500).json({ message: "Internal Server Error" });
@@ -52,24 +68,24 @@ const run = async () => {
       const receiver = request.body.receiver;
       const text = request.body.text;
       const timestamp = request.body.timestamp;
-      const full_name = request.body.full_name;
+      const participants_name = request.body.participants_name;
 
 
       const seenMassageStatus = (sender, receiver) => {
         const emailToUsername = (email) => email.split('@')[0]
-      
+
         const userVale = {
           [emailToUsername(sender)]: true,
           [emailToUsername(receiver)]: false,
         };
-      
+
         return userVale;
       };
 
- 
+
       const prepareMessage = {
         participants: [sender, receiver],
-        full_name,
+        participants_name,
         isMessageSeen: seenMassageStatus(sender, receiver),
         messages: [
           {
@@ -156,7 +172,7 @@ const run = async () => {
       const messagesList = allConversations.map((con) => {
         const conversation = {
           _id: con?._id,
-          full_name: con?.full_name,
+          participants_name: con?.participants_name,
           isMessageSeen: con?.isMessageSeen,
           participants: con?.participants,
           lastMassages: {
@@ -238,14 +254,11 @@ const run = async () => {
             end,
           };
 
-          console.log(currentMessageIndex, { totalMessageLength, page_no });
-          res.status(200).send({message: chunk, isMessageSeen: singleConversationsData?.isMessageSeen});
+          res.status(200).send({ message: chunk, isMessageSeen: singleConversationsData?.isMessageSeen });
         } else {
-          console.log("page count not found");
           res.status(200).send({});
         }
       } else {
-        console.log("user not found");
         const demoData = [
           {
             _id: "demo",

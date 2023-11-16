@@ -8,7 +8,6 @@ import "./chatBox.css"
 export default function ChatBox() {
   const { isChatBoxOpen, singleConversationShow, addNewConversation } =
     useContext(ChatContext);
-
   return (
     <div>
       {/* conversation user list show */}
