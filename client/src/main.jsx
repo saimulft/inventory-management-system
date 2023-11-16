@@ -13,7 +13,7 @@ import { ChatProvider } from "./Providers/ChatProvider.jsx";
 import Cookies from "js-cookie";
 const queryClient = new QueryClient()
 import CryptoJS from "crypto-js"
-axios.defaults.baseURL = "http://localhost:5000"
+axios.defaults.baseURL = "https://ims-backend.nabilnewaz.com"
 
 // interceptor for set token in headers
 axios.interceptors.request.use(
@@ -30,7 +30,7 @@ axios.interceptors.request.use(
 
     const encryptedTokenFromCookie = Cookies.get('imstoken');
     const token = decryptToken(encryptedTokenFromCookie, "e74cca3d65c871d49a7508bac94a1a4c41b843528411a5823b04d5921d2bf6e0b016164cssdf");
-    
+
     config.headers.authorization = `Bearer ${token}`;
     return config;
   },

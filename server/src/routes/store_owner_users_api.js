@@ -17,7 +17,7 @@ const run = async () => {
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }
-            
+
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
             const login_data = {
@@ -62,7 +62,7 @@ const run = async () => {
                             </div>
                             <hr />
                             <h2>Hi ${req.body.full_name}, Please verify your email before login to your account</h2>
-                            <p>To verify your email <a href="http://localhost:5173/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
+                            <p>To verify your email <a href="https://ims.nabilnewaz.com/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
                         </div>`
                     }
 

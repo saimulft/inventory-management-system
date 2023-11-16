@@ -98,7 +98,7 @@ export default function ConversationUserList() {
     setLoading(true);
     axios
       .get(
-        `http://localhost:5000/api/v1/conversations_api/user_messages_list?sender=${user?.email}`
+        `/api/v1/conversations_api/user_messages_list?sender=${user?.email}`
       )
       .then((res) => {
         setData(res?.data);

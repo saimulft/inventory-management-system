@@ -82,7 +82,7 @@ const run = async () => {
                                 </div>
                                 <hr />
                                 <h2>Please verify your email before login to your account</h2>
-                                <p>To verify your email <a href="http://localhost:5173/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
+                                <p>To verify your email <a href="https://ims.nabilnewaz.com/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
                             </div>`
                         }
 
@@ -106,20 +106,20 @@ const run = async () => {
 
 
     // get all warehouse admin
-    router.get('/get_all_warehouse_admin',verifyJWT, async (req, res) => {
+    router.get('/get_all_warehouse_admin', verifyJWT, async (req, res) => {
         try {
             const admin_id = req.query.id;
 
-            const result = await warehouse_admin_users_collection.find({admin_id: admin_id}).toArray()
+            const result = await warehouse_admin_users_collection.find({ admin_id: admin_id }).toArray()
 
-            if(result.length){
+            if (result.length) {
                 const data = result.map(item => {
-                    return {warehouse_admin_id: item.warehouse_admin_id, value: item.warehouse_id, label: item.full_name }
+                    return { warehouse_admin_id: item.warehouse_admin_id, value: item.warehouse_id, label: item.full_name }
                 })
-                return res.status(200).json({data: data, message: 'Successfully got all warehouse admin'})
+                return res.status(200).json({ data: data, message: 'Successfully got all warehouse admin' })
             }
-            else{
-                return res.status(204).json({message: 'No content found'})
+            else {
+                return res.status(204).json({ message: 'No content found' })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });

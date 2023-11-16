@@ -3,7 +3,7 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 
 const stripe = require('stripe')('sk_test_51M9AWiKa3gcPGhKTJaOAKnhWZgT7pA0dqch2kQ7uz7M5lXpt6dDckLjHdFIyYs1rgafA64sKm7eGH05O6aWWlo52006GcXLLcN');
-const YOUR_DOMAIN = 'http://localhost:5173';
+const YOUR_DOMAIN = 'https://ims.nabilnewaz.com';
 
 const sendEmail = require("../utilities/send_email");
 const verifyJWT = require("../middlewares/verifyJWT");
@@ -162,7 +162,7 @@ const run = async () => {
             // If you are testing with the CLI, find the secret by running 'stripe listen'
             // If you are using an endpoint defined with the API or dashboard, look in your webhook settings
             // at https://dashboard.stripe.com/webhooks
-            const endpointSecret = 'whsec_29992f8ac88b4a56b23b1bc4cb37289601e648815fc729f2a00e9322fc343b1d';
+            const endpointSecret = 'whsec_Yc7akirdGNYc9TfWv96HpkE8zDOk0bFk';
             // Only verify the event if you have an endpoint secret defined.
             // Otherwise use the basic event deserialized with JSON.parse
             if (endpointSecret) {
