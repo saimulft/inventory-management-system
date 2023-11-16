@@ -8,9 +8,11 @@ import Swal from "sweetalert2";
 import SearchDropdown from "../Utilities/SearchDropdown";
 import useGlobal from "../hooks/useGlobal";
 import { GlobalContext } from "../Providers/GlobalProviders";
+import { NotificationContext } from "../Providers/NotificationProvider";
 
 const ArrivalFormPage = () => {
    const {socket} = useContext(GlobalContext)
+   const {currentUser} = useContext(NotificationContext)
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
@@ -202,36 +204,22 @@ const ArrivalFormPage = () => {
     }
 
   }
-  useEffect(()=>{
-    socket?.current?.on("getArrivalFormSubmit", (data) => {
-      console.log(data);
-      
-    })
-  },[socket])
 
 
-
-
-
+  
 const handleTest = () => {
-  socket?.current?.emit("arrivalFormSubmit", {
+  socket?.current?.emit("sendNotification", {
     user,
     status: "submit a pending arrival form."
-})   
+  })  
+
+  const status = "Submit a pending arrival form."
+  axios.post(`/api/v1/notifications_api/send_notification`,{currentUser, status})
+  .then(res => console.log(res.data)
+  .catch(err => console.log(err)
+  )
+  )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
   return (
     <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div

@@ -68,49 +68,83 @@ io.on('connection',  (socket) => {
     // add current user 
     socket.on("addCurrentUser", ({currentUser}) => {
         addCurrentUser(currentUser, socket.id)
-        console.log("🚀 ~ file: index.js:74 ~ socket.on ~ currentUsers:", currentUsers)
+        // console.log("🚀 ~ file: index.js:74 ~ socket.on ~ currentUsers:", currentUsers)
     }) 
 
     // pending arrival notification data 
-    socket.on("arrivalFormSubmit", ({user, status}) => {
+    socket.on("sendNotification", ({user, status}) => {
         const currentUsersData = currentUsers.filter(currentUser => (currentUser?.admin_id || (user?.email != currentUser?.email) && currentUser._id) == user?.admin_id)
      
+        console.log(user);
         if(user?.role == "Admin" || user?.role == "Admin VA"){
-          const adminAdminVAUnderUsers = currentUsersData?.filter(currentUser => currentUser?.admin_id == user?.admin_id)
-          adminAdminVAUnderUsers?.forEach(adminAdminVAUnderUser => {
-                {adminAdminVAUnderUser && io?.to(adminAdminVAUnderUser?.socketId)?.emit("getArrivalFormSubmit", ({status, data: adminAdminVAUnderUser}))}
+          const adminAdminVANotificationAccessUsers = currentUsersData?.filter(currentUser => currentUser?.admin_id == user?.admin_id)
+          
+        // send notification 
+          adminAdminVANotificationAccessUsers?.forEach(adminAdminVANotificationAccessUser => {
+                {adminAdminVANotificationAccessUser && io?.to(adminAdminVANotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: user}))}
             })
         }
+
         if(user?.role == "Store Manager Admin"){
             const storeManagerAdminNotificationAccessUsers = currentUsersData?.filter(
                 currentUser =>
-                  (currentUser?.store_manager_admin_id === user?.store_manager_admin_id &&
-                    currentUser?.role === "Store Manager VA") ||
-                  (currentUser?.admin_id === user?.admin_id &&
+                  (currentUser?.store_manager_admin_id == user?.store_manager_admin_id &&
+                    currentUser?.role == "Store Manager VA") ||
+                  (currentUser?.admin_id == user?.admin_id &&
                     currentUser.role !== "Store Manager Admin" &&
                     currentUser.role !== "Store Manager VA")
               );
-            console.log("🚀 ~ file: index.js:93 ~ socket.on ~ storeManagerAdminAccessUsers:", storeManagerAdminNotificationAccessUsers)
 
             // send notification 
-            storeManagerAdminNotificationAccessUsers?.forEach(storeManagerAdminAccessUser => {
-                {storeManagerAdminAccessUser && io?.to(storeManagerAdminAccessUser?.socketId)?.emit("getArrivalFormSubmit", ({status, data: storeManagerAdminAccessUser}))}
+            storeManagerAdminNotificationAccessUsers?.forEach(storeManagerAdminNotificationAccessUser => {
+                {storeManagerAdminNotificationAccessUser && io?.to(storeManagerAdminNotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: storeManagerAdminNotificationAccessUser}))}
             })            
         }
+
         if(user?.role == "Store Manager VA"){
             const storeManagerVANotificationAccessUsers = currentUsersData?.filter(
                 currentUser =>
-                    (d)
+                    (currentUser?.store_manager_admin_id == user?.store_manager_admin_id && currentUser?.role == "Store Manager Admin") || 
+                    (currentUser?.admin_id == user?.admin_id &&
+                        currentUser.role !== "Store Manager Admin" &&
+                        currentUser.role !== "Store Manager VA")
                 )
+            // send notification 
+            storeManagerVANotificationAccessUsers?.forEach(storeManagerVANotificationAccessUser => {
+                {storeManagerVANotificationAccessUser && io?.to(storeManagerVANotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: storeManagerVANotificationAccessUser}))}
+            })               
         }
 
-        // if(user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA"){
-        //     console.log("Warehouse Admin || Warehouse Manager VA");
-        //     // send notifications to the client 
-        //     if(data?.role != "Warehouse Admin" && data?.role != "Warehouse Manager VA"){
-        //         {data && io?.to(data?.socketId).emit("getArrivalFormSubmit", ({status, data}))}
-        //     }
-        // }
+        if(user?.role == "Warehouse Admin"){
+            const warehouseNotificationAccessUsers = currentUsersData?.filter(
+                currentUser =>
+                  (currentUser?.warehouse_admin_id == user?.warehouse_admin_id &&
+                    currentUser?.role == "Warehouse Admin") ||
+                  (currentUser?.admin_id == user?.admin_id &&
+                    currentUser.role !== "Warehouse Admin" &&
+                    currentUser.role !== "Warehouse Manager VA")
+              );
+
+            // send notification 
+            warehouseNotificationAccessUsers?.forEach(warehouseNotificationAccessUser => {
+                {warehouseNotificationAccessUser && io?.to(warehouseNotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: warehouseNotificationAccessUser}))}
+            })  
+        }
+
+        if(user?.role == "Warehouse Manager VA"){
+            const warehouseManagerVANotificationAccessUsers = currentUsersData?.filter(
+                currentUser =>
+                    (currentUser?.warehouse_admin_id == user?.warehouse_admin_id &&
+                         currentUser?.role == "Warehouse Admin") || 
+                    (currentUser?.admin_id == user?.admin_id &&
+                        currentUser?.role !== "Warehouse Admin" &&
+                        currentUser?.role !== "Warehouse Manager VA")
+                )
+            // send notification 
+            warehouseManagerVANotificationAccessUsers?.forEach(storeManagerVANotificationAccessUser => {
+                {storeManagerVANotificationAccessUser && io?.to(storeManagerVANotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: storeManagerVANotificationAccessUser}))}
+            })
+        }
     })
 
     //disconnect

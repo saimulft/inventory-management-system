@@ -11,6 +11,7 @@ const NotificationProvider = ({ children }) => {
 
     const[currentUser, setCurrentUser]=useState({})
     const[currentUserLoading, setCurrentUserLoading]=useState(false)
+    const[notificationStatus, setNotificationStatus] = useState("")
 
     // get the user with creator email 
     useEffect(()=>{
@@ -34,15 +35,17 @@ const NotificationProvider = ({ children }) => {
         }
     },[currentUser, socket])
     
-    socket.current?.on("getArrivalFormSubmit" , (data) => {
-        console.log(data);
+    // get notification 
+    socket.current?.on("getNotification" , (data) => {
+        setNotificationStatus(data?.status)
+        console.log(data.status);
+        
     })
-  
-
 
 const notificationInfo = {
 user,
-currentUser
+currentUser,
+notificationStatus
 }
     return (
         <NotificationContext.Provider value={notificationInfo}>
