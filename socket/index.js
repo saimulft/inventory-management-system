@@ -14,8 +14,9 @@ const addUser = (userData, socketId) => {
 // add current user with creator email 
 let currentUsers = [];
 const addCurrentUser = (currentUserData, socketId) => {  
-    !currentUsers.some(currentUser => currentUser?.email == currentUserData?.email) && currentUsers?.push({...currentUserData, socketId})
+    !currentUsers.find(currentUser => currentUser?.email == currentUserData?.email) && currentUsers?.push({...currentUserData, socketId})
 }
+
 
 const removeUser = (socketId) => {
     users = users.filter(user => user.socketId !== socketId);
@@ -68,35 +69,41 @@ io.on('connection',  (socket) => {
     // add current user 
     socket.on("addCurrentUser", ({currentUser}) => {
         addCurrentUser(currentUser, socket.id)
-        // console.log("🚀 ~ file: index.js:74 ~ socket.on ~ currentUsers:", currentUsers)
+        console.log("🚀 ~ file: index.js:73 ~ socket.on ~ currentUser:", currentUser)
     }) 
 
     // pending arrival notification data 
     socket.on("sendNotification", ({user, status}) => {
-        const currentUsersData = currentUsers.filter(currentUser => (currentUser?.admin_id || (user?.email != currentUser?.email) && currentUser._id) == user?.admin_id)
-     
-        console.log(user);
-        if(user?.role == "Admin" || user?.role == "Admin VA"){
-          const adminAdminVANotificationAccessUsers = currentUsersData?.filter(currentUser => currentUser?.admin_id == user?.admin_id)
-          
+        const currentUsersData = currentUsers.filter(currentUser => currentUser?.admin_id == user?.admin_id || currentUser?._id == user?.admin_id)
+        let adminAdminVANotificationAccessUsers;
+        
+        if(user?.role == "Admin"){
+            adminAdminVANotificationAccessUsers = currentUsersData?.filter(currentUser => currentUser?.admin_id == user?.admin_id)
+        }
+        if(user?.role == "Admin VA"){
+            adminAdminVANotificationAccessUsers = currentUsersData?.filter(currentUser =>currentUser?._id == user?.admin_id)
+        }
+        console.log(currentUsers);
         // send notification 
           adminAdminVANotificationAccessUsers?.forEach(adminAdminVANotificationAccessUser => {
-                {adminAdminVANotificationAccessUser && io?.to(adminAdminVANotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: user}))}
+                console.log("🚀 ~ file: index.js:86 ~ socket.on ~ adminAdminVANotificationAccessUser:", adminAdminVANotificationAccessUser?.socketId)
+               io?.to(adminAdminVANotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: user}))
             })
-        }
 
         if(user?.role == "Store Manager Admin"){
+            console.log(user.role);
             const storeManagerAdminNotificationAccessUsers = currentUsersData?.filter(
                 currentUser =>
                   (currentUser?.store_manager_admin_id == user?.store_manager_admin_id &&
                     currentUser?.role == "Store Manager VA") ||
-                  (currentUser?.admin_id == user?.admin_id &&
+                  (currentUser?._id == user?.admin_id &&
                     currentUser.role !== "Store Manager Admin" &&
                     currentUser.role !== "Store Manager VA")
               );
 
-            // send notification 
+          // send notification 
             storeManagerAdminNotificationAccessUsers?.forEach(storeManagerAdminNotificationAccessUser => {
+                console.log("🚀 ~ file: index.js:108 ~ socket.on ~ storeManagerAdminNotificationAccessUser:", storeManagerAdminNotificationAccessUser)
                 {storeManagerAdminNotificationAccessUser && io?.to(storeManagerAdminNotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: storeManagerAdminNotificationAccessUser}))}
             })            
         }

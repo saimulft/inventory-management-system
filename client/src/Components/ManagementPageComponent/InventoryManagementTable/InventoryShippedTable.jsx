@@ -1,11 +1,10 @@
-
 import { AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
-import { format } from "date-fns"
+import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
@@ -15,32 +14,45 @@ import { FaSpinner } from "react-icons/fa";
 import { BsCheck2Circle } from "react-icons/bs";
 import { MdErrorOutline } from "react-icons/md";
 import useGlobal from "../../../hooks/useGlobal";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { NotificationContext } from "../../../Providers/NotificationProvider";
 
 export default function InventoryShippedTable() {
+  const { socket } = useContext(GlobalContext);
+  const { currentUser } = useContext(NotificationContext);
   // const [RTSdata ,setRTSdata] = useState({})
-  const { user } = useAuth()
-  const [filterDays, setFilterDays] = useState('')
-  const [searchText, setSearchText] = useState('');
-  const [searchError, setSearchError] = useState('');
+  const { user } = useAuth();
+  const [filterDays, setFilterDays] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [singleData, setSingleData] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
-  const { isSidebarOpen, setCountsRefetch } = useGlobal()
-  const [successMessage, setSuccessMessage] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [loading, setLoading] = useState()
-  const [rangeDate, setRangeDate] = useState([{
-    startDate: new Date(),
-    endDate: new Date(),  //addDays(new Date(), 7)
-    key: 'selection'
-  }]);
+  const { isSidebarOpen, setCountsRefetch } = useGlobal();
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState();
+  const [rangeDate, setRangeDate] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(), //addDays(new Date(), 7)
+      key: "selection",
+    },
+  ]);
 
-  const { data = [], refetch, isLoading } = useQuery({
-    queryKey: ['ready_to_ship_data'],
+  const {
+    data = [],
+    refetch,
+    isLoading,
+  } = useQuery({
+    queryKey: ["ready_to_ship_data"],
     queryFn: async () => {
       try {
-        const res = await axios.post(`/api/v1/shipped_api/get_all_shipped_data`, { user })
+        const res = await axios.post(
+          `/api/v1/shipped_api/get_all_shipped_data`,
+          { user }
+        );
         if (res.status === 200) {
           return res.data.data;
         }
@@ -49,43 +61,42 @@ export default function InventoryShippedTable() {
         console.log(error);
         return [];
       }
-    }
-  })
+    },
+  });
 
   const handleSearch = (e) => {
-    e.preventDefault()
-    setSearchError("")
+    e.preventDefault();
+    setSearchError("");
     if (!searchText) {
-      return
+      return;
     }
-    const filteredData = data.filter(item =>
-    (item.asin_upc_code?.toLowerCase().includes(searchText) ||
-      item.product_name?.toLowerCase().includes(searchText) ||
-      item.store_name?.toLowerCase().includes(searchText) ||
-      item.upin?.toLowerCase().includes(searchText) ||
-      item.code_type?.toLowerCase().includes(searchText))
+    const filteredData = data.filter(
+      (item) =>
+        item.asin_upc_code?.toLowerCase().includes(searchText) ||
+        item.product_name?.toLowerCase().includes(searchText) ||
+        item.store_name?.toLowerCase().includes(searchText) ||
+        item.upin?.toLowerCase().includes(searchText) ||
+        item.code_type?.toLowerCase().includes(searchText)
     );
     if (!filteredData.length) {
-      setFilterDays(null)
-      setSearchError(`No data found for "${searchText}"`)
-      return
+      setFilterDays(null);
+      setSearchError(`No data found for "${searchText}"`);
+      return;
     }
-    setFilterDays(null)
-    setSearchResults(filteredData)
-  }
+    setFilterDays(null);
+    setSearchResults(filteredData);
+  };
 
   const handleDateSearch = (day) => {
-    setSearchError("")
+    setSearchError("");
     const currentDate = new Date();
     const endDate = new Date();
     let startDate;
 
-
     if (day === "today") {
       startDate = new Date(currentDate);
       startDate.setHours(0, 0, 0, 0); // Set to midnight
-    }
-    else {
+    } else {
       const previousDate = new Date();
       previousDate.setDate(currentDate.getDate() - day);
       startDate = previousDate;
@@ -110,108 +121,140 @@ export default function InventoryShippedTable() {
     }
 
     setSearchResults(filteredDateResults);
-  }
+  };
   const handleCustomDateSearch = () => {
-    setSearchError("")
-    const startDate = rangeDate[0].startDate
-    const endDate = rangeDate[0].endDate
+    setSearchError("");
+    const startDate = rangeDate[0].startDate;
+    const endDate = rangeDate[0].endDate;
     if (startDate !== endDate) {
       const filteredDateResults = data.filter((item) => {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= endDate;
       });
-      console.log(filteredDateResults)
+      console.log(filteredDateResults);
       if (!filteredDateResults.length) {
-
-        return setSearchError(`No data found for selected date range`)
+        return setSearchError(`No data found for selected date range`);
       }
       if (filteredDateResults.length) {
         setSearchResults(filteredDateResults);
       }
     }
-
-  }
+  };
 
   const handleDelete = (_id) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#8633FF',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Delete'
+      confirmButtonColor: "#8633FF",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Delete",
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`/api/v1/shipped_api/delete_shipped_data?id=${_id}`)
-          .then(res => {
+        axios
+          .delete(`/api/v1/shipped_api/delete_shipped_data?id=${_id}`)
+          .then((res) => {
             if (res.status === 200) {
-              refetch()
-              setCountsRefetch(true)
+              // send real time notification data
+              socket?.current?.emit("sendNotification", {
+                user,
+                status: "A shipped entry has been deleted..",
+              });
+
+              const status = "A shipped entry has been deleted.";
+              axios
+                .post(`/api/v1/notifications_api/send_notification`, {
+                  currentUser,
+                  status,
+                })
+                .then((res) => console.log(res.data))
+                .catch((err) => console.log(err));
+              refetch();
+              setCountsRefetch(true);
               Swal.fire(
-                'Deleted!',
-                'A shipped entry has been deleted.',
-                'success'
-              )
+                "Deleted!",
+                "A shipped entry has been deleted.",
+                "success"
+              );
             }
           })
-          .catch(error => console.log(error))
+          .catch((error) => console.log(error));
       }
-    })
-  }
+    });
+  };
 
   const handleUpdate = (event, _id) => {
-    event.preventDefault()
-    setLoading(true)
-    setSuccessMessage('')
-    setErrorMessage('')
+    event.preventDefault();
+    setLoading(true);
+    setSuccessMessage("");
+    setErrorMessage("");
 
     const form = event.target;
     const resaleableQuantity = form.resaleableQuantity.value;
     const remark = form.remark.value;
 
     if (!resaleableQuantity && !remark) {
-      setLoading(false)
-      return setErrorMessage('No data entered')
+      setLoading(false);
+      return setErrorMessage("No data entered");
     }
 
     if (parseInt(resaleableQuantity) > parseInt(singleData.quantity)) {
-      setLoading(false)
-      setErrorMessage(`Quantity must be less than ${singleData.quantity}`)
+      setLoading(false);
+      setErrorMessage(`Quantity must be less than ${singleData.quantity}`);
       setTimeout(() => {
-        setErrorMessage('')
+        setErrorMessage("");
       }, 2000);
       return;
     }
 
     const updatedData = {
       resaleable_quantity: resaleableQuantity,
-      remark: remark
-    }
+      remark: remark,
+    };
 
-    axios.put(`/api/v1/shipped_api/update_shipped_data?id=${_id}`, updatedData)
-      .then(res => {
+    axios
+      .put(`/api/v1/shipped_api/update_shipped_data?id=${_id}`, updatedData)
+      .then((res) => {
         if (res.status === 201) {
-          setLoading(false)
-          form.reset()
-          refetch()
-          setCountsRefetch(true)
-          setSuccessMessage('Data update successful!')
+     
+
+          const status = "Updated resaleable quantity.";
+          axios
+            .post(`/api/v1/notifications_api/send_notification`, {
+              currentUser,
+              status,
+            })
+            .then((res) =>{
+              if(res.data.acknowledged){
+                   // send real time notification data
+          socket?.current?.emit("sendNotification", {
+            user,
+            status
+          });
+              }
+            })
+            .catch((err) => console.log(err));
+          setLoading(false);
+          form.reset();
+          refetch();
+          setCountsRefetch(true);
+          setSuccessMessage("Data update successful!");
           setTimeout(() => {
-            setSuccessMessage('')
+            setSuccessMessage("");
           }, 2000);
         }
       })
-      .catch(error => {
-        setLoading(false)
-        setErrorMessage('Something went wrong while updating data!')
+      .catch((error) => {
+        setLoading(false);
+        setErrorMessage("Something went wrong while updating data!");
 
         setTimeout(() => {
-          setErrorMessage('')
+          setErrorMessage("");
         }, 2000);
-        console.log(error)
-      })
-  }
+        console.log(error);
+      });
+  };
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -292,11 +335,10 @@ export default function InventoryShippedTable() {
   generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
   generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
 
-  // pagination code 
+  // pagination code
 
   const handleFilteredDataPageChange = ({ selected }) => {
     setFilteredDataPage(selected);
-
   };
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
@@ -304,7 +346,10 @@ export default function InventoryShippedTable() {
   // filter pagination calculation
   const startIndexFilter = filteredDataPage * itemsPerPage;
   const endIndexFilter = startIndexFilter + itemsPerPage;
-  const displayedDataFilter = searchResults.slice(startIndexFilter, endIndexFilter);
+  const displayedDataFilter = searchResults.slice(
+    startIndexFilter,
+    endIndexFilter
+  );
 
   //  ALl data pagination calculation
   const startIndex = currentPage * itemsPerPage;
@@ -320,53 +365,91 @@ export default function InventoryShippedTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p onClick={() => {
-              setSearchResults([])
-              setSearchText("")
-              setSearchError("")
-              setFilterDays("all")
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'all' && 'bg-[#8633FF] text-white'}`}>
+            <p
+              onClick={() => {
+                setSearchResults([]);
+                setSearchText("");
+                setSearchError("");
+                setFilterDays("all");
+              }}
+              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                filterDays === "all" && "bg-[#8633FF] text-white"
+              }`}
+            >
               All
             </p>
-            <p onClick={() => {
-              handleDateSearch("today")
-              setFilterDays('today')
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
+            <p
+              onClick={() => {
+                handleDateSearch("today");
+                setFilterDays("today");
+              }}
+              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                filterDays === "today" && "bg-[#8633FF] text-white"
+              }`}
+            >
               Today
             </p>
-            <p onClick={() => {
-              handleDateSearch(7)
-              setFilterDays(7)
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && 'bg-[#8633FF] text-white'}`}>
+            <p
+              onClick={() => {
+                handleDateSearch(7);
+                setFilterDays(7);
+              }}
+              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                filterDays === 7 && "bg-[#8633FF] text-white"
+              }`}
+            >
               7 Days
             </p>
-            <p onClick={() => {
-              handleDateSearch(15)
-              setFilterDays(15)
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && 'bg-[#8633FF] text-white'}`}>
+            <p
+              onClick={() => {
+                handleDateSearch(15);
+                setFilterDays(15);
+              }}
+              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                filterDays === 15 && "bg-[#8633FF] text-white"
+              }`}
+            >
               15 Days
             </p>
-            <p onClick={() => {
-              handleDateSearch(30)
-              setFilterDays(1)
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && 'bg-[#8633FF] text-white'}`}>
+            <p
+              onClick={() => {
+                handleDateSearch(30);
+                setFilterDays(1);
+              }}
+              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                filterDays === 1 && "bg-[#8633FF] text-white"
+              }`}
+            >
               1 Month
             </p>
-            <p onClick={() => {
-              handleDateSearch(365)
-              setFilterDays('year')
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
+            <p
+              onClick={() => {
+                handleDateSearch(365);
+                setFilterDays("year");
+              }}
+              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                filterDays === "year" && "bg-[#8633FF] text-white"
+              }`}
+            >
               Year
             </p>
-            <p onClick={() => {
-              setFilterDays('custom')
-              document.getElementById("date_range_modal").showModal()
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
+            <p
+              onClick={() => {
+                setFilterDays("custom");
+                document.getElementById("date_range_modal").showModal();
+              }}
+              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                filterDays === "custom" && "bg-[#8633FF] text-white"
+              }`}
+            >
               Custom
             </p>
           </div>
         </div>
-        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
+        <form
+          onSubmit={handleSearch}
+          className="w-1/4  flex items-center justify-between"
+        >
           <input
             className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
             placeholder="Search Here"
@@ -375,15 +458,22 @@ export default function InventoryShippedTable() {
             onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
           />
           <div className="w-[40%] flex items-center justify-evenly">
-            <button type="submit" onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+            <button
+              type="submit"
+              onClick={handleSearch}
+              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+            >
               <AiOutlineSearch size={24} />
             </button>
-            <button onClick={() => {
-              setSearchResults([])
-              setSearchText("")
-              setSearchError("")
-              setFilterDays("all")
-            }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+            <button
+              onClick={() => {
+                setSearchResults([]);
+                setSearchText("");
+                setSearchError("");
+                setFilterDays("all");
+              }}
+              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+            >
               Clear
             </button>
           </div>
@@ -409,54 +499,16 @@ export default function InventoryShippedTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
-              {
-                searchResults.length ? displayedDataFilter.map((d, index) => {
-                  return (
-                    <tr
-                      className={`${index % 2 == 1 && ""}`}
-                      key={index}
-                    >
-                      <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                      <td className="font-normal">{d.store_name}</td>
-                      <td>{d.asin_upc_code}</td>
-                      <td>{d.code_type}</td>
-                      <td>{d.product_name}</td>
-                      <td>{d.order_id}</td>
-                      <td>{d.upin}</td>
-                      <td>{d.quantity}</td>
-                      <td>{d.courier}</td>
-                      <td className="text-[#8633FF]">{d.tracking_number}</td>
-                      <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
-                      <td>
-                        <div className="dropdown dropdown-end">
-                          <label tabIndex={0}>
-                            <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
-                          </label>
-                          <ul tabIndex={0} className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black">
-                            <li>
-                              <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
-                            </li>
-                            {
-                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
-                                <button onClick={() => handleDelete(d._id)}>Delete</button>
-                              </li> : ''
-                            }
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })
-
-                  :
-
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+            {searchError ? (
+              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                {searchError}
+              </p>
+            ) : (
+              <>
+                {searchResults.length ? (
+                  displayedDataFilter.map((d, index) => {
                     return (
-                      <tr
-                        className={`${index % 2 == 1 && ""}`}
-                        key={index}
-                      >
+                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                         <td className="font-normal">{d.store_name}</td>
                         <td>{d.asin_upc_code}</td>
@@ -467,40 +519,142 @@ export default function InventoryShippedTable() {
                         <td>{d.quantity}</td>
                         <td>{d.courier}</td>
                         <td className="text-[#8633FF]">{d.tracking_number}</td>
-                        <td>{d.shipping_file && <FileDownload fileName={d.shipping_file} />}</td>
+                        <td>
+                          {d.shipping_file && (
+                            <FileDownload fileName={d.shipping_file} />
+                          )}
+                        </td>
                         <td>
                           <div className="dropdown dropdown-end">
                             <label tabIndex={0}>
-                              <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+                              <BiDotsVerticalRounded
+                                onClick={() => setSingleData(d)}
+                                cursor="pointer"
+                              />
                             </label>
-                            <ul tabIndex={0} className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black">
+                            <ul
+                              tabIndex={0}
+                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                            >
                               <li>
-                                <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
+                                <button
+                                  onClick={() =>
+                                    document
+                                      .getElementById("my_modal_2")
+                                      .showModal()
+                                  }
+                                >
+                                  Edit
+                                </button>
                               </li>
-                              {
-                                user.role === 'Admin' || user.role === 'Admin VA' ? <li>
-                                  <button onClick={() => handleDelete(d._id)}>Delete</button>
-                                </li> : ''
-                              }
+                              {user.role === "Admin" ||
+                              user.role === "Admin VA" ? (
+                                <li>
+                                  <button onClick={() => handleDelete(d._id)}>
+                                    Delete
+                                  </button>
+                                </li>
+                              ) : (
+                                ""
+                              )}
                             </ul>
                           </div>
                         </td>
                       </tr>
                     );
                   })
-              }
-            </>}
+                ) : isLoading ? (
+                  <Loading />
+                ) : (
+                  displayAllData?.map((d, index) => {
+                    return (
+                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                        <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                        <td className="font-normal">{d.store_name}</td>
+                        <td>{d.asin_upc_code}</td>
+                        <td>{d.code_type}</td>
+                        <td>{d.product_name}</td>
+                        <td>{d.order_id}</td>
+                        <td>{d.upin}</td>
+                        <td>{d.quantity}</td>
+                        <td>{d.courier}</td>
+                        <td className="text-[#8633FF]">{d.tracking_number}</td>
+                        <td>
+                          {d.shipping_file && (
+                            <FileDownload fileName={d.shipping_file} />
+                          )}
+                        </td>
+                        <td>
+                          <div className="dropdown dropdown-end">
+                            <label tabIndex={0}>
+                              <BiDotsVerticalRounded
+                                onClick={() => setSingleData(d)}
+                                cursor="pointer"
+                              />
+                            </label>
+                            <ul
+                              tabIndex={0}
+                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                            >
+                              <li>
+                                <button
+                                  onClick={() =>
+                                    document
+                                      .getElementById("my_modal_2")
+                                      .showModal()
+                                  }
+                                >
+                                  Edit
+                                </button>
+                              </li>
+                              {user.role === "Admin" ||
+                              user.role === "Admin VA" ? (
+                                <li>
+                                  <button onClick={() => handleDelete(d._id)}>
+                                    Delete
+                                  </button>
+                                </li>
+                              ) : (
+                                ""
+                              )}
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </>
+            )}
           </tbody>
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 15 && < div >
+        {!isLoading &&
+          !searchError &&
+          !searchResults.length &&
+          data?.length > 15 && (
+            <div>
+              <ReactPaginate
+                pageCount={Math.ceil(data.length / itemsPerPage)}
+                marginPagesDisplayed={1}
+                pageRangeDisplayed={maxVisiblePages}
+                onPageChange={handlePageChange}
+                containerClassName="pagination"
+                activeClassName="active"
+                breakLabel={"..."}
+                pageLinkClassName={(pageNumber) => {
+                  return pageNumber === "..." ? "ellipsis" : "";
+                }}
+              />
+            </div>
+          )}
+        {!isLoading && !searchError && searchResults.length > 15 && (
           <ReactPaginate
-            pageCount={Math.ceil(data.length / itemsPerPage)}
-
-            marginPagesDisplayed={1}
+            pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}
-            onPageChange={handlePageChange}
+            marginPagesDisplayed={1}
+            onPageChange={handleFilteredDataPageChange}
             containerClassName="pagination"
             activeClassName="active"
             breakLabel={"..."}
@@ -508,25 +662,18 @@ export default function InventoryShippedTable() {
               return pageNumber === "..." ? "ellipsis" : "";
             }}
           />
-        </div>
-        }
-        {!isLoading && !searchError && searchResults.length > 15 && <ReactPaginate
-          pageCount={Math.ceil(searchResults.length / itemsPerPage)}
-          pageRangeDisplayed={maxVisiblePages}
-          marginPagesDisplayed={1}
-          onPageChange={handleFilteredDataPageChange}
-          containerClassName="pagination"
-          activeClassName="active"
-          breakLabel={"..."}
-          pageLinkClassName={(pageNumber) => {
-            return pageNumber === "..." ? "ellipsis" : "";
-          }}
-        />}
+        )}
       </div>
 
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box py-10 px-10">
-          <form onSubmit={(event) => handleUpdate(event, singleData._id)} className="flex gap-10">
+        <div
+          style={{ marginLeft, maxWidth: "750px" }}
+          className="modal-box py-10 px-10"
+        >
+          <form
+            onSubmit={(event) => handleUpdate(event, singleData._id)}
+            className="flex gap-10"
+          >
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
                 {/* <BiSolidEdit size={24} /> */}
@@ -534,7 +681,10 @@ export default function InventoryShippedTable() {
               </div>
               <p className="mt-2">
                 <span className="font-bold">Date: </span>
-                <span>{singleData.date && format(new Date(singleData.date), 'yyyy/MM/dd')}</span>
+                <span>
+                  {singleData.date &&
+                    format(new Date(singleData.date), "yyyy/MM/dd")}
+                </span>
               </p>
               <p className="mt-2">
                 <span className="font-bold">Store Name: </span>
@@ -579,9 +729,17 @@ export default function InventoryShippedTable() {
               </div>
 
               <div className="mt-3">
-                {successMessage && <p className="w-full flex gap-2 items-center justify-center text-center text-sm font-medium text-green-600 bg-green-100 border py-1 px-4 rounded"><BsCheck2Circle size={20} /> {successMessage}</p>}
+                {successMessage && (
+                  <p className="w-full flex gap-2 items-center justify-center text-center text-sm font-medium text-green-600 bg-green-100 border py-1 px-4 rounded">
+                    <BsCheck2Circle size={20} /> {successMessage}
+                  </p>
+                )}
 
-                {errorMessage && <p className="w-full flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-1 px-4 rounded"><MdErrorOutline size={20} /> {errorMessage}</p>}
+                {errorMessage && (
+                  <p className="w-full flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-1 px-4 rounded">
+                    <MdErrorOutline size={20} /> {errorMessage}
+                  </p>
+                )}
               </div>
 
               <button className="bg-[#8633FF] flex items-center gap-2 justify-center mt-5 w-full py-[6px] rounded text-white font-medium">
@@ -597,13 +755,12 @@ export default function InventoryShippedTable() {
       </dialog>
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
-          <div className='mb-10'>
+        <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">
+          <div className="mb-10">
             <DateRange
               editableDateInputs={true}
-              onChange={item => {
-
-                setRangeDate([item.selection])
+              onChange={(item) => {
+                setRangeDate([item.selection]);
               }}
               moveRangeOnFirstSelection={false}
               months={2}
@@ -613,10 +770,15 @@ export default function InventoryShippedTable() {
               color="#8633FF"
             />
           </div>
-          <button onClick={() => {
-            handleCustomDateSearch()
-            document.getElementById("date_range_modal").close()
-          }} className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded">Select</button>
+          <button
+            onClick={() => {
+              handleCustomDateSearch();
+              document.getElementById("date_range_modal").close();
+            }}
+            className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded"
+          >
+            Select
+          </button>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

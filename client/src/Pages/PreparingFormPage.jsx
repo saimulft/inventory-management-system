@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
@@ -8,7 +8,11 @@ import ToastMessage from "../Components/Shared/ToastMessage";
 import SearchDropdown from "../Utilities/SearchDropdown";
 import { useQuery } from "@tanstack/react-query";
 import useGlobal from "../hooks/useGlobal";
+import { GlobalContext } from "../Providers/GlobalProviders";
+import { NotificationContext } from "../Providers/NotificationProvider";
 const PreparingFormPage = () => {
+  const {socket} = useContext(GlobalContext)
+  const {currentUser} = useContext(NotificationContext)
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
@@ -174,6 +178,21 @@ const PreparingFormPage = () => {
     })
       .then(res => {
         if (res.status === 201) {
+    
+
+      const status = "Submit a preparing request form."
+      axios.post(`/api/v1/notifications_api/send_notification`,{currentUser, status})
+      .then(res =>{
+        if(res.data.acknowledged){
+                        // send real time notification data 
+        socket?.current?.emit("sendNotification", {
+          user,
+          status
+      })        
+        }
+      })
+      .catch(err => console.log(err)
+      )
           setCountsRefetch(true)
           Swal.fire(
             'Added',

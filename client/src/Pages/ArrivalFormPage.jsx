@@ -180,13 +180,21 @@ const ArrivalFormPage = () => {
     try {
       const { status } = await mutateAsync(arrivalFormData)
       if (status === 201) {
-
-        // send real time notification data 
-        socket?.current?.emit("arrivalFormSubmit", {
-            user,
-            status: "submit a pending arrival form."
-        })   
-
+        const notificationStatus = "Submit a pending arrival form."
+        axios.post(`/api/v1/notifications_api/send_notification`,{currentUser, status: notificationStatus })
+        .then(res => {
+          console.log(res.data.acknowledged);
+          
+          if(res.data.acknowledged){
+            console.log("success");
+               socket?.current?.emit("sendNotification", {
+          user,
+          status: notificationStatus
+      })
+          }
+        })
+        .catch(err => console.log(err)
+        )
         setCountsRefetch(true)
         form.reset()
         setAsinUpcOption('')
@@ -207,19 +215,18 @@ const ArrivalFormPage = () => {
 
 
   
-const handleTest = () => {
-  socket?.current?.emit("sendNotification", {
-    user,
-    status: "submit a pending arrival form."
-  })  
-
-  const status = "Submit a pending arrival form."
-  axios.post(`/api/v1/notifications_api/send_notification`,{currentUser, status})
-  .then(res => console.log(res.data)
-  .catch(err => console.log(err)
-  )
-  )
-}
+// const handleTest = () => {
+//   socket?.current?.emit("sendNotification", {
+//     user,
+//     status: "submit a pending arrival form."
+//   })  
+// console.log("inside handle text")
+//   const status = "Submit a pending arrival form."
+//   axios.post(`/api/v1/notifications_api/send_notification`,{currentUser, status})
+//   .then(res => console.log(res.data))
+//   .catch(err => console.log(err)
+//   )
+// }
   return (
     <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div
@@ -466,7 +473,7 @@ const handleTest = () => {
             </div>
           </form>
         </div>
-              <button onClick={handleTest} className="bg-green-500 py-2 px-4 text-white">test</button>
+              {/* <button onClick={handleTest} className="bg-green-500 py-2 px-4 text-white">test</button> */}
       </div>
     </div>
   );

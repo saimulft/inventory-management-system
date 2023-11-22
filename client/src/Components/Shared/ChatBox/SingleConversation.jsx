@@ -7,7 +7,6 @@ import ChatLoading from "../../ChatLoading/ChatLoading";
 
 export default function SingleConversation() {
   const specificComponentRef = useRef(null);
-
   const { user } = useAuth();
 
   // chat context

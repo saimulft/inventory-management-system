@@ -3,7 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import Sidebar from "../Components/Shared/Sidebar";
 import Navbar from "../Components/Shared/Navbar";
 import Container from "../Components/Shared/Container";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import ChatBox from "../Components/Shared/ChatBox/ChatBox";
 import NotificationBox from "../Components/Shared/NotificationBox/NotificationBox";
@@ -13,6 +13,8 @@ export default function DashboardLayout() {
   const url = useLocation();
   const settingActiveRoute = url?.pathname?.split("/")[3];
   const { setIsActiveSetting } = useContext(GlobalContext);
+  const notificationsRef = useRef(null);
+
 
   useEffect(() => {
     setIsActiveSetting(settingActiveRoute);
@@ -36,7 +38,7 @@ export default function DashboardLayout() {
             <Outlet />
             {/* message box  */}
             <ChatBox />
-            <NotificationBox/>
+            <NotificationBox notificationsRef={notificationsRef}/>
           </div>
         </Container>
       </div>

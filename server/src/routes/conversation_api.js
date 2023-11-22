@@ -205,7 +205,6 @@ const run = async () => {
   router.get("/single_conversation", async (req, res) => {
     try {
       const { sender, receiver, page_no } = req.query || {};
-
       const singleConversationsData = await conversationsCollection.findOne({
         participants: { $all: [sender, receiver] },
       });
@@ -234,10 +233,6 @@ const run = async () => {
           }
 
           const chunk = singleConversationsData.messages.slice(start, end);
-          const currentMessageIndex = {
-            start,
-            end,
-          };
 
           res.status(200).send({message: chunk, isMessageSeen: singleConversationsData?.isMessageSeen});
         } else {

@@ -124,7 +124,7 @@ export default function ConversationUserList() {
   };
 
   //calculate ago time
-  const calculateAgeTime = (time) => {
+  const calculateAgoTime = (time) => {
     const lastMessageDate = new Date(time);
     const currentDate = new Date();
     const timeDifference = currentDate - lastMessageDate;
@@ -251,7 +251,7 @@ export default function ConversationUserList() {
                   } pl-2 flex items-center text-xs `}
                 >
                   <BsDot />{" "}
-                  {calculateAgeTime(userData?.lastMassages?.timestamp)}
+                  {calculateAgoTime(userData?.lastMassages?.timestamp)}
                 </span>
               </div>
             </div>

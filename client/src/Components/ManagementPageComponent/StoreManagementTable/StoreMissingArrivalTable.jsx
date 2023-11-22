@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { useQuery } from "@tanstack/react-query";
@@ -12,98 +12,131 @@ import { MdErrorOutline } from "react-icons/md";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import useGlobal from "../../../hooks/useGlobal";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { NotificationContext } from "../../../Providers/NotificationProvider";
 
 export default function StoreMissingArrivalTable() {
-  const [activeTab, setActiveTab] = useState('active');
-  const [singleData, setSingleData] = useState({})
-  const [successMessage, setSuccessMessage] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [loading, setLoading] = useState()
-  const [searchText, setSearchText] = useState('');
-  const [searchError, setSearchError] = useState('');
+  const { socket } = useContext(GlobalContext);
+  const { currentUser } = useContext(NotificationContext);
+  const [activeTab, setActiveTab] = useState("active");
+  const [singleData, setSingleData] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [loading, setLoading] = useState();
+  const [searchText, setSearchText] = useState("");
+  const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const { isSidebarOpen, setCountsRefetch } = useGlobal()
+  const { isSidebarOpen, setCountsRefetch } = useGlobal();
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const { user } = useAuth()
+  const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
 
-  const { data = [], refetch, isLoading } = useQuery({
-    queryKey: ['missing_arrival_data'],
+  const {
+    data = [],
+    refetch,
+    isLoading,
+  } = useQuery({
+    queryKey: ["missing_arrival_data"],
     queryFn: async () => {
       try {
-        const res = await axios.post(`/api/v1/missing_arrival_api/get_all_missing_arrival_data?status=${activeTab}`, { user })
+        const res = await axios.post(
+          `/api/v1/missing_arrival_api/get_all_missing_arrival_data?status=${activeTab}`,
+          { user }
+        );
         if (res.status === 200) {
-          setSearchResults([])
-          setSearchText("")
-          setSearchError("")
+          setSearchResults([]);
+          setSearchText("");
+          setSearchError("");
           return res.data.data;
         }
-        return []
+        return [];
       } catch (error) {
-        console.log(error)
-        return []
+        console.log(error);
+        return [];
       }
-    }
-  })
+    },
+  });
 
   useEffect(() => {
     refetch();
   }, [activeTab, refetch]);
 
   const handleSearch = (e) => {
-    e.preventDefault()
-    setSearchError("")
+    e.preventDefault();
+    setSearchError("");
     if (!searchText) {
-      return
+      return;
     }
-    const filteredData = data.filter(item =>
-    (item.asin_upc_code?.toLowerCase().includes(searchText) ||
-      item.product_name?.toLowerCase().includes(searchText) ||
-      item.store_name?.toLowerCase().includes(searchText) ||
-      item.upin?.toLowerCase().includes(searchText) ||
-      item.code_type?.toLowerCase().includes(searchText))
+    const filteredData = data.filter(
+      (item) =>
+        item.asin_upc_code?.toLowerCase().includes(searchText) ||
+        item.product_name?.toLowerCase().includes(searchText) ||
+        item.store_name?.toLowerCase().includes(searchText) ||
+        item.upin?.toLowerCase().includes(searchText) ||
+        item.code_type?.toLowerCase().includes(searchText)
     );
     if (!filteredData.length) {
-      setSearchError(`No data found for "${searchText}"`)
-      return
+      setSearchError(`No data found for "${searchText}"`);
+      return;
     }
-    setSearchResults(filteredData)
-  }
+    setSearchResults(filteredData);
+  };
 
   const handleDelete = (_id) => {
     Swal.fire({
-      title: 'Are you sure?',
+      title: "Are you sure?",
       text: "You won't be able to revert this!",
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#8633FF',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Delete'
+      confirmButtonColor: "#8633FF",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Delete",
     }).then((result) => {
       if (result.isConfirmed) {
-        axios.delete(`/api/v1/missing_arrival_api/delete_missing_arrival_data?id=${_id}`)
-          .then(res => {
+        axios
+          .delete(
+            `/api/v1/missing_arrival_api/delete_missing_arrival_data?id=${_id}`
+          )
+          .then((res) => {
             if (res.status === 200) {
-              refetch()
-              setCountsRefetch(true)
+           
+              const status = "A missing arrival entry has been deleted.";
+              axios
+                .post(`/api/v1/notifications_api/send_notification`, {
+                  currentUser,
+                  status,
+                })
+                .then((res) => {
+                  if(res.data.acknowledged){
+                     // send real time notification data
+              socket?.current?.emit("sendNotification", {
+                user,
+                status
+              });
+
+                  }
+                })
+                .catch((err) => console.log(err));
+              refetch();
+              setCountsRefetch(true);
               Swal.fire(
-                'Deleted!',
-                'A missing arrival entry has been deleted.',
-                'success'
-              )
+                "Deleted!",
+                "A missing arrival entry has been deleted.",
+                "success"
+              );
             }
           })
-          .catch(error => console.log(error))
+          .catch((error) => console.log(error));
       }
-    })
-  }
+    });
+  };
 
   const handleUpdate = (event, _id) => {
-    event.preventDefault()
-    setLoading(true)
-    setSuccessMessage('')
-    setErrorMessage('')
+    event.preventDefault();
+    setLoading(true);
+    setSuccessMessage("");
+    setErrorMessage("");
 
     const form = event.target;
     const missingStatus = form.missingStatus.value;
@@ -116,60 +149,82 @@ export default function StoreMissingArrivalTable() {
 
     const updatedData = {
       missing_status: missingStatus,
-      notes: notes
-    }
+      notes: notes,
+    };
 
-    if (singleData.missing_status === 'solved') {
-      setLoading(false)
-      setErrorMessage("Already solved, It cannot be changed again!")
+    if (singleData.missing_status === "solved") {
+      setLoading(false);
+      setErrorMessage("Already solved, It cannot be changed again!");
       setTimeout(() => {
-        setErrorMessage('')
+        setErrorMessage("");
       }, 2000);
       return;
     }
 
-    if (singleData.missing_status === 'active' && missingStatus === 'active') {
-      setLoading(false)
-      setErrorMessage("This missing arrival status already active!")
+    if (singleData.missing_status === "active" && missingStatus === "active") {
+      setLoading(false);
+      setErrorMessage("This missing arrival status already active!");
       setTimeout(() => {
-        setErrorMessage('')
+        setErrorMessage("");
       }, 2000);
       return;
     }
 
-    if (missingStatus === 'Select Status' && !notes) {
-      setLoading(false)
-      return setErrorMessage('No data entered')
+    if (missingStatus === "Select Status" && !notes) {
+      setLoading(false);
+      return setErrorMessage("No data entered");
     }
 
-    axios.put(`/api/v1/missing_arrival_api/update_missing_arrival_data?id=${_id}`, updatedData)
-      .then(res => {
+    axios
+      .put(
+        `/api/v1/missing_arrival_api/update_missing_arrival_data?id=${_id}`,
+        updatedData
+      )
+      .then((res) => {
         if (res.status === 200) {
-          setLoading(false)
-          form.reset()
-          refetch()
-          setCountsRefetch(true)
-          setSuccessMessage('Data update successful!')
+   
+
+          const status = "Updated a missing arrival item.";
+          axios
+            .post(`/api/v1/notifications_api/send_notification`, {
+              currentUser,
+              status,
+            })
+            .then((res) => {
+              if(res.data.acknowledged){
+                       // send real time notification data
+          socket?.current?.emit("sendNotification", {
+            user,
+            status
+          });
+              }
+            })
+            .catch((err) => console.log(err));
+          setLoading(false);
+          form.reset();
+          refetch();
+          setCountsRefetch(true);
+          setSuccessMessage("Data update successful!");
           setTimeout(() => {
-            setSuccessMessage('')
+            setSuccessMessage("");
           }, 2000);
         }
 
         if (res.status === 203) {
-          setLoading(false)
+          setLoading(false);
         }
       })
-      .catch(error => {
-        setLoading(false)
-        setErrorMessage('Something went wrong while updating data!')
+      .catch((error) => {
+        setLoading(false);
+        setErrorMessage("Something went wrong while updating data!");
 
         setTimeout(() => {
-          setErrorMessage('')
+          setErrorMessage("");
         }, 2000);
-        console.log(error)
-      })
-  }
-  // pagination code 
+        console.log(error);
+      });
+  };
+  // pagination code
   const generatePageNumbers = (currentPage, pageCount, maxVisiblePages) => {
     if (pageCount <= maxVisiblePages) {
       // If the total page count is less than or equal to the maximum visible pages, show all pages.
@@ -201,8 +256,12 @@ export default function StoreMissingArrivalTable() {
 
       return pageNumbers;
     }
-  }
-  const generatePageNumbersFilter = (currentPage, pageCount, maxVisiblePages) => {
+  };
+  const generatePageNumbersFilter = (
+    currentPage,
+    pageCount,
+    maxVisiblePages
+  ) => {
     if (pageCount <= maxVisiblePages) {
       // If the total page count is less than or equal to the maximum visible pages, show all pages.
       return Array.from({ length: pageCount }, (_, i) => i + 1);
@@ -233,7 +292,7 @@ export default function StoreMissingArrivalTable() {
 
       return pageNumbers;
     }
-  }
+  };
   const itemsPerPage = 15;
   const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
   const pageCount = Math.ceil(data.length / itemsPerPage);
@@ -244,7 +303,6 @@ export default function StoreMissingArrivalTable() {
 
   const handleFilteredDataPageChange = ({ selected }) => {
     setFilteredDataPage(selected);
-
   };
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
@@ -252,8 +310,10 @@ export default function StoreMissingArrivalTable() {
   // filter pagination calculation
   const startIndexFilter = filteredDataPage * itemsPerPage;
   const endIndexFilter = startIndexFilter + itemsPerPage;
-  const displayedDataFilter = searchResults.slice(startIndexFilter, endIndexFilter);
-
+  const displayedDataFilter = searchResults.slice(
+    startIndexFilter,
+    endIndexFilter
+  );
 
   //  ALl data pagination calculation
   const startIndex = currentPage * itemsPerPage;
@@ -267,25 +327,30 @@ export default function StoreMissingArrivalTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div className="flex text-center w-1/2 ">
           <div
-            onClick={() => setActiveTab('active')}
-            className={`px-3 rounded-s-md py-2 cursor-pointer ${activeTab === 'active'
-              ? "bg-[#8633FF] text-white"
-              : "border-2 border-[#8633FF] text-[#8633FF]"
-              }  `}
+            onClick={() => setActiveTab("active")}
+            className={`px-3 rounded-s-md py-2 cursor-pointer ${
+              activeTab === "active"
+                ? "bg-[#8633FF] text-white"
+                : "border-2 border-[#8633FF] text-[#8633FF]"
+            }  `}
           >
             Active
           </div>
           <div
-            onClick={() => setActiveTab('solved')}
-            className={`px-3 rounded-e-md py-2 cursor-pointer ${activeTab === 'solved'
-              ? "bg-[#8633FF] text-white"
-              : "border-2 border-[#8633FF] text-[#8633FF]"
-              }  `}
+            onClick={() => setActiveTab("solved")}
+            className={`px-3 rounded-e-md py-2 cursor-pointer ${
+              activeTab === "solved"
+                ? "bg-[#8633FF] text-white"
+                : "border-2 border-[#8633FF] text-[#8633FF]"
+            }  `}
           >
             Solved
           </div>
         </div>
-        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
+        <form
+          onSubmit={handleSearch}
+          className="w-1/4  flex items-center justify-between"
+        >
           <input
             className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
             placeholder="Search Here"
@@ -294,15 +359,21 @@ export default function StoreMissingArrivalTable() {
             onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
           />
           <div className="w-[40%] flex items-center justify-evenly">
-            <button type="submit" onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+            <button
+              type="submit"
+              onClick={handleSearch}
+              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+            >
               <AiOutlineSearch size={24} />
             </button>
-            <button onClick={() => {
-              setSearchResults([])
-              setSearchText("")
-              setSearchError("")
-
-            }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
+            <button
+              onClick={() => {
+                setSearchResults([]);
+                setSearchText("");
+                setSearchError("");
+              }}
+              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+            >
               Clear
             </button>
           </div>
@@ -329,57 +400,17 @@ export default function StoreMissingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
-              {
-                searchResults.length ? displayedDataFilter.map((d, index) => {
-                  return (
-                    <tr
-                      className={`${index % 2 == 1 && ""}`}
-                      key={index}>
-                      <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
-                      <th className="font-normal">{d.store_name}</th>
-                      <td>{d.asin_upc_code}</td>
-                      <td>{d.code_type}</td>
-                      <td>{d.product_name}</td>
-                      <td>{d.supplier_id}</td>
-                      <td>{d.upin}</td>
-                      <td>{d.quantity}</td>
-                      <td>{d.received_quantity}</td>
-                      <td>{d.missing_quantity}</td>
-                      <td>{d.supplier_tracking ? d.supplier_tracking : '-'}</td>
-                      <td>{format(new Date(d.eda), 'yyyy/MM/dd')}</td>
-                      <td>
-                        <div className="dropdown dropdown-end">
-                          <label tabIndex={0}>
-                            <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
-                          </label>
-                          <ul
-                            tabIndex={0}
-                            className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                          >
-                            <li>
-                              <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
-                            </li>
-                            {
-                              user.role === 'Admin' || user.role === 'Admin VA' ? <li>
-                                <button onClick={() => handleDelete(d._id)}>Delete</button>
-                              </li> : ''
-                            }
-                          </ul>
-                        </div>
-                      </td>
-                    </tr>
-                  )
-                })
-
-                  :
-
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+            {searchError ? (
+              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                {searchError}
+              </p>
+            ) : (
+              <>
+                {searchResults.length ? (
+                  displayedDataFilter.map((d, index) => {
                     return (
-                      <tr
-                        className={`${index % 2 == 1 && ""}`}
-                        key={index}>
-                        <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th>
+                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                        <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
                         <th className="font-normal">{d.store_name}</th>
                         <td>{d.asin_upc_code}</td>
                         <td>{d.code_type}</td>
@@ -389,44 +420,140 @@ export default function StoreMissingArrivalTable() {
                         <td>{d.quantity}</td>
                         <td>{d.received_quantity}</td>
                         <td>{d.missing_quantity}</td>
-                        <td>{d.supplier_tracking ? d.supplier_tracking : '-'}</td>
-                        <td>{format(new Date(d.eda), 'yyyy/MM/dd')}</td>
+                        <td>
+                          {d.supplier_tracking ? d.supplier_tracking : "-"}
+                        </td>
+                        <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
                         <td>
                           <div className="dropdown dropdown-end">
                             <label tabIndex={0}>
-                              <BiDotsVerticalRounded onClick={() => setSingleData(d)} cursor="pointer" />
+                              <BiDotsVerticalRounded
+                                onClick={() => setSingleData(d)}
+                                cursor="pointer"
+                              />
                             </label>
                             <ul
                               tabIndex={0}
                               className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
                             >
                               <li>
-                                <button onClick={() => document.getElementById("my_modal_2").showModal()}>Edit</button>
+                                <button
+                                  onClick={() =>
+                                    document
+                                      .getElementById("my_modal_2")
+                                      .showModal()
+                                  }
+                                >
+                                  Edit
+                                </button>
                               </li>
-                              {
-                                user.role === 'Admin' || user.role === 'Admin VA' ? <li>
-                                  <button onClick={() => handleDelete(d._id)}>Delete</button>
-                                </li> : ''
-                              }
+                              {user.role === "Admin" ||
+                              user.role === "Admin VA" ? (
+                                <li>
+                                  <button onClick={() => handleDelete(d._id)}>
+                                    Delete
+                                  </button>
+                                </li>
+                              ) : (
+                                ""
+                              )}
                             </ul>
                           </div>
                         </td>
                       </tr>
                     );
                   })
-              }
-            </>}
+                ) : isLoading ? (
+                  <Loading />
+                ) : (
+                  displayAllData?.map((d, index) => {
+                    return (
+                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                        <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
+                        <th className="font-normal">{d.store_name}</th>
+                        <td>{d.asin_upc_code}</td>
+                        <td>{d.code_type}</td>
+                        <td>{d.product_name}</td>
+                        <td>{d.supplier_id}</td>
+                        <td>{d.upin}</td>
+                        <td>{d.quantity}</td>
+                        <td>{d.received_quantity}</td>
+                        <td>{d.missing_quantity}</td>
+                        <td>
+                          {d.supplier_tracking ? d.supplier_tracking : "-"}
+                        </td>
+                        <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
+                        <td>
+                          <div className="dropdown dropdown-end">
+                            <label tabIndex={0}>
+                              <BiDotsVerticalRounded
+                                onClick={() => setSingleData(d)}
+                                cursor="pointer"
+                              />
+                            </label>
+                            <ul
+                              tabIndex={0}
+                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                            >
+                              <li>
+                                <button
+                                  onClick={() =>
+                                    document
+                                      .getElementById("my_modal_2")
+                                      .showModal()
+                                  }
+                                >
+                                  Edit
+                                </button>
+                              </li>
+                              {user.role === "Admin" ||
+                              user.role === "Admin VA" ? (
+                                <li>
+                                  <button onClick={() => handleDelete(d._id)}>
+                                    Delete
+                                  </button>
+                                </li>
+                              ) : (
+                                ""
+                              )}
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })
+                )}
+              </>
+            )}
           </tbody>
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 15 && < div >
+        {!isLoading &&
+          !searchError &&
+          !searchResults.length &&
+          data?.length > 15 && (
+            <div>
+              <ReactPaginate
+                pageCount={Math.ceil(data.length / itemsPerPage)}
+                marginPagesDisplayed={1}
+                pageRangeDisplayed={maxVisiblePages}
+                onPageChange={handlePageChange}
+                containerClassName="pagination"
+                activeClassName="active"
+                breakLabel={"..."}
+                pageLinkClassName={(pageNumber) => {
+                  return pageNumber === "..." ? "ellipsis" : "";
+                }}
+              />
+            </div>
+          )}
+        {!isLoading && !searchError && searchResults.length > 15 && (
           <ReactPaginate
-            pageCount={Math.ceil(data.length / itemsPerPage)}
-
-            marginPagesDisplayed={1}
+            pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}
-            onPageChange={handlePageChange}
+            marginPagesDisplayed={1}
+            onPageChange={handleFilteredDataPageChange}
             containerClassName="pagination"
             activeClassName="active"
             breakLabel={"..."}
@@ -434,26 +561,19 @@ export default function StoreMissingArrivalTable() {
               return pageNumber === "..." ? "ellipsis" : "";
             }}
           />
-        </div>
-        }
-        {!isLoading && !searchError && searchResults.length > 15 && <ReactPaginate
-          pageCount={Math.ceil(searchResults.length / itemsPerPage)}
-          pageRangeDisplayed={maxVisiblePages}
-          marginPagesDisplayed={1}
-          onPageChange={handleFilteredDataPageChange}
-          containerClassName="pagination"
-          activeClassName="active"
-          breakLabel={"..."}
-          pageLinkClassName={(pageNumber) => {
-            return pageNumber === "..." ? "ellipsis" : "";
-          }}
-        />}
+        )}
       </div>
 
       {/* modal content */}
       <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: '450px' }} className="modal-box py-10 px-10">
-          <form onSubmit={(event) => handleUpdate(event, singleData._id)} className="flex gap-10">
+        <div
+          style={{ marginLeft, maxWidth: "450px" }}
+          className="modal-box py-10 px-10"
+        >
+          <form
+            onSubmit={(event) => handleUpdate(event, singleData._id)}
+            className="flex gap-10"
+          >
             {/* <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
                 {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
@@ -481,9 +601,7 @@ export default function StoreMissingArrivalTable() {
                     id="missingStatus"
                     name="missingStatus"
                   >
-                    <option defaultValue="Select Status">
-                      Select Status
-                    </option>
+                    <option defaultValue="Select Status">Select Status</option>
                     <option value="active">Active</option>
                     <option value="solved">Solved</option>
                   </select>
@@ -500,12 +618,23 @@ export default function StoreMissingArrivalTable() {
                 </div>
 
                 <div className="mt-3">
-                  {successMessage && <p className="w-full flex gap-2 items-center justify-center text-center text-sm font-medium text-green-600 bg-green-100 border py-1 px-4 rounded"><BsCheck2Circle size={20} /> {successMessage}</p>}
+                  {successMessage && (
+                    <p className="w-full flex gap-2 items-center justify-center text-center text-sm font-medium text-green-600 bg-green-100 border py-1 px-4 rounded">
+                      <BsCheck2Circle size={20} /> {successMessage}
+                    </p>
+                  )}
 
-                  {errorMessage && <p className="w-full flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-1 px-4 rounded"><MdErrorOutline size={20} /> {errorMessage}</p>}
+                  {errorMessage && (
+                    <p className="w-full flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-1 px-4 rounded">
+                      <MdErrorOutline size={20} /> {errorMessage}
+                    </p>
+                  )}
                 </div>
 
-                <button type="submit" className="bg-[#8633FF] flex gap-2 items-center justify-center mt-5 w-full py-[6px] rounded text-white font-medium">
+                <button
+                  type="submit"
+                  className="bg-[#8633FF] flex gap-2 items-center justify-center mt-5 w-full py-[6px] rounded text-white font-medium"
+                >
                   {loading && <FaSpinner size={20} className="animate-spin" />}
                   Update
                 </button>
@@ -519,4 +648,5 @@ export default function StoreMissingArrivalTable() {
       </dialog>
     </div>
   );
-} 0
+}
+0;

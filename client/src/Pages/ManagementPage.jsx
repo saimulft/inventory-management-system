@@ -14,7 +14,7 @@ export default function ManagementPage() {
   const { countsRefetch, setCountsRefetch } = useGlobal()
 
   const { data = {}, refetch, isLoading } = useQuery({
-    queryKey: ['collections-docs-counts'],
+    queryKey: ['collections-docs-counts', 'user'],
     queryFn: async () => {
       try {
         const res = await axios.post(`/api/v1/global_api/collections-docs-counts`, { user })
