@@ -225,6 +225,7 @@ export default function InventoryPendingArrivalTable() {
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
+              notification_links: ["http://localhost:5173/dashboard/management","http://localhost:5173/dashboard/management/store/pending-arrival","http://localhost:5173/dashboard/management/inventory/pending-arrival"]
             })
             .then((res) => {
               console.log(res.data)

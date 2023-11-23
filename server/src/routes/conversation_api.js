@@ -44,7 +44,6 @@ const run = async () => {
     }
   });
 
-
   router.post("/send_message", async (req, res) => {
     try {
       const request = req || {};
@@ -54,19 +53,15 @@ const run = async () => {
       const timestamp = request.body.timestamp;
       const participants_name = request.body.participants_name;
 
-
       const seenMassageStatus = (sender, receiver) => {
-        const emailToUsername = (email) => email.split('@')[0]
-      
+        const emailToUsername = (email) => email.split("@")[0];
         const userVale = {
           [emailToUsername(sender)]: true,
           [emailToUsername(receiver)]: false,
         };
-      
         return userVale;
       };
 
- 
       const prepareMessage = {
         participants: [sender, receiver],
         participants_name,
@@ -96,7 +91,10 @@ const run = async () => {
       if (alreadyConversationExist?._id) {
         const newMessages = await conversationsCollection.updateOne(
           { _id: alreadyConversationExist._id },
-          { $push: { messages: newMessage } },
+          {
+            $push: { messages: newMessage },
+            $set: { [`isMessageSeen.${receiver.split("@")[0]}`]: false },
+          },
           { upsert: true }
         );
         if (newMessages.acknowledged) {
@@ -126,11 +124,42 @@ const run = async () => {
       console.log(err);
     }
   });
-  
+
+  router.get("/message_alert", async (req, res) => {
+    const { sender_email } = req.query;
+    const allConversations = await conversationsCollection
+      .find({
+        participants: { $all: [sender_email] },
+      })
+      .toArray();
+    let seenUnseenStatus;
+    allConversations.map((conversation) =>
+      Object.entries(conversation.isMessageSeen).forEach(([key, value]) => {
+        if (key != sender_email.split("@")[0]) {
+          if(seenUnseenStatus == false){
+            return
+          }
+          if(value){
+            seenUnseenStatus = value;
+            console.log("🚀 ~ file: conversation_api.js:144 ~ Object.entries ~ value:", value)
+          }
+          else{
+            seenUnseenStatus = value
+            console.log("🚀 ~ file: conversation_api.js:148 ~ Object.entries ~ value:", value)
+          }
+        }
+      })
+    );
+    if(seenUnseenStatus != undefined){
+    console.log(seenUnseenStatus);
+    res.status(200).send(seenUnseenStatus)
+    }
+    
+  });
+
   router.get("/user_messages_list", async (req, res) => {
     try {
       const { sender } = req.query;
-
       if (!sender) {
         const conversationDemo = {
           _id: "demo",
@@ -174,31 +203,25 @@ const run = async () => {
   });
 
   router.patch("/messages/seen_messages", async (req, res) => {
-    try {
-      const { id, seenUnseenStatus } = req.body;
-      const query = { _id: new ObjectId(id) };
-      let updateSeenStatus;
-      if (seenUnseenStatus == "seen") {
-        updateSeenStatus = {
-          $set: {
-            isMessageSeen: true,
-          },
-        };
-      } else if (seenUnseenStatus == "unseen") {
-        updateSeenStatus = {
-          $set: {
-            isMessageSeen: false,
-          },
-        };
-      }
+    const id = req.query.id || {};
+    const messageSeenUser = req.query.email.split("@")[0];
 
+    if (id != "undefined") {
+      const query = { _id: new ObjectId(id) };
+      const updatedData = {
+        $set: {
+          [`isMessageSeen.${messageSeenUser}`]: true,
+        },
+      };
       const result = await conversationsCollection.updateOne(
         query,
-        updateSeenStatus
+        updatedData
       );
-      res.status(200).send(result);
-    } catch (err) {
-      res.status(500).send({ err: "Internal server error" });
+      res
+        .status(200)
+        .send({ data: result, message: "successfully update seen status" });
+    } else {
+      res.status(404).send({ data: {}, message: "conversation not found." });
     }
   });
 
@@ -229,12 +252,15 @@ const run = async () => {
               : totalMessageLength - prepareCount - sentMsgGroupCount;
 
           if (start == 0 && end == 0) {
-            res.status(200)
+            res.status(200);
           }
 
           const chunk = singleConversationsData.messages.slice(start, end);
 
-          res.status(200).send({message: chunk, isMessageSeen: singleConversationsData?.isMessageSeen});
+          res.status(200).send({
+            message: chunk,
+            isMessageSeen: singleConversationsData?.isMessageSeen,
+          });
         } else {
           res.status(200).send({});
         }

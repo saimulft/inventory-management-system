@@ -1,9 +1,11 @@
-import { createContext, useContext, useEffect,  useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { GlobalContext } from "./GlobalProviders";
+import axios from "axios";
 
 export const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
+  
   // chat head information
   const [currentChatUserName, setCurrentChatUserName] = useState("");
   const [currentChatUserEmail, setCurrentChatUserEmail] = useState("");
@@ -12,8 +14,9 @@ export const ChatProvider = ({ children }) => {
     setCurrentChatUserName,
     setCurrentChatUserEmail,
   };
+  const [conversationData, setConversationData] = useState();
 
-const {socket} = useContext(GlobalContext)
+  const { socket } = useContext(GlobalContext);
 
   // user info
   const { user } = useAuth();
@@ -38,7 +41,6 @@ const {socket} = useContext(GlobalContext)
   const [singleConversationShow, setSingleConversationShow] = useState(false);
   const [addNewConversation, setAddNewConversation] = useState(false);
   const [newConversationAdd, setNewConversationAdd] = useState(false);
-
 
   // message box open close handle state
   const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false);
@@ -67,6 +69,14 @@ const {socket} = useContext(GlobalContext)
     setSingleConversationShow(true);
     setAddNewConversation(!addNewConversation);
   };
+
+  // notification alert 
+  const[messageAlert, setMessageAlert]=useState(true)
+  useEffect(() => {
+    axios.get(`/api/v1/conversations_api/message_alert?sender_email=${user?.email}`)
+      .then(res => setMessageAlert(res.data))
+      .catch(err => console.log(err));
+  }, [user?.email]); 
 
   //all user state
   const [allUsers, setAllUsers] = useState([]);
@@ -117,7 +127,10 @@ const {socket} = useContext(GlobalContext)
     alreadyConversationUserState,
     alreadyConversationUserSetState,
     isNotificationBoxOpen,
-       setIsNotificationBoxOpen
+    setIsNotificationBoxOpen,
+     conversationData,
+    setConversationData,
+    messageAlert
   };
 
   return (

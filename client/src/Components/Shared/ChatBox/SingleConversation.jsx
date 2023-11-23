@@ -17,10 +17,12 @@ export default function SingleConversation() {
     setNewConversationAdd,
     checkOnline,
     socket,
+    conversationData,
+    notificationAlert
   } = useContext(ChatContext);
 
   const { currentChatUserName, currentChatUserEmail } =
-  currentChatUserInfo || {};
+    currentChatUserInfo || {};
 
   // all state
   const [conversation, setConversation] = useState([]);
@@ -35,8 +37,8 @@ export default function SingleConversation() {
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
   const [switchLick, setSwitchLick] = useState("");
   // const [seenUnseenStatus, setSeenUnseenStatus] = useState(false);
-  const [messageSend, setMessageSend] = useState(false)
-  const [messageSendSocket, setMessageSendSocket] = useState(false)
+  const [messageSend, setMessageSend] = useState(false);
+  const [messageSendSocket, setMessageSendSocket] = useState(false);
 
   // render message data first time
   useEffect(() => {
@@ -45,15 +47,15 @@ export default function SingleConversation() {
 
   // scroll calculate
   const scrollPositionSet = () => {
-      
-      if(messageSendSocket){
-      setMessageSendSocket(false)
-      return
-      }
-    if(messageSend){
-      specificComponentRef.current.scrollTop =   specificComponentRef.current.scrollHeight ;
-      setMessageSend(false)
-      return
+    if (messageSendSocket) {
+      setMessageSendSocket(false);
+      return;
+    }
+    if (messageSend) {
+      specificComponentRef.current.scrollTop =
+        specificComponentRef.current.scrollHeight;
+      setMessageSend(false);
+      return;
     }
     setCalcScrollHeight(specificComponentRef.current.scrollHeight);
     if (conversation?.length > 16) {
@@ -118,7 +120,7 @@ export default function SingleConversation() {
   const handleSentNewMassages = async (e, text = "") => {
     try {
       e.preventDefault();
-      setMessageSend(true)
+      setMessageSend(true);
       let msg = document.getElementById("message_input")?.value;
       if (msg || text) {
         const date = new Date();
@@ -222,7 +224,7 @@ export default function SingleConversation() {
   //  get typing status
   useEffect(() => {
     socket?.current?.on("getTyping", (status) => {
-      setMessageSendSocket(true)
+      setMessageSendSocket(true);
       setChatLoadingStatus(status);
     });
   }, [socket]);
@@ -265,6 +267,15 @@ export default function SingleConversation() {
   //  handle seen unseen status
   const handleSeenUnseen = (e) => {
     if (e.type == "focus") {
+      const conversationId = conversationData?._id
+      const currentUserEmail = user?.email
+      axios.patch(`/api/v1/conversations_api/messages/seen_messages?id=${conversationId}&email=${currentUserEmail}`)
+      .then(res => console.log(res?.data)
+      .catch(error => {
+        console.log(error);
+        notificationAlert(true)
+      })
+      )
       socket?.current?.emit("seenUnseenStatus", {
         status: true,
         receiver: currentChatUserEmail,
@@ -364,7 +375,9 @@ export default function SingleConversation() {
                   online ? "bg-green-500" : "bg-gray-400"
                 } `}
               ></div>
-              <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>{online ? "Online" : "Offline"}</div>
+              <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>
+                {online ? "Online" : "Offline"}
+              </div>
             </div>
           </div>
         </div>

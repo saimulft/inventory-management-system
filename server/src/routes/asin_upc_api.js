@@ -79,7 +79,7 @@ const run = async () => {
             const result = await asin_upc_collection.insertOne(data)
 
             if (result.acknowledged) {
-                res.status(201).json({ message: "asin_upc inserted" })
+                res.status(201).json({ message: "asin_upc inserted", result })
             }
             else {
                 res.status(500).json({ message: "Error to inserting asin" })

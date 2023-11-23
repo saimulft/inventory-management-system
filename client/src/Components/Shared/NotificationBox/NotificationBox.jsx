@@ -10,9 +10,8 @@ export default function NotificationBox({notificationsRef}) {
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
   const [updateNotificationDB, setUpdateNotificationDB] = useState(false);
-  // const [reFetch, setReFetch] = useState(false)
-
   const [skip, setSkip] = useState(0);
+  
   const handleNotificationsData = () => {
     axios
       .get(
@@ -20,8 +19,8 @@ export default function NotificationBox({notificationsRef}) {
       )
       .then((res) => {
         setSkip(skip + 10);
-        // const notificationData = [...notifications, ...res.data];
-        setNotifications(res.data);
+        const notificationData = [...notifications, ...res.data];
+        setNotifications(notificationData);
       })
       .catch((error) => console.log(error));
   };
@@ -31,47 +30,11 @@ export default function NotificationBox({notificationsRef}) {
     handleNotificationsData();
   }, [user?.email, updateNotificationDB]);
 
-  useEffect(()=>{
-  console.log(notificationsRef);
-},[notificationsRef])
-console.log(notificationsRef.current?.scrollHeight);
-
-// setTimeout(()=>{
-//   setReFetch(!reFetch)
-//   console.log('helloe');
-// }, [2000])
-
   // get notification
-  socket?.current?.on("getNotification", (data) => {
-    console.log(data);
+  socket?.current?.on("getNotification", ({notificationData}) => {
+    setNotifications([notificationData, ...notifications])
     setUpdateNotificationDB(!updateNotificationDB);
   });
-
-  // find scroll position
-  useEffect(() => {
-    const handleScroll = () => {
-      // Calculate the scroll position relative to the specific component
-      const componentScrollTop = notificationsRef.current.scrollTop;
-      const componentScrollHeight = notificationsRef.current.scrollHeight;
-      const componentScrollClientHeight = notificationsRef.current.clientHeight;
-      // console.log(componentScrollClientHeight + componentScrollTop);
-      if (
-        componentScrollClientHeight + componentScrollTop ==
-        componentScrollHeight
-      ) {
-        console.log("more data");
-        handleNotificationsData();
-      }
-    };
-    if (notificationsRef.current) {
-      notificationsRef.current.addEventListener("scroll", handleScroll);
-    }
-    return () => {
-      if (notificationsRef.current) {
-        notificationsRef.current.removeEventListener("scroll", handleScroll);
-      }
-    };
-  }, [notifications]);
 
   //calculate ago time
   const calculateAgoTime = (time) => {
@@ -105,6 +68,30 @@ console.log(notificationsRef.current?.scrollHeight);
     return agoTime;
   };
 
+  // handle scroll 
+const handleScroll = (event) => {
+const {scrollTop, scrollHeight, clientHeight} = event.target
+if(scrollTop + clientHeight == scrollHeight){
+handleNotificationsData()
+}
+  };
+
+  // notification link 
+  const notificationLink = (links) => {
+if(user.role == "Admin" || user.role == "Admin VA"){
+ const link = links[0]
+ return link;
+}
+if(user.role == "Store Manager Admin" || user.role == "Store Manager VA"){
+ const link = links[2]
+ return link;
+}
+if(user.role == "Warehouse Admin" || user.role == "Warehouse Manager VA"){
+ const link = links[1]
+ return link;
+}
+  }
+
   return (
     <div>
       {isNotificationBoxOpen && (
@@ -121,12 +108,14 @@ console.log(notificationsRef.current?.scrollHeight);
             </div>
           </div>
           <div
+          onScroll={handleScroll}
             ref={notificationsRef}
             className="h-[467px]  overflow-y-scroll notifications_box"
           >
             {notifications?.map((notification) => {
               return (
-                <div
+                <a
+                href={notificationLink(notification.notification_links)}
                   key={notification._id}
                   className="hover:bg-gray-100 px-4 flex items-center gap-3 py-3 cursor-pointer rounded-lg transition "
                 >
@@ -150,7 +139,7 @@ console.log(notificationsRef.current?.scrollHeight);
                       {calculateAgoTime(notification.timestamp)}
                     </p>
                   </div>
-                </div>
+                </a>
               );
             })}
           </div>

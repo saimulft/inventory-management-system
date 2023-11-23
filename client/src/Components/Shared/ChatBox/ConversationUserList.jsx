@@ -16,7 +16,9 @@ export default function ConversationUserList() {
     checkOnline,
     currentReceiverFind,
     socket,
-    setIsChatBoxOpen
+    setIsChatBoxOpen,
+    setConversationData,
+
   } = useContext(ChatContext);
 
   //set current Chat User Info
@@ -28,7 +30,7 @@ export default function ConversationUserList() {
 
   const [search, setSearch] = useState("");
   const [socketData, setSocketData] = useState({});
-  const [filterData, setFilterData] = useState(Number)
+  const [filterData, setFilterData] = useState(Number);
   const [
     updateLestMessageUpdateConversationUserList,
     setUpdateLestMessageUpdateConversationUserList,
@@ -97,9 +99,7 @@ export default function ConversationUserList() {
     setError(false);
     setLoading(true);
     axios
-      .get(
-        `http://localhost:5000/api/v1/conversations_api/user_messages_list?sender=${user?.email}`
-      )
+      .get(`/api/v1/conversations_api/user_messages_list?sender=${user?.email}`)
       .then((res) => {
         setData(res?.data);
         setLoading(false);
@@ -166,7 +166,6 @@ export default function ConversationUserList() {
 
     const senderStatus = user.email == data?.lastMassages?.sender ? "You:" : "";
     const result = senderStatus + " " + lastMsg;
-
     return result;
   };
 
@@ -179,16 +178,28 @@ export default function ConversationUserList() {
   // user Conversation List Search
   const userConversationListSearch = (data) => {
     if (search) {
-      const result = data.filter((d) =>{
-        const messageSenderName = d?.participants_name?.find(name => name != user?.full_name)?.toLowerCase()
-        const filterData = messageSenderName?.includes(search?.toLocaleLowerCase())
-        return filterData
+      const result = data.filter((d) => {
+        const messageSenderName = d?.participants_name
+          ?.find((name) => name != user?.full_name)
+          ?.toLowerCase();
+        const filterData = messageSenderName?.includes(
+          search?.toLocaleLowerCase()
+        );
+        return filterData;
       });
       return result;
     } else {
       return data;
     }
   };
+
+  // message seen unseen status 
+  const messageSeenUnseenStatus = (data) => {
+    const currentUserSeenStatus = user.email.split("@")[0]
+    const checkSeenUnseen = data.isMessageSeen[currentUserSeenStatus]
+    console.log("🚀 ~ file: ConversationUserList.jsx:200 ~ messageSeenUnseenStatus ~ checkSeenUnseen:", checkSeenUnseen)
+  return checkSeenUnseen    
+  }
 
   // decide what to render
   let content;
@@ -201,11 +212,12 @@ export default function ConversationUserList() {
   } else if (!loading && error) {
     content = <p>Something is Wrong !</p>;
   } else if (!loading && !error && data.length > 0) {
-
     content = dataSortByTime(userConversationListSearch(data))?.map(
       (userData) => {
         const online = checkOnline(currentReceiverFind(userData?.participants));
-        const senderName = userData?.participants_name?.find(name => name != user?.full_name)
+        const senderName = userData?.participants_name?.find(
+          (name) => name != user?.full_name
+        );
         return (
           <div
             onClick={(e) => {
@@ -214,6 +226,7 @@ export default function ConversationUserList() {
               setCurrentChatUserEmail(
                 currentChatReceiver(userData?.participants)
               );
+              setConversationData(userData);
             }}
             key={userData?._id}
             className=" flex gap-3 items-center text-xs font-medium hover:bg-gray-100   py-2 px-4 cursor-pointer "
@@ -236,7 +249,7 @@ export default function ConversationUserList() {
               <div className="text-sm flex items-center">
                 <span
                   className={`${
-                    user.email == userData?.lastMassages?.sender
+                    messageSeenUnseenStatus(userData)
                       ? "text-[#8C8D90]"
                       : ""
                   } text-xs`}
@@ -245,7 +258,7 @@ export default function ConversationUserList() {
                 </span>
                 <span
                   className={`${
-                    user.email == userData?.lastMassages?.sender
+                    messageSeenUnseenStatus(userData)
                       ? "text-[#8C8D90]"
                       : ""
                   } pl-2 flex items-center text-xs `}
@@ -259,7 +272,6 @@ export default function ConversationUserList() {
         );
       }
     );
-    
   }
 
   return (
@@ -275,7 +287,10 @@ export default function ConversationUserList() {
             <AiOutlinePlus /> <p>Users</p>
           </button>
           <div className="flex items-center">
-            <button onClick={() => setIsChatBoxOpen(false)} className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100">
+            <button
+              onClick={() => setIsChatBoxOpen(false)}
+              className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100"
+            >
               <AiOutlineClose size={20} />
             </button>
           </div>
@@ -297,8 +312,16 @@ export default function ConversationUserList() {
       {/* user chat list  */}
       <div className="chat_list h-[calc(100%_-_126px)] overflow-y-scroll">
         {content}
-       {(data.length < 1 && !loading && !search) && <p className="text-center mt-4 text-lg font-medium text-purple-500">Let's begin conversation!</p>}
-       {(filterData < 1 && !loading && search) &&  <p  className="text-center mt-4 text-lg font-medium text-purple-500">Search data not available!</p>}
+        {data.length < 1 && !loading && !search && (
+          <p className="text-center mt-4 text-lg font-medium text-purple-500">
+            Let's begin conversation!
+          </p>
+        )}
+        {filterData < 1 && !loading && search && (
+          <p className="text-center mt-4 text-lg font-medium text-purple-500">
+            Search data not available!
+          </p>
+        )}
       </div>
     </div>
   );

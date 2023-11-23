@@ -11,7 +11,7 @@ export default function ChatBox() {
   return (
     <div>
       {/* conversation user list show */}
-      {isChatBoxOpen && <ConversationUserList />}
+      <div className={isChatBoxOpen ? "block": "hidden"}><ConversationUserList /></div> 
 
       {/* single conversation show  */}
       {singleConversationShow && <SingleConversation />}

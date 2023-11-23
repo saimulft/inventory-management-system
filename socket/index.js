@@ -69,25 +69,24 @@ io.on('connection',  (socket) => {
     // add current user 
     socket.on("addCurrentUser", ({currentUser}) => {
         addCurrentUser(currentUser, socket.id)
-        console.log("🚀 ~ file: index.js:73 ~ socket.on ~ currentUser:", currentUser)
     }) 
 
-    // pending arrival notification data 
-    socket.on("sendNotification", ({user, status}) => {
+    // notification
+    socket.on("sendNotification", ({user, notificationData}) => {
         const currentUsersData = currentUsers.filter(currentUser => currentUser?.admin_id == user?.admin_id || currentUser?._id == user?.admin_id)
         let adminAdminVANotificationAccessUsers;
-        
         if(user?.role == "Admin"){
             adminAdminVANotificationAccessUsers = currentUsersData?.filter(currentUser => currentUser?.admin_id == user?.admin_id)
         }
         if(user?.role == "Admin VA"){
             adminAdminVANotificationAccessUsers = currentUsersData?.filter(currentUser =>currentUser?._id == user?.admin_id)
         }
-        console.log(currentUsers);
         // send notification 
           adminAdminVANotificationAccessUsers?.forEach(adminAdminVANotificationAccessUser => {
-                console.log("🚀 ~ file: index.js:86 ~ socket.on ~ adminAdminVANotificationAccessUser:", adminAdminVANotificationAccessUser?.socketId)
-               io?.to(adminAdminVANotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: user}))
+             if(notificationData){
+                console.log("🚀 ~ file: index.js:88 ~ socket.on ~ notificationData:", notificationData)
+                io?.to(adminAdminVANotificationAccessUser?.socketId)?.emit("getNotification", ({notificationData }))
+             }
             })
 
         if(user?.role == "Store Manager Admin"){
