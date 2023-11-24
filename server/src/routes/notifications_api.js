@@ -58,7 +58,7 @@ const run = async () => {
 
   // set notifications in db
   router.post("/send_notification", async (req, res) => {
-    const { currentUser, status, notification_links } = req.body;
+    const { currentUser, status } = req.body;
     const notificationSenderRole = currentUser?.role
     const notificationSenderName = currentUser?.full_name
 
@@ -90,7 +90,6 @@ const run = async () => {
           notification_receivers_email: notificationReceiversEmail,
           notification_sender_name: notificationSenderName,
           notification_sender_role: notificationSenderRole,
-          notification_links,
           timestamp,
           status,
         };
@@ -105,6 +104,7 @@ const run = async () => {
 // send notification by store manager admin
    try{
     if (currentUser?.role == "Store Manager Admin") {
+      console.log(currentUser?.role);
       const adminQuery = { _id: new ObjectId(currentUser?.admin_id) };
       const result = await all_users_collection.find(adminQuery).toArray();
       const query = {
@@ -133,12 +133,11 @@ const run = async () => {
             notification_receivers_email: notificationReceiversEmail,
             notification_sender_name: notificationSenderName,
             notification_sender_role: notificationSenderRole,
-            notification_links,
             timestamp,
             status,
           };
         const finalResult =  await notification_collection.insertOne(notificationData);
-        res.send(finalResult)
+        res.send({finalResult, notificationData})
     }
    }
    catch(error){
@@ -178,12 +177,11 @@ const run = async () => {
             notification_receivers_email: notificationReceiversEmail,
             notification_sender_name: notificationSenderName,
             notification_sender_role: notificationSenderRole,
-            notification_links,
             timestamp,
             status,
           };
           const finalResult =  await notification_collection.insertOne(notificationData);
-          res.send(finalResult)
+          res.send({finalResult, notificationData})
     }
 
   }
@@ -221,12 +219,11 @@ const run = async () => {
             notification_receivers_email: notificationReceiversEmail,
             notification_sender_name: notificationSenderName,
             notification_sender_role: notificationSenderRole,
-            notification_links,
             timestamp,
             status,
           };
           const finalResult =  await notification_collection.insertOne(notificationData);
-          res.send(finalResult)
+          res.send({finalResult, notificationData})
     }
   }
   catch(error){
@@ -264,7 +261,6 @@ const run = async () => {
             notification_receivers_email: notificationReceiversEmail,
             notification_sender_name: notificationSenderName,
             notification_sender_role: notificationSenderRole,
-            notification_links,
             timestamp,
             status,
           };

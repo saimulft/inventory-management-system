@@ -33,6 +33,7 @@ export default function NotificationBox({notificationsRef}) {
   // get notification
   socket?.current?.on("getNotification", ({notificationData}) => {
     setNotifications([notificationData, ...notifications])
+    console.log("🚀 ~ file: NotificationBox.jsx:36 ~ socket?.current?.on ~ notificationData:", notificationData)
     setUpdateNotificationDB(!updateNotificationDB);
   });
 
@@ -77,20 +78,20 @@ handleNotificationsData()
   };
 
   // notification link 
-  const notificationLink = (links) => {
-if(user.role == "Admin" || user.role == "Admin VA"){
- const link = links[0]
- return link;
-}
-if(user.role == "Store Manager Admin" || user.role == "Store Manager VA"){
- const link = links[2]
- return link;
-}
-if(user.role == "Warehouse Admin" || user.role == "Warehouse Manager VA"){
- const link = links[1]
- return link;
-}
-  }
+//   const notificationLink = (links) => {
+// if(user.role == "Admin" || user.role == "Admin VA"){
+//  const link = links[0]
+//  return link;
+// }
+// if(user.role == "Store Manager Admin" || user.role == "Store Manager VA"){
+//  const link = links[2]
+//  return link;
+// }
+// if(user.role == "Warehouse Admin" || user.role == "Warehouse Manager VA"){
+//  const link = links[1]
+//  return link;
+// }
+//   }
 
   return (
     <div>
@@ -115,8 +116,8 @@ if(user.role == "Warehouse Admin" || user.role == "Warehouse Manager VA"){
             {notifications?.map((notification) => {
               return (
                 <a
-                href={notificationLink(notification.notification_links)}
-                  key={notification._id}
+                // href={notificationLink(notification?.notification_links)}
+                  key={notification?._id}
                   className="hover:bg-gray-100 px-4 flex items-center gap-3 py-3 cursor-pointer rounded-lg transition "
                 >
                   <div>
@@ -136,7 +137,7 @@ if(user.role == "Warehouse Admin" || user.role == "Warehouse Manager VA"){
                       <span className="text-sm"> {notification?.status}</span>
                     </p>
                     <p className="text-purple-500 text-xs">
-                      {calculateAgoTime(notification.timestamp)}
+                      {calculateAgoTime(notification?.timestamp)}
                     </p>
                   </div>
                 </a>

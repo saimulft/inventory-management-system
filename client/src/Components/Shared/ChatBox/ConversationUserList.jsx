@@ -18,6 +18,8 @@ export default function ConversationUserList() {
     socket,
     setIsChatBoxOpen,
     setConversationData,
+    conversationDataRefetch,
+     setIsMessageSeen
 
   } = useContext(ChatContext);
 
@@ -51,7 +53,6 @@ export default function ConversationUserList() {
         const newLastMsg = {
           ...cd,
           lastMassages: socketData,
-          isMessageSeen: false,
         };
         return newLastMsg;
       } else {
@@ -109,7 +110,7 @@ export default function ConversationUserList() {
         setError(err);
         setLoading(false);
       });
-  }, [user?.email]);
+  }, [user?.email, conversationDataRefetch]);
 
   // data sort by time
   const dataSortByTime = (data) => {
@@ -197,7 +198,6 @@ export default function ConversationUserList() {
   const messageSeenUnseenStatus = (data) => {
     const currentUserSeenStatus = user.email.split("@")[0]
     const checkSeenUnseen = data.isMessageSeen[currentUserSeenStatus]
-    console.log("🚀 ~ file: ConversationUserList.jsx:200 ~ messageSeenUnseenStatus ~ checkSeenUnseen:", checkSeenUnseen)
   return checkSeenUnseen    
   }
 
@@ -217,7 +217,17 @@ export default function ConversationUserList() {
         const online = checkOnline(currentReceiverFind(userData?.participants));
         const senderName = userData?.participants_name?.find(
           (name) => name != user?.full_name
-        );
+          );
+
+          
+          const isMessageSeen = userData.isMessageSeen
+          Object.keys(isMessageSeen).forEach(key => {
+            let value = isMessageSeen[key];
+            if(key != user?.email?.split("@")[0]){
+              setIsMessageSeen(value)
+            }
+        });
+          
         return (
           <div
             onClick={(e) => {
@@ -227,6 +237,7 @@ export default function ConversationUserList() {
                 currentChatReceiver(userData?.participants)
               );
               setConversationData(userData);
+
             }}
             key={userData?._id}
             className=" flex gap-3 items-center text-xs font-medium hover:bg-gray-100   py-2 px-4 cursor-pointer "

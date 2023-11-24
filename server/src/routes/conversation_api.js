@@ -125,38 +125,6 @@ const run = async () => {
     }
   });
 
-  router.get("/message_alert", async (req, res) => {
-    const { sender_email } = req.query;
-    const allConversations = await conversationsCollection
-      .find({
-        participants: { $all: [sender_email] },
-      })
-      .toArray();
-    let seenUnseenStatus;
-    allConversations.map((conversation) =>
-      Object.entries(conversation.isMessageSeen).forEach(([key, value]) => {
-        if (key != sender_email.split("@")[0]) {
-          if(seenUnseenStatus == false){
-            return
-          }
-          if(value){
-            seenUnseenStatus = value;
-            console.log("🚀 ~ file: conversation_api.js:144 ~ Object.entries ~ value:", value)
-          }
-          else{
-            seenUnseenStatus = value
-            console.log("🚀 ~ file: conversation_api.js:148 ~ Object.entries ~ value:", value)
-          }
-        }
-      })
-    );
-    if(seenUnseenStatus != undefined){
-    console.log(seenUnseenStatus);
-    res.status(200).send(seenUnseenStatus)
-    }
-    
-  });
-
   router.get("/user_messages_list", async (req, res) => {
     try {
       const { sender } = req.query;
@@ -205,7 +173,6 @@ const run = async () => {
   router.patch("/messages/seen_messages", async (req, res) => {
     const id = req.query.id || {};
     const messageSeenUser = req.query.email.split("@")[0];
-
     if (id != "undefined") {
       const query = { _id: new ObjectId(id) };
       const updatedData = {
@@ -217,9 +184,12 @@ const run = async () => {
         query,
         updatedData
       );
-      res
-        .status(200)
-        .send({ data: result, message: "successfully update seen status" });
+      if(result){
+    //  console.log(result);
+    res
+    .status(200)
+    .send({ data: result, message: "successfully update seen status" });
+   }
     } else {
       res.status(404).send({ data: {}, message: "conversation not found." });
     }

@@ -1,11 +1,13 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { GlobalContext } from "./GlobalProviders";
-import axios from "axios";
 
 export const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
-  
+  const [conversationDataRefetch, setConversationDataRefetch] = useState(false);
+  const [isMessageSeen, setIsMessageSeen] = useState(false)
+
+
   // chat head information
   const [currentChatUserName, setCurrentChatUserName] = useState("");
   const [currentChatUserEmail, setCurrentChatUserEmail] = useState("");
@@ -70,14 +72,6 @@ export const ChatProvider = ({ children }) => {
     setAddNewConversation(!addNewConversation);
   };
 
-  // notification alert 
-  const[messageAlert, setMessageAlert]=useState(true)
-  useEffect(() => {
-    axios.get(`/api/v1/conversations_api/message_alert?sender_email=${user?.email}`)
-      .then(res => setMessageAlert(res.data))
-      .catch(err => console.log(err));
-  }, [user?.email]); 
-
   //all user state
   const [allUsers, setAllUsers] = useState([]);
   const [allUsersLoading, setAllUsersLoading] = useState(false);
@@ -128,11 +122,12 @@ export const ChatProvider = ({ children }) => {
     alreadyConversationUserSetState,
     isNotificationBoxOpen,
     setIsNotificationBoxOpen,
-     conversationData,
+    conversationData,
     setConversationData,
-    messageAlert
+    conversationDataRefetch,
+    setConversationDataRefetch,
+    isMessageSeen, setIsMessageSeen
   };
-
   return (
     <ChatContext.Provider value={chatInfo}>{children}</ChatContext.Provider>
   );

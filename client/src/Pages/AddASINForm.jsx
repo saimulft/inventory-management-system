@@ -174,6 +174,7 @@ const AddASINForm = () => {
                       if (res.data?.finalResult?.acknowledged) {
                         // send real time notification data
                         const notificationData = res.data?.notificationData;
+                        console.log("🚀 ~ file: AddASINForm.jsx:177 ~ .then ~ notificationData:", notificationData)
                         if (notificationData) {
                           socket?.current?.emit("sendNotification", {
                             user,

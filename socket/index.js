@@ -61,8 +61,9 @@ io.on('connection',  (socket) => {
 
     // seen unseen status 
     socket.on("seenUnseenStatus", ({status, receiver}) => {
+        console.log(status, receiver);
         const user =  getUser(receiver)
-      {user && io.to(user?.socketId).emit('getSeenUnseenStatus', status)}
+      {user && io.to(user?.socketId)?.emit('getSeenUnseenStatus', status)}
 
     } )
 
@@ -73,6 +74,7 @@ io.on('connection',  (socket) => {
 
     // notification
     socket.on("sendNotification", ({user, notificationData}) => {
+        // console.log(notificationData);
         const currentUsersData = currentUsers.filter(currentUser => currentUser?.admin_id == user?.admin_id || currentUser?._id == user?.admin_id)
         let adminAdminVANotificationAccessUsers;
         if(user?.role == "Admin"){
@@ -84,13 +86,11 @@ io.on('connection',  (socket) => {
         // send notification 
           adminAdminVANotificationAccessUsers?.forEach(adminAdminVANotificationAccessUser => {
              if(notificationData){
-                console.log("🚀 ~ file: index.js:88 ~ socket.on ~ notificationData:", notificationData)
                 io?.to(adminAdminVANotificationAccessUser?.socketId)?.emit("getNotification", ({notificationData }))
              }
             })
 
         if(user?.role == "Store Manager Admin"){
-            console.log(user.role);
             const storeManagerAdminNotificationAccessUsers = currentUsersData?.filter(
                 currentUser =>
                   (currentUser?.store_manager_admin_id == user?.store_manager_admin_id &&
@@ -102,8 +102,9 @@ io.on('connection',  (socket) => {
 
           // send notification 
             storeManagerAdminNotificationAccessUsers?.forEach(storeManagerAdminNotificationAccessUser => {
-                console.log("🚀 ~ file: index.js:108 ~ socket.on ~ storeManagerAdminNotificationAccessUser:", storeManagerAdminNotificationAccessUser)
-                {storeManagerAdminNotificationAccessUser && io?.to(storeManagerAdminNotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: storeManagerAdminNotificationAccessUser}))}
+               if (notificationData) {
+                io?.to(storeManagerAdminNotificationAccessUser?.socketId)?.emit("getNotification", ({notificationData}))
+               }
             })            
         }
 
@@ -117,7 +118,9 @@ io.on('connection',  (socket) => {
                 )
             // send notification 
             storeManagerVANotificationAccessUsers?.forEach(storeManagerVANotificationAccessUser => {
-                {storeManagerVANotificationAccessUser && io?.to(storeManagerVANotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: storeManagerVANotificationAccessUser}))}
+                 if(notificationData){
+                    io?.to(storeManagerVANotificationAccessUser?.socketId)?.emit("getNotification", ({notificationData}))
+                 }
             })               
         }
 
@@ -133,7 +136,9 @@ io.on('connection',  (socket) => {
 
             // send notification 
             warehouseNotificationAccessUsers?.forEach(warehouseNotificationAccessUser => {
-                {warehouseNotificationAccessUser && io?.to(warehouseNotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: warehouseNotificationAccessUser}))}
+                if(notificationData){
+                    io?.to(warehouseNotificationAccessUser?.socketId)?.emit("getNotification", ({notificationData}))
+                }
             })  
         }
 
@@ -148,7 +153,9 @@ io.on('connection',  (socket) => {
                 )
             // send notification 
             warehouseManagerVANotificationAccessUsers?.forEach(storeManagerVANotificationAccessUser => {
-                {storeManagerVANotificationAccessUser && io?.to(storeManagerVANotificationAccessUser?.socketId)?.emit("getNotification", ({status, data: storeManagerVANotificationAccessUser}))}
+              if(notificationData){
+                io?.to(storeManagerVANotificationAccessUser?.socketId)?.emit("getNotification", ({ data: storeManagerVANotificationAccessUser}))
+              }
             })
         }
     })
