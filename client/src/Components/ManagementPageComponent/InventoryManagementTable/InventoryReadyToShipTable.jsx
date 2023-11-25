@@ -164,7 +164,6 @@ export default function InventoryReadyToShipTable() {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= endDate;
       });
-      console.log(filteredDateResults);
       if (!filteredDateResults.length) {
         return setSearchError(`No data found for selected date range`);
       }

@@ -19,8 +19,7 @@ export default function ConversationUserList() {
     setIsChatBoxOpen,
     setConversationData,
     conversationDataRefetch,
-     setIsMessageSeen
-
+    setIsMessageSeen,
   } = useContext(ChatContext);
 
   //set current Chat User Info
@@ -42,6 +41,7 @@ export default function ConversationUserList() {
 
   // update every message in real time conversation user list
   const newMessagesUpdateRealtime = (userConversationData, socketData) => {
+
     const emailOne = socketData?.sender;
     const emailTwo = socketData?.receiver;
 
@@ -50,9 +50,18 @@ export default function ConversationUserList() {
       const existTwo = cd?.participants?.includes(emailTwo);
 
       if (existOne && existTwo) {
+        const incomingMessages = {
+          receiver: socketData?.receiver,
+          sender: socketData?.sender,
+          text: socketData?.text,
+          timestamp: socketData?.timestamp,
+          _id: socketData?._id,
+        };
+
         const newLastMsg = {
           ...cd,
-          lastMassages: socketData,
+          isMessageSeen: socketData?.isMessageSeen,
+          lastMassages: incomingMessages,
         };
         return newLastMsg;
       } else {
@@ -194,12 +203,12 @@ export default function ConversationUserList() {
     }
   };
 
-  // message seen unseen status 
+  // message seen unseen status
   const messageSeenUnseenStatus = (data) => {
-    const currentUserSeenStatus = user.email.split("@")[0]
-    const checkSeenUnseen = data.isMessageSeen[currentUserSeenStatus]
-  return checkSeenUnseen    
-  }
+    const currentUserSeenStatus = user.email.split("@")[0];
+    const checkSeenUnseen = data.isMessageSeen[currentUserSeenStatus];
+    return checkSeenUnseen;
+  };
 
   // decide what to render
   let content;
@@ -217,17 +226,16 @@ export default function ConversationUserList() {
         const online = checkOnline(currentReceiverFind(userData?.participants));
         const senderName = userData?.participants_name?.find(
           (name) => name != user?.full_name
-          );
+        );
 
-          
-          const isMessageSeen = userData.isMessageSeen
-          Object.keys(isMessageSeen).forEach(key => {
-            let value = isMessageSeen[key];
-            if(key != user?.email?.split("@")[0]){
-              setIsMessageSeen(value)
-            }
+        const isMessageSeen = userData.isMessageSeen;
+        Object.keys(isMessageSeen).forEach((key) => {
+          let value = isMessageSeen[key];
+          if (key != user?.email?.split("@")[0]) {
+            setIsMessageSeen(value);
+          }
         });
-          
+
         return (
           <div
             onClick={(e) => {
@@ -237,7 +245,6 @@ export default function ConversationUserList() {
                 currentChatReceiver(userData?.participants)
               );
               setConversationData(userData);
-
             }}
             key={userData?._id}
             className=" flex gap-3 items-center text-xs font-medium hover:bg-gray-100   py-2 px-4 cursor-pointer "
@@ -260,18 +267,14 @@ export default function ConversationUserList() {
               <div className="text-sm flex items-center">
                 <span
                   className={`${
-                    messageSeenUnseenStatus(userData)
-                      ? "text-[#8C8D90]"
-                      : ""
+                    messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
                   } text-xs`}
                 >
                   {massagesSliceAndSenderStatus(userData)}
                 </span>
                 <span
                   className={`${
-                    messageSeenUnseenStatus(userData)
-                      ? "text-[#8C8D90]"
-                      : ""
+                    messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
                   } pl-2 flex items-center text-xs `}
                 >
                   <BsDot />{" "}

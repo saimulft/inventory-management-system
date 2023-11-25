@@ -19,7 +19,10 @@ export default function SingleConversation() {
     socket,
     conversationData,
     notificationAlert,
-    conversationDataRefetch, setConversationDataRefetch, isMessageSeen, setIsMessageSeen
+    conversationDataRefetch,
+    setConversationDataRefetch,
+    isMessageSeen,
+    setIsMessageSeen,
   } = useContext(ChatContext);
 
   const { currentChatUserName, currentChatUserEmail } =
@@ -40,7 +43,7 @@ export default function SingleConversation() {
   const [messageSend, setMessageSend] = useState(false);
   const [messageSendSocket, setMessageSendSocket] = useState(false);
 
-  const lastMessageSenderEmail = conversation[conversation?.length - 1]?.sender
+  const lastMessageSenderEmail = conversation[conversation?.length - 1]?.sender;
 
   // render message data first time
   useEffect(() => {
@@ -157,23 +160,29 @@ export default function SingleConversation() {
             },
           }
         );
-          if(data?.data){
-         socket.current.on("")
-          }
-        if (data?.data?.insertedId) {
-          const seenMassageStatus = (sender, receiver) => {
-            const emailToUsername = (email) => email.split("@")[0];
-            const userValue = {
-              [emailToUsername(sender)]: false,
-              [emailToUsername(receiver)]: true,
-            };
-            return userValue;
+        if (data?.data) {
+          socket.current.on("");
+        }
+        const seenMassageStatus = (sender, receiver) => {
+          const emailToUsername = (email) => email.split("@")[0];
+          const userValue = {
+            [emailToUsername(sender)]: true,
+            [emailToUsername(receiver)]: false,
           };
+          return userValue;
+        };
+
+        const isMessageSeen = seenMassageStatus(
+          user?.email,
+          currentChatUserEmail
+        );
+
+        if (data?.data?.insertedId) {
           const firstTimeData = {
             _id: data.data.insertedId,
             participants: [user?.email, currentChatUserEmail],
             participants_name: [user?.full_name, currentChatUserName],
-            isMessageSeen: seenMassageStatus(user?.email, currentChatUserEmail),
+            isMessageSeen,
             lastMassages: {
               sender: message?.sender,
               receiver: message?.receiver,
@@ -181,16 +190,21 @@ export default function SingleConversation() {
               timestamp,
             },
           };
-          
+
           socket.current?.emit("sendMessageFastTime", firstTimeData);
           fetchConData(true);
           setNewConversationAdd(false);
         } else if (data?.data?._id) {
           socket.current?.emit("sendMessage", data?.data);
           typingStop();
+          console.log("update");
+
+          const updateDataLestMessage = { data: data?.data, isMessageSeen };
+          console.log(updateDataLestMessage);
+
           socket.current?.emit(
             "sentLestMessageUpdateConversationUserList",
-            data?.data
+            {...data?.data, isMessageSeen}
           );
         }
       }
@@ -281,17 +295,21 @@ export default function SingleConversation() {
   //  handle seen unseen status
   const handleSeenUnseen = (e) => {
     if (e.type == "focus") {
-      const conversationId = conversationData?._id
-      const currentUserEmail = user?.email
-      axios.patch(`/api/v1/conversations_api/messages/seen_messages?id=${conversationId}&email=${currentUserEmail}`)
-      .then(res =>{
-        console.log(res.data);
-        setConversationDataRefetch(!conversationDataRefetch)
-      })
-      .catch(error => {
-        console.log(error);
-        notificationAlert(true)
-      })
+      const conversationId = conversationData?._id;
+      const currentUserEmail = user?.email;
+      axios
+        .patch(
+          `/api/v1/conversations_api/messages/seen_messages?id=${conversationId}&email=${currentUserEmail}`
+        )
+        .then((res) => {
+          console.log(res);
+
+          setConversationDataRefetch(!conversationDataRefetch);
+        })
+        .catch((error) => {
+          console.log(error);
+          notificationAlert(true);
+        });
       socket?.current?.emit("seenUnseenStatus", {
         status: true,
         receiver: currentChatUserEmail,
@@ -302,7 +320,7 @@ export default function SingleConversation() {
   // get seen unseen status
   useEffect(() => {
     socket.current.on("getSeenUnseenStatus", (status) => {
-     setIsMessageSeen(status)
+      setIsMessageSeen(status);
     });
   }, []);
 
@@ -418,7 +436,11 @@ export default function SingleConversation() {
         )}
         {content}
         {chatLoadingStatus && online && <ChatLoading />}
-        {isMessageSeen && (user?.email == lastMessageSenderEmail) && <p className="text-right text-xs mb-1 mr-4 relative bottom-[6px]">seen</p> }
+        {isMessageSeen && user?.email == lastMessageSenderEmail && (
+          <p className="text-right text-xs mb-1 mr-4 relative bottom-[6px]">
+            seen
+          </p>
+        )}
       </div>
 
       {/* sent message box  */}

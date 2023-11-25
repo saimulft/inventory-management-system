@@ -132,9 +132,7 @@ export default function AddSupplier() {
       </div>
 
       {/* add information  */}
-      {addSupplier.map((a, index) => {
-        console.log(index);
-        
+      {addSupplier.map((a, index) => {        
         return (
           <div key={index} className="relative z-10">
             <div className="mt-8 border-2 border-[#8633FF] flex rounded-lg ">

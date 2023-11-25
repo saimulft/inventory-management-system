@@ -135,7 +135,6 @@ export default function InventoryPendingArrivalTable() {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= endDate;
       });
-      console.log(filteredDateResults);
       if (!filteredDateResults.length) {
         return setSearchError(`No data found for selected date range`);
       }
@@ -228,7 +227,6 @@ export default function InventoryPendingArrivalTable() {
               notification_links: ["http://localhost:5173/dashboard/management","http://localhost:5173/dashboard/management/store/pending-arrival","http://localhost:5173/dashboard/management/inventory/pending-arrival"]
             })
             .then((res) => {
-              console.log(res.data)
                    // send real time notification data
                    if (res.data?.finalResult?.acknowledged) {
                     const notificationData = res.data?.notificationData;
