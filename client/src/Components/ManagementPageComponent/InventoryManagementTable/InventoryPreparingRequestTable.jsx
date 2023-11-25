@@ -97,19 +97,24 @@ export default function InventoryPreparingRequestTable() {
               .post(`/api/v1/ready_to_ship_api/ready_to_ship?id=${_id}`)
               .then((res) => {
                 if (res.status === 201) {
-                  // send real time notification data
-                  socket?.current?.emit("sendNotification", {
-                    user,
-                    status: "Product has been shipped.",
-                  });
-
                   const status = "Product has been shipped.";
                   axios
                     .post(`/api/v1/notifications_api/send_notification`, {
                       currentUser,
                       status,
                     })
-                    .then((res) => console.log(res.data))
+                    .then((res) => {
+                      if (res.data?.finalResult?.acknowledged) {
+                        // send real time notification data
+                        const notificationData = res.data?.notificationData;
+                        if (notificationData) {
+                          socket?.current?.emit("sendNotification", {
+                            user,
+                            notificationData,
+                          });
+                        }
+                      }
+                    })
                     .catch((err) => console.log(err));
                   Swal.fire("Shipped!", "Product has been Shipped.", "success");
                   refetch();
@@ -140,12 +145,6 @@ export default function InventoryPreparingRequestTable() {
           .post(`/api/v1/out_of_stock_api/out_of_stock?id=${_id}`)
           .then((res) => {
             if (res.status === 201) {
-              // send real time notification data
-              socket?.current?.emit("sendNotification", {
-                user,
-                status: "Product has been Added to out of stock.",
-              });
-
               const status = "Product has been Added to out of stock.";
               axios
                 .post(`/api/v1/notifications_api/send_notification`, {
@@ -153,11 +152,15 @@ export default function InventoryPreparingRequestTable() {
                   status,
                 })
                 .then((res) => {
-                  if(res.data.acknowledged){
-                    socket?.current?.emit("sendNotification", {
-                      user,
-                      status
-                    });
+                  if (res.data?.finalResult?.acknowledged) {
+                    // send real time notification data
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      });
+                    }
                   }
                 })
                 .catch((err) => console.log(err));

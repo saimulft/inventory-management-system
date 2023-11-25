@@ -11,65 +11,56 @@ import useGlobal from "../hooks/useGlobal";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import { NotificationContext } from "../Providers/NotificationProvider";
 const PreparingFormPage = () => {
-  const {socket} = useContext(GlobalContext)
-  const {currentUser} = useContext(NotificationContext)
+  const { socket } = useContext(GlobalContext);
+  const { currentUser } = useContext(NotificationContext);
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
-  const [InvoieImageSrc, setInvoiceImageSrc] = useState(null)
-  const [InvoiceImageFile, setInvoiceImageFile] = useState(null)
-  const [InvoiceImageError, setInvoiceImageError] = useState('')
-  const [shippingImageSrc, setShippingImageSrc] = useState(null)
-  const [shippingImageFile, setShippingImageFile] = useState(null)
-  const [shippingImageError, setShippingImageError] = useState('')
-  const [formError, setFormError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [storeOption, setStoreOption] = useState(null)
-  const [warehouseOption, setWarehouseOption] = useState(null)
-  const [asinUpcOption, setAsinUpcOption] = useState()
-  const [productName, setProductName] = useState('')
-  const { user } = useAuth()
-  const {setCountsRefetch} = useGlobal()
-  const asinId = asinUpcOption?.value
-  const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
+  const [InvoieImageSrc, setInvoiceImageSrc] = useState(null);
+  const [InvoiceImageFile, setInvoiceImageFile] = useState(null);
+  const [InvoiceImageError, setInvoiceImageError] = useState("");
+  const [shippingImageSrc, setShippingImageSrc] = useState(null);
+  const [shippingImageFile, setShippingImageFile] = useState(null);
+  const [shippingImageError, setShippingImageError] = useState("");
+  const [formError, setFormError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [storeOption, setStoreOption] = useState(null);
+  const [warehouseOption, setWarehouseOption] = useState(null);
+  const [asinUpcOption, setAsinUpcOption] = useState();
+  const [productName, setProductName] = useState("");
+  const { user } = useAuth();
+  const { setCountsRefetch } = useGlobal();
+  const asinId = asinUpcOption?.value;
+  const asinUpc = asinUpcOption?.data?.filter(
+    (asinUpc) => asinId === asinUpc._id
+  );
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
-      const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
+      const upin = `${storeOption?.label}_${asinUpcOption.label}`;
 
-      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`,{user})
-        .then(res => {
+      axios
+        .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
+        .then((res) => {
           if (res.status === 200) {
-            setProductName(res.data.data.product_name)
+            setProductName(res.data.data.product_name);
           }
           if (res.status === 204) {
-
-            setProductName("")
+            setProductName("");
           }
-        }).catch(err => console.log(err))
+        })
+        .catch((err) => console.log(err));
     }
-  }, [storeOption?.label, asinUpcOption,user]);
+  }, [storeOption?.label, asinUpcOption, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
-    queryKey: ['asin_upc_data'],
+    queryKey: ["asin_upc_data"],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', {user})
-        if (res.status === 200) {
-          return res.data.data;
-        }
-        return []
-      } catch (error) {
-        console.log(error)
-        return []
-      }
-    }
-  })
-  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
-    queryKey: ['get_all_stores_data'],
-    queryFn: async () => {
-      try {
-        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', {user})
+        const res = await axios.post(
+          "/api/v1/asin_upc_api/get_asin_upc_dropdown_data",
+          { user }
+        );
         if (res.status === 200) {
           return res.data.data;
         }
@@ -78,14 +69,34 @@ const PreparingFormPage = () => {
         console.log(error);
         return [];
       }
-    }
-  })
+    },
+  });
+  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
+    queryKey: ["get_all_stores_data"],
+    queryFn: async () => {
+      try {
+        const res = await axios.post(
+          "/api/v1/store_api/get_stores_dropdown_data",
+          { user }
+        );
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    },
+  });
 
   const { data: warehouseData = [], isLoading: warehouseLoading } = useQuery({
-    queryKey: ['get_warehouse_data'],
+    queryKey: ["get_warehouse_data"],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`)
+        const res = await axios.get(
+          `/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`
+        );
         if (res.status === 200) {
           return res.data.data;
         }
@@ -94,8 +105,8 @@ const PreparingFormPage = () => {
         console.log(error);
         return [];
       }
-    }
-  })
+    },
+  });
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -104,38 +115,37 @@ const PreparingFormPage = () => {
   };
 
   const hadnlePreparingForm = (event) => {
-    setInvoiceImageError('')
-    setShippingImageError('')
-    setFormError('')
-    event.preventDefault()
-    const form = event.target
+    setInvoiceImageError("");
+    setShippingImageError("");
+    setFormError("");
+    event.preventDefault();
+    const form = event.target;
     const date = new Date(form.date.value).toISOString();
     const createdAt = new Date().toISOString();
-    const orderID = form.orderID.value
-    const courier = form.courier.value
-    const upin = `${storeOption?.label}_${asinUpcOption?.label}`
-    const quantity = form.quantity.value
-    const trackingNumber = form.trackingNumber.value
-
+    const orderID = form.orderID.value;
+    const courier = form.courier.value;
+    const upin = `${storeOption?.label}_${asinUpcOption?.label}`;
+    const quantity = form.quantity.value;
+    const trackingNumber = form.trackingNumber.value;
 
     if (!warehouseOption?.label) {
-      setFormError("Missing warehouse")
-      return
+      setFormError("Missing warehouse");
+      return;
     }
     if (!storeOption?.label) {
-      setFormError("Select  Store")
-      return
+      setFormError("Select  Store");
+      return;
     }
     if (!productName) {
-      setFormError(`No product available under UPIN ${upin}`)
-      return
+      setFormError(`No product available under UPIN ${upin}`);
+      return;
     }
     if (!date || !asinUpcOption.label || !orderID || !upin || !quantity) {
-      setFormError("Missing form field detected")
+      setFormError("Missing form field detected");
       return;
     }
 
-    const formData = new FormData()
+    const formData = new FormData();
     let preparingFormvalue = {
       adminId: user?.admin_id,
       creatorEmail: user?.email,
@@ -152,109 +162,109 @@ const PreparingFormPage = () => {
       quantity,
       trackingNumber,
       warehouseName: warehouseOption?.label,
-      warehouseId: warehouseOption?.value
-    }
+      warehouseId: warehouseOption?.value,
+    };
     for (const key in preparingFormvalue) {
       formData.append(key, preparingFormvalue[key]);
     }
-    const Invoice = InvoiceImageFile?.name.split('.').pop();
-    const shipping = shippingImageFile?.name.split('.').pop();
+    const Invoice = InvoiceImageFile?.name.split(".").pop();
+    const shipping = shippingImageFile?.name.split(".").pop();
 
     if (InvoiceImageFile && !shippingImageFile) {
-      formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
+      formData.append("file", InvoiceImageFile, `invoice.${Invoice}`);
     }
     if (shippingImageFile && !InvoiceImageFile) {
-      formData.append('file', shippingImageFile, `shipping.${shipping}`)
+      formData.append("file", shippingImageFile, `shipping.${shipping}`);
     }
     if (InvoiceImageFile && shippingImageFile) {
-      formData.append('file', InvoiceImageFile, `invoice.${Invoice}`)
-      formData.append('file', shippingImageFile, `shipping.${shipping}`)
+      formData.append("file", InvoiceImageFile, `invoice.${Invoice}`);
+      formData.append("file", shippingImageFile, `shipping.${shipping}`);
     }
-    setLoading(true)
-    axios.post('/api/v1/preparing_form_api/preparing_form_insert', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      }
-    })
-      .then(res => {
-        if (res.status === 201) {
-    
-
-      const status = "Submit a preparing request form."
-      axios.post(`/api/v1/notifications_api/send_notification`,{currentUser, status})
-      .then(res =>{
-        if(res.data.acknowledged){
-                        // send real time notification data 
-        socket?.current?.emit("sendNotification", {
-          user,
-          status
-      })        
-        }
+    setLoading(true);
+    axios
+      .post("/api/v1/preparing_form_api/preparing_form_insert", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       })
-      .catch(err => console.log(err)
-      )
-          setCountsRefetch(true)
+      .then((res) => {
+        if (res.status === 201) {
+          const status = "Submit a preparing request form.";
+          axios
+            .post(`/api/v1/notifications_api/send_notification`, {
+              currentUser,
+              status,
+            })
+            .then((res) => {
+              console.log(res.data);
+              
+              if (res?.data?.finalResult?.acknowledged) {
+                // send real time notification data
+              const notificationData = res.data.notificationData;
+                socket?.current?.emit("sendNotification", {
+                  user,
+                  notificationData,
+                });
+              }
+            })
+            .catch((err) => console.log(err));
+          setCountsRefetch(true);
           Swal.fire(
-            'Added',
-            'Preparing form request has been added.',
-            'success'
-          )
-          form.reset()
-          setProductName("")
-          setWarehouseOption(null)
-          setStoreOption(null)
-          setAsinUpcOption(null)
-          setInvoiceImageFile(null)
-          setShippingImageFile(null)
-          setInvoiceImageSrc(null)
-          setShippingImageSrc(null)
-          setLoading(false)
-        }
-        else {
-          setLoading(false)
-          setFormError("Something went wrong to send preparing form request")
+            "Added",
+            "Preparing form request has been added.",
+            "success"
+          );
+          form.reset();
+          setProductName("");
+          setWarehouseOption(null);
+          setStoreOption(null);
+          setAsinUpcOption(null);
+          setInvoiceImageFile(null);
+          setShippingImageFile(null);
+          setInvoiceImageSrc(null);
+          setShippingImageSrc(null);
+          setLoading(false);
+        } else {
+          setLoading(false);
+          setFormError("Something went wrong to send preparing form request");
         }
       })
       .catch((err) => {
-        console.log(err)
-        setLoading(false)
-        setFormError("Something went wrong to send preparing form request")
-
-      })
-  }
+        console.log(err);
+        setLoading(false);
+        setFormError("Something went wrong to send preparing form request");
+      });
+  };
 
   const handleInvoiceImage = (e) => {
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
 
       if (e.target.files[0].size > maxSizeInBytes) {
-        setInvoiceImageError("File size must be less than 5 MB")
+        setInvoiceImageError("File size must be less than 5 MB");
         return;
-
       } else {
-        ('')
-        setInvoiceImageSrc(URL.createObjectURL(e.target.files[0]))
-        setInvoiceImageFile(e.target.files[0])
+        ("");
+        setInvoiceImageSrc(URL.createObjectURL(e.target.files[0]));
+        setInvoiceImageFile(e.target.files[0]);
       }
     }
-  }
+  };
 
   const handleShippingImage = (e) => {
     if (e.target.files[0]) {
       const maxSizeInBytes = 5 * 1024 * 1024; // 5MB
 
       if (e.target.files[0].size > maxSizeInBytes) {
-        setShippingImageError("File size must be less than 5 MB")
+        setShippingImageError("File size must be less than 5 MB");
         return;
-
       } else {
-        setShippingImageError('')
-        setShippingImageSrc(URL.createObjectURL(e.target.files[0]))
-        setShippingImageFile(e.target.files[0])
+        setShippingImageError("");
+        setShippingImageSrc(URL.createObjectURL(e.target.files[0]));
+        setShippingImageFile(e.target.files[0]);
       }
     }
-  }
-
+  };
 
   return (
     <div className="py-20 rounded-lg w-[60%] mx-auto">
@@ -269,7 +279,7 @@ const PreparingFormPage = () => {
           <form className="w-full" onSubmit={hadnlePreparingForm}>
             <div className="flex gap-7">
               <div className="w-full">
-                <div >
+                <div>
                   <label className="text-slate-500">Date</label>
                   <input
                     type="date"
@@ -282,7 +292,13 @@ const PreparingFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500 mb-2">ASIN/UPC</label>
-                  <SearchDropdown isLoading={asinLoading} option={asinUpcOption} placeholder="Select ASIN or UPC" optionData={asinUpcData} setOption={setAsinUpcOption} />
+                  <SearchDropdown
+                    isLoading={asinLoading}
+                    option={asinUpcOption}
+                    placeholder="Select ASIN or UPC"
+                    optionData={asinUpcData}
+                    setOption={setAsinUpcOption}
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -334,15 +350,22 @@ const PreparingFormPage = () => {
                       className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[6.5px]">
-                        {InvoieImageSrc ? <img src={InvoieImageSrc} className="h-8" alt="" /> :
-                          <AiOutlineCloudUpload size={26} />}
+                        {InvoieImageSrc ? (
+                          <img src={InvoieImageSrc} className="h-8" alt="" />
+                        ) : (
+                          <AiOutlineCloudUpload size={26} />
+                        )}
                         <div>
-
-
-                          {InvoiceImageFile && <p className="text-md font-semibold">{InvoiceImageFile.name.slice(0, 32)}</p>}
-                          {!InvoiceImageFile && <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
-                            Select a file or drag and drop
-                          </p>}
+                          {InvoiceImageFile && (
+                            <p className="text-md font-semibold">
+                              {InvoiceImageFile.name.slice(0, 32)}
+                            </p>
+                          )}
+                          {!InvoiceImageFile && (
+                            <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
+                              Select a file or drag and drop
+                            </p>
+                          )}
 
                           <p className="text-xs text-gray-500 dark:text-gray-400">
                             PNG, JPG or PDF, file size no more than 5MB
@@ -371,15 +394,24 @@ const PreparingFormPage = () => {
                     </label>
                   </div>
                 </div>
-                {InvoiceImageError && <p className="text-xs mt-2 font-medium text-rose-500">{InvoiceImageError}</p>}
+                {InvoiceImageError && (
+                  <p className="text-xs mt-2 font-medium text-rose-500">
+                    {InvoiceImageError}
+                  </p>
+                )}
               </div>
 
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <SearchDropdown isLoading={storeLoading} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                  <SearchDropdown
+                    isLoading={storeLoading}
+                    option={storeOption}
+                    optionData={allStoreData}
+                    placeholder="Select Store"
+                    setOption={setStoreOption}
+                  />
                 </div>
-
 
                 <div className="mt-4">
                   <label className="text-slate-500">Code type</label>
@@ -387,7 +419,6 @@ const PreparingFormPage = () => {
                     type="text"
                     readOnly
                     value={asinUpc && asinUpc[0].code_type}
-
                     placeholder="Enter product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="code"
@@ -400,7 +431,11 @@ const PreparingFormPage = () => {
                   <input
                     required
                     readOnly
-                    value={storeOption?.label && asinUpcOption && `${storeOption?.label}_${asinUpcOption.label}`}
+                    value={
+                      storeOption?.label &&
+                      asinUpcOption &&
+                      `${storeOption?.label}_${asinUpcOption.label}`
+                    }
                     type="text"
                     placeholder="Enter UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
@@ -424,7 +459,6 @@ const PreparingFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Tracking Number</label>
                   <input
-
                     type="text"
                     placeholder="Enter tracking number"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
@@ -441,13 +475,22 @@ const PreparingFormPage = () => {
                       className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[6.5px]">
-                        {shippingImageSrc ? <img src={shippingImageSrc} className="h-8" alt="" /> :
-                          <AiOutlineCloudUpload size={26} />}
+                        {shippingImageSrc ? (
+                          <img src={shippingImageSrc} className="h-8" alt="" />
+                        ) : (
+                          <AiOutlineCloudUpload size={26} />
+                        )}
                         <div>
-                          {shippingImageFile && <p className="text-md font-semibold">{shippingImageFile.name.slice(0, 32)}</p>}
-                          {!shippingImageFile && <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
-                            Select a file or drag and drop
-                          </p>}
+                          {shippingImageFile && (
+                            <p className="text-md font-semibold">
+                              {shippingImageFile.name.slice(0, 32)}
+                            </p>
+                          )}
+                          {!shippingImageFile && (
+                            <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
+                              Select a file or drag and drop
+                            </p>
+                          )}
                           <p className="text-xs  text-gray-500 dark:text-gray-400">
                             PNG, JPG or PDF, file size no more than 10MB
                           </p>
@@ -477,17 +520,31 @@ const PreparingFormPage = () => {
                     </label>
                   </div>
 
-                  {shippingImageError && <p className="text-xs mt-2 font-medium text-rose-500">{shippingImageError}</p>}
+                  {shippingImageError && (
+                    <p className="text-xs mt-2 font-medium text-rose-500">
+                      {shippingImageError}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
             <div className="mt-4">
               <label className="text-slate-500">Warehouse</label>
-              <SearchDropdown isLoading={warehouseLoading} option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
+              <SearchDropdown
+                isLoading={warehouseLoading}
+                option={warehouseOption}
+                optionData={warehouseData}
+                placeholder="Select warehouse"
+                setOption={setWarehouseOption}
+              />
             </div>
             <ToastMessage errorMessage={formError} />
             <div className="flex items-center justify-center mt-8">
-              <button type="submit" disabled={loading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">
+              <button
+                type="submit"
+                disabled={loading}
+                className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full"
+              >
                 {loading && <FaSpinner size={20} className="animate-spin" />}
                 Preparing Request
               </button>

@@ -220,11 +220,8 @@ const ArrivalFormPage = () => {
             status: notificationStatus,
           })
           .then((res) => {
-            console.log(res.data.acknowledged);
-
-            if (res.data.acknowledged) {
-              const notificationData = res.data?.notificationData;
-              console.log("success");
+            if (res?.data?.finalResult?.acknowledged) {
+              const notificationData = res.data.notificationData;
               socket?.current?.emit("sendNotification", {
                 user,
                 notificationData,

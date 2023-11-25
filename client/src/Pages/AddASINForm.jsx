@@ -151,12 +151,6 @@ const AddASINForm = () => {
                 if (res.status === 201) {
                   console.log(res.data);
 
-                  // send real time notification data
-                  socket?.current?.emit("sendNotification", {
-                    user,
-                    status: "Submit a ASIN/UPC form.",
-                  });
-
                   const status = "Submit a ASIN/UPC form.";
                   axios
                     .post(`/api/v1/notifications_api/send_notification`, {
@@ -174,7 +168,6 @@ const AddASINForm = () => {
                       if (res.data?.finalResult?.acknowledged) {
                         // send real time notification data
                         const notificationData = res.data?.notificationData;
-                        console.log("🚀 ~ file: AddASINForm.jsx:177 ~ .then ~ notificationData:", notificationData)
                         if (notificationData) {
                           socket?.current?.emit("sendNotification", {
                             user,

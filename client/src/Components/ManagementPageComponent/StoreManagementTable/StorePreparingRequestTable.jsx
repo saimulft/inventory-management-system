@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
@@ -13,10 +13,15 @@ import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import useGlobal from "../../../hooks/useGlobal";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { NotificationContext } from "../../../Providers/NotificationProvider";
 
 
 export default function StorePreparingRequestTable() {
   const { isSidebarOpen, setCountsRefetch } = useGlobal()
+  const { socket } = useContext(GlobalContext);
+  const { currentUser } = useContext(NotificationContext);
+
   const [filterDays, setFilterDays] = useState('')
   const [singleData, setSingleData] = useState({})
   const [loading, setLoading] = useState(false)
@@ -131,6 +136,27 @@ export default function StorePreparingRequestTable() {
     })
       .then(res => {
         if (res.status === 200) {
+          const status = "Update preparing request data.";
+          axios
+            .post(`/api/v1/notifications_api/send_notification`, {
+              currentUser,
+              status,
+              notification_links: ["http://localhost:5173/dashboard/management","http://localhost:5173/dashboard/management/store/pending-arrival","http://localhost:5173/dashboard/management/inventory/pending-arrival"]
+            })
+            .then((res) => {
+              console.log(res.data)
+                   // send real time notification data
+                   if (res.data?.finalResult?.acknowledged) {
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      });
+                    }
+                  }
+            })
+            .catch((err) => console.log(err));
           form.reset()
           setInvoiceImageFile(null)
           setShippingImageFile(null)

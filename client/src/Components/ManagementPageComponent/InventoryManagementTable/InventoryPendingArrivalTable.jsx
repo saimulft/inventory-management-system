@@ -230,12 +230,15 @@ export default function InventoryPendingArrivalTable() {
             .then((res) => {
               console.log(res.data)
                    // send real time notification data
-         if(res.data.acknowledged){
-          socket?.current?.emit("sendNotification", {
-            user,
-            status
-          });
-         }
+                   if (res.data?.finalResult?.acknowledged) {
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      });
+                    }
+                  }
             })
             .catch((err) => console.log(err));
           setLoading(false);
