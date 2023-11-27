@@ -95,13 +95,9 @@ const run = async () => {
     router.post('/get_asin_upc_dropdown_data', async (req, res) => {
         try {
             const user = req.body.user;
-
-            const asinUpcData = await asin_upc_collection.find({ admin_id: user.admin_id }).sort({ date: -1 }).toArray()
+            const asinUpcData = await asin_upc_collection.find({ admin_id: user.admin_id }).project({ "value": { $toString: "$_id" }, "label": "$asin_upc_code", _id: 0 }).sort({ date: -1 }).toArray()
             if (asinUpcData) {
-                const data = asinUpcData.map(item => {
-                    return { data: asinUpcData, value: item._id, label: item.asin_upc_code }
-                })
-                res.status(200).json({ data: data, message: "successfully get asin_upc" })
+                res.status(200).json({ data: asinUpcData, message: "successfully get asin_upc" })
             }
             else {
                 res.status(204).json({ message: "No content" })
