@@ -13,8 +13,13 @@ import Swal from "sweetalert2";
 import useGlobal from "../../../hooks/useGlobal";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { NotificationContext } from "../../../Providers/NotificationProvider";
+import { useLocation } from "react-router-dom";
 
 export default function InventoryReadyToShipTable() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  // Get the value of the 'notification_search' parameter
+  const notificationSearchValue = queryParams.get("notification_search");
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
   // const [RTSdata ,setRTSdata] = useState({})
@@ -58,6 +63,10 @@ export default function InventoryReadyToShipTable() {
     },
   });
 
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
+
   const handleSearch = (e) => {
     e.preventDefault();
     setSearchError("");
@@ -94,19 +103,22 @@ export default function InventoryReadyToShipTable() {
           .post(`/api/v1/shipped_api/shipped?id=${_id}`)
           .then((res) => {
             if (res.status === 200) {
+              const notification_search = [res?.data?.result?.insertedId]
               const status = "Confirm complete shipment.";
               axios
                 .post(`/api/v1/notifications_api/send_notification`, {
                   currentUser,
                   status,
+                  notification_search
                 })
                 .then((res) => {
-                  if(res.data.acknowledged){
-                      // send real time notification data
-              socket?.current?.emit("sendNotification", {
-                user,
-                status
-              });
+                  const notificationData = res.data?.notificationData;
+                  if (res.data?.finalResult?.acknowledged) {
+                    // send real time notification data
+                    socket?.current?.emit("sendNotification", {
+                      user,
+                      notificationData,
+                    });
                   }
                 })
                 .catch((err) => console.log(err));
@@ -454,7 +466,7 @@ export default function InventoryReadyToShipTable() {
                 ) : isLoading ? (
                   <Loading />
                 ) : (
-                  displayAllData?.map((d, index) => {
+                 (!notificationSearchValue ? displayAllData?.map((d, index) => {
                     return (
                       <tr
                         className={`${index % 2 == 1 && ""} py-2`}
@@ -488,7 +500,35 @@ export default function InventoryReadyToShipTable() {
                         </td>
                       </tr>
                     );
-                  })
+                  }): <tr
+                >
+                  <th>{format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
+                  <th className="font-normal">{notificationSearchData?.store_name}</th>
+                  <td>{notificationSearchData?.asin_upc_code}</td>
+                  <td>{notificationSearchData?.code_type}</td>
+                  <td>{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.order_id}</td>
+                  <td>{notificationSearchData?.upin}</td>
+                  <td>{notificationSearchData?.quantity}</td>
+                  <td>{notificationSearchData?.courier}</td>
+                  <td>{notificationSearchData?.tracking_number}</td>
+                  <td>
+                    {notificationSearchData?.shipping_file && (
+                      <FileDownload fileName={notificationSearchData?.shipping_file} />
+                    )}
+                  </td>
+                  <td className="flex gap-2">
+                    <button
+                      onClick={() => {
+                        handleShipment(notificationSearchData?._id);
+                      }}
+                      className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]"
+                    >
+                      <FiCheckCircle />
+                      <p>Complete Shipment</p>
+                    </button>
+                  </td>
+                </tr> )
                 )}
               </>
             )}

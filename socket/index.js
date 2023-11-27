@@ -60,9 +60,10 @@ io.on('connection',  (socket) => {
     })
 
     // seen unseen status 
-    socket.on("seenUnseenStatus", ({status, receiver}) => {
+    socket.on("sentSeenUnseenStatus", ({status, receiver}) => {
         console.log(status, receiver);
         const user =  getUser(receiver)
+        console.log(user);
       {user && io.to(user?.socketId)?.emit('getSeenUnseenStatus', status)}
 
     } )

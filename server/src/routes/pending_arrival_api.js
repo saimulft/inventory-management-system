@@ -44,7 +44,7 @@ const run = async () => {
             const result = await pending_arrival_collection.insertOne(data)
 
             if (result.acknowledged) {
-                res.status(201).json({ message: "Successfully inserted pending arrival data" })
+                res.status(201).json({ message: "Successfully inserted pending arrival data", result })
             }
             else {
                 res.status(500).json({ message: "Internal server error while inserting pending arrival data" })
@@ -60,7 +60,6 @@ const run = async () => {
         try {
             const user = req.body.user;
             const role = user.role;
-
             let query;
 
             if (role === 'Admin' || role === 'Admin VA') {
@@ -75,7 +74,6 @@ const run = async () => {
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
                 query = { warehouse_id: user.warehouse_id }
             }
-
             const result = await pending_arrival_collection.find(query).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got pending arrival data" })
@@ -175,7 +173,6 @@ const run = async () => {
                                 missing_status: 'active'
                             }
                             const insertResult = await missing_arrival_collection.insertOne(missingArrivalData);
-
                             if (!insertResult.insertedId) {
                                 return res.status(500).json({ message: 'Internal server error while inserting missing arrival data' });
                             }

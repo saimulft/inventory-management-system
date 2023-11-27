@@ -3,8 +3,10 @@ import { ChatContext } from "../../../Providers/ChatProvider";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 export default function NotificationBox({notificationsRef}) {
+  const navigate = useNavigate()
   const { isNotificationBoxOpen } = useContext(ChatContext);
   const { socket } = useContext(GlobalContext);
   const { user } = useAuth();
@@ -25,6 +27,26 @@ export default function NotificationBox({notificationsRef}) {
       .catch((error) => console.log(error));
   };
 
+const handleNavigateUrl = (url, notification_search) => {
+  if(user?.role == "Admin" ||user?.role ==  "Admin VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA"){
+  const link = url.split("/")
+  
+  const indexToReplace = 3;
+  const newValue = "inventory"
+  link[indexToReplace] = newValue
+  const generatedLink = link.join("/") + `?notification_search=${notification_search}`
+  console.log(generatedLink);
+  navigate(generatedLink)
+}
+if(user?.role == "Store Manager Admin" || user?.role == "Store Manager VA"){
+  const generatedLink = url + `?notification_search=${notification_search}`
+  navigate(generatedLink)
+}
+
+console.log(url);
+
+  }
+
   // render the notifications data first time 
   useEffect(() => {
     handleNotificationsData();
@@ -33,7 +55,6 @@ export default function NotificationBox({notificationsRef}) {
   // get notification
   socket?.current?.on("getNotification", ({notificationData}) => {
     setNotifications([notificationData, ...notifications])
-    console.log("🚀 ~ file: NotificationBox.jsx:36 ~ socket?.current?.on ~ notificationData:", notificationData)
     setUpdateNotificationDB(!updateNotificationDB);
   });
 
@@ -114,9 +135,11 @@ handleNotificationsData()
             className="h-[467px]  overflow-y-scroll notifications_box"
           >
             {notifications?.map((notification) => {
+              const notification_link = notification?.notification_link
+              const notification_search = notification?.notification_search
               return (
-                <a
-                // href={notificationLink(notification?.notification_links)}
+                <div
+                onClick={() => handleNavigateUrl(notification_link, notification_search)}
                   key={notification?._id}
                   className="hover:bg-gray-100 px-4 flex items-center gap-3 py-3 cursor-pointer rounded-lg transition "
                 >
@@ -140,7 +163,7 @@ handleNotificationsData()
                       {calculateAgoTime(notification?.timestamp)}
                     </p>
                   </div>
-                </a>
+                </div>
               );
             })}
           </div>

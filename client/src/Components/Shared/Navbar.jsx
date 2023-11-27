@@ -132,7 +132,7 @@ export default function Navbar() {
             className="bg-[#454547] hover:bg-[#3f3f41] cursor-pointer transition-all duration-15 p-3 rounded relative"
           >
             <AiOutlineMessage size={20} />
-             {!messageAlert && <> <span className="animate-ping absolute top-1 right-1 inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
+             {messageAlert && <> <span className="animate-ping absolute top-1 right-1 inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
             <span className="h-1 w-1 rounded-full bg-red-500 absolute inline top-2 right-2"></span></>}
           </div>
         </div>

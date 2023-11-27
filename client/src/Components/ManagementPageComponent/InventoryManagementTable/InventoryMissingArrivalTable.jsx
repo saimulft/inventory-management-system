@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { useQuery } from "@tanstack/react-query";
@@ -12,8 +12,12 @@ import { MdErrorOutline } from "react-icons/md";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import useGlobal from "../../../hooks/useGlobal";
+import { NotificationContext } from "../../../Providers/NotificationProvider";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
 
 export default function InventoryMissingArrivalTable() {
+  const { socket } = useContext(GlobalContext);
+  const { currentUser } = useContext(NotificationContext);
   const [activeTab, setActiveTab] = useState('active');
   const [singleData, setSingleData] = useState({})
   const [successMessage, setSuccessMessage] = useState('')
@@ -145,6 +149,32 @@ export default function InventoryMissingArrivalTable() {
     axios.put(`/api/v1/missing_arrival_api/update_missing_arrival_data?id=${_id}`, updatedData)
       .then(res => {
         if (res.status === 200) {
+          const baseURL = window.location.origin;
+          const notification_link =
+            baseURL + "/dashboard/management/store/missing-arrival";
+          const notification_search = _id;
+          const status = "Solved missing arrival item.";
+          axios
+            .post(`/api/v1/notifications_api/send_notification`, {
+              currentUser,
+              status,
+              notification_link,
+              notification_search
+            })
+            .then((res) => {
+                   // send real time notification data
+                   if (res.data?.finalResult?.acknowledged) { 
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      
+                      });
+                    }
+                  }
+            })
+            .catch((err) => console.log(err));
           setLoading(false)
           form.reset()
           refetch()

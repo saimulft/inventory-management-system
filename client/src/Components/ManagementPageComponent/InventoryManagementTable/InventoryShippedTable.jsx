@@ -131,7 +131,6 @@ export default function InventoryShippedTable() {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= endDate;
       });
-      console.log(filteredDateResults);
       if (!filteredDateResults.length) {
         return setSearchError(`No data found for selected date range`);
       }
@@ -156,20 +155,6 @@ export default function InventoryShippedTable() {
           .delete(`/api/v1/shipped_api/delete_shipped_data?id=${_id}`)
           .then((res) => {
             if (res.status === 200) {
-              // send real time notification data
-              socket?.current?.emit("sendNotification", {
-                user,
-                status: "A shipped entry has been deleted..",
-              });
-
-              const status = "A shipped entry has been deleted.";
-              axios
-                .post(`/api/v1/notifications_api/send_notification`, {
-                  currentUser,
-                  status,
-                })
-                .then((res) => console.log(res.data))
-                .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -212,26 +197,30 @@ export default function InventoryShippedTable() {
       resaleable_quantity: resaleableQuantity,
       remark: remark,
     };
-
     axios
       .put(`/api/v1/shipped_api/update_shipped_data?id=${_id}`, updatedData)
       .then((res) => {
         if (res.status === 201) {
-     
-
+          const baseURL = window.location.origin;
+          const notification_link =
+            baseURL + "/dashboard/management/store/shipped";
+          const notification_search = [_id];
           const status = "Updated resaleable quantity.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
+              notification_link,
+              notification_search,
             })
-            .then((res) =>{
-              if(res.data.acknowledged){
-                   // send real time notification data
-          socket?.current?.emit("sendNotification", {
-            user,
-            status
-          });
+            .then((res) => {
+              const notificationData = res.data?.notificationData;
+              if (res.data?.finalResult?.acknowledged) {
+                // send real time notification data
+                socket?.current?.emit("sendNotification", {
+                  user,
+                  notificationData,
+                });
               }
             })
             .catch((err) => console.log(err));

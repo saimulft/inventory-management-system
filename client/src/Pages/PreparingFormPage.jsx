@@ -189,18 +189,24 @@ const PreparingFormPage = () => {
       })
       .then((res) => {
         if (res.status === 201) {
+          console.log(res);
+          const notification_link =
+             "/dashboard/management/store/preparing-request";
+          const notification_search =[ res?.data?.result?.insertedId];
           const status = "Submit a preparing request form.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
+              notification_link,
+              notification_search,
             })
             .then((res) => {
               console.log(res.data);
-              
+
               if (res?.data?.finalResult?.acknowledged) {
                 // send real time notification data
-              const notificationData = res.data.notificationData;
+                const notificationData = res.data.notificationData;
                 socket?.current?.emit("sendNotification", {
                   user,
                   notificationData,

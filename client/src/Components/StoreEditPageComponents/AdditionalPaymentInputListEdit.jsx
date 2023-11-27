@@ -8,7 +8,6 @@ export default function AdditionalPaymentInputListEdit({additionalPaymentInputLi
   ]);
 
   const aco = (e, track) => {
-    console.log(e.target);
     e.stopPropagation();
     if (e.target.id == "aco") {
       isOpen.map((singleAco) => {

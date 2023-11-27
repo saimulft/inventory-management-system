@@ -79,7 +79,7 @@ const run = async () => {
 
             const result = await preparing_form_collection.insertOne(data)
             if (result.acknowledged) {
-                res.status(201).json({ message: "Preparing form inserted" })
+                res.status(201).json({ message: "Preparing form inserted", result })
             }
             else {
                 res.status(500).json({ message: "Error to Preparing form " });

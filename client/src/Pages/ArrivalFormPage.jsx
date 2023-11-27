@@ -211,13 +211,17 @@ const ArrivalFormPage = () => {
     };
 
     try {
-      const { status } = await mutateAsync(arrivalFormData);
+      const { status, data } = await mutateAsync(arrivalFormData);
       if (status === 201) {
+        const notification_link = "/dashboard/management/store/pending-arrival";
+        const notification_search = [data?.result?.insertedId];
         const notificationStatus = "Submit a pending arrival form.";
         axios
           .post(`/api/v1/notifications_api/send_notification`, {
             currentUser,
             status: notificationStatus,
+            notification_search,
+            notification_link,
           })
           .then((res) => {
             if (res?.data?.finalResult?.acknowledged) {

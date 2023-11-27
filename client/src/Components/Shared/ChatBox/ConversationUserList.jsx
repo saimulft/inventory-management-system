@@ -20,6 +20,8 @@ export default function ConversationUserList() {
     setConversationData,
     conversationDataRefetch,
     setIsMessageSeen,
+    setMessageAlert
+
   } = useContext(ChatContext);
 
   //set current Chat User Info
@@ -209,6 +211,20 @@ export default function ConversationUserList() {
     const checkSeenUnseen = data.isMessageSeen[currentUserSeenStatus];
     return checkSeenUnseen;
   };
+
+  const currentUserObjKey = user?.email?.split("@")[0];
+
+
+  if(data){
+    const unreadMessage = data?.find(d =>{
+      if(d?.isMessageSeen){
+        if(!d.isMessageSeen[currentUserObjKey]){
+        return true
+        }
+      }
+    })
+    setMessageAlert(unreadMessage )
+  }
 
   // decide what to render
   let content;

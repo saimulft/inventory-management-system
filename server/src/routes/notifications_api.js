@@ -58,14 +58,13 @@ const run = async () => {
 
   // set notifications in db
   router.post("/send_notification", async (req, res) => {
-    const { currentUser, status } = req.body;
+    const { currentUser, status, notification_link, notification_search } = req.body;
     const notificationSenderRole = currentUser?.role
     const notificationSenderName = currentUser?.full_name
 
 // send notification by admin  || admin va
    try{
     if (currentUser?.role == "Admin" || currentUser?.role == "Admin VA") {
-      console.log("admin");
       let query;
       if (currentUser?.role == "Admin") {
         const condition1 = { admin_id: currentUser?._id };
@@ -92,6 +91,8 @@ const run = async () => {
           notification_sender_role: notificationSenderRole,
           timestamp,
           status,
+          notification_search,
+          notification_link
         };
        const finalResult =  await notification_collection.insertOne(notificationData, {upsert: true});
        res.send({finalResult, notificationData})
@@ -104,7 +105,6 @@ const run = async () => {
 // send notification by store manager admin
    try{
     if (currentUser?.role == "Store Manager Admin") {
-      console.log(currentUser?.role);
       const adminQuery = { _id: new ObjectId(currentUser?.admin_id) };
       const result = await all_users_collection.find(adminQuery).toArray();
       const query = {
@@ -135,6 +135,8 @@ const run = async () => {
             notification_sender_role: notificationSenderRole,
             timestamp,
             status,
+            notification_search,
+            notification_link
           };
         const finalResult =  await notification_collection.insertOne(notificationData);
         res.send({finalResult, notificationData})
@@ -179,6 +181,8 @@ const run = async () => {
             notification_sender_role: notificationSenderRole,
             timestamp,
             status,
+            notification_search,
+            notification_link
           };
           const finalResult =  await notification_collection.insertOne(notificationData);
           res.send({finalResult, notificationData})
@@ -221,6 +225,8 @@ const run = async () => {
             notification_sender_role: notificationSenderRole,
             timestamp,
             status,
+            notification_search,
+            notification_link
           };
           const finalResult =  await notification_collection.insertOne(notificationData);
           res.send({finalResult, notificationData})
@@ -263,6 +269,8 @@ const run = async () => {
             notification_sender_role: notificationSenderRole,
             timestamp,
             status,
+            notification_search,
+            notification_link
           };
           await notification_collection.insertOne(notificationData);
     }

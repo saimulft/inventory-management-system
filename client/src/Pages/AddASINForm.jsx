@@ -149,22 +149,17 @@ const AddASINForm = () => {
               .post("/api/v1/asin_upc_api/insert_asin_upc", asinInfo)
               .then((res) => {
                 if (res.status === 201) {
-                  console.log(res.data);
-
+                  const notification_link = "/dashboard/management/store/total-asin";
+                  const notification_search = [res?.data?.result?.insertedId];
                   const status = "Submit a ASIN/UPC form.";
                   axios
                     .post(`/api/v1/notifications_api/send_notification`, {
                       currentUser,
                       status,
-                      notification_links: [
-                        "http://localhost:5173/dashboard/management",
-                        "http://localhost:5173/dashboard/management/store/total-asin",
-                        "http://localhost:5173/dashboard/management/inventory/total-asin",
-                      ],
+                      notification_link,
+                      notification_search
                     })
                     .then((res) => {
-                      console.log(res.data);
-
                       if (res.data?.finalResult?.acknowledged) {
                         // send real time notification data
                         const notificationData = res.data?.notificationData;
@@ -177,6 +172,7 @@ const AddASINForm = () => {
                       }
                     })
                     .catch((err) => console.log(err));
+
                   setCountsRefetch(true);
                   form.reset();
                   setImageSrc(null);

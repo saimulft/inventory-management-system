@@ -9,6 +9,8 @@ import { GlobalContext } from "../../../Providers/GlobalProviders";
 import Loading from "../../Shared/Loading";
 import { DateRange } from 'react-date-range';
 import ReactPaginate from "react-paginate";
+import { useLocation } from 'react-router-dom';
+
 
 export default function InventoryTotalASINTable() {
   const { user } = useAuth()
@@ -25,6 +27,11 @@ export default function InventoryTotalASINTable() {
     endDate: new Date(),  //addDays(new Date(), 7)
     key: 'selection'
   }]);
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  // Get the value of the 'notification_search' parameter
+  const notificationSearchValue = queryParams.get('notification_search')
 
   const { data = [], isLoading } = useQuery({
     queryKey: ['get_all_asin_upc'],
@@ -43,6 +50,8 @@ export default function InventoryTotalASINTable() {
     }
   })
 
+  const notificationSearchData = data?.find(d => d._id == notificationSearchValue
+  )
   const handleCustomDateSearch = () => {
     setSearchError("")
     const startDate = rangeDate[0].startDate
@@ -52,9 +61,7 @@ export default function InventoryTotalASINTable() {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= endDate;
       });
-      console.log(filteredDateResults)
       if (!filteredDateResults.length) {
-
         return setSearchError(`No data found for selected date range`)
       }
       if (filteredDateResults.length) {
@@ -321,28 +328,37 @@ export default function InventoryTotalASINTable() {
                       <td className="text-[#8633FF]">{d.product_name}</td>
                       <td>{d.min_price}</td>
                       <td>{d.code_type}</td>
-                      <td>{d.store_manager_name}</td>
+                      <td>{d.store_manager_name}</td> 
                       <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
                     </tr>
                   )
                 })
-
                   :
+           (!notificationSearchValue ?  (isLoading ? <Loading /> :  displayAllData?.map((d, index) => {
+            return (
+              <tr
+                className={`${index % 2 == 1 && ""}`} key={index} >
+                <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                <td>{d.asin_upc_code}</td>
+                <td className="text-[#8633FF]">{d.product_name}</td>
+                <td>{d.min_price}</td>
+                <td>{d.code_type}</td>
+                <td>{d.store_manager_name}</td>
+                <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
+              </tr>
+            );
+          })) :  <tr>
+            <th>{notificationSearchData?.date && format(new Date(notificationSearchData.date), "y/MM/d")}</th>
+            <td>{notificationSearchData?.asin_upc_code}</td>
+            <td className="text-[#8633FF]">{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.min_price}</td>
+                <td>{notificationSearchData?.code_type}</td>
+                <td>{notificationSearchData?.store_manager_name}</td>
+                <td>{notificationSearchData?.product_image && <FileDownload fileName={notificationSearchData.product_image} />}</td>
+            </tr>
+          
+          )
 
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
-                    return (
-                      <tr
-                        className={`${index % 2 == 1 && ""}`} key={index} >
-                        <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td className="text-[#8633FF]">{d.product_name}</td>
-                        <td>{d.min_price}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.store_manager_name}</td>
-                        <td>{d.product_image && <FileDownload fileName={d.product_image} />}</td>
-                      </tr>
-                    );
-                  })
               }
             </>}
           </tbody>

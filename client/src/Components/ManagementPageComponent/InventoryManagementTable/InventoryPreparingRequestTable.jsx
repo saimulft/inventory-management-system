@@ -13,8 +13,13 @@ import { LiaShippingFastSolid } from "react-icons/lia";
 import useGlobal from "../../../hooks/useGlobal";
 import { NotificationContext } from "../../../Providers/NotificationProvider";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { useLocation } from "react-router-dom";
 
 export default function InventoryPreparingRequestTable() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  // Get the value of the 'notification_search' parameter
+  const notificationSearchValue = queryParams.get("notification_search");
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
   const { isSidebarOpen, setCountsRefetch } = useGlobal();
@@ -55,6 +60,9 @@ export default function InventoryPreparingRequestTable() {
       }
     },
   });
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
 
   const handleRTS = async (_id, quantity, upin) => {
     try {
@@ -97,11 +105,15 @@ export default function InventoryPreparingRequestTable() {
               .post(`/api/v1/ready_to_ship_api/ready_to_ship?id=${_id}`)
               .then((res) => {
                 if (res.status === 201) {
+                  const notification_link = "/dashboard/management/store/ready-to-ship"
+                  const notification_search = [res?.data?.result?.insertedId];
                   const status = "Product has been shipped.";
                   axios
                     .post(`/api/v1/notifications_api/send_notification`, {
                       currentUser,
                       status,
+                      notification_link,
+                      notification_search,
                     })
                     .then((res) => {
                       if (res.data?.finalResult?.acknowledged) {
@@ -145,11 +157,15 @@ export default function InventoryPreparingRequestTable() {
           .post(`/api/v1/out_of_stock_api/out_of_stock?id=${_id}`)
           .then((res) => {
             if (res.status === 201) {
+              const notification_link = "/dashboard/management/store/out-of-stock"
+              const notification_search = res?.data?.result?.insertedId;
               const status = "Product has been Added to out of stock.";
               axios
                 .post(`/api/v1/notifications_api/send_notification`, {
                   currentUser,
                   status,
+                  notification_search,
+                  notification_link
                 })
                 .then((res) => {
                   if (res.data?.finalResult?.acknowledged) {
@@ -558,7 +574,7 @@ export default function InventoryPreparingRequestTable() {
                 ) : isLoading ? (
                   <Loading />
                 ) : (
-                  displayAllData?.map((d, index) => {
+                ( !notificationSearchValue ? displayAllData?.map((d, index) => {
                     return (
                       <tr
                         className={`${index % 2 == 1 && ""} py-2`}
@@ -610,7 +626,52 @@ export default function InventoryPreparingRequestTable() {
                         </td>
                       </tr>
                     );
-                  })
+                  }) : <tr>
+                  <th>{format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
+                  <th className="font-normal">{notificationSearchData?.store_name}</th>
+                  <td>{notificationSearchData?.asin_upc_code}</td>
+                  <td>{notificationSearchData?.code_type}</td>
+                  <td>{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.order_id}</td>
+                  <td>{notificationSearchData?.upin}</td>
+                  <td>{notificationSearchData?.quantity}</td>
+                  <td>{notificationSearchData?.courier}</td>
+                  <td>{notificationSearchData?.tracking_number}</td>
+                  <td>
+                    {notificationSearchData?.invoice_file && (
+                      <FileDownload fileName={notificationSearchData?.invoice_file} />
+                    )}
+                  </td>
+                  <td>
+                    {notificationSearchData?.shipping_file && (
+                      <FileDownload fileName={notificationSearchData?.shipping_file} />
+                    )}
+                  </td>
+                  <td>{notificationSearchData?.notes}</td>
+                  <td className="flex gap-2">
+                    <button
+                      disabled={loading}
+                      onClick={() => {
+                        handleRTS(notificationSearchData?._id, notificationSearchData?.quantity, notificationSearchData?.upin);
+                      }}
+                      className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
+                    >
+                      <LiaShippingFastSolid />
+                      <p>RTS</p>
+                    </button>
+
+                    <button
+                      disabled={loading}
+                      onClick={() => {
+                        handleOOS(notificationSearchData?._id);
+                      }}
+                      className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
+                    >
+                      <LiaShippingFastSolid />
+                      <p>OOS</p>
+                    </button>
+                  </td>
+                </tr>)
                 )}
               </>
             )}

@@ -6,6 +6,7 @@ export const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
   const [conversationDataRefetch, setConversationDataRefetch] = useState(false);
   const [isMessageSeen, setIsMessageSeen] = useState(false)
+  const [messageAlert, setMessageAlert] = useState(true)
 
 
   // chat head information
@@ -126,7 +127,7 @@ export const ChatProvider = ({ children }) => {
     setConversationData,
     conversationDataRefetch,
     setConversationDataRefetch,
-    isMessageSeen, setIsMessageSeen
+    isMessageSeen, setIsMessageSeen, messageAlert, setMessageAlert
   };
   return (
     <ChatContext.Provider value={chatInfo}>{children}</ChatContext.Provider>

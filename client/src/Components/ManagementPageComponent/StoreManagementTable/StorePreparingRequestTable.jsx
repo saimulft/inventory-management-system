@@ -15,13 +15,18 @@ import { DateRange } from "react-date-range";
 import useGlobal from "../../../hooks/useGlobal";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { NotificationContext } from "../../../Providers/NotificationProvider";
+import { useLocation } from "react-router-dom";
 
 
 export default function StorePreparingRequestTable() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  // Get the value of the 'notification_search' parameter
+  const notificationSearchValue = queryParams.get("notification_search");
+
   const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const { socket } = useContext(GlobalContext);
-  const { currentUser } = useContext(NotificationContext);
-
+  const { currentUser } = useContext(NotificationContext)
   const [filterDays, setFilterDays] = useState('')
   const [singleData, setSingleData] = useState({})
   const [loading, setLoading] = useState(false)
@@ -67,6 +72,10 @@ export default function StorePreparingRequestTable() {
       }
     }
   })
+
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
 
   const handleDelete = (_id, invoice_file, shipping_file) => {
     const deleteData = {
@@ -537,7 +546,7 @@ export default function StorePreparingRequestTable() {
 
                   :
 
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+                  (!notificationSearchValue ? isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
 
                       <tr
@@ -587,7 +596,50 @@ export default function StorePreparingRequestTable() {
                         </td>
                       </tr>
                     );
-                  })
+                  }): <tr
+                >
+                  <th>{format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
+                  <th className="font-normal">{notificationSearchData?.store_name}</th>
+                  <td>{notificationSearchData?.asin_upc_code}</td>
+                  <td>{notificationSearchData?.code_type}</td>
+                  <td>{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.order_id}</td>
+                  <td>{notificationSearchData?.upin}</td>
+                  <td>{notificationSearchData?.quantity}</td>
+                  <td>{notificationSearchData?.courier}</td>
+                  <td>{notificationSearchData?.tracking_number}</td>
+                  <td>{notificationSearchData?.invoice_file && <FileDownload fileName={notificationSearchData?.invoice_file} />}</td>
+                  <td>{notificationSearchData?.shipping_file && <FileDownload fileName={notificationSearchData?.shipping_file} />}</td>
+                  <td>{notificationSearchData?.notes}</td>
+                  <td>
+                    <div className="dropdown dropdown-end">
+                      <label
+                        tabIndex={0}
+                      >
+                        <BiDotsVerticalRounded onClick={() => setSingleData()} cursor="pointer" />
+
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
+
+                        <li>
+                          <button onClick={() => {
+                            document.getElementById("my_modal_2").showModal()
+
+                          }
+                          }>Edit</button>
+                        </li>
+                        {
+                          user.role === 'Admin' || user.role === 'Admin VA' ? <li>
+                            <button onClick={() => handleDelete(notificationSearchValue?._id, notificationSearchData?.invoice_file, notificationSearchData?.shipping_file)}>Delete</button>
+                          </li> : ''
+                        }
+                      </ul>
+                    </div>
+                  </td>
+                </tr>)
               }
             </>}
           </tbody>

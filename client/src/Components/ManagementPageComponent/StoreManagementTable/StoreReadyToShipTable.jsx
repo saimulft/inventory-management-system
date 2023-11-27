@@ -10,9 +10,13 @@ import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { useLocation } from "react-router-dom";
 
 export default function StorePreparingRequestTable() {
-  // const [RTSdata ,setRTSdata] = useState({})
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  // Get the value of the 'notification_search' parameter
+  const notificationSearchValue = queryParams.get("notification_search");
   const { user } = useAuth()
   const [filterDays, setFilterDays] = useState('')
   const [searchText, setSearchText] = useState('');
@@ -43,6 +47,10 @@ export default function StorePreparingRequestTable() {
       }
     }
   })
+
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -340,7 +348,7 @@ export default function StorePreparingRequestTable() {
 
                   :
 
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+                (!notificationSearchValue ?  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
                         className={`${index % 2 == 1 && ""} py-2`}
@@ -361,7 +369,22 @@ export default function StorePreparingRequestTable() {
                         </td>
                       </tr>
                     );
-                  })
+                  }):   <tr>
+                  <th>{format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
+                  <th className="font-normal">{notificationSearchData?.store_name}</th>
+                  <td>{notificationSearchData?.asin_upc_code}</td>
+                  <td>{notificationSearchData?.code_type}</td>
+                  <td>{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.order_id}</td>
+                  <td>{notificationSearchData?.upin}</td>
+                  <td>{notificationSearchData?.quantity}</td>
+                  <td>{notificationSearchData?.courier}</td>
+                  <td>{notificationSearchData?.tracking_number}</td>
+                  <td className="flex gap-2">
+                    {notificationSearchData?.shipping_file && <FileDownload fileName={notificationSearchData?.shipping_file} />}
+
+                  </td>
+                </tr>)
               }
             </>}
           </tbody>

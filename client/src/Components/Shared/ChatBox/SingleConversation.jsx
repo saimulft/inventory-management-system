@@ -45,6 +45,8 @@ export default function SingleConversation() {
 
   const lastMessageSenderEmail = conversation[conversation?.length - 1]?.sender;
 
+ 
+
   // render message data first time
   useEffect(() => {
     setConversation([]);
@@ -197,15 +199,12 @@ export default function SingleConversation() {
         } else if (data?.data?._id) {
           socket.current?.emit("sendMessage", data?.data);
           typingStop();
-          console.log("update");
-
           const updateDataLestMessage = { data: data?.data, isMessageSeen };
           console.log(updateDataLestMessage);
-
-          socket.current?.emit(
-            "sentLestMessageUpdateConversationUserList",
-            {...data?.data, isMessageSeen}
-          );
+          socket.current?.emit("sentLestMessageUpdateConversationUserList", {
+            ...data?.data,
+            isMessageSeen,
+          });
         }
       }
     } catch (err) {
@@ -241,14 +240,6 @@ export default function SingleConversation() {
     }
   }, [socketData]);
 
-  /// get single message on socket
-  useEffect(() => {
-    socket?.current?.on("getMessage", (data) => {
-      if (data) {
-        setSocketData(data);
-      }
-    });
-  }, []);
   //  get typing status
   useEffect(() => {
     socket?.current?.on("getTyping", (status) => {
@@ -302,27 +293,36 @@ export default function SingleConversation() {
           `/api/v1/conversations_api/messages/seen_messages?id=${conversationId}&email=${currentUserEmail}`
         )
         .then((res) => {
-          console.log(res);
-
           setConversationDataRefetch(!conversationDataRefetch);
         })
         .catch((error) => {
           console.log(error);
           notificationAlert(true);
         });
-      socket?.current?.emit("seenUnseenStatus", {
-        status: true,
-        receiver: currentChatUserEmail,
-      });
     }
   };
 
-  // get seen unseen status
+  /// get single message on socket
   useEffect(() => {
-    socket.current.on("getSeenUnseenStatus", (status) => {
-      setIsMessageSeen(status);
+    socket?.current?.on("getMessage", (data) => {
+      if (data) {
+        socket.current?.emit("sentSeenUnseenStatus", {
+          status: true,
+          receiver: data?.sender,
+        });
+        setSocketData(data);
+      }
     });
-  }, []);
+  }, [socket]);
+
+   // get seen unseen status
+  //  useEffect(() => {
+  //   socket.current.on("getSeenUnseenStatus", (status) => {
+  //     // setIsMessageSeen(status);
+  //     console.log("get messages", status);
+  //   });
+  // }, [socket]);
+
 
   let content;
   if (!conversationLoading && conversationError) {
@@ -436,11 +436,6 @@ export default function SingleConversation() {
         )}
         {content}
         {chatLoadingStatus && online && <ChatLoading />}
-        {isMessageSeen && user?.email == lastMessageSenderEmail && (
-          <p className="text-right text-xs mb-1 mr-4 relative bottom-[6px]">
-            seen
-          </p>
-        )}
       </div>
 
       {/* sent message box  */}

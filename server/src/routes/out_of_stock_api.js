@@ -22,7 +22,7 @@ const run = async () => {
                 if (result.acknowledged) {
                     const deleteResult = await preparing_form_collection.deleteOne({ "_id": new ObjectId(id) })
                     if (deleteResult.deletedCount) {
-                        res.status(201).json({ message: "OOS data inserted" })
+                        res.status(201).json({ message: "OOS data inserted", result })
                     }
                 }
             }
@@ -72,8 +72,6 @@ const run = async () => {
             const id = req.query.id;
 
             const result = await out_of_stock_collection.deleteOne({ _id: new ObjectId(id) });
-            console.log(result)
-
             if (result.deletedCount) {
                 res.status(200).json({ message: "Successfully deleted an out of stock data" })
             }
@@ -114,10 +112,8 @@ const run = async () => {
                         ...result,
                     }
                     const preparingResult = await preparing_form_collection.insertOne(preparingData)
-                    console.log(preparingResult)
-
                     if (preparingResult.insertedId) {
-                        return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
+                        return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful', result: preparingResult });
                     }
                     else {
                         return res.status(500).json({ message: 'Error to insert prepering data' });

@@ -22,7 +22,7 @@ const run = async () => {
                     const deleteResult = await ready_to_ship_collection.deleteOne({ _id: new ObjectId(id) });
 
                     if (deleteResult.deletedCount) {
-                        return res.status(200).json({ message: "Shipped data inserted and deleted from ready_to_ship_data" });
+                        return res.status(200).json({ message: "Shipped data inserted and deleted from ready_to_ship_data", result });
                     } else {
                         return res.status(404).json({ message: "No matching document found in ready_to_ship_data to delete" });
                     }
@@ -120,7 +120,7 @@ const run = async () => {
                     const updateStockResult = await all_stock_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateStockdata })
 
                     if (updateStockResult.modifiedCount) {
-                        return res.status(201).json({ status: 'success', message: 'Data delete and update operations successful' });
+                        return res.status(201).json({ status: 'success', message: 'Data delete and update operations successful', result: id });
                     }
                     else {
                         return res.status(500).json({ message: 'Error to update all stock data' });
