@@ -30,16 +30,16 @@ const run = async () => {
                 warehouse_name: req.body.warehouse_name,
                 warehouse_id: req.body.warehouse_id,
 
-                amazon_quantity: req.body.amazon_quantity,
-                customer_name: req.body.customer_name,
-                amazon_shipping: req.body.amazon_shipping,
-                shipping_cost: req.body.shipping_cost,
-                handling_cost: req.body.handling_cost,
-                walmart_quantity: req.body.walmart_quantity,
-                amazon_price: req.body.amazon_price,
-                average_price: req.body.average_price,
-                average_tax: req.body.average_tax,
-                order_number: req.body.order_number,
+                amazon_quantity: 0,
+                customer_name: 'N/A',
+                amazon_shipping: 0,
+                shipping_cost: 0,
+                handling_cost: 0,
+                walmart_quantity: 0,
+                amazon_price: 0,
+                average_price: 0,
+                average_tax: 0,
+                order_number: "N/A",
             }
 
             const result = await pending_arrival_collection.insertOne(data)
@@ -57,7 +57,7 @@ const run = async () => {
     })
 
     //get all pending arrival data
-    router.post('/get_all_pending_arrival_data',verifyJWT, async (req, res) => {
+    router.post('/get_all_pending_arrival_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
             const role = req.role;
