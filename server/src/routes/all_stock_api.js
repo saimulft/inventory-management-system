@@ -75,16 +75,14 @@ const run = async () => {
         }
     })
 
-    router.post('/get_all_stock_dropdown_data', async (req, res) => {
+    router.post('/get_all_stock_dropdown_data', async (req, res) => { 
         try {
             const user = req.body.user;
 
-            const allStockData = await all_stock_collection.find({ admin_id: user.admin_id }).sort({ date: -1 }).toArray()
+            const allStockData = await all_stock_collection.find({ admin_id: user.admin_id }).project({ "value": "$upin", "label": "$upin", "_id": 0 }).sort({ date: -1 }).toArray()
             if (allStockData.length) {
-                const data = allStockData.map(item => {
-                    return {  value: item.upin, label: item.upin }
-                })
-                res.status(200).json({ data: data, message: "successfully get asin_upc" })
+
+                res.status(200).json({ data: allStockData, message: "successfully get asin_upc" })
             }
             else {
                 res.status(204).json({ message: "No content" })
