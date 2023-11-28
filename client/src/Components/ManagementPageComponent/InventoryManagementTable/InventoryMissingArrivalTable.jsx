@@ -294,7 +294,7 @@ export default function InventoryMissingArrivalTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Missing Arrival Item: {data.length}
+        Missing Arrival Item<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
       <div className="relative flex justify-between items-center mt-4">
         <div className="flex text-center w-1/2 ">

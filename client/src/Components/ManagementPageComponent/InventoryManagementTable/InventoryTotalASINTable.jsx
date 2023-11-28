@@ -30,7 +30,6 @@ export default function InventoryTotalASINTable() {
 
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  // Get the value of the 'notification_search' parameter
   const notificationSearchValue = queryParams.get('notification_search')
 
   const { data = [], isLoading } = useQuery({
@@ -225,7 +224,7 @@ export default function InventoryTotalASINTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Total ASIN/UPC: {data?.length}
+        Total ASIN/UPC<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">

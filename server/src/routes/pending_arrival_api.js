@@ -160,12 +160,14 @@ const run = async () => {
                 if (result) {
                     if (req.body.received_quantity) {
                         const missingQuantity = parseInt(result.quantity) - parseInt(result.received_quantity);
-
+                        
                         const deletedResult = await pending_arrival_collection.deleteOne({ _id: new ObjectId(id) });
                         if (!deletedResult.deletedCount) {
                             return res.status(500).json({ message: "Error to delete pending arrival data" })
                         }
-
+                        
+                        // let missingArrivalInsertedId;
+                        let missingArrivalInsertedId;
                         if (missingQuantity) {
                             const missingArrivalData = {
                                 ...result,
@@ -173,6 +175,8 @@ const run = async () => {
                                 missing_status: 'active'
                             }
                             const insertResult = await missing_arrival_collection.insertOne(missingArrivalData);
+                            missingArrivalInsertedId = insertResult.insertedId
+                            // missingArrivalData = insertResult.insertedId
                             if (!insertResult.insertedId) {
                                 return res.status(500).json({ message: 'Internal server error while inserting missing arrival data' });
                             }
@@ -197,10 +201,16 @@ const run = async () => {
                                 remaining_price: remainingPrice
                             }
                             const id = existInStock._id
+                            let notificationSearchArray = []
+                            if(missingArrivalInsertedId){
+                            notificationSearchArray = [id, missingArrivalInsertedId]
+                            }
+                            else{
+                                notificationSearchArray = id
+                            }
                             const updateStockResult = await all_stock_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateStockdata })
-
                             if (updateStockResult.modifiedCount) {
-                                return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
+                                return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful', result: notificationSearchArray });
                             }
                             else {
                                 return res.status(500).json({ message: 'Error to insert all stock data' });
@@ -209,7 +219,6 @@ const run = async () => {
 
                         else {
                             const remainingPrice = parseInt(result.received_quantity) * result.unit_price;
-
                             const allStockData = {
                                 ...result,
                                 stock: result.received_quantity,
@@ -219,7 +228,7 @@ const run = async () => {
                             }
                             const allStockIntertResult = await all_stock_collection.insertOne(allStockData)
                             if (allStockIntertResult.insertedId) {
-                                return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
+                                return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful', result: [allStockIntertResult.insertedId, missingArrivalInsertedId] });
                             }
                             else {
                                 return res.status(500).json({ message: 'Error to insert all stock data' });

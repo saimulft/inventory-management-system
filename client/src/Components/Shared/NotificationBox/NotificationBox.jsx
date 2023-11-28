@@ -4,10 +4,11 @@ import { GlobalContext } from "../../../Providers/GlobalProviders";
 import axios from "axios";
 import useAuth from "../../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
+import { AiOutlineClose } from "react-icons/ai";
 
 export default function NotificationBox({notificationsRef}) {
   const navigate = useNavigate()
-  const { isNotificationBoxOpen } = useContext(ChatContext);
+  const { isNotificationBoxOpen, setIsNotificationBoxOpen } = useContext(ChatContext);
   const { socket } = useContext(GlobalContext);
   const { user } = useAuth();
   const [notifications, setNotifications] = useState([]);
@@ -27,18 +28,26 @@ export default function NotificationBox({notificationsRef}) {
       .catch((error) => console.log(error));
   };
 
-const handleNavigateUrl = (url, notification_search) => {
-  if(user?.role == "Admin" ||user?.role ==  "Admin VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA"){
+  // generate notification redirect url 
+const handleNavigateUrl = (url, notification_search, notification) => {
+  setIsNotificationBoxOpen(false)
+  if(user?.role == "Admin" ||user?.role ==  "Admin VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA" && !Array.isArray(url) && notification_search.length < 2){
   const link = url.split("/")
   const indexToReplace = 3;
   const newValue = "inventory"
   link[indexToReplace] = newValue
   const generatedLink = link.join("/") + `?notification_search=${notification_search}`
-  console.log(generatedLink);
   navigate(generatedLink)
 }
-if(user?.role == "Store Manager Admin" || user?.role == "Store Manager VA"){
-  const generatedLink = url + `?notification_search=${notification_search}`
+if(user?.role == "Store Manager Admin" || user?.role == "Store Manager VA" && !Array.isArray(url) && notification_search.length < 2){
+  let generatedLink = ""
+  if(notification?.notification_search.length > 1){
+     generatedLink = url + `?notification_search=${notification_search}&missing_arrival_status=active`
+  }
+  else{
+    generatedLink = url + `?notification_search=${notification_search}`
+  }
+  
   navigate(generatedLink)
 }
   }
@@ -98,30 +107,36 @@ handleNotificationsData()
     <div>
       {isNotificationBoxOpen && (
         <div className="  fixed right-10 top-[74px] shadow-2xl z-50 bg-white rounded-b-lg h-[600px] w-[400px] py-4">
-          <div className="text-black p-4">
+          <div className="text-black px-4 py-2">
+            <div className="flex items-center justify-between">
             <h3 className="text-2xl font-bold">Notifications</h3>
+            <div onClick={() => setIsNotificationBoxOpen(false)} className="flex items-center">
+            <button
+              className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100"
+            >
+              <AiOutlineClose size={20} />
+            </button>
+          </div>
+            </div>
             <div className="flex gap-2 mt-3 mb-2">
-              <p className="bg-purple-50 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-100 transition hover:shadow">
-                All
-              </p>
-              <p className="bg-purple-50 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-100 transition hover:shadow">
-                Unread
-              </p>
+            {notifications?.length > 0 && <p className="bg-purple-50 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-100 transition hover:shadow text-sm">
+                Mark all as read
+              </p>}
             </div>
           </div>
           <div
           onScroll={handleScroll}
             ref={notificationsRef}
-            className="h-[467px]  overflow-y-scroll notifications_box"
+            className="h-[488px]  overflow-y-scroll notifications_box"
           >
-            {notifications?.map((notification) => {
+          <div>  {notifications?.map((notification) => {
               const notification_link = notification?.notification_link
               const notification_search = notification?.notification_search
               return (
                 <div
-                onClick={() => handleNavigateUrl(notification_link, notification_search)}
+                onClick={notification_search?.length < 2 ? () => handleNavigateUrl(notification_link, notification_search) :null }
                   key={notification?._id}
-                  className="hover:bg-gray-100 px-4 flex items-center gap-3 py-3 cursor-pointer rounded-lg transition "
+                  className="hover:bg-gray-100 px-4 flex items-center gap-3 py-3 cursor-pointer  transition "
                 >
                   <div>
                     <div className=" h-14 w-14 rounded-full">
@@ -138,6 +153,8 @@ handleNotificationsData()
                         {notification?.notification_sender_name}
                       </span>
                       <span className="text-sm"> {notification?.status}</span>
+                     {notification_search?.length > 1 && <span onClick={() => handleNavigateUrl(notification_link[0],notification_search[0])} className="underline text-xs ml-1 text-purple-500 hover:text-purple-800">All Stock</span>}
+                     {notification_search?.length > 1 && <span onClick={() => handleNavigateUrl(notification_link[1],notification_search[1], notification)} className="underline text-xs ml-2 text-purple-500 hover:text-purple-800">Missing Arrival</span>}
                     </p>
                     <p className="text-purple-500 text-xs">
                       {calculateAgoTime(notification?.timestamp)}
@@ -145,7 +162,9 @@ handleNotificationsData()
                   </div>
                 </div>
               );
-            })}
+            })}</div>
+
+          {notifications?.length == 0 && <div className="text-xl font-medium text-center text-purple-500">Notifications data not available!</div> }
           </div>
         </div>
       )}

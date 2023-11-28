@@ -369,7 +369,7 @@ export default function StoreOutOfStockTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Out Of Stock: {data?.length}
+        Out Of Stock<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">

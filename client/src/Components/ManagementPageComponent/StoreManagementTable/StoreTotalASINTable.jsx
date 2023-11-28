@@ -422,7 +422,7 @@ export default function InventoryTotalASINTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Total ASIN/UPC: {data?.length}
+        Total ASIN/UPC<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">

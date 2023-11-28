@@ -284,7 +284,7 @@ export default function InventoryReadyToShipTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Ready to ship : {data?.length}
+        Ready to ship<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">

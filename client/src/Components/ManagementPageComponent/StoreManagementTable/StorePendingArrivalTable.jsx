@@ -66,6 +66,9 @@ export default function StorePendingArrivalTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
+
+  console.log(notificationSearchData);
+  
   
   const handleSearch = (e) => {
     e.preventDefault()
@@ -312,17 +315,14 @@ export default function StorePendingArrivalTable() {
   const endIndexFilter = startIndexFilter + itemsPerPage;
   const displayedDataFilter = searchResults.slice(startIndexFilter, endIndexFilter);
 
-
   //  ALl data pagination calculation
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const displayAllData = data.slice(startIndex, endIndex);
 
-
-
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">Pending Arrival: {data.length}</h3>
+      <h3 className="text-center text-2xl font-medium">Pending Arrival<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span></h3>
 
       <div className="relative flex justify-between items-center mt-4">
         <div>
@@ -373,7 +373,7 @@ export default function StorePendingArrivalTable() {
             </p>
           </div>
         </div>
-        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
+       {!notificationSearchValue && <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
           <input
             className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
             placeholder="Search Here"
@@ -394,7 +394,7 @@ export default function StorePendingArrivalTable() {
               Clear
             </button>
           </div>
-        </form>
+        </form>}
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -418,6 +418,9 @@ export default function StorePendingArrivalTable() {
           </thead>
           <tbody className="relative">
             {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
+
+          { notificationSearchData == undefined && <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">Pending arrival notification search data not found!</p>}
+            
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {
                   return (

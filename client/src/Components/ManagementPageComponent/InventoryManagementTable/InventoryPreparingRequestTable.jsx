@@ -368,7 +368,7 @@ export default function InventoryPreparingRequestTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Preparing Request : {data?.length}
+        Preparing Request<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">

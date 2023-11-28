@@ -5,6 +5,7 @@ import axios from "axios";
 import Loading from "../../Shared/Loading";
 import { useState } from "react";
 import ReactPaginate from "react-paginate";
+import { useLocation } from "react-router-dom";
 
 export default function StoreAllStockTable() {
   const { user } = useAuth()
@@ -13,6 +14,9 @@ export default function StoreAllStockTable() {
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const notificationSearchValue = queryParams.get("notification_search");
   const { data = [], isLoading } = useQuery({
     queryKey: ['all_stock_data'],
     queryFn: async () => {
@@ -28,6 +32,11 @@ export default function StoreAllStockTable() {
       }
     }
   })
+
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  ); 
+
   const handleSearch = (e) => {
     e.preventDefault()
     setSearchError("")
@@ -141,7 +150,7 @@ export default function StoreAllStockTable() {
   const displayAllData = data.slice(startIndex, endIndex);
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">All Stocks: {data.length}</h3>
+      <h3 className="text-center text-2xl font-medium">All Stocks<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span></h3>
 
       <div className="relative flex justify-end mt-4">
         <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
@@ -206,7 +215,7 @@ export default function StoreAllStockTable() {
 
                   :
 
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+                  (!notificationSearchValue ? isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
                         className={`${index % 2 == 1 && ""}`}
@@ -223,7 +232,17 @@ export default function StoreAllStockTable() {
                         <td>{d.remaining_price ? `$${d.remaining_price}` : '-'}</td>
                       </tr>
                     );
-                  })
+                  }): <tr>
+                  <th>{notificationSearchData?.store_name}</th>
+                  <td>{notificationSearchData?.upin}</td>
+                  <td>{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.received_quantity}</td>
+                  <td>{notificationSearchData?.total_sold ? `${notificationSearchData?.total_sold}` : '-'}</td>
+                  <td>{notificationSearchData?.stock}</td>
+                  <td>${notificationSearchData?.unit_price}</td>
+                  <td>{notificationSearchData?.sold_price ? `$${notificationSearchData?.sold_price}` : '-'}</td>
+                  <td>{notificationSearchData?.remaining_price ? `$${notificationSearchData?.remaining_price}` : '-'}</td>
+                </tr> )
               }
             </>}
           </tbody>

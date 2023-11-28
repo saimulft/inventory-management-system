@@ -16,6 +16,7 @@ import { MdErrorOutline } from "react-icons/md";
 import useGlobal from "../../../hooks/useGlobal";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { NotificationContext } from "../../../Providers/NotificationProvider";
+import { useLocation } from "react-router-dom";
 
 export default function InventoryShippedTable() {
   const { socket } = useContext(GlobalContext);
@@ -32,6 +33,9 @@ export default function InventoryShippedTable() {
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const notificationSearchValue = queryParams.get("notification_search");
   const [rangeDate, setRangeDate] = useState([
     {
       startDate: new Date(),
@@ -62,6 +66,12 @@ export default function InventoryShippedTable() {
       }
     },
   });
+
+
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
+
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -346,7 +356,7 @@ export default function InventoryShippedTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Shipped : {data?.length}
+        Shipped<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
@@ -553,7 +563,7 @@ export default function InventoryShippedTable() {
                 ) : isLoading ? (
                   <Loading />
                 ) : (
-                  displayAllData?.map((d, index) => {
+                 (!notificationSearchValue ? displayAllData?.map((d, index) => {
                     return (
                       <tr className={`${index % 2 == 1 && ""}`} key={index}>
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
@@ -609,7 +619,59 @@ export default function InventoryShippedTable() {
                         </td>
                       </tr>
                     );
-                  })
+                  }):  <tr>
+                  <th>{notificationSearchData?.date && format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
+                  <td className="font-normal">{notificationSearchData?.store_name}</td>
+                  <td>{notificationSearchData?.asin_upc_code}</td>
+                  <td>{notificationSearchData?.code_type}</td>
+                  <td>{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.order_id}</td>
+                  <td>{notificationSearchData?.upin}</td>
+                  <td>{notificationSearchData?.quantity}</td>
+                  <td>{notificationSearchData?.courier}</td>
+                  <td className="text-[#8633FF]">{notificationSearchData?.tracking_number}</td>
+                  <td>
+                    {notificationSearchData?.shipping_file && (
+                      <FileDownload fileName={notificationSearchData?.shipping_file} />
+                    )}
+                  </td>
+                  <td>
+                    <div className="dropdown dropdown-end">
+                      <label tabIndex={0}>
+                        <BiDotsVerticalRounded
+                          onClick={() => setSingleData(notificationSearchData)}
+                          cursor="pointer"
+                        />
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
+                        <li>
+                          <button
+                            onClick={() =>
+                              document
+                                .getElementById("my_modal_2")
+                                .showModal()
+                            }
+                          >
+                            Edit
+                          </button>
+                        </li>
+                        {user.role === "Admin" ||
+                        user.role === "Admin VA" ? (
+                          <li>
+                            <button onClick={() => handleDelete(notificationSearchData?._id)}>
+                              Delete
+                            </button>
+                          </li>
+                        ) : (
+                          ""
+                        )}
+                      </ul>
+                    </div>
+                  </td>
+                </tr>)
                 )}
               </>
             )}

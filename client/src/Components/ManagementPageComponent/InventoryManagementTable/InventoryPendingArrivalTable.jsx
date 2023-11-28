@@ -20,7 +20,6 @@ import { useLocation } from "react-router-dom";
 export default function InventoryPendingArrivalTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  // Get the value of the 'notification_search' parameter
   const notificationSearchValue = queryParams.get("notification_search");
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
@@ -228,13 +227,24 @@ export default function InventoryPendingArrivalTable() {
         updatedData
       )
       .then((res) => {
+        console.log(res);
+        
         if (res.status === 201) {
           const status = "Update pending arrival request.";
+          const notification_search = res?.data?.result;
+          let notification_link = ''
+          if(notification_search < 2){
+            notification_link = '/dashboard/management/store/all-stock'
+          }
+          else{
+            notification_link =['/dashboard/management/store/all-stock', "/dashboard/management/store/missing-arrival"]
+          }
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
-              notification_links: ["http://localhost:5173/dashboard/management","http://localhost:5173/dashboard/management/store/pending-arrival","http://localhost:5173/dashboard/management/inventory/pending-arrival"]
+              notification_search,
+              notification_link
             })
             .then((res) => {
                    // send real time notification data
@@ -373,7 +383,7 @@ export default function InventoryPendingArrivalTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Pending Arrival: {data?.length}
+        Pending Arrival<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">

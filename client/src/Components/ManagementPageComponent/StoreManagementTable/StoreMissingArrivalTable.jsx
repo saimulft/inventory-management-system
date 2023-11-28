@@ -20,9 +20,10 @@ export default function StoreMissingArrivalTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const notificationSearchValue = queryParams.get("notification_search");
+  const missingArrivalStatus = queryParams.get("missing_arrival_status");
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
-  const [activeTab, setActiveTab] = useState(`${notificationSearchValue ? "solved": "active"}`);
+  const [activeTab, setActiveTab] = useState(`${notificationSearchValue ? missingArrivalStatus == "active" ? "active" : "solved": "active"}`);
   const [singleData, setSingleData] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,6 +32,7 @@ export default function StoreMissingArrivalTable() {
   const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const { isSidebarOpen, setCountsRefetch } = useGlobal();
+
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(0);
@@ -325,7 +327,7 @@ export default function StoreMissingArrivalTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Missing Arrival Item: {data.length}
+        Missing Arrival Item<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
       </h3>
       <div className="relative flex justify-between items-center mt-4">
         <div className="flex text-center w-1/2 ">
