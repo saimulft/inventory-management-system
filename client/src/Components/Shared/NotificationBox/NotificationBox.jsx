@@ -30,7 +30,6 @@ export default function NotificationBox({notificationsRef}) {
 const handleNavigateUrl = (url, notification_search) => {
   if(user?.role == "Admin" ||user?.role ==  "Admin VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA"){
   const link = url.split("/")
-  
   const indexToReplace = 3;
   const newValue = "inventory"
   link[indexToReplace] = newValue
@@ -42,9 +41,6 @@ if(user?.role == "Store Manager Admin" || user?.role == "Store Manager VA"){
   const generatedLink = url + `?notification_search=${notification_search}`
   navigate(generatedLink)
 }
-
-console.log(url);
-
   }
 
   // render the notifications data first time 
@@ -97,22 +93,6 @@ if(scrollTop + clientHeight == scrollHeight){
 handleNotificationsData()
 }
   };
-
-  // notification link 
-//   const notificationLink = (links) => {
-// if(user.role == "Admin" || user.role == "Admin VA"){
-//  const link = links[0]
-//  return link;
-// }
-// if(user.role == "Store Manager Admin" || user.role == "Store Manager VA"){
-//  const link = links[2]
-//  return link;
-// }
-// if(user.role == "Warehouse Admin" || user.role == "Warehouse Manager VA"){
-//  const link = links[1]
-//  return link;
-// }
-//   }
 
   return (
     <div>

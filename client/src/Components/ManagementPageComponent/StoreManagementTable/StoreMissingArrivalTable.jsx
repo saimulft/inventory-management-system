@@ -14,11 +14,15 @@ import ReactPaginate from "react-paginate";
 import useGlobal from "../../../hooks/useGlobal";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { NotificationContext } from "../../../Providers/NotificationProvider";
+import { useLocation } from "react-router-dom";
 
 export default function StoreMissingArrivalTable() {
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const notificationSearchValue = queryParams.get("notification_search");
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
-  const [activeTab, setActiveTab] = useState("active");
+  const [activeTab, setActiveTab] = useState(`${notificationSearchValue ? "solved": "active"}`);
   const [singleData, setSingleData] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -57,6 +61,10 @@ export default function StoreMissingArrivalTable() {
       }
     },
   });
+
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
 
   useEffect(() => {
     refetch();
@@ -141,11 +149,6 @@ export default function StoreMissingArrivalTable() {
     const form = event.target;
     const missingStatus = form.missingStatus.value;
     const notes = form.notes.value;
-
-    // const productName = form.productName.value;
-    // const eda = form.eda.value;
-    // product_name: productName,
-    // eda: eda ? new Date(eda).toISOString() : '',
 
     const updatedData = {
       missing_status: missingStatus,
@@ -407,7 +410,7 @@ export default function StoreMissingArrivalTable() {
             ) : (
               <>
                 {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
+                 (!notificationSearchValue ? displayedDataFilter.map((d, index) => {
                     return (
                       <tr className={`${index % 2 == 1 && ""}`} key={index}>
                         <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
@@ -462,11 +465,11 @@ export default function StoreMissingArrivalTable() {
                         </td>
                       </tr>
                     );
-                  })
+                  }): <div>hello</div> )
                 ) : isLoading ? (
                   <Loading />
                 ) : (
-                  displayAllData?.map((d, index) => {
+                 (!notificationSearchValue ? displayAllData?.map((d, index) => {
                     return (
                       <tr className={`${index % 2 == 1 && ""}`} key={index}>
                         <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
@@ -521,7 +524,58 @@ export default function StoreMissingArrivalTable() {
                         </td>
                       </tr>
                     );
-                  })
+                  }): ( notificationSearchData && <tr>
+                  <th>{notificationSearchData?.date && format(new Date(notificationSearchData?.date), "yyyy/MM/dd")}</th>
+                  <th className="font-normal">{notificationSearchData?.store_name}</th>
+                  <td>{notificationSearchData?.asin_upc_code}</td>
+                  <td>{notificationSearchData?.code_type}</td>
+                  <td>{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.supplier_id}</td>
+                  <td>{notificationSearchData?.upin}</td>
+                  <td>{notificationSearchData?.quantity}</td>
+                  <td>{notificationSearchData?.received_quantity}</td>
+                  <td>{notificationSearchData?.missing_quantity}</td>
+                  <td>
+                    {notificationSearchData?.supplier_tracking ? notificationSearchData?.supplier_tracking : "-"}
+                  </td>
+                  <td>{notificationSearchData?.eda && format(new Date(notificationSearchData?.eda), "yyyy/MM/dd")}</td>
+                  <td>
+                    <div className="dropdown dropdown-end">
+                      <label tabIndex={0}>
+                        <BiDotsVerticalRounded
+                          onClick={() => setSingleData(notificationSearchData)}
+                          cursor="pointer"
+                        />
+                      </label>
+                      <ul
+                        tabIndex={0}
+                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                      >
+                        <li>
+                          <button
+                            onClick={() =>
+                              document
+                                .getElementById("my_modal_2")
+                                .showModal()
+                            }
+                          >
+                            Edit
+                          </button>
+                        </li>
+                        {user.role === "Admin" ||
+                        user.role === "Admin VA" ? (
+                          <li>
+                            <button onClick={() => handleDelete(notificationSearchData?._id)}>
+                              Delete
+                            </button>
+                          </li>
+                        ) : (
+                          ""
+                        )}
+                      </ul>
+                    </div>
+                  </td>
+                </tr> ))
                 )}
               </>
             )}
@@ -574,23 +628,6 @@ export default function StoreMissingArrivalTable() {
             onSubmit={(event) => handleUpdate(event, singleData._id)}
             className="flex gap-10"
           >
-            {/* <div className="w-1/2">
-              <div className="flex items-center mb-6 gap-2">
-                {user.role === 'Admin' || user.role === 'Admin VA' ? <BiSolidEdit onClick={() => setIsEditable(!isEditable)} size={24} className="cursor-pointer" /> : null}
-                <h3 className="text-2xl font-medium">Details</h3>
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between'}`}>
-                <label className="font-bold">Product Name: </label>
-                <input type="text" defaultValue={singleData.product_name}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} py-1 pl-2 rounded`} id="productName" name="productName" readOnly={!isEditable} />
-              </div>
-              <div className={`flex items-center ${isEditable && 'justify-between mt-2'}`}>
-                <label className="font-bold">EDA: </label>
-                <input type={isEditable ? 'date' : 'text'} defaultValue={isEditable ? '' : singleData.eda && format(new Date(singleData.eda), 'yyyy/MM/dd')}
-                  className={`${isEditable ? 'border border-[#8633FF] outline-[#8633FF] mt-1' : 'outline-none'} w-[191px] py-1 pl-2 rounded`} id="eda" name="eda" readOnly={!isEditable} />
-              </div>
-            </div> */}
-
             <div className="w-full">
               <h3 className="text-2xl font-medium mb-6">Update</h3>
               <div>

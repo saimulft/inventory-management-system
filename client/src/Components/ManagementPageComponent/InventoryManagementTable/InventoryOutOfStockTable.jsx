@@ -21,7 +21,6 @@ import { useLocation } from "react-router-dom";
 export default function InventoryOutOfStockTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  // Get the value of the 'notification_search' parameter
   const notificationSearchValue = queryParams.get("notification_search");
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
@@ -137,9 +136,8 @@ export default function InventoryOutOfStockTable() {
       )
       .then((res) => {
         if (res.status === 201) {
-          const baseURL = window.location.origin;
           const notification_link =
-            baseURL + "/dashboard/management/store/preparing-request";
+            "/dashboard/management/store/preparing-request";
           const notification_search = res.data?.result?.insertedId
           const status = "Solved out of stock data.";
           axios

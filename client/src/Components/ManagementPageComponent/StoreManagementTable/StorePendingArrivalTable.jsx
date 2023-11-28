@@ -510,8 +510,7 @@ export default function StorePendingArrivalTable() {
                       </tr>
                     );
                   }): 
-                  <tr
-                >
+                 (notificationSearchData && <tr>
                   <th>{format(new Date(notificationSearchData?.date), 'yyyy/MM/dd')}</th>
                   <th className="font-normal">{notificationSearchData?.store_name}</th>
                   <td>{notificationSearchData?.asin_upc_code}</td>
@@ -547,7 +546,7 @@ export default function StorePendingArrivalTable() {
                       </ul>
                     </div>
                   </td>
-                </tr>
+                </tr>)
                   )
               }
             </>}

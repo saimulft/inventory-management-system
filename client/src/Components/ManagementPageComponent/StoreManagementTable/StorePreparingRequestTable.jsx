@@ -21,13 +21,12 @@ import { useLocation } from "react-router-dom";
 export default function StorePreparingRequestTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  // Get the value of the 'notification_search' parameter
   const notificationSearchValue = queryParams.get("notification_search");
 
   const { isSidebarOpen, setCountsRefetch } = useGlobal()
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext)
-  const [filterDays, setFilterDays] = useState('')
+  const [filterDays, setFilterDays] = useState('all')
   const [singleData, setSingleData] = useState({})
   const [loading, setLoading] = useState(false)
   const [formError, setFormError] = useState('')
@@ -64,7 +63,7 @@ export default function StorePreparingRequestTable() {
       try {
         const res = await axios.post('/api/v1/preparing_form_api/get_all_preparing_request_data', { user })
         if (res.status === 200) {
-          return res.data.data;
+          return res?.data?.data;
         }
         return [];
       } catch (error) {
@@ -596,9 +595,8 @@ export default function StorePreparingRequestTable() {
                         </td>
                       </tr>
                     );
-                  }): <tr
-                >
-                  <th>{format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
+                  }): (notificationSearchData && <tr>
+                  <th>{notificationSearchData?.date && format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
                   <th className="font-normal">{notificationSearchData?.store_name}</th>
                   <td>{notificationSearchData?.asin_upc_code}</td>
                   <td>{notificationSearchData?.code_type}</td>
@@ -639,7 +637,7 @@ export default function StorePreparingRequestTable() {
                       </ul>
                     </div>
                   </td>
-                </tr>)
+                </tr>))
               }
             </>}
           </tbody>

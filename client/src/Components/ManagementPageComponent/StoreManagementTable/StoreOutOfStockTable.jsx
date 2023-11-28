@@ -642,7 +642,7 @@ export default function StoreOutOfStockTable() {
                         </td>
                       </tr>
                     );
-                  }):<tr>
+                  }):(notificationSearchData && <tr>
                   <th>{notificationSearchData?.date && format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
                   <th>{notificationSearchData?.store_name}</th>
                   <td>{notificationSearchData?.asin_upc_code}</td>
@@ -698,7 +698,7 @@ export default function StoreOutOfStockTable() {
                       </ul>
                     </div>
                   </td>
-                </tr>)
+                </tr>))
                 )}
               </>
             )}

@@ -15,7 +15,6 @@ import { useLocation } from "react-router-dom";
 export default function StorePreparingRequestTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  // Get the value of the 'notification_search' parameter
   const notificationSearchValue = queryParams.get("notification_search");
   const { user } = useAuth()
   const [filterDays, setFilterDays] = useState('')
@@ -369,8 +368,8 @@ export default function StorePreparingRequestTable() {
                         </td>
                       </tr>
                     );
-                  }):   <tr>
-                  <th>{format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
+                  }):   ( notificationSearchData && <tr>
+                  <th>{notificationSearchData?.date && format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
                   <th className="font-normal">{notificationSearchData?.store_name}</th>
                   <td>{notificationSearchData?.asin_upc_code}</td>
                   <td>{notificationSearchData?.code_type}</td>
@@ -382,9 +381,8 @@ export default function StorePreparingRequestTable() {
                   <td>{notificationSearchData?.tracking_number}</td>
                   <td className="flex gap-2">
                     {notificationSearchData?.shipping_file && <FileDownload fileName={notificationSearchData?.shipping_file} />}
-
                   </td>
-                </tr>)
+                </tr>))
               }
             </>}
           </tbody>

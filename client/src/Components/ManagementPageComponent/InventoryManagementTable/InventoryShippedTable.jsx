@@ -20,7 +20,6 @@ import { NotificationContext } from "../../../Providers/NotificationProvider";
 export default function InventoryShippedTable() {
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
-  // const [RTSdata ,setRTSdata] = useState({})
   const { user } = useAuth();
   const [filterDays, setFilterDays] = useState("");
   const [searchText, setSearchText] = useState("");
@@ -201,9 +200,8 @@ export default function InventoryShippedTable() {
       .put(`/api/v1/shipped_api/update_shipped_data?id=${_id}`, updatedData)
       .then((res) => {
         if (res.status === 201) {
-          const baseURL = window.location.origin;
           const notification_link =
-            baseURL + "/dashboard/management/store/shipped";
+           "/dashboard/management/store/shipped";
           const notification_search = [_id];
           const status = "Updated resaleable quantity.";
           axios

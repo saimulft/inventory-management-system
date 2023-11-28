@@ -10,9 +10,13 @@ import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { useLocation } from "react-router-dom";
 export default function StoreShippedTable() {
 
   const { user } = useAuth()
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const notificationSearchValue = queryParams.get("notification_search");
   const [filterDays, setFilterDays] = useState('')
   const [searchText, setSearchText] = useState('');
   const [searchError, setSearchError] = useState('');
@@ -42,6 +46,10 @@ export default function StoreShippedTable() {
       }
     }
   })
+
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
 
   const handleSearch = (e) => {
     e.preventDefault()
@@ -345,7 +353,7 @@ export default function StoreShippedTable() {
 
                   :
 
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+                  (!notificationSearchValue ? isLoading ? <Loading /> : displayAllData?.map((d, index) => {
                     return (
                       <tr
                         className={`${index % 2 == 1 && ""}`}
@@ -372,7 +380,27 @@ export default function StoreShippedTable() {
                         </td>
                       </tr>
                     );
-                  })
+                  }): (notificationSearchData && <tr>
+                  <th>{notificationSearchData?.date && format(new Date(notificationSearchData?.date), "y/MM/d")}</th>
+                  <td className="font-normal">{notificationSearchData?.store_name}</td>
+                  <td>{notificationSearchData?.asin_upc_code}</td>
+                  <td>{notificationSearchData?.code_type}</td>
+                  <td>{notificationSearchData?.product_name}</td>
+                  <td>{notificationSearchData?.order_id}</td>
+                  <td>{notificationSearchData?.upin}</td>
+                  <td>{notificationSearchData?.quantity}</td>
+                  <td>{notificationSearchData?.courier}</td>
+                  <td className="text-[#8633FF]">{notificationSearchData?.tracking_number}</td>
+                  <td>{notificationSearchData?.shipping_file && <FileDownload fileName={notificationSearchData?.shipping_file} />}</td>
+                  <td
+                    onClick={() =>
+                      document.getElementById("my_modal_2").showModal()
+                    }
+                    className="cursor-pointer"
+                  >
+                    <AiOutlineEye onClick={() => setSingleData(notificationSearchData)} size={15} />
+                  </td>
+                </tr>))
               }
             </>}
           </tbody>
