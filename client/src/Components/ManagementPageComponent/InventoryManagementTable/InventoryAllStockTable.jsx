@@ -153,7 +153,7 @@ export default function InventoryAllStockTable() {
       <h3 className="text-center text-2xl font-medium">All Stocks<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span></h3>
 
       <div className="relative flex justify-end mt-4">
-        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
+       {!notificationSearchValue && <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
           <input
             className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
             placeholder="Search Here"
@@ -173,7 +173,7 @@ export default function InventoryAllStockTable() {
               Clear
             </button>
           </div>
-        </form>
+        </form>}
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -192,6 +192,7 @@ export default function InventoryAllStockTable() {
             </tr>
           </thead>
           <tbody className="relative">
+          { (notificationSearchData == undefined && notificationSearchValue) && <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">Pending arrival notified data not available!</p>}
             {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {

@@ -8,9 +8,9 @@ import ReactPaginate from "react-paginate";
 import { useLocation } from "react-router-dom";
 
 export default function StoreAllStockTable() {
-  const { user } = useAuth()
-  const [searchText, setSearchText] = useState('');
-  const [searchError, setSearchError] = useState('');
+  const { user } = useAuth();
+  const [searchText, setSearchText] = useState("");
+  const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
@@ -18,44 +18,46 @@ export default function StoreAllStockTable() {
   const queryParams = new URLSearchParams(location.search);
   const notificationSearchValue = queryParams.get("notification_search");
   const { data = [], isLoading } = useQuery({
-    queryKey: ['all_stock_data'],
+    queryKey: ["all_stock_data"],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/all_stock_api/get_all_stock_data', {user})
+        const res = await axios.post(
+          "/api/v1/all_stock_api/get_all_stock_data",
+          { user }
+        );
         if (res.status === 200) {
           return res.data.data;
         }
-        return []
+        return [];
       } catch (error) {
-        console.log(error)
-        return []
+        console.log(error);
+        return [];
       }
-    }
-  })
+    },
+  });
 
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
-  ); 
+  );
 
   const handleSearch = (e) => {
-    e.preventDefault()
-    setSearchError("")
+    e.preventDefault();
+    setSearchError("");
     if (!searchText) {
-      return
+      return;
     }
-    const filteredData = data.filter(item =>
-    (
-      item.product_name?.toLowerCase().includes(searchText) ||
-      item.store_name?.toLowerCase().includes(searchText) ||
-      item.upin?.toLowerCase().includes(searchText))
+    const filteredData = data.filter(
+      (item) =>
+        item.product_name?.toLowerCase().includes(searchText) ||
+        item.store_name?.toLowerCase().includes(searchText) ||
+        item.upin?.toLowerCase().includes(searchText)
     );
     if (!filteredData.length) {
-      setSearchError(`No data found for "${searchText}"`)
-      return
+      setSearchError(`No data found for "${searchText}"`);
+      return;
     }
-    setSearchResults(filteredData)
-  }
-
+    setSearchResults(filteredData);
+  };
 
   function generatePageNumbers(currentPage, pageCount, maxVisiblePages) {
     if (pageCount <= maxVisiblePages) {
@@ -129,11 +131,10 @@ export default function StoreAllStockTable() {
   generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
   generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
 
-  // pagination code 
+  // pagination code
 
   const handleFilteredDataPageChange = ({ selected }) => {
     setFilteredDataPage(selected);
-
   };
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
@@ -141,8 +142,10 @@ export default function StoreAllStockTable() {
   // filter pagination calculation
   const startIndexFilter = filteredDataPage * itemsPerPage;
   const endIndexFilter = startIndexFilter + itemsPerPage;
-  const displayedDataFilter = searchResults.slice(startIndexFilter, endIndexFilter);
-
+  const displayedDataFilter = searchResults.slice(
+    startIndexFilter,
+    endIndexFilter
+  );
 
   //  ALl data pagination calculation
   const startIndex = currentPage * itemsPerPage;
@@ -150,31 +153,48 @@ export default function StoreAllStockTable() {
   const displayAllData = data.slice(startIndex, endIndex);
   return (
     <div className="px-8 py-12">
-      <h3 className="text-center text-2xl font-medium">All Stocks<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span></h3>
+      <h3 className="text-center text-2xl font-medium">
+        All Stocks
+        <span className={`${notificationSearchValue && "hidden"}`}>
+          : {data.length}
+        </span>
+      </h3>
 
-      <div className="relative flex justify-end mt-4">
-        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
-          <input
-            className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
-            placeholder="Search Here"
-            value={searchText}
-            type="text"
-            onChange={(e) => setSearchText(e.target.value.toLowerCase())}
-          />
-          <div className="w-[40%] flex items-center justify-evenly">
-            <button type="submit" onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
-              <AiOutlineSearch size={24} />
-            </button>
-            <button onClick={() => {
-              setSearchResults([])
-              setSearchText("")
-              setSearchError("")
-            }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
-              Clear
-            </button>
-          </div>
-        </form>
-      </div>
+      {!notificationSearchValue && (
+        <div className="relative flex justify-end mt-4">
+          <form
+            onSubmit={handleSearch}
+            className="w-1/4  flex items-center justify-between"
+          >
+            <input
+              className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
+              placeholder="Search Here"
+              value={searchText}
+              type="text"
+              onChange={(e) => setSearchText(e.target.value.toLowerCase())}
+            />
+            <div className="w-[40%] flex items-center justify-evenly">
+              <button
+                type="submit"
+                onClick={handleSearch}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                <AiOutlineSearch size={24} />
+              </button>
+              <button
+                onClick={() => {
+                  setSearchResults([]);
+                  setSearchText("");
+                  setSearchError("");
+                }}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-sm">
@@ -192,70 +212,115 @@ export default function StoreAllStockTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
-              {
-                searchResults.length ? displayedDataFilter.map((d, index) => {
-                  return (
-                    <tr
-                      className={`${index % 2 == 1 && ""}`}
-                      key={index}
-                    >
-                      <th>{d.store_name}</th>
-                      <td>{d.upin}</td>
-                      <td>{d.product_name}</td>
-                      <td>{d.received_quantity}</td>
-                      <td>{d.total_sold ? `${d.total_sold}` : '-'}</td>
-                      <td>{d.stock}</td>
-                      <td>${d.unit_price}</td>
-                      <td>{d.sold_price ? `$${d.sold_price}` : '-'}</td>
-                      <td>{d.remaining_price ? `$${d.remaining_price}` : '-'}</td>
-                    </tr>
-                  )
-                })
+            {searchError ? (
+              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                {searchError}
+              </p>
+            ) : (
+              <>
+                {notificationSearchData == undefined &&
+                  notificationSearchValue && (
+                    <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                      All stock notified data not available!
+                    </p>
+                  )}
 
-                  :
-
-                  (!notificationSearchValue ? isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+                {searchResults.length ? (
+                  displayedDataFilter.map((d, index) => {
                     return (
-                      <tr
-                        className={`${index % 2 == 1 && ""}`}
-                        key={index}
-                      >
+                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
                         <th>{d.store_name}</th>
                         <td>{d.upin}</td>
                         <td>{d.product_name}</td>
                         <td>{d.received_quantity}</td>
-                        <td>{d.total_sold ? `${d.total_sold}` : '-'}</td>
+                        <td>{d.total_sold ? `${d.total_sold}` : "-"}</td>
                         <td>{d.stock}</td>
                         <td>${d.unit_price}</td>
-                        <td>{d.sold_price ? `$${d.sold_price}` : '-'}</td>
-                        <td>{d.remaining_price ? `$${d.remaining_price}` : '-'}</td>
+                        <td>{d.sold_price ? `$${d.sold_price}` : "-"}</td>
+                        <td>
+                          {d.remaining_price ? `$${d.remaining_price}` : "-"}
+                        </td>
                       </tr>
                     );
-                  }): <tr>
-                  <th>{notificationSearchData?.store_name}</th>
-                  <td>{notificationSearchData?.upin}</td>
-                  <td>{notificationSearchData?.product_name}</td>
-                  <td>{notificationSearchData?.received_quantity}</td>
-                  <td>{notificationSearchData?.total_sold ? `${notificationSearchData?.total_sold}` : '-'}</td>
-                  <td>{notificationSearchData?.stock}</td>
-                  <td>${notificationSearchData?.unit_price}</td>
-                  <td>{notificationSearchData?.sold_price ? `$${notificationSearchData?.sold_price}` : '-'}</td>
-                  <td>{notificationSearchData?.remaining_price ? `$${notificationSearchData?.remaining_price}` : '-'}</td>
-                </tr> )
-              }
-            </>}
+                  })
+                ) : !notificationSearchValue ? (
+                  isLoading ? (
+                    <Loading />
+                  ) : (
+                    displayAllData?.map((d, index) => {
+                      return (
+                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                          <th>{d.store_name}</th>
+                          <td>{d.upin}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.received_quantity}</td>
+                          <td>{d.total_sold ? `${d.total_sold}` : "-"}</td>
+                          <td>{d.stock}</td>
+                          <td>${d.unit_price}</td>
+                          <td>{d.sold_price ? `$${d.sold_price}` : "-"}</td>
+                          <td>
+                            {d.remaining_price ? `$${d.remaining_price}` : "-"}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )
+                ) : (
+                  <tr>
+                    <th>{notificationSearchData?.store_name}</th>
+                    <td>{notificationSearchData?.upin}</td>
+                    <td>{notificationSearchData?.product_name}</td>
+                    <td>{notificationSearchData?.received_quantity}</td>
+                    <td>
+                      {notificationSearchData?.total_sold
+                        ? `${notificationSearchData?.total_sold}`
+                        : "-"}
+                    </td>
+                    <td>{notificationSearchData?.stock}</td>
+                    <td>${notificationSearchData?.unit_price}</td>
+                    <td>
+                      {notificationSearchData?.sold_price
+                        ? `$${notificationSearchData?.sold_price}`
+                        : "-"}
+                    </td>
+                    <td>
+                      {notificationSearchData?.remaining_price
+                        ? `$${notificationSearchData?.remaining_price}`
+                        : "-"}
+                    </td>
+                  </tr>
+                )}
+              </>
+            )}
           </tbody>
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 15 && < div >
+        {!isLoading &&
+          !searchError &&
+          !searchResults.length &&
+          data?.length > 15 && (
+            <div>
+              <ReactPaginate
+                pageCount={Math.ceil(data.length / itemsPerPage)}
+                marginPagesDisplayed={1}
+                pageRangeDisplayed={maxVisiblePages}
+                onPageChange={handlePageChange}
+                containerClassName="pagination"
+                activeClassName="active"
+                breakLabel={"..."}
+                pageLinkClassName={(pageNumber) => {
+                  return pageNumber === "..." ? "ellipsis" : "";
+                }}
+              />
+            </div>
+          )}
+        {!isLoading && !searchError && searchResults.length > 15 && (
           <ReactPaginate
-            pageCount={Math.ceil(data.length / itemsPerPage)}
-
-            marginPagesDisplayed={1}
+            pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}
-            onPageChange={handlePageChange}
+            marginPagesDisplayed={1}
+            onPageChange={handleFilteredDataPageChange}
             containerClassName="pagination"
             activeClassName="active"
             breakLabel={"..."}
@@ -263,20 +328,7 @@ export default function StoreAllStockTable() {
               return pageNumber === "..." ? "ellipsis" : "";
             }}
           />
-        </div>
-        }
-        {!isLoading && !searchError && searchResults.length > 15 && <ReactPaginate
-          pageCount={Math.ceil(searchResults.length / itemsPerPage)}
-          pageRangeDisplayed={maxVisiblePages}
-          marginPagesDisplayed={1}
-          onPageChange={handleFilteredDataPageChange}
-          containerClassName="pagination"
-          activeClassName="active"
-          breakLabel={"..."}
-          pageLinkClassName={(pageNumber) => {
-            return pageNumber === "..." ? "ellipsis" : "";
-          }}
-        />}
+        )}
       </div>
     </div>
   );

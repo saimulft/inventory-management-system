@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
@@ -14,12 +14,16 @@ import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import useGlobal from "../../../hooks/useGlobal";
 import { useLocation } from "react-router-dom";
+import { NotificationContext } from "../../../Providers/NotificationProvider";
+import { GlobalContext } from "../../../Providers/GlobalProviders";
 
 export default function StorePendingArrivalTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   // Get the value of the 'notification_search' parameter
   const notificationSearchValue = queryParams.get("notification_search");
+  const { socket } = useContext(GlobalContext);
+  const { currentUser } = useContext(NotificationContext);
 
   const [singleData, setSingleData] = useState({})
   const [isEditable, setIsEditable] = useState(false)
@@ -206,6 +210,30 @@ export default function StorePendingArrivalTable() {
     axios.put(`/api/v1/pending_arrival_api/update_store_pending_arrival_data?id=${_id}`, updatedData)
       .then(res => {
         if (res.status === 200) {
+
+          const notification_link = "/dashboard/management/store/pending-arrival"
+                  const notification_search = [_id];
+                  const status = "Updated pending arrival data.";
+                  axios
+                    .post(`/api/v1/notifications_api/send_notification`, {
+                      currentUser,
+                      status,
+                      notification_link,
+                      notification_search,
+                    })
+                    .then((res) => {
+                      if (res.data?.finalResult?.acknowledged) {
+                        // send real time notification data
+                        const notificationData = res.data?.notificationData;
+                        if (notificationData) {
+                          socket?.current?.emit("sendNotification", {
+                            user,
+                            notificationData,
+                          });
+                        }
+                      }
+                    })
+                    .catch((err) => console.log(err));
           setLoading(false)
           form.reset()
           refetch()
@@ -335,7 +363,7 @@ export default function StorePendingArrivalTable() {
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'all' && 'bg-[#8633FF] text-white'}`}>
               All
             </p>
-            <p onClick={() => {
+      { !notificationSearchValue &&  <>   <p onClick={() => {
               handleDateSearch("today")
               setFilterDays('today')
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
@@ -370,7 +398,7 @@ export default function StorePendingArrivalTable() {
               document.getElementById("date_range_modal").showModal()
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
               Custom
-            </p>
+            </p></>}
           </div>
         </div>
        {!notificationSearchValue && <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
@@ -419,7 +447,7 @@ export default function StorePendingArrivalTable() {
           <tbody className="relative">
             {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
 
-          { notificationSearchData == undefined && <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">Pending arrival notification search data not found!</p>}
+          { (notificationSearchData == undefined && notificationSearchValue) && <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">Pending arrival notified data not available!</p>}
             
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {

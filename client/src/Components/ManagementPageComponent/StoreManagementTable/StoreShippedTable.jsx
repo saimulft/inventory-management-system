@@ -239,7 +239,8 @@ export default function StoreShippedTable() {
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'all' && 'bg-[#8633FF] text-white'}`}>
               All
             </p>
-            <p onClick={() => {
+         {!notificationSearchValue && <>
+          <p onClick={() => {
               handleDateSearch("today")
               setFilterDays('today')
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
@@ -275,9 +276,10 @@ export default function StoreShippedTable() {
             }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
               Custom
             </p>
+          </>}
           </div>
         </div>
-        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
+        {!notificationSearchValue && <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
           <input
             className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
             placeholder="Search Here"
@@ -298,7 +300,7 @@ export default function StoreShippedTable() {
               Clear
             </button>
           </div>
-        </form>
+        </form>}
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -320,6 +322,7 @@ export default function StoreShippedTable() {
             </tr>
           </thead>
           <tbody className="relative">
+          { (notificationSearchData == undefined && notificationSearchValue) && <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">Pending arrival notified data not available!</p>}
             {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
               {
                 searchResults.length ? displayedDataFilter.map((d, index) => {

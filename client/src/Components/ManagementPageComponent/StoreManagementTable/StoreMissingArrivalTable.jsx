@@ -23,7 +23,15 @@ export default function StoreMissingArrivalTable() {
   const missingArrivalStatus = queryParams.get("missing_arrival_status");
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
-  const [activeTab, setActiveTab] = useState(`${notificationSearchValue ? missingArrivalStatus == "active" ? "active" : "solved": "active"}`);
+  const [activeTab, setActiveTab] = useState(
+    `${
+      notificationSearchValue
+        ? missingArrivalStatus == "active"
+          ? "active"
+          : "solved"
+        : "active"
+    }`
+  );
   const [singleData, setSingleData] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -110,7 +118,6 @@ export default function StoreMissingArrivalTable() {
           )
           .then((res) => {
             if (res.status === 200) {
-           
               const status = "A missing arrival entry has been deleted.";
               axios
                 .post(`/api/v1/notifications_api/send_notification`, {
@@ -118,13 +125,12 @@ export default function StoreMissingArrivalTable() {
                   status,
                 })
                 .then((res) => {
-                  if(res.data.acknowledged){
-                     // send real time notification data
-              socket?.current?.emit("sendNotification", {
-                user,
-                status
-              });
-
+                  if (res.data.acknowledged) {
+                    // send real time notification data
+                    socket?.current?.emit("sendNotification", {
+                      user,
+                      status,
+                    });
                   }
                 })
                 .catch((err) => console.log(err));
@@ -187,8 +193,6 @@ export default function StoreMissingArrivalTable() {
       )
       .then((res) => {
         if (res.status === 200) {
-   
-
           const status = "Updated a missing arrival item.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
@@ -196,12 +200,12 @@ export default function StoreMissingArrivalTable() {
               status,
             })
             .then((res) => {
-              if(res.data.acknowledged){
-                       // send real time notification data
-          socket?.current?.emit("sendNotification", {
-            user,
-            status
-          });
+              if (res.data.acknowledged) {
+                // send real time notification data
+                socket?.current?.emit("sendNotification", {
+                  user,
+                  status,
+                });
               }
             })
             .catch((err) => console.log(err));
@@ -327,7 +331,10 @@ export default function StoreMissingArrivalTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Missing Arrival Item<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
+        Missing Arrival Item
+        <span className={`${notificationSearchValue && "hidden"}`}>
+          : {data.length}
+        </span>
       </h3>
       <div className="relative flex justify-between items-center mt-4">
         <div className="flex text-center w-1/2 ">
@@ -352,37 +359,41 @@ export default function StoreMissingArrivalTable() {
             Solved
           </div>
         </div>
-        <form
-          onSubmit={handleSearch}
-          className="w-1/4  flex items-center justify-between"
-        >
-          <input
-            className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
-            placeholder="Search Here"
-            value={searchText}
-            type="text"
-            onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
-          />
-          <div className="w-[40%] flex items-center justify-evenly">
-            <button
-              type="submit"
-              onClick={handleSearch}
-              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
-            >
-              <AiOutlineSearch size={24} />
-            </button>
-            <button
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-              }}
-              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
-            >
-              Clear
-            </button>
-          </div>
-        </form>
+        {!notificationSearchValue && (
+          <form
+            onSubmit={handleSearch}
+            className="w-1/4  flex items-center justify-between"
+          >
+            <input
+              className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
+              placeholder="Search Here"
+              value={searchText}
+              type="text"
+              onChange={(e) =>
+                setSearchText(e.target.value.toLocaleLowerCase())
+              }
+            />
+            <div className="w-[40%] flex items-center justify-evenly">
+              <button
+                type="submit"
+                onClick={handleSearch}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                <AiOutlineSearch size={24} />
+              </button>
+              <button
+                onClick={() => {
+                  setSearchResults([]);
+                  setSearchText("");
+                  setSearchError("");
+                }}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
+        )}
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-294px)] max-h-full">
@@ -405,6 +416,11 @@ export default function StoreMissingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
+            {notificationSearchData == undefined && notificationSearchValue && (
+              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                Missing arrival notified data not available!
+              </p>
+            )}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -412,66 +428,70 @@ export default function StoreMissingArrivalTable() {
             ) : (
               <>
                 {searchResults.length ? (
-                 (!notificationSearchValue ? displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
-                        <th className="font-normal">{d.store_name}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.supplier_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.received_quantity}</td>
-                        <td>{d.missing_quantity}</td>
-                        <td>
-                          {d.supplier_tracking ? d.supplier_tracking : "-"}
-                        </td>
-                        <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
-                        <td>
-                          <div className="dropdown dropdown-end">
-                            <label tabIndex={0}>
-                              <BiDotsVerticalRounded
-                                onClick={() => setSingleData(d)}
-                                cursor="pointer"
-                              />
-                            </label>
-                            <ul
-                              tabIndex={0}
-                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                            >
-                              <li>
-                                <button
-                                  onClick={() =>
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal()
-                                  }
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                              {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                  !notificationSearchValue ? (
+                    displayedDataFilter.map((d, index) => {
+                      return (
+                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                          <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
+                          <th className="font-normal">{d.store_name}</th>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.supplier_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.received_quantity}</td>
+                          <td>{d.missing_quantity}</td>
+                          <td>
+                            {d.supplier_tracking ? d.supplier_tracking : "-"}
+                          </td>
+                          <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
+                          <td>
+                            <div className="dropdown dropdown-end">
+                              <label tabIndex={0}>
+                                <BiDotsVerticalRounded
+                                  onClick={() => setSingleData(d)}
+                                  cursor="pointer"
+                                />
+                              </label>
+                              <ul
+                                tabIndex={0}
+                                className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                              >
                                 <li>
-                                  <button onClick={() => handleDelete(d._id)}>
-                                    Delete
+                                  <button
+                                    onClick={() =>
+                                      document
+                                        .getElementById("my_modal_2")
+                                        .showModal()
+                                    }
+                                  >
+                                    Edit
                                   </button>
                                 </li>
-                              ) : (
-                                ""
-                              )}
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  }): <div>hello</div> )
+                                {user.role === "Admin" ||
+                                user.role === "Admin VA" ? (
+                                  <li>
+                                    <button onClick={() => handleDelete(d._id)}>
+                                      Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  ""
+                                )}
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <></>
+                  )
                 ) : isLoading ? (
                   <Loading />
-                ) : (
-                 (!notificationSearchValue ? displayAllData?.map((d, index) => {
+                ) : !notificationSearchValue ? (
+                  displayAllData?.map((d, index) => {
                     return (
                       <tr className={`${index % 2 == 1 && ""}`} key={index}>
                         <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
@@ -526,58 +546,84 @@ export default function StoreMissingArrivalTable() {
                         </td>
                       </tr>
                     );
-                  }): ( notificationSearchData && <tr>
-                  <th>{notificationSearchData?.date && format(new Date(notificationSearchData?.date), "yyyy/MM/dd")}</th>
-                  <th className="font-normal">{notificationSearchData?.store_name}</th>
-                  <td>{notificationSearchData?.asin_upc_code}</td>
-                  <td>{notificationSearchData?.code_type}</td>
-                  <td>{notificationSearchData?.product_name}</td>
-                  <td>{notificationSearchData?.supplier_id}</td>
-                  <td>{notificationSearchData?.upin}</td>
-                  <td>{notificationSearchData?.quantity}</td>
-                  <td>{notificationSearchData?.received_quantity}</td>
-                  <td>{notificationSearchData?.missing_quantity}</td>
-                  <td>
-                    {notificationSearchData?.supplier_tracking ? notificationSearchData?.supplier_tracking : "-"}
-                  </td>
-                  <td>{notificationSearchData?.eda && format(new Date(notificationSearchData?.eda), "yyyy/MM/dd")}</td>
-                  <td>
-                    <div className="dropdown dropdown-end">
-                      <label tabIndex={0}>
-                        <BiDotsVerticalRounded
-                          onClick={() => setSingleData(notificationSearchData)}
-                          cursor="pointer"
-                        />
-                      </label>
-                      <ul
-                        tabIndex={0}
-                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                      >
-                        <li>
-                          <button
-                            onClick={() =>
-                              document
-                                .getElementById("my_modal_2")
-                                .showModal()
-                            }
+                  })
+                ) : (
+                  notificationSearchData && (
+                    <tr>
+                      <th>
+                        {notificationSearchData?.date &&
+                          format(
+                            new Date(notificationSearchData?.date),
+                            "yyyy/MM/dd"
+                          )}
+                      </th>
+                      <th className="font-normal">
+                        {notificationSearchData?.store_name}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.product_name}</td>
+                      <td>{notificationSearchData?.supplier_id}</td>
+                      <td>{notificationSearchData?.upin}</td>
+                      <td>{notificationSearchData?.quantity}</td>
+                      <td>{notificationSearchData?.received_quantity}</td>
+                      <td>{notificationSearchData?.missing_quantity}</td>
+                      <td>
+                        {notificationSearchData?.supplier_tracking
+                          ? notificationSearchData?.supplier_tracking
+                          : "-"}
+                      </td>
+                      <td>
+                        {notificationSearchData?.eda &&
+                          format(
+                            new Date(notificationSearchData?.eda),
+                            "yyyy/MM/dd"
+                          )}
+                      </td>
+                      <td>
+                        <div className="dropdown dropdown-end">
+                          <label tabIndex={0}>
+                            <BiDotsVerticalRounded
+                              onClick={() =>
+                                setSingleData(notificationSearchData)
+                              }
+                              cursor="pointer"
+                            />
+                          </label>
+                          <ul
+                            tabIndex={0}
+                            className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
                           >
-                            Edit
-                          </button>
-                        </li>
-                        {user.role === "Admin" ||
-                        user.role === "Admin VA" ? (
-                          <li>
-                            <button onClick={() => handleDelete(notificationSearchData?._id)}>
-                              Delete
-                            </button>
-                          </li>
-                        ) : (
-                          ""
-                        )}
-                      </ul>
-                    </div>
-                  </td>
-                </tr> ))
+                            <li>
+                              <button
+                                onClick={() =>
+                                  document
+                                    .getElementById("my_modal_2")
+                                    .showModal()
+                                }
+                              >
+                                Edit
+                              </button>
+                            </li>
+                            {user.role === "Admin" ||
+                            user.role === "Admin VA" ? (
+                              <li>
+                                <button
+                                  onClick={() =>
+                                    handleDelete(notificationSearchData?._id)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </li>
+                            ) : (
+                              ""
+                            )}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  )
                 )}
               </>
             )}

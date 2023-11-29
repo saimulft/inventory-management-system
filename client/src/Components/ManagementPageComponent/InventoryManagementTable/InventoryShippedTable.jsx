@@ -374,7 +374,8 @@ export default function InventoryShippedTable() {
               }`}
             >
               All
-            </p>
+         </p>
+         {!notificationSearchValue && <>
             <p
               onClick={() => {
                 handleDateSearch("today");
@@ -441,9 +442,10 @@ export default function InventoryShippedTable() {
             >
               Custom
             </p>
+         </>}
           </div>
         </div>
-        <form
+       {!notificationSearchValue && <form
           onSubmit={handleSearch}
           className="w-1/4  flex items-center justify-between"
         >
@@ -474,7 +476,7 @@ export default function InventoryShippedTable() {
               Clear
             </button>
           </div>
-        </form>
+        </form>}
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -496,6 +498,7 @@ export default function InventoryShippedTable() {
             </tr>
           </thead>
           <tbody className="relative">
+          { (notificationSearchData == undefined && notificationSearchValue) && <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">Pending arrival notified data not available!</p>}\
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}

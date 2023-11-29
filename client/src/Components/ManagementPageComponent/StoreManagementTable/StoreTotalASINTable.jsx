@@ -423,9 +423,7 @@ export default function InventoryTotalASINTable() {
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
         Total ASIN/UPC<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
-      </h3>
-
-      <div className="relative flex justify-between items-center mt-4">
+      </h3>      <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
             <p
@@ -441,7 +439,8 @@ export default function InventoryTotalASINTable() {
             >
               All
             </p>
-            <p
+       {!notificationSearchValue && <>
+        <p
               onClick={() => {
                 handleDateSearch("today");
                 setFilterDays("today");
@@ -507,10 +506,11 @@ export default function InventoryTotalASINTable() {
             >
               Custom
             </p>
+        </>}
           </div>
         </div>
 
-        <form
+       {!notificationSearchValue && <form
           onSubmit={handleSearch}
           className="w-1/4  flex items-center justify-between"
         >
@@ -541,7 +541,7 @@ export default function InventoryTotalASINTable() {
               Clear
             </button>
           </div>
-        </form>
+        </form>}
       </div>
 
       <div className="overflow-x-auto  mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -559,6 +559,7 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody className="relative">
+          { (notificationSearchData == undefined && notificationSearchValue) && <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">Pending arrival notified data not available!</p>}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}

@@ -65,7 +65,6 @@ export default function InventoryOutOfStockTable() {
     (d) => d._id == notificationSearchValue
   );
 
-
   const [rangeDate, setRangeDate] = useState([
     {
       startDate: new Date(),
@@ -138,15 +137,15 @@ export default function InventoryOutOfStockTable() {
         if (res.status === 201) {
           const notification_link =
             "/dashboard/management/store/preparing-request";
-          const notification_search = res.data?.result?.insertedId
+          const notification_search = [res.data?.result?.insertedId];
           const status = "Solved out of stock data.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
               notification_link,
-              notification_search
-           })
+              notification_search,
+            })
             .then((res) => {
               // send real time notification data
               if (res.data?.finalResult?.acknowledged) {
@@ -357,7 +356,10 @@ export default function InventoryOutOfStockTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Out Of Stock<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
+        Out Of Stock
+        <span className={`${notificationSearchValue && "hidden"}`}>
+          : {data.length}
+        </span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
@@ -376,106 +378,112 @@ export default function InventoryOutOfStockTable() {
             >
               All
             </p>
-            <p
-              onClick={() => {
-                handleDateSearch("today");
-                setFilterDays("today");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "today" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              Today
-            </p>
-            <p
-              onClick={() => {
-                handleDateSearch(7);
-                setFilterDays(7);
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === 7 && "bg-[#8633FF] text-white"
-              }`}
-            >
-              7 Days
-            </p>
-            <p
-              onClick={() => {
-                handleDateSearch(15);
-                setFilterDays(15);
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === 15 && "bg-[#8633FF] text-white"
-              }`}
-            >
-              15 Days
-            </p>
-            <p
-              onClick={() => {
-                handleDateSearch(30);
-                setFilterDays(1);
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === 1 && "bg-[#8633FF] text-white"
-              }`}
-            >
-              1 Month
-            </p>
-            <p
-              onClick={() => {
-                handleDateSearch(365);
-                setFilterDays("year");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "year" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              Year
-            </p>
-            <p
-              onClick={() => {
-                setFilterDays("custom");
-                document.getElementById("date_range_modal").showModal();
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "custom" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              Custom
-            </p>
+            {!notificationSearchValue && (
+              <>
+                <p
+                  onClick={() => {
+                    handleDateSearch("today");
+                    setFilterDays("today");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "today" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Today
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(7);
+                    setFilterDays(7);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 7 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  7 Days
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(15);
+                    setFilterDays(15);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 15 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  15 Days
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(30);
+                    setFilterDays(1);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 1 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  1 Month
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(365);
+                    setFilterDays("year");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "year" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Year
+                </p>
+                <p
+                  onClick={() => {
+                    setFilterDays("custom");
+                    document.getElementById("date_range_modal").showModal();
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "custom" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Custom
+                </p>
+              </>
+            )}
           </div>
         </div>
-        <form
-          onSubmit={handleSearch}
-          className="w-1/4  flex items-center justify-between"
-        >
-          <input
-            className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
-            placeholder="Search Here"
-            value={searchText}
-            type="text"
-            onChange={(e) => setSearchText(e.target.value.toLowerCase())}
-          />
-          <div className="w-[40%] flex items-center justify-evenly">
-            <button
-              type="submit"
-              onClick={handleSearch}
-              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
-            >
-              <AiOutlineSearch size={24} />
-            </button>
-            <button
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
-            >
-              Clear
-            </button>
-          </div>
-        </form>
+        {!notificationSearchValue && (
+          <form
+            onSubmit={handleSearch}
+            className="w-1/4  flex items-center justify-between"
+          >
+            <input
+              className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
+              placeholder="Search Here"
+              value={searchText}
+              type="text"
+              onChange={(e) => setSearchText(e.target.value.toLowerCase())}
+            />
+            <div className="w-[40%] flex items-center justify-evenly">
+              <button
+                type="submit"
+                onClick={handleSearch}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                <AiOutlineSearch size={24} />
+              </button>
+              <button
+                onClick={() => {
+                  setSearchResults([]);
+                  setSearchText("");
+                  setSearchError("");
+                  setFilterDays("all");
+                }}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
+        )}
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -499,6 +507,11 @@ export default function InventoryOutOfStockTable() {
             </tr>
           </thead>
           <tbody className="relative">
+            {notificationSearchData == undefined && notificationSearchValue && (
+              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                Pending arrival notified data not available!
+              </p>
+            )}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -569,8 +582,8 @@ export default function InventoryOutOfStockTable() {
                   })
                 ) : isLoading ? (
                   <Loading />
-                ) : (
-                  (!notificationSearchValue ? displayAllData?.map((d, index) => {
+                ) : !notificationSearchValue ? (
+                  displayAllData?.map((d, index) => {
                     return (
                       <tr className={`${index % 2 == 1 && ""}`} key={index}>
                         <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
@@ -630,63 +643,76 @@ export default function InventoryOutOfStockTable() {
                         </td>
                       </tr>
                     );
-                  }):<tr>
-                  <th>{notificationSearchData.date && format(new Date(notificationSearchData.date), "y/MM/d")}</th>
-                  <th>{notificationSearchData.store_name}</th>
-                  <td>{notificationSearchData.asin_upc_code}</td>
-                  <td>{notificationSearchData.code_type}</td>
-                  <td>{notificationSearchData.order_id}</td>
-                  <td>{notificationSearchData.product_name}</td>
-                  <td>{notificationSearchData.upin}</td>
-                  <td>{notificationSearchData.quantity}</td>
-                  <td>{notificationSearchData.courier}</td>
-                  <td>{notificationSearchData.tracking_number}</td>
-                  <td>
-                    {notificationSearchData.shipping_file && (
-                      <FileDownload fileName={notificationSearchData.shipping_file} />
-                    )}
-                  </td>
-                  <td className="text-green-600">
-                    {notificationSearchData.status && notificationSearchData.status}
-                  </td>
-                  <td>{notificationSearchData.notes}</td>
-                  <td>
-                    <div className="dropdown dropdown-end">
-                      <label tabIndex={0}>
-                        <BiDotsVerticalRounded
-                          onClick={() => setSingleData(notificationSearchData)}
-                          cursor="pointer"
+                  })
+                ) : (
+                  <tr>
+                    <th>
+                      {notificationSearchData.date &&
+                        format(new Date(notificationSearchData.date), "y/MM/d")}
+                    </th>
+                    <th>{notificationSearchData.store_name}</th>
+                    <td>{notificationSearchData.asin_upc_code}</td>
+                    <td>{notificationSearchData.code_type}</td>
+                    <td>{notificationSearchData.order_id}</td>
+                    <td>{notificationSearchData.product_name}</td>
+                    <td>{notificationSearchData.upin}</td>
+                    <td>{notificationSearchData.quantity}</td>
+                    <td>{notificationSearchData.courier}</td>
+                    <td>{notificationSearchData.tracking_number}</td>
+                    <td>
+                      {notificationSearchData.shipping_file && (
+                        <FileDownload
+                          fileName={notificationSearchData.shipping_file}
                         />
-                      </label>
-                      <ul
-                        tabIndex={0}
-                        className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                      >
-                        <li>
-                          <button
+                      )}
+                    </td>
+                    <td className="text-green-600">
+                      {notificationSearchData.status &&
+                        notificationSearchData.status}
+                    </td>
+                    <td>{notificationSearchData.notes}</td>
+                    <td>
+                      <div className="dropdown dropdown-end">
+                        <label tabIndex={0}>
+                          <BiDotsVerticalRounded
                             onClick={() =>
-                              document
-                                .getElementById("my_modal_2")
-                                .showModal()
+                              setSingleData(notificationSearchData)
                             }
-                          >
-                            Edit
-                          </button>
-                        </li>
-                        {user.role === "Admin" ||
-                        user.role === "Admin VA" ? (
+                            cursor="pointer"
+                          />
+                        </label>
+                        <ul
+                          tabIndex={0}
+                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                        >
                           <li>
-                            <button onClick={() => handleDelete(notificationSearchData._id)}>
-                              Delete
+                            <button
+                              onClick={() =>
+                                document
+                                  .getElementById("my_modal_2")
+                                  .showModal()
+                              }
+                            >
+                              Edit
                             </button>
                           </li>
-                        ) : (
-                          ""
-                        )}
-                      </ul>
-                    </div>
-                  </td>
-                </tr>)
+                          {user.role === "Admin" || user.role === "Admin VA" ? (
+                            <li>
+                              <button
+                                onClick={() =>
+                                  handleDelete(notificationSearchData._id)
+                                }
+                              >
+                                Delete
+                              </button>
+                            </li>
+                          ) : (
+                            ""
+                          )}
+                        </ul>
+                      </div>
+                    </td>
+                  </tr>
                 )}
               </>
             )}
