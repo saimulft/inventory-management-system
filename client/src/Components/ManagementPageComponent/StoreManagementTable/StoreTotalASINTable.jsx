@@ -422,8 +422,12 @@ export default function InventoryTotalASINTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Total ASIN/UPC<span className={`${notificationSearchValue && "hidden"}`}>: {data.length}</span>
-      </h3>      <div className="relative flex justify-between items-center mt-4">
+        Total ASIN/UPC
+        <span className={`${notificationSearchValue && "hidden"}`}>
+          : {data.length}
+        </span>
+      </h3>{" "}
+      <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
             <p
@@ -439,111 +443,116 @@ export default function InventoryTotalASINTable() {
             >
               All
             </p>
-       {!notificationSearchValue && <>
-        <p
-              onClick={() => {
-                handleDateSearch("today");
-                setFilterDays("today");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "today" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              Today
-            </p>
-            <p
-              onClick={() => {
-                handleDateSearch(7);
-                setFilterDays(7);
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === 7 && "bg-[#8633FF] text-white"
-              }`}
-            >
-              7 Days
-            </p>
-            <p
-              onClick={() => {
-                handleDateSearch(15);
-                setFilterDays(15);
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === 15 && "bg-[#8633FF] text-white"
-              }`}
-            >
-              15 Days
-            </p>
-            <p
-              onClick={() => {
-                handleDateSearch(30);
-                setFilterDays(1);
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === 1 && "bg-[#8633FF] text-white"
-              }`}
-            >
-              1 Month
-            </p>
-            <p
-              onClick={() => {
-                handleDateSearch(365);
-                setFilterDays("year");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "year" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              Year
-            </p>
-            <p
-              onClick={() => {
-                setFilterDays("custom");
-                document.getElementById("date_range_modal").showModal();
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "custom" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              Custom
-            </p>
-        </>}
+            {!notificationSearchValue && (
+              <>
+                <p
+                  onClick={() => {
+                    handleDateSearch("today");
+                    setFilterDays("today");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "today" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Today
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(7);
+                    setFilterDays(7);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 7 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  7 Days
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(15);
+                    setFilterDays(15);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 15 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  15 Days
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(30);
+                    setFilterDays(1);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 1 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  1 Month
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(365);
+                    setFilterDays("year");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "year" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Year
+                </p>
+                <p
+                  onClick={() => {
+                    setFilterDays("custom");
+                    document.getElementById("date_range_modal").showModal();
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "custom" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Custom
+                </p>
+              </>
+            )}
           </div>
         </div>
 
-       {!notificationSearchValue && <form
-          onSubmit={handleSearch}
-          className="w-1/4  flex items-center justify-between"
-        >
-          <input
-            className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
-            placeholder="Search Here"
-            value={searchText}
-            type="text"
-            onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
-          />
-          <div className="w-[40%] flex items-center justify-evenly">
-            <button
-              type="submit"
-              onClick={handleSearch}
-              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
-            >
-              <AiOutlineSearch size={24} />
-            </button>
-            <button
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
-            >
-              Clear
-            </button>
-          </div>
-        </form>}
+        {!notificationSearchValue && (
+          <form
+            onSubmit={handleSearch}
+            className="w-1/4  flex items-center justify-between"
+          >
+            <input
+              className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
+              placeholder="Search Here"
+              value={searchText}
+              type="text"
+              onChange={(e) =>
+                setSearchText(e.target.value.toLocaleLowerCase())
+              }
+            />
+            <div className="w-[40%] flex items-center justify-evenly">
+              <button
+                type="submit"
+                onClick={handleSearch}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                <AiOutlineSearch size={24} />
+              </button>
+              <button
+                onClick={() => {
+                  setSearchResults([]);
+                  setSearchText("");
+                  setSearchError("");
+                  setFilterDays("all");
+                }}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
+        )}
       </div>
-
       <div className="overflow-x-auto  mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-sm">
           <thead>
@@ -559,7 +568,11 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody className="relative">
-          { (notificationSearchData == undefined && notificationSearchValue) && <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">Pending arrival notified data not available!</p>}
+            {notificationSearchData == undefined && notificationSearchValue && (
+              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                Pending arrival notified data not available!
+              </p>
+            )}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -692,7 +705,10 @@ export default function InventoryTotalASINTable() {
                   <tr>
                     <th>
                       {notificationSearchData?.date &&
-                        format(new Date(notificationSearchData?.date), "y/MM/d")}
+                        format(
+                          new Date(notificationSearchData?.date),
+                          "y/MM/d"
+                        )}
                     </th>
                     <td>{notificationSearchData?.asin_upc_code}</td>
                     <td className="text-[#8633FF]">
@@ -791,7 +807,6 @@ export default function InventoryTotalASINTable() {
           />
         )}
       </div>
-
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft, maxWidth: "450px" }} className="modal-box">
@@ -923,7 +938,6 @@ export default function InventoryTotalASINTable() {
           <button>close</button>
         </form>
       </dialog>
-
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
         <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">
