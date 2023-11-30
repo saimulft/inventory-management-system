@@ -138,7 +138,7 @@ const run = async () => {
                         return res.status(500).json({ message: "Error to update all stock" });
                     }
                 }
-                return res.status(200).json({ message: "Preparing form updated" })
+                return res.status(200).json({ message: "Preparing form updated", result: id })
             }
             else {
                 return res.status(500).json({ message: "Error to Preparing form " });

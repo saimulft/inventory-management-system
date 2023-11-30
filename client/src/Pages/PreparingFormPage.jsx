@@ -200,6 +200,7 @@ const PreparingFormPage = () => {
               status,
               notification_link,
               notification_search,
+              storeId: storeOption?.value
             })
             .then((res) => {
               console.log(res.data);

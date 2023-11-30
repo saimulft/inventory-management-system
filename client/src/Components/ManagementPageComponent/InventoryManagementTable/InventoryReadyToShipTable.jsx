@@ -520,9 +520,9 @@ export default function InventoryReadyToShipTable() {
                     );
                   })
                 ) : (
-                  <tr>
+                 (notificationSearchData && <tr>
                     <th>
-                      {format(new Date(notificationSearchData?.date), "y/MM/d")}
+                      {notificationSearchData?.date && format(new Date(notificationSearchData?.date), "y/MM/d")}
                     </th>
                     <th className="font-normal">
                       {notificationSearchData?.store_name}
@@ -553,7 +553,7 @@ export default function InventoryReadyToShipTable() {
                         <p>Complete Shipment</p>
                       </button>
                     </td>
-                  </tr>
+                  </tr>)
                 )}
               </>
             )}

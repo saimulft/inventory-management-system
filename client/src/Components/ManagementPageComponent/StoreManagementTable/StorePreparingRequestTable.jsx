@@ -158,17 +158,17 @@ export default function StorePreparingRequestTable() {
         },
       })
       .then((res) => {
+        console.log(res);
+        
         if (res.status === 200) {
           const status = "Update preparing request data.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
-              notification_links: [
-                "http://localhost:5173/dashboard/management",
-                "http://localhost:5173/dashboard/management/store/pending-arrival",
-                "http://localhost:5173/dashboard/management/inventory/pending-arrival",
-              ],
+              notification_link: "/dashboard/management/store/preparing-request",
+              notification_search: [res?.data?.result]
+
             })
             .then((res) => {
               console.log(res.data);
@@ -564,7 +564,7 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {notificationSearchData == undefined && !notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Preparing request notified data not available!
               </p>

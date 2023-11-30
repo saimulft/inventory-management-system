@@ -193,11 +193,16 @@ export default function StoreMissingArrivalTable() {
       )
       .then((res) => {
         if (res.status === 200) {
+          const notification_link =
+            "/dashboard/management/store/missing-arrival";
+          const notification_search = [_id];
           const status = "Updated a missing arrival item.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
+              notification_link,
+              notification_search
             })
             .then((res) => {
               if (res.data.acknowledged) {

@@ -6,6 +6,7 @@ const router = express.Router();
 const run = async () => {
   const db = await connectDatabase();
   const all_users_collection = db.collection("all_users");
+  const admin_users_collection = db.collection("admin_users");
   const store_manager_admin_users_collection = db.collection(
     "store_manager_admin_users"
   );
@@ -21,7 +22,7 @@ const run = async () => {
   const admin_va_users_collection = db.collection("admin_va_users");
   const notification_collection = db.collection("notifications");
 
-  // get current user 
+  // get current user
   router.get("/current_user", async (req, res) => {
     try {
       const currentUserEmail = req.query.email;
@@ -58,32 +59,87 @@ const run = async () => {
 
   // set notifications in db
   router.post("/send_notification", async (req, res) => {
-    const { currentUser, status, notification_link, notification_search } = req.body;
-    const notificationSenderRole = currentUser?.role
-    const notificationSenderName = currentUser?.full_name
+    const {
+      currentUser,
+      status,
+      notification_link,
+      notification_search,
+      storeId,
+      warehouseId,
+    } = req.body;
+    console.log(storeId, warehouseId);
+    const notificationSenderRole = currentUser?.role;
+    const notificationSenderName = currentUser?.full_name;
 
-// send notification by admin  || admin va
-   try{
-    if (currentUser?.role == "Admin" || currentUser?.role == "Admin VA") {
-      let query;
+    // send notification by admin
+    try {
       if (currentUser?.role == "Admin") {
-        const condition1 = { admin_id: currentUser?._id };
-        const condition2 = { _id: new ObjectId(currentUser?._id) };
-        query = {
-          $or: [condition1, condition2],
-        };
-      }
-      if (currentUser?.role == "Admin VA") {
-        const condition1 = { admin_id: currentUser?.admin_id };
-        const condition2 = { _id: new ObjectId(currentUser?.admin_id) };
-        query = {
-          $or: [condition1, condition2],
-        };
-      }
+        // get access admin and admin va users
+        const adminVAQuery = { admin_id: currentUser?._id };
+        const adminVAAccessUsers = await admin_va_users_collection
+          .find(adminVAQuery)
+          .toArray();
 
-      const adminNotificationAccessUsers = await all_users_collection.find(query).toArray();
-          const notificationReceiversEmail =
-          adminNotificationAccessUsers?.map(adminNotificationAccessUser => adminNotificationAccessUser?.email)?.filter(email => email != currentUser?.email)
+        //  get storeManager and store manager va access users
+        let storeManagerAdminAndStoreManagerVAQuery = {
+          admin_id: currentUser?.admin_id,
+        };
+        if (storeId) {
+          storeManagerAdminAndStoreManagerVAQuery.admin_id = currentUser?._id;
+          storeManagerAdminAndStoreManagerVAQuery.store_access_ids = {
+            $in: [storeId],
+          };
+        }
+        const storeManagerAdminAccessUsers =
+          await store_manager_admin_users_collection
+            .find(storeManagerAdminAndStoreManagerVAQuery)
+            .toArray();
+        const storeManagerVAAccessUsers =
+          await store_manager_va_users_collection
+            .find(storeManagerAdminAndStoreManagerVAQuery)
+            .toArray();
+
+        //get warehouse  admin and warehouse manager va access users
+        let warehouseAdminAndWarehouseManagerVAQuery = {
+          admin_id: currentUser?.admin_id,
+        };
+        if (warehouseId) {
+          warehouseAdminAndWarehouseManagerVAQuery.warehouse_id = warehouseId;
+        }
+        const warehouseAdminAccessUsers = await warehouse_admin_users_collection
+          .find(warehouseAdminAndWarehouseManagerVAQuery)
+          .toArray();
+
+        const warehouseManagerVaAccessUsers =
+          await warehouse_manager_va_users_collection
+            .find(warehouseAdminAndWarehouseManagerVAQuery)
+            .toArray();
+
+        const adminNotificationAccessUsers = [
+          ...adminVAAccessUsers,
+          ...storeManagerAdminAccessUsers,
+          ...storeManagerVAAccessUsers,
+          ...warehouseAdminAccessUsers,
+          ...warehouseManagerVaAccessUsers,
+        ];
+
+        // define notification receiver email
+        const notificationReceiversEmail = adminNotificationAccessUsers
+          ?.map(
+            (adminNotificationAccessUser) => adminNotificationAccessUser?.email
+          )
+          ?.filter((email) => email != currentUser?.email);
+
+        // define notification unseen email
+        const unseenUsersArray = [];
+        const findNotificationUnseenUsers = adminNotificationAccessUsers?.map(
+          (adminNotificationAccessUser) => {
+            const unseenUser =
+              adminNotificationAccessUser?.email?.split("@")[0];
+            unseenUsersArray.push({ [unseenUser]: false });
+          }
+        );
+
         const timestamp = new Date().toISOString();
         const notificationData = {
           notification_receivers_email: notificationReceiversEmail,
@@ -92,204 +148,504 @@ const run = async () => {
           timestamp,
           status,
           notification_search,
-          notification_link
+          notification_link,
+          isNotificationSeen: unseenUsersArray,
         };
-       const finalResult =  await notification_collection.insertOne(notificationData, {upsert: true});
-       res.send({finalResult, notificationData})
+        const finalResult = await notification_collection.insertOne(
+          notificationData,
+          { upsert: true }
+        );
+        res.send({ finalResult, notificationData });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    // send notification by admin va
+    try {
+      if (currentUser?.role == "Admin VA") {
+        // get access admin and admin va users
+        const adminQuery = { admin_id: currentUser?.admin_id };
+        const adminAccessUsers = await admin_users_collection
+          .find(adminQuery)
+          .toArray();
+
+        //  get storeManager and store manager va access users
+        let storeManagerAdminAndStoreManagerVAQuery = {
+          admin_id: currentUser?._id,
+        };
+        if (storeId) {
+          storeManagerAdminAndStoreManagerVAQuery.store_access_ids = {
+            $in: [storeId],
+          };
         }
-   }
-   catch(error){
-    console.log(error);
-   }
+        const storeManagerAdminAccessUsers =
+          await store_manager_admin_users_collection
+            .find(storeManagerAdminAndStoreManagerVAQuery)
+            .toArray();
+        const storeManagerVAAccessUsers =
+          await store_manager_va_users_collection
+            .find(storeManagerAdminAndStoreManagerVAQuery)
+            .toArray();
 
-// send notification by store manager admin
-   try{
-    if (currentUser?.role == "Store Manager Admin") {
-      const adminQuery = { _id: new ObjectId(currentUser?.admin_id) };
-      const result = await all_users_collection.find(adminQuery).toArray();
-      const query = {
-        role: {
-          $nin: ["Store Manager Admin", "Store Manager VA"],
-        },
-        admin_id: currentUser?.admin_id,
-      };
-      const result2 = await all_users_collection.find(query).toArray();
-      const storeVAQuery = {
-        store_manager_admin_id: currentUser?.store_manager_admin_id,
-      };
-      const result3 = await store_manager_va_users_collection
-        .find(storeVAQuery)
-        .toArray();
-      const storeManagerNotificationUsersAccessArr = [
-        ...result,
-        ...result2,
-        ...result3,
-      ];
+        //get warehouse  admin and warehouse manager va access users
+        let warehouseAdminAndWarehouseManagerVAQuery = {
+          admin_id: currentUser?._id,
+        };
+        if (warehouseId) {
+          warehouseAdminAndWarehouseManagerVAQuery.warehouse_id = warehouseId;
+        }
+        const warehouseAdminAccessUsers = await warehouse_admin_users_collection
+          .find(warehouseAdminAndWarehouseManagerVAQuery)
+          .toArray();
 
-      // send notification
-      const notificationReceiversEmail = storeManagerNotificationUsersAccessArr.map(storeManagerNotificationUser => storeManagerNotificationUser?.email);
-          const timestamp = new Date().toISOString();
-          const notificationData = {
-            notification_receivers_email: notificationReceiversEmail,
-            notification_sender_name: notificationSenderName,
-            notification_sender_role: notificationSenderRole,
-            timestamp,
-            status,
-            notification_search,
-            notification_link
-          };
-        const finalResult =  await notification_collection.insertOne(notificationData);
-        res.send({finalResult, notificationData})
-    }
-   }
-   catch(error){
-    console.log(error);
-   }
+        const warehouseManagerVaAccessUsers =
+          await warehouse_manager_va_users_collection
+            .find(warehouseAdminAndWarehouseManagerVAQuery)
+            .toArray();
 
-// send notification by store manager va
-  try{
-    if (currentUser?.role == "Store Manager VA") {
-      const findAdminQuery = { _id: new ObjectId(currentUser?.admin_id) };
-      const result = await all_users_collection.find(findAdminQuery).toArray();
-      const query = {
-        role: {
-          $nin: ["Store Manager Admin", "Store Manager VA"],
-        },
-        admin_id: currentUser?.admin_id,
-      };
-      const result2 = await all_users_collection.find(query).toArray();
+        const adminNotificationAccessUsers = [
+          ...adminAccessUsers,
+          ...storeManagerAdminAccessUsers,
+          ...storeManagerVAAccessUsers,
+          ...warehouseAdminAccessUsers,
+          ...warehouseManagerVaAccessUsers,
+        ];
 
-      const findStoreManagerAdminQuery = {
-        store_manager_admin_id: currentUser?.store_manager_admin_id,
-      };
-      const result3 = await store_manager_admin_users_collection
-        .find(findStoreManagerAdminQuery)
-        .toArray();
+        // define notification receiver email
+        const notificationReceiversEmail = adminNotificationAccessUsers
+          ?.map(
+            (adminNotificationAccessUser) => adminNotificationAccessUser?.email
+          )
+          ?.filter((email) => email != currentUser?.email);
 
-      const storeManagerVANotificationUsersAccessArr = [
-        ...result,
-        ...result2,
-        ...result3,
-      ];
+        // define notification unseen email
+        const unseenUsersArray = [];
+        const findNotificationUnseenUsers = adminNotificationAccessUsers?.map(
+          (adminNotificationAccessUser) => {
+            const unseenUser =
+              adminNotificationAccessUser?.email?.split("@")[0];
+            unseenUsersArray.push({ [unseenUser]: false });
+          }
+        );
 
-      // send notification
-      const notificationReceiversEmail = storeManagerVANotificationUsersAccessArr.map(storeManagerVANotificationUser => storeManagerVANotificationUser?.email);
-          const timestamp = new Date().toISOString();
-          const notificationData = {
-            notification_receivers_email: notificationReceiversEmail,
-            notification_sender_name: notificationSenderName,
-            notification_sender_role: notificationSenderRole,
-            timestamp,
-            status,
-            notification_search,
-            notification_link
-          };
-          const finalResult =  await notification_collection.insertOne(notificationData);
-          res.send({finalResult, notificationData})
+        const timestamp = new Date().toISOString();
+        const notificationData = {
+          notification_receivers_email: notificationReceiversEmail,
+          notification_sender_name: notificationSenderName,
+          notification_sender_role: notificationSenderRole,
+          timestamp,
+          status,
+          notification_search,
+          notification_link,
+          isNotificationSeen: unseenUsersArray,
+        };
+        const finalResult = await notification_collection.insertOne(
+          notificationData,
+          { upsert: true }
+        );
+        res.send({ finalResult, notificationData });
+      }
+    } catch (error) {
+      console.log(error);
     }
 
-  }
-  catch(error){
-    console.log(error);
-  }
-// send notification by warehouse admin
-  try{
-    if (currentUser?.role == "Warehouse Admin") {
-      const adminQuery = { _id: new ObjectId(currentUser?.admin_id) };
-      const result = await all_users_collection.find(adminQuery).toArray();
-      const query = {
-        role: {
-          $nin: ["Warehouse Admin", "Warehouse Manager VA"],
-        },
-        admin_id: currentUser?.admin_id,
-      };
-      const result2 = await all_users_collection.find(query).toArray();
-      const warehouseVAQuery = {
-        warehouse_admin_id: currentUser?.warehouse_admin_id,
-      };
-      const result3 = await warehouse_manager_va_users_collection
-        .find(warehouseVAQuery)
-        .toArray();
-      const warehouseNotificationUsersAccessArr = [
-        ...result,
-        ...result2,
-        ...result3,
-      ];
+    // send notification by store manager admin
+    try {
+      if (currentUser?.role == "Store Manager Admin") {
+        const adminQuery = { admin_id: currentUser?.admin_id };
+        const adminAccessUsers = await admin_users_collection
+          .find(adminQuery)
+          .toArray();
 
-      // send notification
-      const notificationReceiversEmail = warehouseNotificationUsersAccessArr.map(warehouseNotificationUser => warehouseNotificationUser?.email);
-          const timestamp = new Date().toISOString();
-          const notificationData = {
-            notification_receivers_email: notificationReceiversEmail,
-            notification_sender_name: notificationSenderName,
-            notification_sender_role: notificationSenderRole,
-            timestamp,
-            status,
-            notification_search,
-            notification_link
-          };
-          const finalResult =  await notification_collection.insertOne(notificationData);
-          res.send({finalResult, notificationData})
+        const adminVAQuery = { admin_id: currentUser?.admin_id };
+        const adminVAAccessUsers = await admin_va_users_collection
+          .find(adminVAQuery)
+          .toArray();
+
+        const storeManagerAdminQuery = {
+          admin_id: currentUser?.admin_id,
+          store_access_ids: { $in: [storeId] },
+        };
+        const storeManagerAccessUsers =
+          await store_manager_admin_users_collection
+            .find(storeManagerAdminQuery)
+            .toArray();
+
+        const storeManagerVAQuery = {
+          admin_id: currentUser?.admin_id,
+          store_access_ids: { $in: [storeId] },
+        };
+        const storeManagerVAAccessUsers =
+          await store_manager_va_users_collection
+            .find(storeManagerVAQuery)
+            .toArray();
+
+        const warehouseAdminQuery = {
+          admin_id: currentUser?.admin_id,
+          warehouse_id: warehouseId,
+        };
+        const warehouseAdminAccessUsers = await warehouse_admin_users_collection
+          .find(warehouseAdminQuery)
+          .toArray();
+
+        const warehouseManagerVAQuery = {
+          admin_id: currentUser?.admin_id,
+          warehouse_id: warehouseId,
+        };
+        const warehouseManagerVAAccessUsers =
+          await warehouse_manager_va_users_collection
+            .find(warehouseManagerVAQuery)
+            .toArray();
+
+        const storeManagerNotificationUsersAccessArr = [
+          ...adminAccessUsers,
+          ...adminVAAccessUsers,
+          ...storeManagerAccessUsers,
+          ...storeManagerVAAccessUsers,
+          ...warehouseAdminAccessUsers,
+          ...warehouseManagerVAAccessUsers
+        ];
+
+        // send notification
+        // define notification receiver email
+        const notificationReceiversEmail =
+          storeManagerNotificationUsersAccessArr.map(
+            (storeManagerNotificationUser) =>
+              storeManagerNotificationUser?.email
+          );
+
+        // define notification unseen email
+        const unseenUsersArray = [];
+        const findNotificationUnseenUsers =
+          storeManagerNotificationUsersAccessArr?.map(
+            (storeManagerNotificationUser) => {
+              const unseenUser =
+                storeManagerNotificationUser?.email?.split("@")[0];
+              unseenUsersArray.push({ [unseenUser]: false });
+            }
+          );
+
+        const timestamp = new Date().toISOString();
+        const notificationData = {
+          notification_receivers_email: notificationReceiversEmail,
+          notification_sender_name: notificationSenderName,
+          notification_sender_role: notificationSenderRole,
+          timestamp,
+          status,
+          notification_search,
+          notification_link,
+          isNotificationSeen: unseenUsersArray,
+        };
+        const finalResult = await notification_collection.insertOne(
+          notificationData
+        );
+        res.send({ finalResult, notificationData });
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }
-  catch(error){
-    console.log(error);
-  }
 
-// send notification by warehouse admin
-  try{
-    if (currentUser?.role == "Warehouse Manager VA") {
-      const findAdminQuery = { _id: new ObjectId(currentUser?.admin_id) };
-      const result = await all_users_collection.find(findAdminQuery).toArray();
-      const query = {
-        role: {
-          $nin: ["Warehouse Admin", "Warehouse Manager VA"],
-        },
-        admin_id: currentUser?.admin_id,
-      };
-      const result2 = await all_users_collection.find(query).toArray();
-      const findWarehouseManagerAdminQuery = {
-        warehouse_admin_id: currentUser?.warehouse_admin_id,
-      };
-      const result3 = await warehouse_admin_users_collection
-        .find(findWarehouseManagerAdminQuery)
-        .toArray();
-      const warehouseVANotificationUsersAccessArr = [
-        ...result,
-        ...result2,
-        ...result3,
-      ];
+    // send notification by store manager va
+    try {
+      if (currentUser?.role == "Store Manager VA") {
+        const adminQuery = { admin_id: currentUser?.admin_id };
+        const adminAccessUsers = await admin_users_collection
+          .find(adminQuery)
+          .toArray();
 
-      // send notification
-      const notificationReceiversEmail = warehouseVANotificationUsersAccessArr.map(warehouseVANotificationUser => warehouseVANotificationUser?.email);
-          const timestamp = new Date().toISOString();
-          const notificationData = {
-            notification_receivers_email: notificationReceiversEmail,
-            notification_sender_name: notificationSenderName,
-            notification_sender_role: notificationSenderRole,
-            timestamp,
-            status,
-            notification_search,
-            notification_link
-          };
-          await notification_collection.insertOne(notificationData);
+        const adminVAQuery = { admin_id: currentUser?.admin_id };
+        const adminVAAccessUsers = await admin_va_users_collection
+          .find(adminVAQuery)
+          .toArray();
+
+        const storeManagerAdminQuery = {
+          admin_id: currentUser?.admin_id,
+          store_access_ids: { $in: [storeId] },
+        };
+        const storeManagerAccessUsers =
+          await store_manager_admin_users_collection
+            .find(storeManagerAdminQuery)
+            .toArray();
+
+        const storeManagerVAQuery = {
+          email: { $ne: currentUser?.email },
+          admin_id: currentUser?.admin_id,
+          store_access_ids: { $in: [storeId] },
+        };
+        const storeManagerVAAccessUsers =
+          await store_manager_va_users_collection
+            .find(storeManagerVAQuery)
+            .toArray();
+
+        const warehouseAdminQuery = {
+          admin_id: currentUser?.admin_id,
+          warehouse_id: warehouseId,
+        };
+        const warehouseAdminAccessUsers = await warehouse_admin_users_collection
+          .find(warehouseAdminQuery)
+          .toArray();
+
+        const warehouseManagerVAQuery = {
+          admin_id: currentUser?.admin_id,
+          warehouse_id: warehouseId,
+        };
+        const warehouseManagerVAAccessUsers =
+          await warehouse_manager_va_users_collection
+            .find(warehouseManagerVAQuery)
+            .toArray();
+
+        const storeManagerVANotificationUsersAccessArr = [
+          ...adminAccessUsers,
+          ...adminVAAccessUsers,
+          ...storeManagerAccessUsers,
+          ...storeManagerVAAccessUsers,
+          ...warehouseAdminAccessUsers,
+          ...warehouseManagerVAAccessUsers
+        ];
+
+        // send notification
+        // define notification receiver email
+        const notificationReceiversEmail =
+          storeManagerVANotificationUsersAccessArr.map(
+            (storeManagerVANotificationUser) =>
+              storeManagerVANotificationUser?.email
+          );
+
+        // define notification unseen email
+        const unseenUsersArray = [];
+        const findNotificationUnseenUsers =
+          storeManagerVANotificationUsersAccessArr?.map(
+            (storeManagerVANotificationUser) => {
+              const unseenUser =
+                storeManagerVANotificationUser?.email?.split("@")[0];
+              unseenUsersArray.push({ [unseenUser]: false });
+            }
+          );
+
+        const timestamp = new Date().toISOString();
+        const notificationData = {
+          notification_receivers_email: notificationReceiversEmail,
+          notification_sender_name: notificationSenderName,
+          notification_sender_role: notificationSenderRole,
+          timestamp,
+          status,
+          notification_search,
+          notification_link,
+          isNotificationSeen: unseenUsersArray,
+        };
+        const finalResult = await notification_collection.insertOne(
+          notificationData
+        );
+        res.send({ finalResult, notificationData });
+      }
+    } catch (error) {
+      console.log(error);
     }
-  }
-  catch(error){
-    console.log(error);
-  }
-    });
 
-  // get all notifications 
+    // working 
+    // send notification by warehouse admin
+    try {
+      if (currentUser?.role == "Warehouse Admin") {
+        const adminQuery = { admin_id: currentUser?.admin_id };
+        const adminAccessUsers = await admin_users_collection
+          .find(adminQuery)
+          .toArray();
+
+        const adminVAQuery = { admin_id: currentUser?.admin_id };
+        const adminVAAccessUsers = await admin_va_users_collection
+          .find(adminVAQuery)
+          .toArray();
+
+        const storeManagerAdminQuery = {
+          admin_id: currentUser?.admin_id,
+          store_access_ids: { $in: [storeId] },
+        };
+        const storeManagerAccessUsers =
+          await store_manager_admin_users_collection
+            .find(storeManagerAdminQuery)
+            .toArray();
+
+        const storeManagerVAQuery = {
+          admin_id: currentUser?.admin_id,
+          store_access_ids: { $in: [storeId] },
+        };
+        const storeManagerVAAccessUsers =
+          await store_manager_va_users_collection
+            .find(storeManagerVAQuery)
+            .toArray();
+
+        // const warehouseAdminQuery = {
+        //   admin_id: currentUser?.admin_id,
+        //   warehouse_id: warehouseId,
+        // };
+        // const warehouseAdminAccessUsers = await warehouse_admin_users_collection
+        //   .find(warehouseAdminQuery)
+        //   .toArray();
+
+        const warehouseManagerVAQuery = {
+          admin_id: currentUser?.admin_id,
+          warehouse_id: warehouseId,
+        };
+        const warehouseManagerVAAccessUsers =
+          await warehouse_manager_va_users_collection
+            .find(warehouseManagerVAQuery)
+            .toArray();
+
+        const warehouseNotificationUsersAccessArr = [
+          ...adminAccessUsers,
+          ...adminVAAccessUsers,
+          ...storeManagerAccessUsers,
+          ...storeManagerVAAccessUsers,
+          ...warehouseManagerVAAccessUsers
+        ];
+
+        // send notification
+        // define notification receiver email
+        const notificationReceiversEmail =
+          warehouseNotificationUsersAccessArr.map(
+            (warehouseNotificationUser) => warehouseNotificationUser?.email
+          );
+
+        // define notification unseen email
+        const unseenUsersArray = [];
+        const findNotificationUnseenUsers =
+          warehouseNotificationUsersAccessArr?.map(
+            (warehouseNotificationUser) => {
+              const unseenUser =
+                warehouseNotificationUser?.email?.split("@")[0];
+              unseenUsersArray.push({ [unseenUser]: false });
+            }
+          );
+
+        const timestamp = new Date().toISOString();
+        const notificationData = {
+          notification_receivers_email: notificationReceiversEmail,
+          notification_sender_name: notificationSenderName,
+          notification_sender_role: notificationSenderRole,
+          timestamp,
+          status,
+          notification_search,
+          notification_link,
+          isNotificationSeen: unseenUsersArray,
+        };
+        const finalResult = await notification_collection.insertOne(
+          notificationData
+        );
+        res.send({ finalResult, notificationData });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+
+    // send notification by warehouse admin
+    try {
+      if (currentUser?.role == "Warehouse Manager VA") {
+        const adminQuery = { admin_id: currentUser?.admin_id };
+        const adminAccessUsers = await admin_users_collection
+          .find(adminQuery)
+          .toArray();
+
+        const adminVAQuery = { admin_id: currentUser?.admin_id };
+        const adminVAAccessUsers = await admin_va_users_collection
+          .find(adminVAQuery)
+          .toArray();
+
+        const storeManagerAdminQuery = {
+          admin_id: currentUser?.admin_id,
+          store_access_ids: { $in: [storeId] },
+        };
+        const storeManagerAccessUsers =
+          await store_manager_admin_users_collection
+            .find(storeManagerAdminQuery)
+            .toArray();
+
+        const storeManagerVAQuery = {
+          admin_id: currentUser?.admin_id,
+          store_access_ids: { $in: [storeId] },
+        };
+        const storeManagerVAAccessUsers =
+          await store_manager_va_users_collection
+            .find(storeManagerVAQuery)
+            .toArray();
+
+        const warehouseAdminQuery = {
+          admin_id: currentUser?.admin_id,
+          warehouse_id: warehouseId,
+        };
+        const warehouseAdminAccessUsers = await warehouse_admin_users_collection
+          .find(warehouseAdminQuery)
+          .toArray();
+
+        const warehouseManagerVAQuery = {
+          email: {$ne: currentUser?.email},
+          admin_id: currentUser?.admin_id,
+          warehouse_id: warehouseId,
+        };
+        const warehouseManagerVAAccessUsers =
+          await warehouse_manager_va_users_collection
+            .find(warehouseManagerVAQuery)
+            .toArray();
+
+        const warehouseNotificationUsersAccessArr = [
+          ...adminAccessUsers,
+          ...adminVAAccessUsers,
+          ...storeManagerAccessUsers,
+          ...storeManagerVAAccessUsers,
+          ...warehouseAdminAccessUsers,
+          ...warehouseManagerVAAccessUsers
+        ];
+        
+        // send notification
+        // define notification receiver email
+        const notificationReceiversEmail =
+        warehouseNotificationUsersAccessArr.map(
+            (warehouseVANotificationUser) => warehouseVANotificationUser?.email
+          );
+
+        // define notification unseen email
+        const unseenUsersArray = [];
+        const findNotificationUnseenUsers =
+        warehouseNotificationUsersAccessArr?.map(
+            (warehouseVANotificationUser) => {
+              const unseenUser =
+                warehouseVANotificationUser?.email?.split("@")[0];
+              unseenUsersArray.push({ [unseenUser]: false });
+            }
+          );
+        const timestamp = new Date().toISOString();
+        const notificationData = {
+          notification_receivers_email: notificationReceiversEmail,
+          notification_sender_name: notificationSenderName,
+          notification_sender_role: notificationSenderRole,
+          timestamp,
+          status,
+          notification_search,
+          notification_link,
+          isNotificationSeen: unseenUsersArray,
+        };
+        await notification_collection.insertOne(notificationData);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
+  // get all notifications
   router.get("/notifications", async (req, res) => {
-    const email = req.query?.email
-    const limit = req.query?.limit
-    const skip = req.query?.skip
-    const query = {notification_receivers_email: { $in: [email] }}
-    const result = await notification_collection.find(query).sort({ timestamp: -1 }).skip(Number(skip)).limit(Number(limit)).toArray()
+    const email = req.query?.email;
+    const limit = req.query?.limit;
+    const skip = req.query?.skip;
+    const query = { notification_receivers_email: { $in: [email] } };
+    const result = await notification_collection
+      .find(query)
+      .sort({ timestamp: -1 })
+      .skip(Number(skip))
+      .limit(Number(limit))
+      .toArray();
     // const result = await notification_collection.find(query).sort({ timestamp: -1 }).toArray()
-    res.status(200).send(result)
-  })
+    res.status(200).send(result);
+  });
 };
 
 run();

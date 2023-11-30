@@ -646,7 +646,7 @@ export default function InventoryPreparingRequestTable() {
                     );
                   })
                 ) : (
-                  <tr>
+                  (notificationSearchData && <tr>
                     <th>
                       {format(new Date(notificationSearchData?.date), "y/MM/d")}
                     </th>
@@ -703,7 +703,7 @@ export default function InventoryPreparingRequestTable() {
                         <p>OOS</p>
                       </button>
                     </td>
-                  </tr>
+                  </tr>)
                 )}
               </>
             )}

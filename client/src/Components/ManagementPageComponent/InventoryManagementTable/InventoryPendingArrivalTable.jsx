@@ -184,7 +184,7 @@ export default function InventoryPendingArrivalTable() {
     });
   };
 
-  const handleUpdate = (event, _id) => {
+  const handleUpdate = (event, data) => {
     event.preventDefault();
     setLoading(true);
     setSuccessMessage("");
@@ -223,7 +223,7 @@ export default function InventoryPendingArrivalTable() {
 
     axios
       .put(
-        `/api/v1/pending_arrival_api/update_inventory_pending_arrival_data?id=${_id}`,
+        `/api/v1/pending_arrival_api/update_inventory_pending_arrival_data?id=${data?._id}`,
         updatedData
       )
       .then((res) => {
@@ -247,6 +247,8 @@ export default function InventoryPendingArrivalTable() {
               status,
               notification_search,
               notification_link,
+              storeId: data?.store_id,
+              warehouseId: data?.warehouse_id,
             })
             .then((res) => {
               // send real time notification data
@@ -789,7 +791,7 @@ export default function InventoryPendingArrivalTable() {
           className="modal-box py-10 px-10"
         >
           <form
-            onSubmit={(event) => handleUpdate(event, singleData._id)}
+            onSubmit={(event) => handleUpdate(event, singleData)}
             className="flex gap-10"
           >
             <div className="w-1/2">

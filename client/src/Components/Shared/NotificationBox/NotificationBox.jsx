@@ -30,6 +30,7 @@ export default function NotificationBox({notificationsRef}) {
 
   // generate notification redirect url 
 const handleNavigateUrl = (url, notification_search, notification) => {
+  console.log(notification_search);
   setIsNotificationBoxOpen(false)
   if(user?.role == "Admin" ||user?.role ==  "Admin VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA" && !Array.isArray(url) && notification_search.length < 2){
   const link = url.split("/")
