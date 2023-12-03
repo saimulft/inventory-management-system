@@ -304,6 +304,7 @@ io.on("connection", (socket) => {
         ...warehouseAdminUsers,
         ...warehouseManagerVAUsers,
       ];
+      console.log("🚀 ~ file: index.js:307 ~ socket.on ~ warehouseNotificationAccessUsers:", warehouseNotificationAccessUsers)
       
       // send notification
       warehouseNotificationAccessUsers?.forEach(

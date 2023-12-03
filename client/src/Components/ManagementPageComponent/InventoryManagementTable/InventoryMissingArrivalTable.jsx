@@ -653,7 +653,7 @@ if(missingArrivalStatus == "solved"){
         </table>
 
         {/* pagination */}
-        {!isLoading &&
+        {!notificationSearchValue && !isLoading &&
           !searchError &&
           !searchResults.length &&
           data?.length > 15 && (

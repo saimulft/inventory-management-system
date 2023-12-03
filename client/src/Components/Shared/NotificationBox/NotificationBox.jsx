@@ -189,7 +189,7 @@ export default function NotificationBox({ notificationsRef }) {
         setSkip(0);
         setNotifications([]);
         setRefetch(!refetch);
-        setNotificationLoading(true);
+        setNotificationLoading(false);
       })
       .catch((error) => {
         console.log(error);
@@ -216,9 +216,9 @@ export default function NotificationBox({ notificationsRef }) {
               {notifications?.length > 0 && (
                 <p
                   onClick={() => handleReadAll(user?.email)}
-                  className="bg-purple-50 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-100 transition hover:shadow text-sm"
+                  className="bg-purple-100 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-200 transition hover:shadow text-sm"
                 >
-                  Mark all as read
+                 Read all
                 </p>
               )}
             </div>
@@ -229,8 +229,12 @@ export default function NotificationBox({ notificationsRef }) {
             className="h-[488px]  overflow-y-scroll notifications_box"
           >
             <div>
-              {" "}
-              {notifications?.map((notification) => {
+            <div className="flex justify-center">
+              {notificationLoading && (
+                <p className="h-10 w-10 border-purple-500 border-4 border-dotted rounded-full animate-spin "></p>
+              )}
+            </div>
+              {!notificationLoading && notifications?.map((notification) => {
                 const notification_link = notification?.notification_link;
                 const notification_search = notification?.notification_search;
                 return (
@@ -319,17 +323,14 @@ export default function NotificationBox({ notificationsRef }) {
                 );
               })}
             </div>
-            <div className="flex justify-center">
-              {notificationLoading && !notifications && (
-                <p className="h-10 w-10 border-purple-500 border-4 border-dotted rounded-full animate-spin "></p>
-              )}
-            </div>
+           
             {notifications?.length == 0 && !notificationLoading && (
-              <div className="text-xl font-medium text-center text-purple-500">
+              <div className="text-xl font-medium text-center text-purple-500  mt-2">
                 Notifications data not available!
               </div>
             )}
           </div>
+          
         </div>
       )}
     </div>
