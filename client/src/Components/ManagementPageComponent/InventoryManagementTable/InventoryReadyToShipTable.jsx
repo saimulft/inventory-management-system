@@ -89,7 +89,7 @@ export default function InventoryReadyToShipTable() {
     setFilterDays(null);
     setSearchResults(filteredData);
   };
-  const handleShipment = (_id) => {
+  const handleShipment = (data) => {
     Swal.fire({
       title: "Confirm complete shipment?",
       icon: "warning",
@@ -100,7 +100,7 @@ export default function InventoryReadyToShipTable() {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .post(`/api/v1/shipped_api/shipped?id=${_id}`)
+          .post(`/api/v1/shipped_api/shipped?id=${data?._id}`)
           .then((res) => {
             if (res.status === 200) {
               const notification_link = "/dashboard/management/store/shipped";
@@ -112,6 +112,8 @@ export default function InventoryReadyToShipTable() {
                   status,
                   notification_link,
                   notification_search,
+                  storeId: data?.store_id,
+                  warehouseId: data?.warehouse_id
                 })
                 .then((res) => {
                   const notificationData = res.data?.notificationData;
@@ -292,7 +294,10 @@ export default function InventoryReadyToShipTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+           
+            {!notificationSearchValue && (
+              <>
+               <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -305,8 +310,6 @@ export default function InventoryReadyToShipTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -434,11 +437,11 @@ export default function InventoryReadyToShipTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -470,7 +473,7 @@ export default function InventoryReadyToShipTable() {
                         <td className="flex gap-2">
                           <button
                             onClick={() => {
-                              handleShipment(d._id);
+                              handleShipment(d);
                             }}
                             className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]"
                           >
@@ -508,7 +511,7 @@ export default function InventoryReadyToShipTable() {
                         <td className="flex gap-2">
                           <button
                             onClick={() => {
-                              handleShipment(d._id);
+                              handleShipment(d);
                             }}
                             className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]"
                           >
@@ -545,7 +548,7 @@ export default function InventoryReadyToShipTable() {
                     <td className="flex gap-2">
                       <button
                         onClick={() => {
-                          handleShipment(notificationSearchData?._id);
+                          handleShipment(notificationSearchData);
                         }}
                         className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]"
                       >

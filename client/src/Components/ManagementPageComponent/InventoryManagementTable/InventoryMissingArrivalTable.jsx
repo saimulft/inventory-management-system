@@ -20,11 +20,22 @@ export default function InventoryMissingArrivalTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const notificationSearchValue = queryParams.get("notification_search");
+  const missingArrivalStatus = queryParams.get("missing_arrival_status");
+ 
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
-  const [activeTab, setActiveTab] = useState(
-    `${notificationSearchValue ? "solved" : "active"}`
-  );
+  const [activeTab, setActiveTab] = useState('active');
+  console.log("🚀 ~ file: InventoryMissingArrivalTable.jsx:28 ~ InventoryMissingArrivalTable ~ activeTab:", activeTab)
+
+useEffect(()=>{
+if(!missingArrivalStatus || missingArrivalStatus == "active"){
+  setActiveTab("active")
+}
+if(missingArrivalStatus == "solved"){
+  setActiveTab("solved")
+}
+},[missingArrivalStatus])
+
   const [singleData, setSingleData] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -110,6 +121,32 @@ export default function InventoryMissingArrivalTable() {
           )
           .then((res) => {
             if (res.status === 200) {
+              const notification_link =
+              "/dashboard/management/store/missing-arrival";
+            const notification_search = [res.data?.result?.insertedId];
+            const status = "A missing arrival entry has been deleted.";
+            axios
+              .post(`/api/v1/notifications_api/send_notification`, {
+                currentUser,
+                status,
+                notification_link,
+                notification_search,
+                storeId: data?.store_id,
+                warehouseId: data?.warehouse_id
+              })
+              .then((res) => {
+                // send real time notification data
+                if (res.data?.finalResult?.acknowledged) {
+                  const notificationData = res.data?.notificationData;
+                  if (notificationData) {
+                    socket?.current?.emit("sendNotification", {
+                      user,
+                      notificationData,
+                    });
+                  }
+                }
+              })
+              .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -124,7 +161,7 @@ export default function InventoryMissingArrivalTable() {
     });
   };
 
-  const handleUpdate = (event, _id) => {
+  const handleUpdate = (event, data) => {
     event.preventDefault();
     setLoading(true);
     setSuccessMessage("");
@@ -164,14 +201,14 @@ export default function InventoryMissingArrivalTable() {
 
     axios
       .put(
-        `/api/v1/missing_arrival_api/update_missing_arrival_data?id=${_id}`,
+        `/api/v1/missing_arrival_api/update_missing_arrival_data?id=${data?._id}`,
         updatedData
       )
       .then((res) => {
         if (res.status === 200) {
           const notification_link =
             "/dashboard/management/store/missing-arrival";
-          const notification_search = [_id];
+          const notification_search = [data?._id];
           const status = "Solved missing arrival item.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
@@ -179,6 +216,8 @@ export default function InventoryMissingArrivalTable() {
               status,
               notification_link,
               notification_search,
+              storeId: data?.store_id,
+              warehouseId: data?.warehouse_id
             })
             .then((res) => {
               // send real time notification data
@@ -404,11 +443,11 @@ export default function InventoryMissingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -534,7 +573,7 @@ export default function InventoryMissingArrivalTable() {
                     })
                   )
                 ) : (
-                  <tr>
+                  (notificationSearchData && <tr>
                     <th>
                       {notificationSearchData?.date &&
                         format(
@@ -606,7 +645,7 @@ export default function InventoryMissingArrivalTable() {
                         </ul>
                       </div>
                     </td>
-                  </tr>
+                  </tr>)
                 )}
               </>
             )}
@@ -656,7 +695,7 @@ export default function InventoryMissingArrivalTable() {
           className="modal-box py-10 px-10"
         >
           <form
-            onSubmit={(event) => handleUpdate(event, singleData._id)}
+            onSubmit={(event) => handleUpdate(event, singleData)}
             className="flex gap-10"
           >
             <div className="w-full">

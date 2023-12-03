@@ -54,6 +54,7 @@ export default function InventoryTotalASINTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
+  
   const handleCustomDateSearch = () => {
     setSearchError("");
     const startDate = rangeDate[0].startDate;
@@ -235,7 +236,10 @@ export default function InventoryTotalASINTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+            
+            {!notificationSearchValue && (
+              <>
+              <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -248,8 +252,6 @@ export default function InventoryTotalASINTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -373,11 +375,11 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -427,7 +429,7 @@ export default function InventoryTotalASINTable() {
                     })
                   )
                 ) : (
-                  <tr>
+                  (notificationSearchValue && <tr>
                     <th>
                       {notificationSearchData?.date &&
                         format(new Date(notificationSearchData.date), "y/MM/d")}
@@ -446,7 +448,7 @@ export default function InventoryTotalASINTable() {
                         />
                       )}
                     </td>
-                  </tr>
+                  </tr>)
                 )}
               </>
             )}
@@ -457,7 +459,7 @@ export default function InventoryTotalASINTable() {
         {!isLoading &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && (
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}

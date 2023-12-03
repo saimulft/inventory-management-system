@@ -4,6 +4,7 @@ import useAuth from "../../hooks/useAuth";
 import useGlobal from "../../hooks/useGlobal";
 import { ChatContext } from "../../Providers/ChatProvider";
 import { useContext} from "react";
+import { NotificationContext } from "../../Providers/NotificationProvider";
 
 export default function Navbar() {
   const {
@@ -15,6 +16,7 @@ export default function Navbar() {
     setSingleConversationShow,
     isNotificationBoxOpen, setIsNotificationBoxOpen,messageAlert
   } = useContext(ChatContext);
+  const {notificationAlert} = useContext(NotificationContext);
 
   const { user } = useAuth()
   const { pageName } = useGlobal()
@@ -67,8 +69,10 @@ export default function Navbar() {
             className="bg-[#454547] hover:bg-[#3f3f41] cursor-pointer transition-all duration-15 p-3 rounded relative"
           >
             <BsBell size={20} />
+      {  notificationAlert &&  <>
             <span className="animate-ping absolute top-1 right-1 inline-flex h-3 w-3 rounded-full bg-red-400 opacity-75"></span>
             <span className="h-1 w-1 rounded-full bg-red-500 absolute inline top-2 right-2"></span>
+            </>}
           </div>
         </div>
 

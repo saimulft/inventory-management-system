@@ -213,8 +213,6 @@ export default function ConversationUserList() {
   };
 
   const currentUserObjKey = user?.email?.split("@")[0];
-
-
   if(data){
     const unreadMessage = data?.find(d =>{
       if(d?.isMessageSeen){

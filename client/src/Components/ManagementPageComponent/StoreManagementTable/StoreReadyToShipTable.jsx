@@ -236,7 +236,10 @@ export default function StorePreparingRequestTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+           
+            {!notificationSearchValue && (
+              <>
+               <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -249,8 +252,6 @@ export default function StorePreparingRequestTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -377,11 +378,11 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}

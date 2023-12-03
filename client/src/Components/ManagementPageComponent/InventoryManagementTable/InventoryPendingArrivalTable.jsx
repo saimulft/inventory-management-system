@@ -44,6 +44,10 @@ export default function InventoryPendingArrivalTable() {
       key: "selection",
     },
   ]);
+
+  console.log(notificationSearchValue);
+  
+
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -77,7 +81,7 @@ export default function InventoryPendingArrivalTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
-
+    
   const handleSearch = (e) => {
     e.preventDefault();
     setSearchError("");
@@ -170,6 +174,32 @@ export default function InventoryPendingArrivalTable() {
           )
           .then((res) => {
             if (res.status === 200) {
+              const notification_link =
+              "/dashboard/management/store/pending-arrival";
+            const notification_search = [res.data?.result?.insertedId];
+            const status = "A pending arrival entry has been deleted.";
+            axios
+              .post(`/api/v1/notifications_api/send_notification`, {
+                currentUser,
+                status,
+                notification_link,
+                notification_search,
+                storeId: data?.store_id,
+                warehouseId: data?.warehouse_id
+              })
+              .then((res) => {
+                // send real time notification data
+                if (res.data?.finalResult?.acknowledged) {
+                  const notificationData = res.data?.notificationData;
+                  if (notificationData) {
+                    socket?.current?.emit("sendNotification", {
+                      user,
+                      notificationData,
+                    });
+                  }
+                }
+              })
+              .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -396,7 +426,10 @@ export default function InventoryPendingArrivalTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+            
+            {!notificationSearchValue && (
+              <>
+              <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -409,8 +442,6 @@ export default function InventoryPendingArrivalTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -539,11 +570,11 @@ export default function InventoryPendingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -609,7 +640,7 @@ export default function InventoryPendingArrivalTable() {
                   })
                 ) : isLoading ? (
                   <Loading />
-                ) : !notificationSearchData ? (
+                ) : !notificationSearchData && !notificationSearchValue? (
                   displayAllData?.map((d, index) => {
                     return (
                       <tr className={`${index % 2 == 1 && ""}`} key={index}>
@@ -667,9 +698,9 @@ export default function InventoryPendingArrivalTable() {
                     );
                   })
                 ) : (
-                  <tr>
+                  (notificationSearchData && <tr>
                     <th>
-                      {format(
+                      {notificationSearchData?.date && format(
                         new Date(notificationSearchData?.date),
                         "yyyy/MM/dd"
                       )}
@@ -695,7 +726,7 @@ export default function InventoryPendingArrivalTable() {
                         : "-"}
                     </td>
                     <td>
-                      {format(
+                      {notificationSearchData?.date && format(
                         new Date(notificationSearchData?.eda),
                         "yyyy/MM/dd"
                       )}
@@ -741,7 +772,7 @@ export default function InventoryPendingArrivalTable() {
                         </ul>
                       </div>
                     </td>
-                  </tr>
+                  </tr>)
                 )}
               </>
             )}
@@ -749,7 +780,7 @@ export default function InventoryPendingArrivalTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading &&
+        {!isLoading && !notificationSearchValue &&
           !searchError &&
           !searchResults.length &&
           data?.length > 15 && (

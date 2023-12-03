@@ -152,7 +152,6 @@ const run = async () => {
 
     // get all preparing request data
     router.post('/get_all_preparing_request_data', async (req, res) => {
-console.log("enter");
         try {
             const user = req.body.user;
             const role = user.role;
@@ -174,8 +173,6 @@ console.log("enter");
             }
 
             const data = await preparing_form_collection.find(query).sort({ created_at: -1 }).toArray()
-            console.log(data);
-
             if (data) {
                 res.status(200).json({ data: data })
             }

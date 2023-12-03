@@ -89,6 +89,32 @@ export default function InventoryOutOfStockTable() {
           .delete(`/api/v1/out_of_stock_api/delete_OOS_data?id=${_id}`)
           .then((res) => {
             if (res.status === 200) {
+              const notification_link =
+              "/dashboard/management/store/out-of-stock";
+            const notification_search = [res.data?.result?.insertedId];
+            const status = "A out of stock entry has been deleted.";
+            axios
+              .post(`/api/v1/notifications_api/send_notification`, {
+                currentUser,
+                status,
+                notification_link,
+                notification_search,
+                storeId: data?.store_id,
+                warehouseId: data?.warehouse_id
+              })
+              .then((res) => {
+                // send real time notification data
+                if (res.data?.finalResult?.acknowledged) {
+                  const notificationData = res.data?.notificationData;
+                  if (notificationData) {
+                    socket?.current?.emit("sendNotification", {
+                      user,
+                      notificationData,
+                    });
+                  }
+                }
+              })
+              .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -103,7 +129,7 @@ export default function InventoryOutOfStockTable() {
     });
   };
 
-  const handleUpdate = (event, _id) => {
+  const handleUpdate = (event, data) => {
     event.preventDefault();
     setLoading(true);
     setSuccessMessage("");
@@ -130,7 +156,7 @@ export default function InventoryOutOfStockTable() {
 
     axios
       .put(
-        `/api/v1/out_of_stock_api/update_OOS_data?id=${_id}&from=inventory`,
+        `/api/v1/out_of_stock_api/update_OOS_data?id=${data?._id}&from=inventory`,
         updatedData
       )
       .then((res) => {
@@ -145,6 +171,8 @@ export default function InventoryOutOfStockTable() {
               status,
               notification_link,
               notification_search,
+              storeId: data?.store_id,
+              warehouseId: data?.warehouse_id
             })
             .then((res) => {
               // send real time notification data
@@ -365,7 +393,10 @@ export default function InventoryOutOfStockTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+            
+            {!notificationSearchValue && (
+              <>
+              <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -378,8 +409,6 @@ export default function InventoryOutOfStockTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -507,11 +536,11 @@ export default function InventoryOutOfStockTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -647,30 +676,30 @@ export default function InventoryOutOfStockTable() {
                 ) : (
                   <tr>
                     <th>
-                      {notificationSearchData.date &&
+                      {notificationSearchData?.date &&
                         format(new Date(notificationSearchData.date), "y/MM/d")}
                     </th>
-                    <th>{notificationSearchData.store_name}</th>
-                    <td>{notificationSearchData.asin_upc_code}</td>
-                    <td>{notificationSearchData.code_type}</td>
-                    <td>{notificationSearchData.order_id}</td>
-                    <td>{notificationSearchData.product_name}</td>
-                    <td>{notificationSearchData.upin}</td>
-                    <td>{notificationSearchData.quantity}</td>
-                    <td>{notificationSearchData.courier}</td>
-                    <td>{notificationSearchData.tracking_number}</td>
+                    <th>{notificationSearchData?.store_name}</th>
+                    <td>{notificationSearchData?.asin_upc_code}</td>
+                    <td>{notificationSearchData?.code_type}</td>
+                    <td>{notificationSearchData?.order_id}</td>
+                    <td>{notificationSearchData?.product_name}</td>
+                    <td>{notificationSearchData?.upin}</td>
+                    <td>{notificationSearchData?.quantity}</td>
+                    <td>{notificationSearchData?.courier}</td>
+                    <td>{notificationSearchData?.tracking_number}</td>
                     <td>
-                      {notificationSearchData.shipping_file && (
+                      {notificationSearchData?.shipping_file && (
                         <FileDownload
-                          fileName={notificationSearchData.shipping_file}
+                          fileName={notificationSearchData?.shipping_file}
                         />
                       )}
                     </td>
                     <td className="text-green-600">
-                      {notificationSearchData.status &&
-                        notificationSearchData.status}
+                      {notificationSearchData?.status &&
+                        notificationSearchData?.status}
                     </td>
-                    <td>{notificationSearchData.notes}</td>
+                    <td>{notificationSearchData?.notes}</td>
                     <td>
                       <div className="dropdown dropdown-end">
                         <label tabIndex={0}>
@@ -700,7 +729,7 @@ export default function InventoryOutOfStockTable() {
                             <li>
                               <button
                                 onClick={() =>
-                                  handleDelete(notificationSearchData._id)
+                                  handleDelete(notificationSearchData?._id)
                                 }
                               >
                                 Delete
@@ -762,7 +791,7 @@ export default function InventoryOutOfStockTable() {
           className="modal-box py-10 px-10"
         >
           <form
-            onSubmit={(event) => handleUpdate(event, singleData._id)}
+            onSubmit={(event) => handleUpdate(event, singleData)}
             className="flex gap-10"
           >
             <div className="w-1/2">

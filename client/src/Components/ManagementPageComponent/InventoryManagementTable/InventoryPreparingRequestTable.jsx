@@ -60,11 +60,14 @@ export default function InventoryPreparingRequestTable() {
       }
     },
   });
+  
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
 
-  const handleRTS = async (_id, quantity, upin) => {
+  const handleRTS = async (_id, quantity, upin, data ) => {
+    console.log(data);
+    
     try {
       setLoading(true);
       const res = await axios.post(
@@ -115,6 +118,8 @@ export default function InventoryPreparingRequestTable() {
                       status,
                       notification_link,
                       notification_search,
+                      storeId: data?.store_id,
+                      warehouseId: data?.warehouse_id,
                     })
                     .then((res) => {
                       if (res.data?.finalResult?.acknowledged) {
@@ -144,7 +149,7 @@ export default function InventoryPreparingRequestTable() {
     }
   };
 
-  const handleOOS = (_id) => {
+  const handleOOS = (data) => {
     Swal.fire({
       title: "Confirm out of stock?",
       icon: "warning",
@@ -155,7 +160,7 @@ export default function InventoryPreparingRequestTable() {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .post(`/api/v1/out_of_stock_api/out_of_stock?id=${_id}`)
+          .post(`/api/v1/out_of_stock_api/out_of_stock?id=${data?._id}`)
           .then((res) => {
             if (res.status === 201) {
               const notification_link =
@@ -168,6 +173,8 @@ export default function InventoryPreparingRequestTable() {
                   status,
                   notification_search,
                   notification_link,
+                  storeId: data?.store_id,
+                  warehouseId: data?.warehouse_id,
                 })
                 .then((res) => {
                   if (res.data?.finalResult?.acknowledged) {
@@ -379,7 +386,10 @@ export default function InventoryPreparingRequestTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+          
+            {!notificationSearchValue && (
+              <>
+                <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -392,8 +402,6 @@ export default function InventoryPreparingRequestTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -523,11 +531,11 @@ export default function InventoryPreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -566,7 +574,7 @@ export default function InventoryPreparingRequestTable() {
                           <button
                             disabled={loading}
                             onClick={() => {
-                              handleRTS(d._id, d.quantity, d.upin);
+                              handleRTS(d._id, d.quantity, d.upin, d);
                             }}
                             className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
                           >
@@ -578,7 +586,7 @@ export default function InventoryPreparingRequestTable() {
                           <button
                             disabled={loading}
                             onClick={() => {
-                              handleOOS(d._id);
+                              handleOOS(d);
                             }}
                             className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
                           >
@@ -623,7 +631,7 @@ export default function InventoryPreparingRequestTable() {
                           <button
                             disabled={loading}
                             onClick={() => {
-                              handleRTS(d._id, d.quantity, d.upin);
+                              handleRTS(d._id, d.quantity, d.upin, d);
                             }}
                             className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
                           >
@@ -634,7 +642,7 @@ export default function InventoryPreparingRequestTable() {
                           <button
                             disabled={loading}
                             onClick={() => {
-                              handleOOS(d._id);
+                              handleOOS(d);
                             }}
                             className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
                           >
@@ -683,7 +691,8 @@ export default function InventoryPreparingRequestTable() {
                           handleRTS(
                             notificationSearchData?._id,
                             notificationSearchData?.quantity,
-                            notificationSearchData?.upin
+                            notificationSearchData?.upin,
+                            notificationSearchData
                           );
                         }}
                         className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
@@ -695,7 +704,7 @@ export default function InventoryPreparingRequestTable() {
                       <button
                         disabled={loading}
                         onClick={() => {
-                          handleOOS(notificationSearchData?._id);
+                          handleOOS(notificationSearchData);
                         }}
                         className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
                       >

@@ -189,7 +189,7 @@ const PreparingFormPage = () => {
       })
       .then((res) => {
         if (res.status === 201) {
-          console.log(res);
+          console.log(currentUser);
           const notification_link =
              "/dashboard/management/store/preparing-request";
           const notification_search =[ res?.data?.result?.insertedId];
@@ -200,7 +200,8 @@ const PreparingFormPage = () => {
               status,
               notification_link,
               notification_search,
-              storeId: storeOption?.value
+              storeId: storeOption?.value,
+              warehouseId: warehouseOption?.value,
             })
             .then((res) => {
               console.log(res.data);

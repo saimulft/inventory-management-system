@@ -161,6 +161,29 @@ export default function InventoryShippedTable() {
         axios
           .delete(`/api/v1/shipped_api/delete_shipped_data?id=${_id}`)
           .then((res) => {
+            const notification_link = "/dashboard/management/store/shipped";
+            const notification_search = [data?._id];
+            const status = "A shipped entry has been deleted.";
+            axios
+              .post(`/api/v1/notifications_api/send_notification`, {
+                currentUser,
+                status,
+                notification_link,
+                notification_search,
+                storeId: data?.store_id,
+                warehouseId: data?.warehouse_id
+              })
+              .then((res) => {
+                const notificationData = res.data?.notificationData;
+                if (res.data?.finalResult?.acknowledged) {
+                  // send real time notification data
+                  socket?.current?.emit("sendNotification", {
+                    user,
+                    notificationData,
+                  });
+                }
+              })
+              .catch((err) => console.log(err));
             if (res.status === 200) {
               refetch();
               setCountsRefetch(true);
@@ -176,7 +199,7 @@ export default function InventoryShippedTable() {
     });
   };
 
-  const handleUpdate = (event, _id) => {
+  const handleUpdate = (event, data) => {
     event.preventDefault();
     setLoading(true);
     setSuccessMessage("");
@@ -205,11 +228,11 @@ export default function InventoryShippedTable() {
       remark: remark,
     };
     axios
-      .put(`/api/v1/shipped_api/update_shipped_data?id=${_id}`, updatedData)
+      .put(`/api/v1/shipped_api/update_shipped_data?id=${data?._id}`, updatedData)
       .then((res) => {
         if (res.status === 201) {
           const notification_link = "/dashboard/management/store/shipped";
-          const notification_search = [_id];
+          const notification_search = [data?._id];
           const status = "Updated resaleable quantity.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
@@ -217,6 +240,8 @@ export default function InventoryShippedTable() {
               status,
               notification_link,
               notification_search,
+              storeId: data?.store_id,
+              warehouseId: data?.warehouse_id
             })
             .then((res) => {
               const notificationData = res.data?.notificationData;
@@ -362,7 +387,10 @@ export default function InventoryShippedTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+            
+            {!notificationSearchValue && (
+              <>
+              <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -375,8 +403,6 @@ export default function InventoryShippedTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -504,11 +530,11 @@ export default function InventoryShippedTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -752,7 +778,7 @@ export default function InventoryShippedTable() {
           className="modal-box py-10 px-10"
         >
           <form
-            onSubmit={(event) => handleUpdate(event, singleData._id)}
+            onSubmit={(event) => handleUpdate(event, singleData)}
             className="flex gap-10"
           >
             <div className="w-1/2">

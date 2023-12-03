@@ -23,15 +23,7 @@ export default function StoreMissingArrivalTable() {
   const missingArrivalStatus = queryParams.get("missing_arrival_status");
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
-  const [activeTab, setActiveTab] = useState(
-    `${
-      notificationSearchValue
-        ? missingArrivalStatus == "active"
-          ? "active"
-          : "solved"
-        : "active"
-    }`
-  );
+  const [activeTab, setActiveTab] = useState("active");
   const [singleData, setSingleData] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -40,6 +32,16 @@ export default function StoreMissingArrivalTable() {
   const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const { isSidebarOpen, setCountsRefetch } = useGlobal();
+
+  useEffect(()=>{
+    if(!missingArrivalStatus || missingArrivalStatus == "active"){
+      setActiveTab("active")
+    }
+    if(missingArrivalStatus == "solved"){
+      setActiveTab("solved")
+    }
+    },[missingArrivalStatus])
+    
 
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
   const { user } = useAuth();
@@ -118,22 +120,32 @@ export default function StoreMissingArrivalTable() {
           )
           .then((res) => {
             if (res.status === 200) {
-              const status = "A missing arrival entry has been deleted.";
-              axios
-                .post(`/api/v1/notifications_api/send_notification`, {
-                  currentUser,
-                  status,
-                })
-                .then((res) => {
-                  if (res.data.acknowledged) {
-                    // send real time notification data
-                    socket?.current?.emit("sendNotification", {
-                      user,
-                      status,
-                    });
-                  }
-                })
-                .catch((err) => console.log(err));
+              const notification_link =
+            "/dashboard/management/store/missing-arrival";
+          const notification_search = [res.data?.result?.insertedId];
+          const status = "A missing arrival entry has been deleted.";
+          axios
+            .post(`/api/v1/notifications_api/send_notification`, {
+              currentUser,
+              status,
+              notification_link,
+              notification_search,
+              storeId: data?.store_id,
+              warehouseId: data?.warehouse_id
+            })
+            .then((res) => {
+              // send real time notification data
+              if (res.data?.finalResult?.acknowledged) {
+                const notificationData = res.data?.notificationData;
+                if (notificationData) {
+                  socket?.current?.emit("sendNotification", {
+                    user,
+                    notificationData,
+                  });
+                }
+              }
+            })
+            .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -148,7 +160,7 @@ export default function StoreMissingArrivalTable() {
     });
   };
 
-  const handleUpdate = (event, _id) => {
+  const handleUpdate = (event, data) => {
     event.preventDefault();
     setLoading(true);
     setSuccessMessage("");
@@ -188,21 +200,23 @@ export default function StoreMissingArrivalTable() {
 
     axios
       .put(
-        `/api/v1/missing_arrival_api/update_missing_arrival_data?id=${_id}`,
+        `/api/v1/missing_arrival_api/update_missing_arrival_data?id=${data?._id}`,
         updatedData
       )
       .then((res) => {
         if (res.status === 200) {
           const notification_link =
             "/dashboard/management/store/missing-arrival";
-          const notification_search = [_id];
+          const notification_search = [data?._id];
           const status = "Updated a missing arrival item.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
               notification_link,
-              notification_search
+              notification_search,
+              storeId: data?.store_id,
+              warehouseId: data?.warehouse_id
             })
             .then((res) => {
               if (res.data.acknowledged) {
@@ -412,8 +426,6 @@ export default function StoreMissingArrivalTable() {
               <th>Product Name</th>
               <th>Supplier ID</th>
               <th>UPIN</th>
-              <th>Expected Qnt.</th>
-              <th>Receive Qnt.</th>
               <th>Missing Qnt.</th>
               <th>Supplier Tracking</th>
               <th>EDA</th>
@@ -421,11 +433,11 @@ export default function StoreMissingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Missing arrival notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -553,7 +565,7 @@ export default function StoreMissingArrivalTable() {
                     );
                   })
                 ) : (
-                  notificationSearchData && (
+                  notificationSearchData  && (
                     <tr>
                       <th>
                         {notificationSearchData?.date &&
@@ -678,7 +690,7 @@ export default function StoreMissingArrivalTable() {
           className="modal-box py-10 px-10"
         >
           <form
-            onSubmit={(event) => handleUpdate(event, singleData._id)}
+            onSubmit={(event) => handleUpdate(event, singleData)}
             className="flex gap-10"
           >
             <div className="w-full">

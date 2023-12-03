@@ -106,6 +106,30 @@ export default function StorePreparingRequestTable() {
           })
           .then((res) => {
             if (res.status === 200) {
+              const status = "A preparing request entry has been deleted.";
+              axios
+                .post(`/api/v1/notifications_api/send_notification`, {
+                  currentUser,
+                  status,
+                  notification_link: "/dashboard/management/store/preparing-request",
+                  notification_search: [res?.data?.result],
+                  storeId: singleData?.store_id,
+                  warehouseId: singleData?.warehouse_id
+                })
+                .then((res) => {
+                  console.log(res.data);
+                  // send real time notification data
+                  if (res.data?.finalResult?.acknowledged) {
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      });
+                    }
+                  }
+                })
+                .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire("Deleted!", "Data has been deleted.", "success");
@@ -151,6 +175,7 @@ export default function StorePreparingRequestTable() {
       formData.append("file", shippingImageFile, `shipping.${shipping}`);
     }
     setLoading(true);
+    
     axios
       .put("/api/v1/preparing_form_api/preparing_form_update", formData, {
         headers: {
@@ -158,8 +183,6 @@ export default function StorePreparingRequestTable() {
         },
       })
       .then((res) => {
-        console.log(res);
-        
         if (res.status === 200) {
           const status = "Update preparing request data.";
           axios
@@ -167,8 +190,9 @@ export default function StorePreparingRequestTable() {
               currentUser,
               status,
               notification_link: "/dashboard/management/store/preparing-request",
-              notification_search: [res?.data?.result]
-
+              notification_search: [res?.data?.result],
+              storeId: singleData?.store_id,
+              warehouseId: singleData?.warehouse_id
             })
             .then((res) => {
               console.log(res.data);
@@ -420,7 +444,10 @@ export default function StorePreparingRequestTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+           
+            {!notificationSearchValue && (
+              <>
+               <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -433,8 +460,6 @@ export default function StorePreparingRequestTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -564,11 +589,11 @@ export default function StorePreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {notificationSearchData == undefined && !notificationSearchValue && (
+            {/* {notificationSearchData == undefined && !notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Preparing request notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}

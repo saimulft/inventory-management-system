@@ -218,12 +218,12 @@ export default function StoreAllStockTable() {
               </p>
             ) : (
               <>
-                {notificationSearchData == undefined &&
+                {/* {notificationSearchData == undefined &&
                   notificationSearchValue && (
                     <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                       All stock notified data not available!
                     </p>
-                  )}
+                  )} */}
 
                 {searchResults.length ? (
                   displayedDataFilter.map((d, index) => {

@@ -90,22 +90,32 @@ export default function StoreOutOfStockTable() {
           .delete(`/api/v1/out_of_stock_api/delete_OOS_data?id=${_id}`)
           .then((res) => {
             if (res.status === 200) {
-              const status = "An out of stock entry has been deleted.";
-              axios
-                .post(`/api/v1/notifications_api/send_notification`, {
-                  currentUser,
-                  status,
-                })
-                .then((res) => {
-                  if (res.data.acknowledged) {
-                    // send real time notification data
-                    socket?.current?.emit("sendNotification", {
-                      user,
-                      status,
-                    });
-                  }
-                })
-                .catch((err) => console.log(err));
+              const notification_link =
+            "/dashboard/management/store/out-of-stock";
+          const notification_search = [res.data?.result?.insertedId];
+          const status = "An out of stock entry has been deleted.";
+          axios
+            .post(`/api/v1/notifications_api/send_notification`, {
+              currentUser,
+              status,
+              notification_link,
+              notification_search,
+              storeId: data?.store_id,
+              warehouseId: data?.warehouse_id
+            })
+            .then((res) => {
+              // send real time notification data
+              if (res.data?.finalResult?.acknowledged) {
+                const notificationData = res.data?.notificationData;
+                if (notificationData) {
+                  socket?.current?.emit("sendNotification", {
+                    user,
+                    notificationData,
+                  });
+                }
+              }
+            })
+            .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -120,7 +130,7 @@ export default function StoreOutOfStockTable() {
     });
   };
 
-  const handleUpdate = (event, _id) => {
+  const handleUpdate = (event, data) => {
     event.preventDefault();
     setLoading(true);
     setSuccessMessage("");
@@ -147,16 +157,21 @@ export default function StoreOutOfStockTable() {
 
     axios
       .put(
-        `/api/v1/out_of_stock_api/update_OOS_data?id=${_id}&from=store`,
+        `/api/v1/out_of_stock_api/update_OOS_data?id=${data?._id}&from=store`,
         updatedData
       )
       .then((res) => {
+        console.log(res);
         if (res.status === 201) {
           const status = "Updated out of stock data.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
               status,
+              notification_link: "/dashboard/management/store/preparing-request",
+              notification_search: [res?.data?.result],
+              storeId: data?.store_id,
+              warehouseId: data?.warehouse_id
             })
             .then((res) => {
               if (res.data.acknowledged) {
@@ -374,7 +389,10 @@ export default function StoreOutOfStockTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p
+            
+            {!notificationSearchValue && (
+              <>
+              <p
               onClick={() => {
                 setSearchResults([]);
                 setSearchText("");
@@ -387,8 +405,6 @@ export default function StoreOutOfStockTable() {
             >
               All
             </p>
-            {!notificationSearchValue && (
-              <>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
@@ -516,11 +532,11 @@ export default function StoreOutOfStockTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {notificationSearchData == undefined && notificationSearchValue && (
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Out of stock notified data not available!
               </p>
-            )}
+            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -773,7 +789,7 @@ export default function StoreOutOfStockTable() {
           className="modal-box py-10 px-10"
         >
           <form
-            onSubmit={(event) => handleUpdate(event, singleData._id)}
+            onSubmit={(event) => handleUpdate(event, singleData)}
             className="flex gap-10"
           >
             <div className="w-1/2">

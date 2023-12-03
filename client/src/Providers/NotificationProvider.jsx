@@ -11,10 +11,13 @@ const NotificationProvider = ({ children }) => {
 
   const [currentUser, setCurrentUser] = useState({});
   const [currentUserLoading, setCurrentUserLoading] = useState(false);
+  const[notificationAlert, setNotificationAlert]=useState(true)
 
   // get the user with creator email
+  console.log(user?.email);
   useEffect(() => {
     setCurrentUserLoading(true);
+    
     axios
       .get(
         `/api/v1/notifications_api/current_user?email=${user?.email}&user_role=${user?.role}`
@@ -39,6 +42,8 @@ const NotificationProvider = ({ children }) => {
   const notificationInfo = {
     user,
     currentUser,
+    notificationAlert,
+    setNotificationAlert
   };
   return (
     <NotificationContext.Provider value={notificationInfo}>
