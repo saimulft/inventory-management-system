@@ -8,12 +8,10 @@ import "./chatBox.css"
 export default function ChatBox() {
   const { isChatBoxOpen, singleConversationShow, addNewConversation } =
     useContext(ChatContext);
-
-
   return (
     <div>
       {/* conversation user list show */}
-      {isChatBoxOpen && <ConversationUserList />}
+      <div className={isChatBoxOpen ? "block": "hidden"}><ConversationUserList /></div> 
 
       {/* single conversation show  */}
       {singleConversationShow && <SingleConversation />}

@@ -11,9 +11,11 @@ import { NavLink, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Cookies from "js-cookie";
 import useGlobal from "../../hooks/useGlobal";
+import useStore from "../../hooks/useStore";
 
 export default function Sidebar() {
   const [settingActive, setSettingActive] = useState(false);
+  const { setStoreDetails } = useStore()
   const url = useLocation();
   const route = url?.pathname?.split("/")[2];
   const { user, setUser } = useAuth()
@@ -101,7 +103,7 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Add Store')}
+                  onClick={() => { setPageName('Add Store'); setStoreDetails(null) }}
                   to="/dashboard/add-store"
                   className={({ isActive }) =>
                     isActive

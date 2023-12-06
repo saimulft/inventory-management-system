@@ -1,12 +1,17 @@
 import { BsArrowLeftCircle } from "react-icons/bs";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import useStore from "../../hooks/useStore";
 import axios from "axios";
 
 export default function SendPaymentLink() {
-  const { storeDetails, paymentLink } = useStore()
+  const { storeDetails, paymentLink, setStoreDetails } = useStore()
   const navigate = useNavigate()
+
+  if (!storeDetails) {
+    return <Navigate to="/dashboard/add-store/add-supplier/select-payment" />
+  }
+
   const handleSendPaymentLink = (e) => {
     e.preventDefault();
     const form = e.target;
@@ -28,6 +33,8 @@ export default function SendPaymentLink() {
             timer: 1500,
           })
           navigate('/dashboard/add-store', { replace: true })
+          setStoreDetails(null)
+
         }
       })
       .catch(function (error) {

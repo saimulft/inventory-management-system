@@ -35,6 +35,7 @@ const warehouse_api = require("./src/routes/warehouse_api")
 const profit_tracker_api = require("./src/routes/profit_tracker_api")
 const conversations_api = require("./src/routes/conversation_api")
 const sales_form_api = require("./src/routes/sales_form_api")
+const notifications_api = require("./src/routes/notifications_api")
 
 const payment_api = require("./src/routes/payment_api")
 
@@ -64,6 +65,7 @@ app.use('/api/v1/warehouse_api', warehouse_api)
 app.use('/api/v1/profit_tracker_api', profit_tracker_api)
 app.use('/api/v1/conversations_api', conversations_api)
 app.use('/api/v1/sales_form_api', sales_form_api)
+app.use('/api/v1/notifications_api', notifications_api)
 
 app.get('/', (req, res) => {
 

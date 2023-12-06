@@ -9,6 +9,7 @@ export default function InventoryManagementData({documentCounts}) {
   const shadowStyle = {
     boxShadow: "0px 0px 15px -8px rgba(0,0,0,0.75)",
   };
+
   const inventoryManagementData = [
     {
       quantity: documentCounts.all_stock,

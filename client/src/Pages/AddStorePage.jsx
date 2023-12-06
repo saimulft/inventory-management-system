@@ -9,7 +9,7 @@ export default function AddStorePage() {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.5)",
   };
   const [errorMessage, setErrorMessage] = useState('')
-  const { setStoreDetails } = useStore()
+  const { storeDetails, setStoreDetails } = useStore()
   const navigate = useNavigate()
 
   const handleNext = (event) => {
@@ -23,7 +23,7 @@ export default function AddStorePage() {
     if (storeType && storeType === 'Pick Store Type') {
       return setErrorMessage('Please select store type')
     }
-    if(storeStatus && storeStatus === 'Select Status'){
+    if (storeStatus && storeStatus === 'Select Status') {
       return setErrorMessage('Please select store status')
     }
 
@@ -54,6 +54,7 @@ export default function AddStorePage() {
                 className="input input-bordered input-primary w-full max-w-xs mt-2"
                 id="storeName"
                 name="storeName"
+                defaultValue={storeDetails?.store_name ? storeDetails?.store_name : ''}
                 required
               />
             </div>
@@ -66,6 +67,7 @@ export default function AddStorePage() {
                 className="input input-bordered input-primary w-full max-w-xs mt-2"
                 id="storeManagerName"
                 name="storeManagerName"
+                defaultValue={storeDetails?.store_manager_name ? storeDetails?.store_manager_name : ''}
                 required
               />
             </div>
@@ -76,10 +78,11 @@ export default function AddStorePage() {
                 className="select select-primary w-full mt-2"
                 name="storeType"
                 id="storeType"
+                defaultValue={storeDetails?.store_type ? storeDetails?.store_type : ''}
                 required
               >
                 <option defaultValue="Pick Store Type">
-                  Pick Store Type
+                  {storeDetails?.store_type ? storeDetails?.store_type : 'Pick Store Type'}
                 </option>
                 <option value="Amazon">Amazon</option>
                 <option value="Walmart">Walmart</option>
@@ -98,7 +101,7 @@ export default function AddStorePage() {
                 required
               >
                 <option defaultValue="Select Status">
-                  Select Status
+                  {storeDetails?.store_status ? storeDetails?.store_status : 'Select Status'}
                 </option>
                 <option value="Active">Active</option>
                 <option value="Inactive">Inactive</option>

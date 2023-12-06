@@ -1,7 +1,6 @@
-
 import { AiOutlineSearch } from "react-icons/ai";
 import axios from "axios";
-import { format } from "date-fns"
+import { format } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../../../hooks/useAuth";
 import FileDownload from "../../Shared/FileDownload";
@@ -10,28 +9,36 @@ import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
 import { DateRange } from "react-date-range";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { useLocation } from "react-router-dom";
 
 export default function StorePreparingRequestTable() {
-  // const [RTSdata ,setRTSdata] = useState({})
-  const { user } = useAuth()
-  const [filterDays, setFilterDays] = useState('')
-  const [searchText, setSearchText] = useState('');
-  const [searchError, setSearchError] = useState('');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const notificationSearchValue = queryParams.get("notification_search");
+  const { user } = useAuth();
+  const [filterDays, setFilterDays] = useState("");
+  const [searchText, setSearchText] = useState("");
+  const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
   const { isSidebarOpen } = useContext(GlobalContext);
-  const [rangeDate, setRangeDate] = useState([{
-    startDate: new Date(),
-    endDate: new Date(),  //addDays(new Date(), 7)
-    key: 'selection'
-  }]);
-  
+  const [rangeDate, setRangeDate] = useState([
+    {
+      startDate: new Date(),
+      endDate: new Date(), //addDays(new Date(), 7)
+      key: "selection",
+    },
+  ]);
+
   const { data = [], isLoading } = useQuery({
-    queryKey: ['ready_to_ship_data'],
+    queryKey: ["ready_to_ship_data"],
     queryFn: async () => {
       try {
-        const res = await axios.post(`/api/v1/ready_to_ship_api/get_all_RTS_data`,{user})
+        const res = await axios.post(
+          `/api/v1/ready_to_ship_api/get_all_RTS_data`,
+          { user }
+        );
         if (res.status === 200) {
           return res.data.data;
         }
@@ -41,42 +48,45 @@ export default function StorePreparingRequestTable() {
         console.log(error);
         return [];
       }
-    }
-  })
+    },
+  });
+
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
 
   const handleSearch = (e) => {
-    e.preventDefault()
-    setSearchError("")
+    e.preventDefault();
+    setSearchError("");
     if (!searchText) {
-      return
+      return;
     }
-    const filteredData = data.filter(item =>
-    (item.asin_upc_code?.toLowerCase().includes(searchText) ||
-      item.product_name?.toLowerCase().includes(searchText) ||
-      item.store_name?.toLowerCase().includes(searchText) ||
-      item.upin?.toLowerCase().includes(searchText) ||
-      item.code_type?.toLowerCase().includes(searchText))
+    const filteredData = data.filter(
+      (item) =>
+        item.asin_upc_code?.toLowerCase().includes(searchText) ||
+        item.product_name?.toLowerCase().includes(searchText) ||
+        item.store_name?.toLowerCase().includes(searchText) ||
+        item.upin?.toLowerCase().includes(searchText) ||
+        item.code_type?.toLowerCase().includes(searchText)
     );
     if (!filteredData.length) {
-      setFilterDays(null)
-      setSearchError(`No data found for "${searchText}"`)
-      return
+      setFilterDays(null);
+      setSearchError(`No data found for "${searchText}"`);
+      return;
     }
-    setFilterDays(null)
-    setSearchResults(filteredData)
-  }
+    setFilterDays(null);
+    setSearchResults(filteredData);
+  };
   const handleDateSearch = (day) => {
-    setSearchError("")
+    setSearchError("");
     const currentDate = new Date();
     const endDate = new Date();
     let startDate;
 
-
     if (day === "today") {
       startDate = new Date(currentDate);
       startDate.setHours(0, 0, 0, 0); // Set to midnight
-    }
-    else {
+    } else {
       const previousDate = new Date();
       previousDate.setDate(currentDate.getDate() - day);
       startDate = previousDate;
@@ -101,27 +111,25 @@ export default function StorePreparingRequestTable() {
     }
 
     setSearchResults(filteredDateResults);
-  }
+  };
   const handleCustomDateSearch = () => {
-    setSearchError("")
-    const startDate = rangeDate[0].startDate
-    const endDate = rangeDate[0].endDate
+    setSearchError("");
+    const startDate = rangeDate[0].startDate;
+    const endDate = rangeDate[0].endDate;
     if (startDate !== endDate) {
       const filteredDateResults = data.filter((item) => {
         const itemDate = new Date(item.date);
         return itemDate >= startDate && itemDate <= endDate;
       });
-      console.log(filteredDateResults)
+      console.log(filteredDateResults);
       if (!filteredDateResults.length) {
-
-        return setSearchError(`No data found for selected date range`)
+        return setSearchError(`No data found for selected date range`);
       }
       if (filteredDateResults.length) {
         setSearchResults(filteredDateResults);
       }
     }
-
-  }
+  };
 
   function generatePageNumbers(currentPage, pageCount, maxVisiblePages) {
     if (pageCount <= maxVisiblePages) {
@@ -195,11 +203,10 @@ export default function StorePreparingRequestTable() {
   generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
   generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
 
-  // pagination code 
+  // pagination code
 
   const handleFilteredDataPageChange = ({ selected }) => {
     setFilteredDataPage(selected);
-
   };
   const handlePageChange = ({ selected }) => {
     setCurrentPage(selected);
@@ -207,8 +214,10 @@ export default function StorePreparingRequestTable() {
   // filter pagination calculation
   const startIndexFilter = filteredDataPage * itemsPerPage;
   const endIndexFilter = startIndexFilter + itemsPerPage;
-  const displayedDataFilter = searchResults.slice(startIndexFilter, endIndexFilter);
-
+  const displayedDataFilter = searchResults.slice(
+    startIndexFilter,
+    endIndexFilter
+  );
 
   //  ALl data pagination calculation
   const startIndex = currentPage * itemsPerPage;
@@ -218,80 +227,137 @@ export default function StorePreparingRequestTable() {
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
-        Ready to ship : {data?.length}
+        Ready to ship
+        <span className={`${notificationSearchValue && "hidden"}`}>
+          : {data.length}
+        </span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            <p onClick={() => {
-              setSearchResults([])
-              setSearchText("")
-              setSearchError("")
-              setFilterDays("all")
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'all' && 'bg-[#8633FF] text-white'}`}>
+           
+            {!notificationSearchValue && (
+              <>
+               <p
+              onClick={() => {
+                setSearchResults([]);
+                setSearchText("");
+                setSearchError("");
+                setFilterDays("all");
+              }}
+              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                filterDays === "all" && "bg-[#8633FF] text-white"
+              }`}
+            >
               All
             </p>
-            <p onClick={() => {
-              handleDateSearch("today")
-              setFilterDays('today')
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'today' && 'bg-[#8633FF] text-white'}`}>
-              Today
-            </p>
-            <p onClick={() => {
-              handleDateSearch(7)
-              setFilterDays(7)
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && 'bg-[#8633FF] text-white'}`}>
-              7 Days
-            </p>
-            <p onClick={() => {
-              handleDateSearch(15)
-              setFilterDays(15)
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && 'bg-[#8633FF] text-white'}`}>
-              15 Days
-            </p>
-            <p onClick={() => {
-              handleDateSearch(30)
-              setFilterDays(1)
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && 'bg-[#8633FF] text-white'}`}>
-              1 Month
-            </p>
-            <p onClick={() => {
-              handleDateSearch(365)
-              setFilterDays('year')
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'year' && 'bg-[#8633FF] text-white'}`}>
-              Year
-            </p>
-            <p onClick={() => {
-              setFilterDays('custom')
-              document.getElementById("date_range_modal").showModal()
-            }} className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 'custom' && 'bg-[#8633FF] text-white'}`}>
-              Custom
-            </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch("today");
+                    setFilterDays("today");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "today" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Today
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(7);
+                    setFilterDays(7);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 7 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  7 Days
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(15);
+                    setFilterDays(15);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 15 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  15 Days
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(30);
+                    setFilterDays(1);
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === 1 && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  1 Month
+                </p>
+                <p
+                  onClick={() => {
+                    handleDateSearch(365);
+                    setFilterDays("year");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "year" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Year
+                </p>
+                <p
+                  onClick={() => {
+                    setFilterDays("custom");
+                    document.getElementById("date_range_modal").showModal();
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
+                    filterDays === "custom" && "bg-[#8633FF] text-white"
+                  }`}
+                >
+                  Custom
+                </p>
+              </>
+            )}
           </div>
         </div>
-        <form onSubmit={handleSearch} className="w-1/4  flex items-center justify-between">
-          <input
-            className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
-            placeholder="Search Here"
-            value={searchText}
-            type="text"
-            onChange={(e) => setSearchText(e.target.value.toLocaleLowerCase())}
-          />
-          <div className="w-[40%] flex items-center justify-evenly">
-            <button type="submit" onClick={handleSearch} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
-              <AiOutlineSearch size={24} />
-            </button>
-            <button onClick={() => {
-              setSearchResults([])
-              setSearchText("")
-              setSearchError("")
-              setFilterDays("all")
-            }} className="py-[6px] px-4 bg-[#8633FF] text-white rounded">
-              Clear
-            </button>
-          </div>
-        </form>
+        {!notificationSearchValue && (
+          <form
+            onSubmit={handleSearch}
+            className="w-1/4  flex items-center justify-between"
+          >
+            <input
+              className="border bg-white shadow-md border-[#8633FF] outline-none w-[60%]   py-2 rounded-md px-2 text-sm"
+              placeholder="Search Here"
+              value={searchText}
+              type="text"
+              onChange={(e) =>
+                setSearchText(e.target.value.toLocaleLowerCase())
+              }
+            />
+            <div className="w-[40%] flex items-center justify-evenly">
+              <button
+                type="submit"
+                onClick={handleSearch}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                <AiOutlineSearch size={24} />
+              </button>
+              <button
+                onClick={() => {
+                  setSearchResults([]);
+                  setSearchText("");
+                  setSearchError("");
+                  setFilterDays("all");
+                }}
+                className="py-[6px] px-4 bg-[#8633FF] text-white rounded"
+              >
+                Clear
+              </button>
+            </div>
+          </form>
+        )}
       </div>
 
       <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
@@ -309,42 +375,27 @@ export default function StorePreparingRequestTable() {
               <th>Courier</th>
               <th>Supplier Tracking</th>
               <th>Shipping level</th>
-
             </tr>
           </thead>
           <tbody className="relative">
-            {searchError ? <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">{searchError}</p> : <>
-              {
-                searchResults.length ? displayedDataFilter.map((d, index) => {
-                  return (
-                    <tr
-                      className={`${index % 2 == 1 && ""} py-2`}
-                      key={index} >
-                      <th>{format(new Date(d.date), "y/MM/d")}</th>
-                      <th className="font-normal">{d.store_name}</th>
-                      <td>{d.asin_upc_code}</td>
-                      <td>{d.code_type}</td>
-                      <td>{d.product_name}</td>
-                      <td>{d.order_id}</td>
-                      <td>{d.upin}</td>
-                      <td>{d.quantity}</td>
-                      <td>{d.courier}</td>
-                      <td>{d.tracking_number}</td>
-                      <td className="flex gap-2">
-                        {d.shipping_file && <FileDownload fileName={d.shipping_file} />}
-
-                      </td>
-                    </tr>
-                  )
-                })
-
-                  :
-
-                  isLoading ? <Loading /> : displayAllData?.map((d, index) => {
+            {/* {notificationSearchData == undefined && notificationSearchValue && (
+              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                Pending arrival notified data not available!
+              </p>
+            )} */}
+            {searchError ? (
+              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                {searchError}
+              </p>
+            ) : (
+              <>
+                {searchResults.length ? (
+                  displayedDataFilter.map((d, index) => {
                     return (
                       <tr
                         className={`${index % 2 == 1 && ""} py-2`}
-                        key={index} >
+                        key={index}
+                      >
                         <th>{format(new Date(d.date), "y/MM/d")}</th>
                         <th className="font-normal">{d.store_name}</th>
                         <td>{d.asin_upc_code}</td>
@@ -356,25 +407,104 @@ export default function StorePreparingRequestTable() {
                         <td>{d.courier}</td>
                         <td>{d.tracking_number}</td>
                         <td className="flex gap-2">
-                          {d.shipping_file && <FileDownload fileName={d.shipping_file} />}
-
+                          {d.shipping_file && (
+                            <FileDownload fileName={d.shipping_file} />
+                          )}
                         </td>
                       </tr>
                     );
                   })
-              }
-            </>}
+                ) : !notificationSearchValue ? (
+                  isLoading ? (
+                    <Loading />
+                  ) : (
+                    displayAllData?.map((d, index) => {
+                      return (
+                        <tr
+                          className={`${index % 2 == 1 && ""} py-2`}
+                          key={index}
+                        >
+                          <th>{format(new Date(d.date), "y/MM/d")}</th>
+                          <th className="font-normal">{d.store_name}</th>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.order_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier}</td>
+                          <td>{d.tracking_number}</td>
+                          <td className="flex gap-2">
+                            {d.shipping_file && (
+                              <FileDownload fileName={d.shipping_file} />
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )
+                ) : (
+                  notificationSearchData && (
+                    <tr>
+                      <th>
+                        {notificationSearchData?.date &&
+                          format(
+                            new Date(notificationSearchData?.date),
+                            "y/MM/d"
+                          )}
+                      </th>
+                      <th className="font-normal">
+                        {notificationSearchData?.store_name}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.product_name}</td>
+                      <td>{notificationSearchData?.order_id}</td>
+                      <td>{notificationSearchData?.upin}</td>
+                      <td>{notificationSearchData?.quantity}</td>
+                      <td>{notificationSearchData?.courier}</td>
+                      <td>{notificationSearchData?.tracking_number}</td>
+                      <td className="flex gap-2">
+                        {notificationSearchData?.shipping_file && (
+                          <FileDownload
+                            fileName={notificationSearchData?.shipping_file}
+                          />
+                        )}
+                      </td>
+                    </tr>
+                  )
+                )}
+              </>
+            )}
           </tbody>
         </table>
 
         {/* pagination */}
-        {!isLoading && !searchError && !searchResults.length && data?.length > 15 && < div >
+        {!isLoading &&
+          !searchError &&
+          !searchResults.length &&
+          data?.length > 15 && (
+            <div>
+              <ReactPaginate
+                pageCount={Math.ceil(data.length / itemsPerPage)}
+                marginPagesDisplayed={1}
+                pageRangeDisplayed={maxVisiblePages}
+                onPageChange={handlePageChange}
+                containerClassName="pagination"
+                activeClassName="active"
+                breakLabel={"..."}
+                pageLinkClassName={(pageNumber) => {
+                  return pageNumber === "..." ? "ellipsis" : "";
+                }}
+              />
+            </div>
+          )}
+        {!isLoading && !searchError && searchResults.length > 15 && (
           <ReactPaginate
-            pageCount={Math.ceil(data.length / itemsPerPage)}
-
-            marginPagesDisplayed={1}
+            pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}
-            onPageChange={handlePageChange}
+            marginPagesDisplayed={1}
+            onPageChange={handleFilteredDataPageChange}
             containerClassName="pagination"
             activeClassName="active"
             breakLabel={"..."}
@@ -382,30 +512,16 @@ export default function StorePreparingRequestTable() {
               return pageNumber === "..." ? "ellipsis" : "";
             }}
           />
-        </div>
-        }
-        {!isLoading && !searchError && searchResults.length > 15 && <ReactPaginate
-          pageCount={Math.ceil(searchResults.length / itemsPerPage)}
-          pageRangeDisplayed={maxVisiblePages}
-          marginPagesDisplayed={1}
-          onPageChange={handleFilteredDataPageChange}
-          containerClassName="pagination"
-          activeClassName="active"
-          breakLabel={"..."}
-          pageLinkClassName={(pageNumber) => {
-            return pageNumber === "..." ? "ellipsis" : "";
-          }}
-        />}
+        )}
       </div>
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
-        <div style={{ marginLeft, maxWidth: '750px' }} className="modal-box">
-          <div className='mb-10'>
+        <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">
+          <div className="mb-10">
             <DateRange
               editableDateInputs={true}
-              onChange={item => {
-
-                setRangeDate([item.selection])
+              onChange={(item) => {
+                setRangeDate([item.selection]);
               }}
               moveRangeOnFirstSelection={false}
               months={2}
@@ -415,10 +531,15 @@ export default function StorePreparingRequestTable() {
               color="#8633FF"
             />
           </div>
-          <button onClick={() => {
-            handleCustomDateSearch()
-            document.getElementById("date_range_modal").close()
-          }} className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded">Select</button>
+          <button
+            onClick={() => {
+              handleCustomDateSearch();
+              document.getElementById("date_range_modal").close();
+            }}
+            className="block mx-auto bg-[#8633FF] text-white px-10 py-2 rounded"
+          >
+            Select
+          </button>
         </div>
         <form method="dialog" className="modal-backdrop">
           <button>close</button>

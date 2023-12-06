@@ -31,7 +31,7 @@ const run = async () => {
     // }
 
     // Define a route to get document counts for all collections
-    router.post('/collections-docs-counts',verifyJWT, async (req, res) => {
+    router.post('/collections-docs-counts', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
             const role = req.role;
