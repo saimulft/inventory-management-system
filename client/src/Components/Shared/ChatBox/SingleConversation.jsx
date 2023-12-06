@@ -8,7 +8,6 @@ import ChatLoading from "../../ChatLoading/ChatLoading";
 
 export default function SingleConversation() {
   const specificComponentRef = useRef(null);
-
   const { user } = useAuth();
 
   // chat context
@@ -19,6 +18,12 @@ export default function SingleConversation() {
     setNewConversationAdd,
     checkOnline,
     socket,
+    conversationData,
+    notificationAlert,
+    conversationDataRefetch,
+    setConversationDataRefetch,
+    isMessageSeen,
+    setIsMessageSeen,
   } = useContext(ChatContext);
 
   const { currentChatUserName, currentChatUserEmail } =
@@ -36,9 +41,12 @@ export default function SingleConversation() {
   const [calcScrollHeight, setCalcScrollHeight] = useState(0);
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
   const [switchLick, setSwitchLick] = useState("");
-  // const [seenUnseenStatus, setSeenUnseenStatus] = useState(false);
-  const [messageSend, setMessageSend] = useState(false)
-  const [messageSendSocket, setMessageSendSocket] = useState(false)
+  const [messageSend, setMessageSend] = useState(false);
+  const [messageSendSocket, setMessageSendSocket] = useState(false);
+
+  const lastMessageSenderEmail = conversation[conversation?.length - 1]?.sender;
+
+
 
   // render message data first time
   useEffect(() => {
@@ -47,15 +55,15 @@ export default function SingleConversation() {
 
   // scroll calculate
   const scrollPositionSet = () => {
-
     if (messageSendSocket) {
-      setMessageSendSocket(false)
-      return
+      setMessageSendSocket(false);
+      return;
     }
     if (messageSend) {
-      specificComponentRef.current.scrollTop = specificComponentRef.current.scrollHeight;
-      setMessageSend(false)
-      return
+      specificComponentRef.current.scrollTop =
+        specificComponentRef.current.scrollHeight;
+      setMessageSend(false);
+      return;
     }
     setCalcScrollHeight(specificComponentRef.current.scrollHeight);
     if (conversation?.length > 16) {
@@ -120,7 +128,7 @@ export default function SingleConversation() {
   const handleSentNewMassages = async (e, text = "") => {
     try {
       e.preventDefault();
-      setMessageSend(true)
+      setMessageSend(true);
       let msg = document.getElementById("message_input")?.value;
       if (msg || text) {
         const date = new Date();
@@ -155,12 +163,29 @@ export default function SingleConversation() {
             },
           }
         );
+        if (data?.data) {
+          socket.current.on("");
+        }
+        const seenMassageStatus = (sender, receiver) => {
+          const emailToUsername = (email) => email.split("@")[0];
+          const userValue = {
+            [emailToUsername(sender)]: true,
+            [emailToUsername(receiver)]: false,
+          };
+          return userValue;
+        };
+
+        const isMessageSeen = seenMassageStatus(
+          user?.email,
+          currentChatUserEmail
+        );
+
         if (data?.data?.insertedId) {
-          const fastTimeData = {
+          const firstTimeData = {
             _id: data.data.insertedId,
             participants: [user?.email, currentChatUserEmail],
             participants_name: [user?.full_name, currentChatUserName],
-            isMessageSeen: false,
+            isMessageSeen,
             lastMassages: {
               sender: message?.sender,
               receiver: message?.receiver,
@@ -168,16 +193,19 @@ export default function SingleConversation() {
               timestamp,
             },
           };
-          socket.current?.emit("sendMessageFastTime", fastTimeData);
+
+          socket.current?.emit("sendMessageFastTime", firstTimeData);
           fetchConData(true);
           setNewConversationAdd(false);
         } else if (data?.data?._id) {
           socket.current?.emit("sendMessage", data?.data);
           typingStop();
-          socket.current?.emit(
-            "sentLestMessageUpdateConversationUserList",
-            data?.data
-          );
+          const updateDataLestMessage = { data: data?.data, isMessageSeen };
+          console.log(updateDataLestMessage);
+          socket.current?.emit("sentLestMessageUpdateConversationUserList", {
+            ...data?.data,
+            isMessageSeen,
+          });
         }
       }
     } catch (err) {
@@ -215,18 +243,10 @@ export default function SingleConversation() {
     }
   }, [socketData]);
 
-  /// get single message on socket
-  useEffect(() => {
-    socket?.current?.on("getMessage", (data) => {
-      if (data) {
-        setSocketData(data);
-      }
-    });
-  }, []);
   //  get typing status
   useEffect(() => {
     socket?.current?.on("getTyping", (status) => {
-      setMessageSendSocket(true)
+      setMessageSendSocket(true);
       setChatLoadingStatus(status);
     });
   }, [socket]);
@@ -269,20 +289,43 @@ export default function SingleConversation() {
   //  handle seen unseen status
   const handleSeenUnseen = (e) => {
     if (e.type == "focus") {
-      socket?.current?.emit("seenUnseenStatus", {
-        status: true,
-        receiver: currentChatUserEmail,
-      });
+      const conversationId = conversationData?._id;
+      const currentUserEmail = user?.email;
+      axios
+        .patch(
+          `/api/v1/conversations_api/messages/seen_messages?id=${conversationId}&email=${currentUserEmail}`
+        )
+        .then((res) => {
+          setConversationDataRefetch(!conversationDataRefetch);
+        })
+        .catch((error) => {
+          console.log(error);
+          notificationAlert(true);
+        });
     }
   };
 
+  /// get single message on socket
+  useEffect(() => {
+    socket?.current?.on("getMessage", (data) => {
+      if (data) {
+        socket.current?.emit("sentSeenUnseenStatus", {
+          status: true,
+          receiver: data?.sender,
+        });
+        setSocketData(data);
+      }
+    });
+  }, [socket]);
+
   // get seen unseen status
-  // useEffect(() => {
-  //   setSeenUnseenStatus(false);
+  //  useEffect(() => {
   //   socket.current.on("getSeenUnseenStatus", (status) => {
-  //     setSeenUnseenStatus(status);
+  //     // setIsMessageSeen(status);
+  //     console.log("get messages", status);
   //   });
-  // }, []);
+  // }, [socket]);
+
 
   let content;
   if (!conversationLoading && conversationError) {
@@ -293,12 +336,10 @@ export default function SingleConversation() {
       ?.sort((a, b) => {
         const timeA = a.timestamp;
         const timeB = b.timestamp;
-
         return timeDifference(timeB) - timeDifference(timeA);
       })
       ?.map((msg, key) => {
         const currentUser = msg?.sender == user?.email;
-
         const msgLengthCheck = msg?.text?.length <= 26;
         const text = msg?.text == "*like**" ? "👍" : msg?.text;
         if (text == "demo") {
@@ -342,7 +383,7 @@ export default function SingleConversation() {
   const online = checkOnline(currentChatUserEmail);
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-[2%] bottom-[0%] rounded z-50 overflow-hidden">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-0 top-[73px] rounded z-50 overflow-hidden">
       {/* conversation header */}
       <div
         style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
@@ -363,7 +404,9 @@ export default function SingleConversation() {
                 className={`w-2.5 h-2.5 rounded-full ${online ? "bg-green-500" : "bg-gray-400"
                   } `}
               ></div>
-              <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>{online ? "Online" : "Offline"}</div>
+              <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>
+                {online ? "Online" : "Offline"}
+              </div>
             </div>
           </div>
         </div>
@@ -391,7 +434,6 @@ export default function SingleConversation() {
         )}
         {content}
         {chatLoadingStatus && online && <ChatLoading />}
-        {/* {seenUnseenStatus && <p className="text-right text-xs mb-1 mr-4 relative bottom-[6px]">seen</p> } */}
       </div>
 
       {/* sent message box  */}

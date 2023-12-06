@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
@@ -11,6 +10,7 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { ChatProvider } from "./Providers/ChatProvider.jsx";
 import Cookies from "js-cookie";
+import NotificationProvider from "./Providers/NotificationProvider.jsx";
 const queryClient = new QueryClient()
 import CryptoJS from "crypto-js"
 axios.defaults.baseURL = "https://ims-backend.nabilnewaz.com"
@@ -40,17 +40,17 @@ axios.interceptors.request.use(
 );
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <GlobalProvider>
+  <QueryClientProvider client={queryClient}>
+    <AuthProvider>
+      <GlobalProvider>
+        <NotificationProvider>
           <ChatProvider>
             <StoreProvider>
               <App />
             </StoreProvider>
           </ChatProvider>
-        </GlobalProvider>
-      </AuthProvider>
-    </QueryClientProvider>
-  </React.StrictMode>
+        </NotificationProvider>
+      </GlobalProvider>
+    </AuthProvider>
+  </QueryClientProvider>
 );

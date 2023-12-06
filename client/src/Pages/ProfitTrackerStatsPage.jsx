@@ -23,8 +23,6 @@ const ProfitTrackerStatsPage = () => {
     const [searchResults, setSearchResults] = useState([]);
     const { id } = useParams()
 
-    console.log()
-
     useEffect(() => {
         setInitialLoading(true)
 

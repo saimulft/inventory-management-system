@@ -56,7 +56,7 @@ const run = async () => {
             else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
 
                 const store_access_ids = req.body.user.store_access_ids;
-                query = { store_id: { $in: store_access_ids.map(id => id) }, upin: upin };
+                query = { store_id: { $in: store_access_ids?.map(id => id) }, upin: upin };
             }
 
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
@@ -74,6 +74,23 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
+
+    router.post('/get_all_stock_dropdown_data', async (req, res) => { 
+        try {
+            const user = req.body.user;
+
+            const allStockData = await all_stock_collection.find({ admin_id: user.admin_id }).project({ "value": "$upin", "label": "$upin", "_id": 0 }).sort({ date: -1 }).toArray()
+            if (allStockData.length) {
+
+                res.status(200).json({ data: allStockData, message: "successfully get asin_upc" })
+            }
+            else {
+                res.status(204).json({ message: "No content" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in asin_upc' });
+        }
+    });
 }
 run()
 

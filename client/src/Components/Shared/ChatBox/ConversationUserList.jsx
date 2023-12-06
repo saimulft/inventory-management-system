@@ -17,7 +17,12 @@ export default function ConversationUserList() {
     checkOnline,
     currentReceiverFind,
     socket,
-    setIsChatBoxOpen
+    setIsChatBoxOpen,
+    setConversationData,
+    conversationDataRefetch,
+    setIsMessageSeen,
+    setMessageAlert
+
   } = useContext(ChatContext);
 
   //set current Chat User Info
@@ -29,6 +34,7 @@ export default function ConversationUserList() {
 
   const [search, setSearch] = useState("");
   const [socketData, setSocketData] = useState({});
+  const [filterData, setFilterData] = useState(Number);
   const [
     updateLestMessageUpdateConversationUserList,
     setUpdateLestMessageUpdateConversationUserList,
@@ -38,6 +44,7 @@ export default function ConversationUserList() {
 
   // update every message in real time conversation user list
   const newMessagesUpdateRealtime = (userConversationData, socketData) => {
+
     const emailOne = socketData?.sender;
     const emailTwo = socketData?.receiver;
 
@@ -46,10 +53,18 @@ export default function ConversationUserList() {
       const existTwo = cd?.participants?.includes(emailTwo);
 
       if (existOne && existTwo) {
+        const incomingMessages = {
+          receiver: socketData?.receiver,
+          sender: socketData?.sender,
+          text: socketData?.text,
+          timestamp: socketData?.timestamp,
+          _id: socketData?._id,
+        };
+
         const newLastMsg = {
           ...cd,
-          lastMassages: socketData,
-          isMessageSeen: false,
+          isMessageSeen: socketData?.isMessageSeen,
+          lastMassages: incomingMessages,
         };
         return newLastMsg;
       } else {
@@ -109,7 +124,7 @@ export default function ConversationUserList() {
         setError(err);
         setLoading(false);
       });
-  }, [user?.email]);
+  }, [user?.email, conversationDataRefetch]);
 
   // data sort by time
   const dataSortByTime = (data) => {
@@ -124,7 +139,7 @@ export default function ConversationUserList() {
   };
 
   //calculate ago time
-  const calculateAgeTime = (time) => {
+  const calculateAgoTime = (time) => {
     const lastMessageDate = new Date(time);
     const currentDate = new Date();
     const timeDifference = currentDate - lastMessageDate;
@@ -166,7 +181,6 @@ export default function ConversationUserList() {
 
     const senderStatus = user.email == data?.lastMassages?.sender ? "You:" : "";
     const result = senderStatus + " " + lastMsg;
-
     return result;
   };
 
@@ -180,15 +194,38 @@ export default function ConversationUserList() {
   const userConversationListSearch = (data) => {
     if (search) {
       const result = data.filter((d) => {
-        const messageSenderName = d?.participants_name?.find(name => name != user?.full_name)?.toLowerCase()
-        const filterData = messageSenderName?.includes(search?.toLocaleLowerCase())
-        return filterData
+        const messageSenderName = d?.participants_name
+          ?.find((name) => name != user?.full_name)
+          ?.toLowerCase();
+        const filterData = messageSenderName?.includes(
+          search?.toLocaleLowerCase()
+        );
+        return filterData;
       });
       return result;
     } else {
       return data;
     }
   };
+
+  // message seen unseen status
+  const messageSeenUnseenStatus = (data) => {
+    const currentUserSeenStatus = user.email.split("@")[0];
+    const checkSeenUnseen = data.isMessageSeen[currentUserSeenStatus];
+    return checkSeenUnseen;
+  };
+
+  const currentUserObjKey = user?.email?.split("@")[0];
+  if (data) {
+    const unreadMessage = data?.find(d => {
+      if (d?.isMessageSeen) {
+        if (!d.isMessageSeen[currentUserObjKey]) {
+          return true
+        }
+      }
+    })
+    setMessageAlert(unreadMessage)
+  }
 
   // decide what to render
   let content;
@@ -205,7 +242,18 @@ export default function ConversationUserList() {
     content = dataSortByTime(userConversationListSearch(data))?.map(
       (userData) => {
         const online = checkOnline(currentReceiverFind(userData?.participants));
-        const senderName = userData?.participants_name?.find(name => name != user?.full_name)
+        const senderName = userData?.participants_name?.find(
+          (name) => name != user?.full_name
+        );
+
+        const isMessageSeen = userData.isMessageSeen;
+        Object.keys(isMessageSeen).forEach((key) => {
+          let value = isMessageSeen[key];
+          if (key != user?.email?.split("@")[0]) {
+            setIsMessageSeen(value);
+          }
+        });
+
         return (
           <div
             onClick={(e) => {
@@ -214,6 +262,7 @@ export default function ConversationUserList() {
               setCurrentChatUserEmail(
                 currentChatReceiver(userData?.participants)
               );
+              setConversationData(userData);
             }}
             key={userData?._id}
             className=" flex gap-3 items-center text-xs font-medium hover:bg-gray-100   py-2 px-4 cursor-pointer "
@@ -234,21 +283,17 @@ export default function ConversationUserList() {
               <p className=" text-base">{senderName}</p>
               <div className="text-sm flex items-center">
                 <span
-                  className={`${user.email == userData?.lastMassages?.sender
-                    ? "text-[#8C8D90]"
-                    : ""
+                  className={`${messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
                     } text-xs`}
                 >
                   {massagesSliceAndSenderStatus(userData)}
                 </span>
                 <span
-                  className={`${user.email == userData?.lastMassages?.sender
-                    ? "text-[#8C8D90]"
-                    : ""
+                  className={`${messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
                     } pl-2 flex items-center text-xs `}
                 >
                   <BsDot />{" "}
-                  {calculateAgeTime(userData?.lastMassages?.timestamp)}
+                  {calculateAgoTime(userData?.lastMassages?.timestamp)}
                 </span>
               </div>
             </div>
@@ -260,7 +305,7 @@ export default function ConversationUserList() {
   }
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-[2%] bottom-[0%] z-50 rounded">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-0 top-[73px] z-50 rounded">
       {/* chat head  */}
       <div className="p-3 flex justify-between items-center pt-3  border-gray-300">
         <p className="font-bold text-2xl">Chats</p>
@@ -272,7 +317,10 @@ export default function ConversationUserList() {
             <AiOutlinePlus /> <p>Users</p>
           </button>
           <div className="flex items-center">
-            <button onClick={() => setIsChatBoxOpen(false)} className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100">
+            <button
+              onClick={() => setIsChatBoxOpen(false)}
+              className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100"
+            >
               <AiOutlineClose size={20} />
             </button>
           </div>
@@ -294,8 +342,16 @@ export default function ConversationUserList() {
       {/* user chat list  */}
       <div className="chat_list h-[calc(100%_-_126px)] overflow-y-scroll">
         {content}
-        {(data.length < 1 && !loading && !search) && <p className="text-center mt-4 text-lg font-medium text-purple-500">Let's begin conversation!</p>}
-        {(content?.length <= 0 && !loading && search) && <p className="text-center mt-4 text-lg font-medium text-purple-500">Search data not available!</p>}
+        {data.length < 1 && !loading && !search && (
+          <p className="text-center mt-4 text-lg font-medium text-purple-500">
+            Let's begin conversation!
+          </p>
+        )}
+        {filterData < 1 && !loading && search && (
+          <p className="text-center mt-4 text-lg font-medium text-purple-500">
+            Search data not available!
+          </p>
+        )}
       </div>
     </div>
   );

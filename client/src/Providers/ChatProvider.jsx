@@ -1,10 +1,15 @@
-import { createContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
-import { io } from "socket.io-client";
+import { GlobalContext } from "./GlobalProviders";
 
 export const ChatContext = createContext();
 export const ChatProvider = ({ children }) => {
-  // chat head infomation
+  const [conversationDataRefetch, setConversationDataRefetch] = useState(false);
+  const [isMessageSeen, setIsMessageSeen] = useState(false)
+  const [messageAlert, setMessageAlert] = useState(true)
+
+
+  // chat head information
   const [currentChatUserName, setCurrentChatUserName] = useState("");
   const [currentChatUserEmail, setCurrentChatUserEmail] = useState("");
   const currentChatUserInfo = { currentChatUserName, currentChatUserEmail };
@@ -12,17 +17,13 @@ export const ChatProvider = ({ children }) => {
     setCurrentChatUserName,
     setCurrentChatUserEmail,
   };
+  const [conversationData, setConversationData] = useState();
+
+  const { socket } = useContext(GlobalContext);
 
   // user info
   const { user } = useAuth();
   const [activeUsers, setActiveUsers] = useState([]);
-
-  // socket install
-  const socket = useRef();
-
-  useEffect(() => {
-    socket.current = io("wss://ims-socket-backend.nabilnewaz.com");
-  }, []);
 
   useEffect(() => {
     if (user) {
@@ -44,11 +45,16 @@ export const ChatProvider = ({ children }) => {
   const [addNewConversation, setAddNewConversation] = useState(false);
   const [newConversationAdd, setNewConversationAdd] = useState(false);
 
-  // console.log({ isChatBoxOpen, singleConversationShow, addNewConversation });
+  // message box open close handle state
+  const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false);
 
   // message box open close handle function
   // single conversation show
   const handleOpenSingleConversationShow = () => {
+    socket.current?.emit("typing", {
+      isTyping: false,
+      receiver: currentChatUserEmail,
+    });
     setSingleConversationShow(!singleConversationShow);
     setIsChatBoxOpen(!isChatBoxOpen);
     setNewConversationAdd(false);
@@ -115,8 +121,14 @@ export const ChatProvider = ({ children }) => {
     currentChatUserSetInfo,
     alreadyConversationUserState,
     alreadyConversationUserSetState,
+    isNotificationBoxOpen,
+    setIsNotificationBoxOpen,
+    conversationData,
+    setConversationData,
+    conversationDataRefetch,
+    setConversationDataRefetch,
+    isMessageSeen, setIsMessageSeen, messageAlert, setMessageAlert
   };
-
   return (
     <ChatContext.Provider value={chatInfo}>{children}</ChatContext.Provider>
   );

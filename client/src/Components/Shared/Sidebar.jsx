@@ -142,6 +142,20 @@ export default function Sidebar() {
                     <p className="whitespace-nowrap">Pending Arrival Form </p>
                   )}
                 </NavLink>
+                <NavLink
+                  onClick={() => setPageName('Sales Form')}
+                  to="/dashboard/sales-form"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
+                  }
+                >
+                  <GoChecklist size={24} />
+                  {isSidebarOpen && (
+                    <p className="whitespace-nowrap">Sales Form</p>
+                  )}
+                </NavLink>
 
                 <NavLink
                   onClick={() => setPageName('Preparing Request')}
@@ -172,6 +186,7 @@ export default function Sidebar() {
                     <p className="whitespace-nowrap">Add ASIN/UPC Form </p>
                   )}
                 </NavLink>
+
               </> : ''
           }
 
