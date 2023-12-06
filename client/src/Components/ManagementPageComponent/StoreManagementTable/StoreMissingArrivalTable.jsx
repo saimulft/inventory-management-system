@@ -347,13 +347,15 @@ export default function StoreMissingArrivalTable() {
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
-              <th>Date</th>
+            <th>Date</th>
               <th>Store Name</th>
               <th>ASIN/UPC</th>
               <th>Code Type</th>
               <th>Product Name</th>
               <th>Supplier ID</th>
               <th>UPIN</th>
+              <th>Expected Qnt.</th>
+              <th>Receive Qnt.</th>
               <th>Missing Qnt.</th>
               <th>Supplier Tracking</th>
               <th>EDA</th>
@@ -361,11 +363,6 @@ export default function StoreMissingArrivalTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Missing arrival notified data not available!
-              </p>
-            )} */}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
