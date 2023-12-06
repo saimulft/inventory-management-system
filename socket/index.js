@@ -29,7 +29,7 @@ const getUser = (receiver) => {
 };
 
 io.on('connection', (socket) => {
-  console.log('user connected')
+
 
   // connect
   socket.on("addUsers", (userData) => {
@@ -74,9 +74,9 @@ io.on('connection', (socket) => {
 
   // seen unseen status
   socket.on("sentSeenUnseenStatus", ({ status, receiver }) => {
-    console.log(status, receiver);
+  
     const user = getUser(receiver);
-    console.log(user);
+   
     {
       user && io.to(user?.socketId)?.emit("getSeenUnseenStatus", status);
     }
@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
 
   // add current user
   socket.on("addCurrentUser", ({ currentUser }) => {
-    console.log(currentUser);
+    
     addCurrentUser(currentUser, socket.id);
   });
 
@@ -137,7 +137,6 @@ io.on('connection', (socket) => {
       notificationData
     ) => {
       if (currentUser.role == "Store Manager Admin") {
-        console.log(currentUser.role);
         const data =
           currentUser.store_access_ids?.find(
             (storeAccessId) => storeAccessId == notificationData.storeId
@@ -151,7 +150,6 @@ io.on('connection', (socket) => {
       notificationData
     ) => {
       if (currentUser.role == "Store Manager VA") {
-        console.log(currentUser.role);
         const data =
           currentUser.store_access_ids?.find(
             (storeAccessId) => storeAccessId == notificationData.storeId
@@ -304,7 +302,6 @@ io.on('connection', (socket) => {
         ...warehouseAdminUsers,
         ...warehouseManagerVAUsers,
       ];
-      console.log("🚀 ~ file: index.js:307 ~ socket.on ~ warehouseNotificationAccessUsers:", warehouseNotificationAccessUsers)
 
       // send notification
       warehouseNotificationAccessUsers?.forEach(
@@ -363,7 +360,6 @@ io.on('connection', (socket) => {
 
   //disconnect
   socket.on("disconnect", () => {
-    console.log("user disconnected");
     removeUser(socket.id);
     io.emit("getUsers", users);
   });

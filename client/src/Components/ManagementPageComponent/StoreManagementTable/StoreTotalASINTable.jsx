@@ -326,79 +326,9 @@ export default function InventoryTotalASINTable() {
       }
     }
   };
-  function generatePageNumbers(currentPage, pageCount, maxVisiblePages) {
-    if (pageCount <= maxVisiblePages) {
-      // If the total page count is less than or equal to the maximum visible pages, show all pages.
-      return Array.from({ length: pageCount }, (_, i) => i + 1);
-    } else {
-      const halfVisible = Math.floor(maxVisiblePages / 2);
-      const firstPage = Math.max(currentPage - halfVisible, 1);
-      const lastPage = Math.min(currentPage + halfVisible, pageCount);
-
-      const pageNumbers = [];
-
-      if (firstPage > 1) {
-        pageNumbers.push(1);
-        if (firstPage > 2) {
-          pageNumbers.push("..."); // Show ellipsis
-        }
-      }
-
-      for (let i = firstPage; i <= lastPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (lastPage < pageCount) {
-        if (lastPage < pageCount - 1) {
-          pageNumbers.push("..."); // Show ellipsis
-        }
-        pageNumbers.push(pageCount);
-      }
-
-      return pageNumbers;
-    }
-  }
-  function generatePageNumbersFilter(currentPage, pageCount, maxVisiblePages) {
-    if (pageCount <= maxVisiblePages) {
-      // If the total page count is less than or equal to the maximum visible pages, show all pages.
-      return Array.from({ length: pageCount }, (_, i) => i + 1);
-    } else {
-      const halfVisible = Math.floor(maxVisiblePages / 2);
-      const firstPage = Math.max(currentPage - halfVisible, 1);
-      const lastPage = Math.min(currentPage + halfVisible, pageCount);
-
-      const pageNumbers = [];
-
-      if (firstPage > 1) {
-        pageNumbers.push(1);
-        if (firstPage > 2) {
-          pageNumbers.push("..."); // Show ellipsis
-        }
-      }
-
-      for (let i = firstPage; i <= lastPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (lastPage < pageCount) {
-        if (lastPage < pageCount - 1) {
-          pageNumbers.push("..."); // Show ellipsis
-        }
-        pageNumbers.push(pageCount);
-      }
-
-      return pageNumbers;
-    }
-  }
+ 
   const itemsPerPage = 15;
-  const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
-  const pageCount = Math.ceil(data.length / itemsPerPage);
-  const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
-
-  generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
-  generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
-
-  // pagination code
+  const maxVisiblePages = 10;
 
   const handleFilteredDataPageChange = ({ selected }) => {
     setFilteredDataPage(selected);
@@ -430,30 +360,28 @@ export default function InventoryTotalASINTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-           
+
             {!notificationSearchValue && (
               <>
-               <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                <p
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -462,9 +390,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -473,9 +400,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -484,9 +410,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -495,9 +420,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -506,9 +430,8 @@ export default function InventoryTotalASINTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -619,7 +542,7 @@ export default function InventoryTotalASINTable() {
                                 </button>
                               </li>
                               {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                                user.role === "Admin VA" ? (
                                 <li>
                                   <button
                                     onClick={() =>
@@ -682,7 +605,7 @@ export default function InventoryTotalASINTable() {
                                   </button>
                                 </li>
                                 {user.role === "Admin" ||
-                                user.role === "Admin VA" ? (
+                                  user.role === "Admin VA" ? (
                                   <li>
                                     <button
                                       onClick={() =>
@@ -754,7 +677,7 @@ export default function InventoryTotalASINTable() {
                             <li>
                               <button
                                 onClick={() =>
-                                  handleDelete(d._id, d.product_image)
+                                  handleDelete(notificationSearchData._id, notificationSearchData.product_image)
                                 }
                               >
                                 Delete
@@ -776,7 +699,7 @@ export default function InventoryTotalASINTable() {
         {/* pagination */}
         {!isLoading &&
           !searchError &&
-          !searchResults.length &&
+          !searchResults.length &&!notificationSearchValue &&
           data?.length > 15 && (
             <div>
               <ReactPaginate
@@ -793,7 +716,7 @@ export default function InventoryTotalASINTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && (
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}

@@ -1,15 +1,9 @@
-import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useState } from "react";
+import { Link } from "react-router-dom";
 
 export default function SettingsHeader() {
   const [isActiveSetting, setIsActiveSetting] = useState("profile");
 
-  // const url = useParams();
-  // console.log(url);
-  // console.log(isActiveSetting);
-
-  // useEffect(() => {}, []);
-  console.log("object");
 
   return (
     <div className="flex flex-col justify-center h-full my-16 pt-10   ">
