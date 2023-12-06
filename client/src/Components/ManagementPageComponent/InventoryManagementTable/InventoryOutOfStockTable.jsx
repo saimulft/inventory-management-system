@@ -286,81 +286,9 @@ export default function InventoryOutOfStockTable() {
     setSearchResults(filteredDateResults);
   };
   // pagination code
-  const generatePageNumbers = (currentPage, pageCount, maxVisiblePages) => {
-    if (pageCount <= maxVisiblePages) {
-      // If the total page count is less than or equal to the maximum visible pages, show all pages.
-      return Array.from({ length: pageCount }, (_, i) => i + 1);
-    } else {
-      const halfVisible = Math.floor(maxVisiblePages / 2);
-      const firstPage = Math.max(currentPage - halfVisible, 1);
-      const lastPage = Math.min(currentPage + halfVisible, pageCount);
-
-      const pageNumbers = [];
-
-      if (firstPage > 1) {
-        pageNumbers.push(1);
-        if (firstPage > 2) {
-          pageNumbers.push("..."); // Show ellipsis
-        }
-      }
-
-      for (let i = firstPage; i <= lastPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (lastPage < pageCount) {
-        if (lastPage < pageCount - 1) {
-          pageNumbers.push("..."); // Show ellipsis
-        }
-        pageNumbers.push(pageCount);
-      }
-
-      return pageNumbers;
-    }
-  };
-  const generatePageNumbersFilter = (
-    currentPage,
-    pageCount,
-    maxVisiblePages
-  ) => {
-    if (pageCount <= maxVisiblePages) {
-      // If the total page count is less than or equal to the maximum visible pages, show all pages.
-      return Array.from({ length: pageCount }, (_, i) => i + 1);
-    } else {
-      const halfVisible = Math.floor(maxVisiblePages / 2);
-      const firstPage = Math.max(currentPage - halfVisible, 1);
-      const lastPage = Math.min(currentPage + halfVisible, pageCount);
-
-      const pageNumbers = [];
-
-      if (firstPage > 1) {
-        pageNumbers.push(1);
-        if (firstPage > 2) {
-          pageNumbers.push("..."); // Show ellipsis
-        }
-      }
-
-      for (let i = firstPage; i <= lastPage; i++) {
-        pageNumbers.push(i);
-      }
-
-      if (lastPage < pageCount) {
-        if (lastPage < pageCount - 1) {
-          pageNumbers.push("..."); // Show ellipsis
-        }
-        pageNumbers.push(pageCount);
-      }
-
-      return pageNumbers;
-    }
-  };
+ 
   const itemsPerPage = 15;
   const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
-  const pageCount = Math.ceil(data.length / itemsPerPage);
-  const pageCountFilter = Math.ceil(searchResults.length / itemsPerPage);
-
-  generatePageNumbers(currentPage + 1, pageCount, maxVisiblePages);
-  generatePageNumbersFilter(currentPage + 1, pageCountFilter, maxVisiblePages);
 
   const handleFilteredDataPageChange = ({ selected }) => {
     setFilteredDataPage(selected);
@@ -752,7 +680,7 @@ export default function InventoryOutOfStockTable() {
         {!isLoading &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && (
+          data?.length > 15 && !notificationSearchValue &&(
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -768,7 +696,7 @@ export default function InventoryOutOfStockTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && (
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}

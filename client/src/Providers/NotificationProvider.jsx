@@ -13,8 +13,6 @@ const NotificationProvider = ({ children }) => {
   const [currentUserLoading, setCurrentUserLoading] = useState(false);
   const[notificationAlert, setNotificationAlert]=useState(true)
 
-  // get the user with creator email
-  console.log(user?.email);
   useEffect(() => {
     setCurrentUserLoading(true);
     
