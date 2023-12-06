@@ -34,7 +34,7 @@ export default function DashboardLayout() {
             <Outlet />
             {/* message box  */}
             <ChatBox />
-            <NotificationBox/>
+            <NotificationBox />
           </div>
         </Container>
       </div>

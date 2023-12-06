@@ -58,6 +58,7 @@ import StoreManagerRoute from "./StoreManagerRoute";
 import StoreOwnerRoute from "./StoreOwnerRoute";
 import ProfitTrackerStatsPage from "../Pages/ProfitTrackerStatsPage";
 import PaymentStatusPage from "../Components/AddStrorePageComponent/PaymentStatusPage";
+import SalesForm from "../Pages/SalesForm";
 
 export const router = createBrowserRouter([
   {
@@ -193,6 +194,10 @@ export const router = createBrowserRouter([
       {
         path: "/dashboard/pending-arrival-from",
         element: <StoreManagerRoute><ArrivalFormPage /></StoreManagerRoute>,
+      },
+      {
+        path: "/dashboard/sales-form",
+        element: <StoreManagerRoute><SalesForm /></StoreManagerRoute>,
       },
       {
         path: "/dashboard/preparing-request-from",

@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const { ObjectId } = require("mongodb")
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
@@ -29,16 +30,16 @@ const run = async () => {
                 warehouse_name: req.body.warehouse_name,
                 warehouse_id: req.body.warehouse_id,
 
-                amazon_quantity: req.body.amazon_quantity,
-                customer_name: req.body.customer_name,
-                amazon_shipping: req.body.amazon_shipping,
-                shipping_cost: req.body.shipping_cost,
-                handling_cost: req.body.handling_cost,
-                walmart_quantity: req.body.walmart_quantity,
-                amazon_price: req.body.amazon_price,
-                average_price: req.body.average_price,
-                average_tax: req.body.average_tax,
-                order_number: req.body.order_number,
+                amazon_quantity: 0,
+                customer_name: 'N/A',
+                amazon_shipping: 0,
+                shipping_cost: 0,
+                handling_cost: 0,
+                walmart_quantity: 0,
+                amazon_price: 0,
+                average_price: 0,
+                average_tax: 0,
+                order_number: "N/A",
             }
 
             const result = await pending_arrival_collection.insertOne(data)
@@ -56,10 +57,11 @@ const run = async () => {
     })
 
     //get all pending arrival data
-    router.post('/get_all_pending_arrival_data', async (req, res) => {
+    router.post('/get_all_pending_arrival_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
-            const role = user.role;
+            const role = req.role;
+
             let query;
 
             if (role === 'Admin' || role === 'Admin VA') {
@@ -160,12 +162,12 @@ const run = async () => {
                 if (result) {
                     if (req.body.received_quantity) {
                         const missingQuantity = parseInt(result.quantity) - parseInt(result.received_quantity);
-                        
+
                         const deletedResult = await pending_arrival_collection.deleteOne({ _id: new ObjectId(id) });
                         if (!deletedResult.deletedCount) {
                             return res.status(500).json({ message: "Error to delete pending arrival data" })
                         }
-                        
+
                         // let missingArrivalInsertedId;
                         let missingArrivalInsertedId;
                         if (missingQuantity) {
@@ -202,10 +204,10 @@ const run = async () => {
                             }
                             const id = existInStock._id
                             let notificationSearchArray = []
-                            if(missingArrivalInsertedId){
-                            notificationSearchArray = [id, missingArrivalInsertedId]
+                            if (missingArrivalInsertedId) {
+                                notificationSearchArray = [id, missingArrivalInsertedId]
                             }
-                            else{
+                            else {
                                 notificationSearchArray = id
                             }
                             const updateStockResult = await all_stock_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateStockdata })

@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const { ObjectId } = require("mongodb")
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
 
@@ -37,10 +38,10 @@ const run = async () => {
         }
     });
 
-    router.post('/get_all_shipped_data', async (req, res) => {
+    router.post('/get_all_shipped_data',verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
-            const role = user.role;
+            const role = req.role;
 
             let query;
 

@@ -6,7 +6,7 @@ import Cookies from "js-cookie"
 import useAuth from "../hooks/useAuth";
 import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from 'react-icons/md';
-
+import CryptoJS from "crypto-js"
 export default function LoginPage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 5px 0px rgba(0, 0, 0, 0.1)",
@@ -27,7 +27,12 @@ export default function LoginPage() {
     const form = event.target;
     const email = form.email.value;
     const password = form.password.value;
-    const userInfo = { email: email,password: password }
+    const userInfo = { email: email, password: password }
+
+    const encryptToken = (token, secretKey) => {
+      const encryptedToken = CryptoJS.AES.encrypt(token, secretKey).toString();
+      return encryptedToken;
+    };
 
     try {
       const { data, status } = await mutateAsync(userInfo)
@@ -35,8 +40,12 @@ export default function LoginPage() {
         form.reset()
         setUser(data.data)
         setLoginError('')
+
         const token = data.token;
-        Cookies.set('loginToken', token, {expires: 7})
+        const encryptedToken = encryptToken(token, "e74cca3d65c871d49a7508bac94a1a4c41b843528411a5823b04d5921d2bf6e0b016164cssdf");
+
+        Cookies.set('imstoken', encryptedToken, { expires: 7 })
+
         navigate('/')
       }
     } catch (error) {
@@ -75,7 +84,7 @@ export default function LoginPage() {
                 id="email"
                 name="email"
                 required
-               
+
               />
             </div>
             <div className="flex flex-col mt-4 relative">
@@ -92,7 +101,7 @@ export default function LoginPage() {
               <div onClick={() => setShowPassword(!showPassword)} className="absolute top-[45px] right-4 text-sm font-medium cursor-pointer">{showPassword ? 'Hide' : 'Show'}</div>
             </div>
 
-            <div onClick={()=>navigate('/reset_password')} className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">
+            <div onClick={() => navigate('/reset_password')} className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">
               Forgot your password?
             </div>
 

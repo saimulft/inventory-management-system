@@ -28,8 +28,8 @@ const getUser = (receiver) => {
   return users?.find((user) => user?.email == receiver);
 };
 
-io.on("connection", (socket) => {
-  console.log("user connected");
+io.on('connection', (socket) => {
+  console.log('user connected')
 
   // connect
   socket.on("addUsers", (userData) => {
@@ -206,10 +206,10 @@ io.on("connection", (socket) => {
       );
 
       const warehouseAdminUsers = currentUsersData.filter((currentUser) =>
-      checkUsersWarehouseAdminByWarehouseId(currentUser, notificationData)
+        checkUsersWarehouseAdminByWarehouseId(currentUser, notificationData)
       );
       const warehouseManagerVAUsers = currentUsersData.filter((currentUser) =>
-      checkUsersWarehouseManagerVAByWarehouseId(currentUser, notificationData)
+        checkUsersWarehouseManagerVAByWarehouseId(currentUser, notificationData)
       );
 
       const storeManagerAdminNotificationAccessUsers = [
@@ -236,22 +236,22 @@ io.on("connection", (socket) => {
 
     if (user?.role == "Store Manager VA") {
       const adminUsers = currentUsersData.filter((currentUser) =>
-      checkAdminId(currentUser, user)
+        checkAdminId(currentUser, user)
       );
       const adminVAUsers = currentUsersData.filter((currentUser) =>
-      checkAdminVAId(currentUser, user)
+        checkAdminVAId(currentUser, user)
       );
       const storeManagerAdminUsers = currentUsersData.filter((currentUser) =>
-      checkUsersStoreManagerAdminByStoreAccessId(currentUser, user, notificationData)
+        checkUsersStoreManagerAdminByStoreAccessId(currentUser, user, notificationData)
       );
       const storeManagerVAUsers = currentUsersData.filter((currentUser) =>
-      checkUsersStoreManagerVAByStoreAccessId(currentUser, user, notificationData)
+        checkUsersStoreManagerVAByStoreAccessId(currentUser, user, notificationData)
       );
       const warehouseAdminUsers = currentUsersData.filter((currentUser) =>
-      checkUsersWarehouseAdminByWarehouseId(currentUser, notificationData)
+        checkUsersWarehouseAdminByWarehouseId(currentUser, notificationData)
       );
       const warehouseManagerVAUsers = currentUsersData.filter((currentUser) =>
-      checkUsersWarehouseManagerVAByWarehouseId(currentUser, notificationData)
+        checkUsersWarehouseManagerVAByWarehouseId(currentUser, notificationData)
       );
 
       const storeManagerVANotificationAccessUsers = [
@@ -278,22 +278,22 @@ io.on("connection", (socket) => {
 
     if (user?.role == "Warehouse Admin") {
       const adminUsers = currentUsersData.filter((currentUser) =>
-      checkAdminId(currentUser, user)
+        checkAdminId(currentUser, user)
       );
       const adminVAUsers = currentUsersData.filter((currentUser) =>
-      checkAdminVAId(currentUser, user)
+        checkAdminVAId(currentUser, user)
       );
       const storeManagerAdminUsers = currentUsersData.filter((currentUser) =>
-      checkUsersStoreManagerAdminByStoreAccessId(currentUser, user, notificationData)
+        checkUsersStoreManagerAdminByStoreAccessId(currentUser, user, notificationData)
       );
       const storeManagerVAUsers = currentUsersData.filter((currentUser) =>
-      checkUsersStoreManagerVAByStoreAccessId(currentUser, user, notificationData)
+        checkUsersStoreManagerVAByStoreAccessId(currentUser, user, notificationData)
       );
       const warehouseAdminUsers = currentUsersData.filter((currentUser) =>
-      checkUsersWarehouseAdminByWarehouseId(currentUser, notificationData)
+        checkUsersWarehouseAdminByWarehouseId(currentUser, notificationData)
       );
       const warehouseManagerVAUsers = currentUsersData.filter((currentUser) =>
-      checkUsersWarehouseManagerVAByWarehouseId(currentUser, notificationData)
+        checkUsersWarehouseManagerVAByWarehouseId(currentUser, notificationData)
       );
 
       const warehouseNotificationAccessUsers = [
@@ -305,7 +305,7 @@ io.on("connection", (socket) => {
         ...warehouseManagerVAUsers,
       ];
       console.log("🚀 ~ file: index.js:307 ~ socket.on ~ warehouseNotificationAccessUsers:", warehouseNotificationAccessUsers)
-      
+
       // send notification
       warehouseNotificationAccessUsers?.forEach(
         (warehouseNotificationAccessUser) => {
@@ -321,22 +321,22 @@ io.on("connection", (socket) => {
 
     if (user?.role == "Warehouse Manager VA") {
       const adminUsers = currentUsersData.filter((currentUser) =>
-      checkAdminId(currentUser, user)
+        checkAdminId(currentUser, user)
       );
       const adminVAUsers = currentUsersData.filter((currentUser) =>
-      checkAdminVAId(currentUser, user)
+        checkAdminVAId(currentUser, user)
       );
       const storeManagerAdminUsers = currentUsersData.filter((currentUser) =>
-      checkUsersStoreManagerAdminByStoreAccessId(currentUser, user, notificationData)
+        checkUsersStoreManagerAdminByStoreAccessId(currentUser, user, notificationData)
       );
       const storeManagerVAUsers = currentUsersData.filter((currentUser) =>
-      checkUsersStoreManagerVAByStoreAccessId(currentUser, user, notificationData)
+        checkUsersStoreManagerVAByStoreAccessId(currentUser, user, notificationData)
       );
       const warehouseAdminUsers = currentUsersData.filter((currentUser) =>
-      checkUsersWarehouseAdminByWarehouseId(currentUser, notificationData)
+        checkUsersWarehouseAdminByWarehouseId(currentUser, notificationData)
       );
       const warehouseManagerVAUsers = currentUsersData.filter((currentUser) =>
-      checkUsersWarehouseManagerVAByWarehouseId(currentUser, notificationData)
+        checkUsersWarehouseManagerVAByWarehouseId(currentUser, notificationData)
       );
 
       const warehouseManagerVANotificationAccessUsers = [

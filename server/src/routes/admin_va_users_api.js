@@ -12,8 +12,7 @@ const run = async () => {
     // create new admin va 
     router.post('/create_admin_va', async (req, res) => {
         try {
-            const inputEmail = req.body.email
-            const isExist = await all_users_collection.findOne({ email: inputEmail })
+            const isExist = await all_users_collection.findOne({ email: req.body.email })
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }

@@ -59,6 +59,7 @@ export default function AddNewConversation() {
         setError(err);
         setLoading(false);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //set current Chat User Info
@@ -74,10 +75,10 @@ export default function AddNewConversation() {
       </div>
     );
   } else if (!loading && error) {
-    content = <p>Something is Wrong !</p>;
+    content = 0;
   } else if (!loading && !error && data.length > 0) {
     content = addConversationSearchData?.map((user) => {
-const online = checkOnline(user.email)
+      const online = checkOnline(user.email)
       return (
         <div
           onClick={() => {
@@ -96,9 +97,8 @@ const online = checkOnline(user.email)
               alt=""
             />
             <div
-              className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${
-                online && "bg-green-500"
-              }    `}
+              className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${online && "bg-green-500"
+                }    `}
             ></div>
           </div>
           <div>

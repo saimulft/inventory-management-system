@@ -16,24 +16,22 @@ const PreparingFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
-  const [InvoieImageSrc, setInvoiceImageSrc] = useState(null);
-  const [InvoiceImageFile, setInvoiceImageFile] = useState(null);
-  const [InvoiceImageError, setInvoiceImageError] = useState("");
-  const [shippingImageSrc, setShippingImageSrc] = useState(null);
-  const [shippingImageFile, setShippingImageFile] = useState(null);
-  const [shippingImageError, setShippingImageError] = useState("");
-  const [formError, setFormError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [storeOption, setStoreOption] = useState(null);
-  const [warehouseOption, setWarehouseOption] = useState(null);
-  const [asinUpcOption, setAsinUpcOption] = useState();
-  const [productName, setProductName] = useState("");
-  const { user } = useAuth();
-  const { setCountsRefetch } = useGlobal();
-  const asinId = asinUpcOption?.value;
-  const asinUpc = asinUpcOption?.data?.filter(
-    (asinUpc) => asinId === asinUpc._id
-  );
+  const [InvoieImageSrc, setInvoiceImageSrc] = useState(null)
+  const [InvoiceImageFile, setInvoiceImageFile] = useState(null)
+  const [InvoiceImageError, setInvoiceImageError] = useState('')
+  const [shippingImageSrc, setShippingImageSrc] = useState(null)
+  const [shippingImageFile, setShippingImageFile] = useState(null)
+  const [shippingImageError, setShippingImageError] = useState('')
+  const [formError, setFormError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [storeOption, setStoreOption] = useState(null)
+  const [warehouseOption, setWarehouseOption] = useState(null)
+  const [asinUpcOption, setAsinUpcOption] = useState()
+  const [productName, setProductName] = useState('')
+  const { user } = useAuth()
+  const { setCountsRefetch } = useGlobal()
+  const asinId = asinUpcOption?.value
+  const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
@@ -191,8 +189,8 @@ const PreparingFormPage = () => {
         if (res.status === 201) {
           console.log(currentUser);
           const notification_link =
-             "/dashboard/management/store/preparing-request";
-          const notification_search =[ res?.data?.result?.insertedId];
+            "/dashboard/management/store/preparing-request";
+          const notification_search = [res?.data?.result?.insertedId];
           const status = "Submit a preparing request form.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
@@ -355,7 +353,7 @@ const PreparingFormPage = () => {
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="invoice-dropzone"
-                      className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                      className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[6.5px]">
                         {InvoieImageSrc ? (
@@ -480,7 +478,7 @@ const PreparingFormPage = () => {
                   <div className="flex items-center w-full mt-2">
                     <label
                       htmlFor="shippingLabel-dropzone"
-                      className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600 shadow-lg"
+                      className="flex justify-between items-center px-4 w-full min-h-[70px] max-h-full border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 shadow-lg"
                     >
                       <div className="flex items-center gap-5 py-[6.5px]">
                         {shippingImageSrc ? (
@@ -500,7 +498,7 @@ const PreparingFormPage = () => {
                             </p>
                           )}
                           <p className="text-xs  text-gray-500 dark:text-gray-400">
-                            PNG, JPG or PDF, file size no more than 10MB
+                            PNG, JPG or PDF, file size no more than 5MB
                           </p>
                         </div>
                       </div>

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useRef, useState } from "react";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import useAuth from "../../../hooks/useAuth";
@@ -45,7 +46,7 @@ export default function SingleConversation() {
 
   const lastMessageSenderEmail = conversation[conversation?.length - 1]?.sender;
 
- 
+
 
   // render message data first time
   useEffect(() => {
@@ -80,8 +81,7 @@ export default function SingleConversation() {
     setConversationLoading(true);
     await axios
       .get(
-        `/api/v1/conversations_api/single_conversation?sender=${
-          user?.email
+        `/api/v1/conversations_api/single_conversation?sender=${user?.email
         }&receiver=${currentChatUserEmail}&page_no=${fastAdd ? 1 : pageCount}`
       )
       .then((res) => {
@@ -98,6 +98,7 @@ export default function SingleConversation() {
 
   useEffect(() => {
     fetchConData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChatUserEmail, user?.email, loadNew]);
 
   // typing start data sent with socket
@@ -223,6 +224,7 @@ export default function SingleConversation() {
   // all useEffect
   useEffect(() => {
     scrollPositionSet();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation]);
 
   useEffect(() => {
@@ -231,6 +233,7 @@ export default function SingleConversation() {
     } else {
       setConversation([...temporaryData, ...conversation]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [temporaryData]);
 
   // update single message update state with socket data
@@ -315,7 +318,7 @@ export default function SingleConversation() {
     });
   }, [socket]);
 
-   // get seen unseen status
+  // get seen unseen status
   //  useEffect(() => {
   //   socket.current.on("getSeenUnseenStatus", (status) => {
   //     // setIsMessageSeen(status);
@@ -345,11 +348,9 @@ export default function SingleConversation() {
         return (
           <div id="messages_text" key={key}>
             <div
-              className={`flex my-[4px] px-2 ${
-                currentUser ? "justify-end " : "justify-start items-end "
-              } ${
-                conversation?.length - 1 == key && !chatLoadingStatus && " mb-5"
-              }`}
+              className={`flex my-[4px] px-2 ${currentUser ? "justify-end " : "justify-start items-end "
+                } ${conversation?.length - 1 == key && !chatLoadingStatus && " mb-5"
+                }`}
             >
               {!currentUser && (
                 <div className="w-[30px] h-[30px] rounded-full bg-black ml-1 mr-0.5 overflow-hidden">
@@ -361,17 +362,15 @@ export default function SingleConversation() {
                 </div>
               )}
               <div
-                className={`${
-                  currentUser
-                    ? msg?.text == "*like**"
-                      ? "bg-transparent  text-4xl"
-                      : "bg-purple-600 text-white  break-words"
-                    : msg?.text == "*like**"
+                className={`${currentUser
+                  ? msg?.text == "*like**"
+                    ? "bg-transparent  text-4xl"
+                    : "bg-purple-600 text-white  break-words"
+                  : msg?.text == "*like**"
                     ? "bg-transparent text-4xl"
                     : "bg-gray-200 text-black break-words"
-                } ${
-                  msgLengthCheck ? "rounded-full" : "rounded-xl"
-                }  mx-0.5  py-[5px] px-3 max-w-[65%]`}
+                  } ${msgLengthCheck ? "rounded-full" : "rounded-xl"
+                  }  mx-0.5  py-[5px] px-3 max-w-[65%]`}
               >
                 {text}
               </div>
@@ -402,9 +401,8 @@ export default function SingleConversation() {
             </p>
             <div className="text-sm flex items-center">
               <div
-                className={`w-2.5 h-2.5 rounded-full ${
-                  online ? "bg-green-500" : "bg-gray-400"
-                } `}
+                className={`w-2.5 h-2.5 rounded-full ${online ? "bg-green-500" : "bg-gray-400"
+                  } `}
               ></div>
               <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>
                 {online ? "Online" : "Offline"}

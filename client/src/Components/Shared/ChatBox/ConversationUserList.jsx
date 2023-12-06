@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { ChatContext } from "../../../Providers/ChatProvider";
@@ -151,18 +152,18 @@ export default function ConversationUserList() {
       timeDifference < 60000
         ? "Just now"
         : timeDifference >= 60000 && timeDifference < 3600000
-        ? minutesDifference + "m"
-        : timeDifference >= 3600000 && timeDifference < 86400000
-        ? hoursDifference + "h"
-        : timeDifference >= 86400000 && timeDifference < 604800000
-        ? daysDifference + "d"
-        : timeDifference >= 604800000 && timeDifference < 2630016000
-        ? weeksDifference + "w"
-        : timeDifference >= 2630016000 && timeDifference < 31536000000
-        ? monthsDifference + "mo"
-        : timeDifference >= 31536000000
-        ? yearsDifference + "y"
-        : "";
+          ? minutesDifference + "m"
+          : timeDifference >= 3600000 && timeDifference < 86400000
+            ? hoursDifference + "h"
+            : timeDifference >= 86400000 && timeDifference < 604800000
+              ? daysDifference + "d"
+              : timeDifference >= 604800000 && timeDifference < 2630016000
+                ? weeksDifference + "w"
+                : timeDifference >= 2630016000 && timeDifference < 31536000000
+                  ? monthsDifference + "mo"
+                  : timeDifference >= 31536000000
+                    ? yearsDifference + "y"
+                    : "";
 
     return agoTime;
   };
@@ -173,8 +174,8 @@ export default function ConversationUserList() {
       data?.lastMassages?.text == "*like**"
         ? "👍"
         : data?.lastMassages?.text.length <= 11
-        ? data?.lastMassages?.text
-        : data?.lastMassages?.text.slice(0, 11) + "...";
+          ? data?.lastMassages?.text
+          : data?.lastMassages?.text.slice(0, 11) + "...";
 
     const senderStatus = user.email == data?.lastMassages?.sender ? "You:" : "";
     const result = senderStatus + " " + lastMsg;
@@ -213,15 +214,15 @@ export default function ConversationUserList() {
   };
 
   const currentUserObjKey = user?.email?.split("@")[0];
-  if(data){
-    const unreadMessage = data?.find(d =>{
-      if(d?.isMessageSeen){
-        if(!d.isMessageSeen[currentUserObjKey]){
-        return true
+  if (data) {
+    const unreadMessage = data?.find(d => {
+      if (d?.isMessageSeen) {
+        if (!d.isMessageSeen[currentUserObjKey]) {
+          return true
         }
       }
     })
-    setMessageAlert(unreadMessage )
+    setMessageAlert(unreadMessage)
   }
 
   // decide what to render
@@ -233,8 +234,9 @@ export default function ConversationUserList() {
       </div>
     );
   } else if (!loading && error) {
-    content = <p>Something is Wrong !</p>;
+    content = <p></p>;
   } else if (!loading && !error && data.length > 0) {
+
     content = dataSortByTime(userConversationListSearch(data))?.map(
       (userData) => {
         const online = checkOnline(currentReceiverFind(userData?.participants));
@@ -270,9 +272,8 @@ export default function ConversationUserList() {
                 alt=""
               />
               <div
-                className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${
-                  online && "bg-green-500"
-                }    `}
+                className={`absolute w-3 h-3 rounded-full top-[74%] left-[74%] ${online && "bg-green-500"
+                  }    `}
               ></div>
             </div>
 
@@ -280,16 +281,14 @@ export default function ConversationUserList() {
               <p className=" text-base">{senderName}</p>
               <div className="text-sm flex items-center">
                 <span
-                  className={`${
-                    messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
-                  } text-xs`}
+                  className={`${messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
+                    } text-xs`}
                 >
                   {massagesSliceAndSenderStatus(userData)}
                 </span>
                 <span
-                  className={`${
-                    messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
-                  } pl-2 flex items-center text-xs `}
+                  className={`${messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
+                    } pl-2 flex items-center text-xs `}
                 >
                   <BsDot />{" "}
                   {calculateAgoTime(userData?.lastMassages?.timestamp)}
@@ -300,6 +299,7 @@ export default function ConversationUserList() {
         );
       }
     );
+
   }
 
   return (

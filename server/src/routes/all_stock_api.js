@@ -1,16 +1,17 @@
 const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
     const all_stock_collection = db.collection("all_stock")
 
     //get all stock data
-    router.post('/get_all_stock_data', async (req, res) => {
+    router.post('/get_all_stock_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
-            const role = user.role;
+            const role = req.role;
 
             let query;
 
@@ -41,11 +42,11 @@ const run = async () => {
     })
 
     // get stock data by UPIN
-    router.post('/all_stock_by_upin', async (req, res) => {
+    router.post('/all_stock_by_upin', verifyJWT, async (req, res) => {
         try {
             const upin = req.query.upin
             const user = req.body.user;
-            const role = user.role;
+            const role = req.role;
 
             let query;
 
@@ -73,6 +74,23 @@ const run = async () => {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
+
+    router.post('/get_all_stock_dropdown_data', async (req, res) => { 
+        try {
+            const user = req.body.user;
+
+            const allStockData = await all_stock_collection.find({ admin_id: user.admin_id }).project({ "value": "$upin", "label": "$upin", "_id": 0 }).sort({ date: -1 }).toArray()
+            if (allStockData.length) {
+
+                res.status(200).json({ data: allStockData, message: "successfully get asin_upc" })
+            }
+            else {
+                res.status(204).json({ message: "No content" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in asin_upc' });
+        }
+    });
 }
 run()
 

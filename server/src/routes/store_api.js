@@ -2,6 +2,7 @@ const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const { ObjectId } = require("mongodb")
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
@@ -39,8 +40,8 @@ const run = async () => {
     // update store details 
     router.post("/update_store_details", async (req, res) => {
         try {
-            const admin_id = req.query.id
-            const existData = await all_stores_collection.findOne({ admin_id: admin_id })
+            const id = req.query.id
+            const existData = await all_stores_collection.findOne({ _id: new ObjectId(id) })
             if (existData) {
                 const updateData = {
                     store_name: req.body.storeName ? req.body.storeName : existData.store_name,
@@ -48,8 +49,8 @@ const run = async () => {
                     store_type: req.body.storeType !== "Pick Store Type" ? req.body.storeType : existData.store_type,
                     store_status: req.body.storeStatus !== "Select Status" ? req.body.storeStatus : existData.store_status,
                 }
-                const updateResult = await all_stores_collection.updateOne({ admin_id: admin_id }, { $set: updateData })
-               
+                const updateResult = await all_stores_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData })
+
                 if (updateResult.modifiedCount) {
                     return res.status(200).json({ message: "Store data updated" })
                 }
@@ -64,9 +65,35 @@ const run = async () => {
             res.status(500).json({ message: "Internal server error" })
         }
     })
-    
+
+    router.post("/update_store_suppliers_details", async (req, res) => {
+        try {
+            const id = req.query.id
+            const existData = await all_stores_collection.findOne({ _id: new ObjectId(id) })
+            if (existData) {
+                const updateData = {
+                    supplier_information: req.body.supplier_information,
+                    additional_payment_details: req.body.additional_payment_details
+                }
+                const updateResult = await all_stores_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData })
+
+                if (updateResult.modifiedCount) {
+                    return res.status(200).json({ message: "Store data updated" })
+                }
+                else {
+                    res.status(204).json({ message: "No data found" })
+                }
+            }
+            else {
+                res.status(204).json({ message: "No data found" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error" })
+        }
+    })
+
     // get all stores
-    router.get('/get_all_stores', async (req, res) => {
+    router.get('/get_all_stores', verifyJWT, async (req, res) => {
         try {
             const id = req.query.id
             const storeType = req.query.storeType
@@ -97,7 +124,7 @@ const run = async () => {
     });
 
     // get all stores for profit tracker page
-    router.get('/profit_tracker_all_stores', async (req, res) => {
+    router.get('/profit_tracker_all_stores', verifyJWT, async (req, res) => {
         try {
             const id = req.query.id
             const storeType = req.query.storeType
@@ -127,7 +154,7 @@ const run = async () => {
     });
 
     // get store by id
-    router.get('/get_store_by_id', async (req, res) => {
+    router.get('/get_store_by_id', verifyJWT, async (req, res) => {
         try {
             const id = req.query.id;
             const storeData = await all_stores_collection.findOne({ _id: new ObjectId(id) })
