@@ -37,7 +37,7 @@ const run = async () => {
             res.status(500).json({ message: "Multer error" })
         }
     })
-    
+
     router.put('/update_asin_upc', upload.single('file'), async (req, res) => {
         const id = req.query.id
         const exitsData = await asin_upc_collection.findOne({ _id: new ObjectId(id) })
@@ -78,7 +78,7 @@ const run = async () => {
             const result = await asin_upc_collection.insertOne(data)
 
             if (result.acknowledged) {
-                res.status(201).json({ message: "asin_upc inserted" })
+                res.status(201).json({ message: "asin_upc inserted", result })
             }
             else {
                 res.status(500).json({ message: "Error to inserting asin" })
@@ -95,27 +95,9 @@ const run = async () => {
     router.post('/get_asin_upc_dropdown_data', async (req, res) => {
         try {
             const user = req.body.user;
-            const role = user.role;
-
-            // let query;
-
-            // if (role === 'Admin' || role === 'Admin VA') {
-            //     query = { admin_id: user.admin_id }
-            // }
-
-            // else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
-            //     const store_access_ids = req.body.user.store_access_ids;
-            //     query = { _id: { $in: store_access_ids.map(id => new ObjectId(id)) } };
-            // }
-
-            //todo: warehouse ki dekhbo.. r store manager er khetre store id diye query korte hbe
-
-            const asinUpcData = await asin_upc_collection.find({ admin_id: user.admin_id }).sort({ date: -1 }).toArray()
+            const asinUpcData = await asin_upc_collection.find({ admin_id: user.admin_id }).project({ "value": { $toString: "$_id" }, "label": "$asin_upc_code", _id: 0 }).sort({ date: -1 }).toArray()
             if (asinUpcData) {
-                const data = asinUpcData.map(item => {
-                    return { data: asinUpcData, value: item._id, label: item.asin_upc_code }
-                })
-                res.status(200).json({ data: data, message: "successfully get asin_upc" })
+                res.status(200).json({ data: asinUpcData, message: "successfully get asin_upc" })
             }
             else {
                 res.status(204).json({ message: "No content" })

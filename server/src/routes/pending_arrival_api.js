@@ -30,22 +30,22 @@ const run = async () => {
                 warehouse_name: req.body.warehouse_name,
                 warehouse_id: req.body.warehouse_id,
 
-                amazon_quantity: req.body.amazon_quantity,
-                customer_name: req.body.customer_name,
-                amazon_shipping: req.body.amazon_shipping,
-                shipping_cost: req.body.shipping_cost,
-                handling_cost: req.body.handling_cost,
-                walmart_quantity: req.body.walmart_quantity,
-                amazon_price: req.body.amazon_price,
-                average_price: req.body.average_price,
-                average_tax: req.body.average_tax,
-                order_number: req.body.order_number,
+                amazon_quantity: 0,
+                customer_name: 'N/A',
+                amazon_shipping: 0,
+                shipping_cost: 0,
+                handling_cost: 0,
+                walmart_quantity: 0,
+                amazon_price: 0,
+                average_price: 0,
+                average_tax: 0,
+                order_number: "N/A",
             }
 
             const result = await pending_arrival_collection.insertOne(data)
 
             if (result.acknowledged) {
-                res.status(201).json({ message: "Successfully inserted pending arrival data" })
+                res.status(201).json({ message: "Successfully inserted pending arrival data", result })
             }
             else {
                 res.status(500).json({ message: "Internal server error while inserting pending arrival data" })
@@ -57,7 +57,7 @@ const run = async () => {
     })
 
     //get all pending arrival data
-    router.post('/get_all_pending_arrival_data',verifyJWT, async (req, res) => {
+    router.post('/get_all_pending_arrival_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
             const role = req.role;
@@ -76,7 +76,6 @@ const run = async () => {
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
                 query = { warehouse_id: user.warehouse_id }
             }
-
             const result = await pending_arrival_collection.find(query).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got pending arrival data" })
@@ -169,6 +168,8 @@ const run = async () => {
                             return res.status(500).json({ message: "Error to delete pending arrival data" })
                         }
 
+                        // let missingArrivalInsertedId;
+                        let missingArrivalInsertedId;
                         if (missingQuantity) {
                             const missingArrivalData = {
                                 ...result,
@@ -176,7 +177,8 @@ const run = async () => {
                                 missing_status: 'active'
                             }
                             const insertResult = await missing_arrival_collection.insertOne(missingArrivalData);
-
+                            missingArrivalInsertedId = insertResult.insertedId
+                            // missingArrivalData = insertResult.insertedId
                             if (!insertResult.insertedId) {
                                 return res.status(500).json({ message: 'Internal server error while inserting missing arrival data' });
                             }
@@ -201,10 +203,16 @@ const run = async () => {
                                 remaining_price: remainingPrice
                             }
                             const id = existInStock._id
+                            let notificationSearchArray = []
+                            if (missingArrivalInsertedId) {
+                                notificationSearchArray = [id, missingArrivalInsertedId]
+                            }
+                            else {
+                                notificationSearchArray = id
+                            }
                             const updateStockResult = await all_stock_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateStockdata })
-
                             if (updateStockResult.modifiedCount) {
-                                return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
+                                return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful', result: notificationSearchArray });
                             }
                             else {
                                 return res.status(500).json({ message: 'Error to insert all stock data' });
@@ -213,7 +221,6 @@ const run = async () => {
 
                         else {
                             const remainingPrice = parseInt(result.received_quantity) * result.unit_price;
-
                             const allStockData = {
                                 ...result,
                                 stock: result.received_quantity,
@@ -223,7 +230,7 @@ const run = async () => {
                             }
                             const allStockIntertResult = await all_stock_collection.insertOne(allStockData)
                             if (allStockIntertResult.insertedId) {
-                                return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful' });
+                                return res.status(201).json({ status: 'success', message: 'Data update and insert operations successful', result: [allStockIntertResult.insertedId, missingArrivalInsertedId] });
                             }
                             else {
                                 return res.status(500).json({ message: 'Error to insert all stock data' });

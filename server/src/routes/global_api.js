@@ -31,7 +31,7 @@ const run = async () => {
     // }
 
     // Define a route to get document counts for all collections
-    router.post('/collections-docs-counts',verifyJWT, async (req, res) => {
+    router.post('/collections-docs-counts', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
             const role = req.role;
@@ -43,7 +43,7 @@ const run = async () => {
                 query = { admin_id: user.admin_id }
             }
 
-            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+            else if ((role === 'Store Manager Admin' || role === 'Store Manager VA') && user.store_access_ids.length) {
                 const store_access_ids = req.body.user.store_access_ids;
                 query = { store_id: { $in: store_access_ids?.map(id => id) } };
             }
