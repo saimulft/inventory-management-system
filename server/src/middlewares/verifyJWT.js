@@ -4,7 +4,7 @@ const verifyJWT = (req, res, next) => {
     try {
         const token = authorization.split(' ')[1]
         if (token === 'undefined') {
-            return res.send({status: 'failed' , message: "Unauthorized access" })
+            return res.send({ status: 'failed', message: "Unauthorized access" })
         }
         else {
             jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
