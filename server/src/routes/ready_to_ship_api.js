@@ -39,7 +39,7 @@ const run = async () => {
                     if (result.acknowledged) {
                         const deleteResult = await preparing_form_collection.deleteOne({ "_id": new ObjectId(id) })
                         if (deleteResult.deletedCount) {
-                            res.status(201).json({ message: "RTS data inserted" })
+                            res.status(201).json({ message: "RTS data inserted", result })
                         }
                     }
                 }

@@ -1,8 +1,16 @@
-import { createContext, useState } from "react";
+import { createContext, useEffect, useRef, useState } from "react";
+import { io } from "socket.io-client";
 
 export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
+ // socket install
+ const socket = useRef();
+
+ useEffect(() => {
+   socket.current = io("ws://localhost:9000");
+ }, []);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isActiveSetting, setIsActiveSetting] = useState("profile");
   const [countsRefetch, setCountsRefetch] = useState(false)
@@ -23,7 +31,8 @@ export const GlobalProvider = ({ children }) => {
     countsRefetch, 
     setCountsRefetch,
     storeRefetch,
-    setStoreRefetch
+    setStoreRefetch,
+    socket
   };
 
   return (

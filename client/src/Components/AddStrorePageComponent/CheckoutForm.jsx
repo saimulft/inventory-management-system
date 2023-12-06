@@ -26,8 +26,6 @@ export default function CheckoutForm() {
     });
   };
 
-  console.log(storeDetails)
-
   return (
     <div className="relative w-full  h-full flex justify-center items-center py-16 ">
       <div

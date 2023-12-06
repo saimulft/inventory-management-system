@@ -80,7 +80,7 @@ const run = async () => {
 
             const result = await preparing_form_collection.insertOne(data)
             if (result.acknowledged) {
-                res.status(201).json({ message: "Preparing form inserted" })
+                res.status(201).json({ message: "Preparing form inserted", result })
             }
             else {
                 res.status(500).json({ message: "Error to Preparing form " });
@@ -139,7 +139,7 @@ const run = async () => {
                         return res.status(500).json({ message: "Error to update all stock" });
                     }
                 }
-                return res.status(200).json({ message: "Preparing form updated" })
+                return res.status(200).json({ message: "Preparing form updated", result: id })
             }
             else {
                 return res.status(500).json({ message: "Error to Preparing form " });
@@ -174,7 +174,6 @@ const run = async () => {
             }
 
             const data = await preparing_form_collection.find(query).sort({ created_at: -1 }).toArray()
-
             if (data) {
                 res.status(200).json({ data: data })
             }

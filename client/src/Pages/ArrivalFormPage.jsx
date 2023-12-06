@@ -1,66 +1,79 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from "react-icons/md";
 import Swal from "sweetalert2";
 import SearchDropdown from "../Utilities/SearchDropdown";
 import useGlobal from "../hooks/useGlobal";
+import { GlobalContext } from "../Providers/GlobalProviders";
+import { NotificationContext } from "../Providers/NotificationProvider";
 
 const ArrivalFormPage = () => {
+  const { socket } = useContext(GlobalContext);
+  const { currentUser } = useContext(NotificationContext);
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
   const { user } = useAuth();
-  const { setCountsRefetch } = useGlobal()
-  const [inputError, setInputError] = useState('')
-  const [asinUpcOption, setAsinUpcOption] = useState(null)
-  const [storeOption, setStoreOption] = useState(null)
-  const [warehouseOption, setWarehouseOption] = useState(null)
-  const [productName, setProductName] = useState('')
-  const asinId = asinUpcOption?.value
-  const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
+  const { setCountsRefetch } = useGlobal();
+  const [inputError, setInputError] = useState("");
+  const [asinUpcOption, setAsinUpcOption] = useState(null);
+  const [storeOption, setStoreOption] = useState(null);
+  const [warehouseOption, setWarehouseOption] = useState(null);
+  const [productName, setProductName] = useState("");
+  const asinId = asinUpcOption?.value;
+  const asinUpc = asinUpcOption?.data?.filter(
+    (asinUpc) => asinId === asinUpc._id
+  );
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
-
-      const upin = (`${storeOption?.label}_${asinUpcOption.label}`);
-      axios.post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
-        .then(res => {
+      const upin = `${storeOption?.label}_${asinUpcOption.label}`;
+      axios
+        .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
+        .then((res) => {
           if (res.status === 200) {
-            setProductName(res.data.data.product_name)
+            setProductName(res.data.data.product_name);
           }
           if (res.status === 204) {
-            setProductName(asinUpc[0]?.product_name)
+            setProductName(asinUpc[0]?.product_name);
           }
-        }).catch((error) => {
-          console.log(error)
         })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }, [storeOption?.label, asinUpcOption, asinUpc, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
-    queryKey: ['asin_upc_data'],
+    queryKey: ["asin_upc_data"],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/asin_upc_api/get_asin_upc_dropdown_data', { user })
+        const res = await axios.post(
+          "/api/v1/asin_upc_api/get_asin_upc_dropdown_data",
+          { user }
+        );
         if (res.status === 200) {
           return res.data.data;
         }
-        return []
+        return [];
       } catch (error) {
-        console.log(error)
-        return []
+        console.log(error);
+        return [];
       }
-    }
-  })
+    },
+  });
 
   const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
-    queryKey: ['get_all_stores_data'],
+    queryKey: ["get_all_stores_data"],
     queryFn: async () => {
       try {
-        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', { user })
+        const res = await axios.post(
+          "/api/v1/store_api/get_stores_dropdown_data",
+          { user }
+        );
         if (res.status === 200) {
           return res.data.data;
         }
@@ -69,14 +82,16 @@ const ArrivalFormPage = () => {
         console.log(error);
         return [];
       }
-    }
-  })
+    },
+  });
 
   const { data: warehouseData = [], isLoading: warehouseLoading } = useQuery({
-    queryKey: ['get_warehouse_data'],
+    queryKey: ["get_warehouse_data"],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`)
+        const res = await axios.get(
+          `/api/v1/warehouse_api/get_warehouse_dropdown_data?id=${user.admin_id}`
+        );
         if (res.status === 200) {
           return res.data.data;
         }
@@ -85,10 +100,8 @@ const ArrivalFormPage = () => {
         console.log(error);
         return [];
       }
-    }
-  })
-
-
+    },
+  });
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -100,13 +113,16 @@ const ArrivalFormPage = () => {
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (arrivalFormData) => {
-      return axios.post('/api/v1/pending_arrival_api/insert_pending_arrival_form_data', arrivalFormData)
+      return axios.post(
+        "/api/v1/pending_arrival_api/insert_pending_arrival_form_data",
+        arrivalFormData
+      );
     },
-  })
+  });
 
   const handleArrivalForm = async (event) => {
-    event.preventDefault()
-    setInputError('')
+    event.preventDefault();
+    setInputError("");
 
     const form = event.target;
     const date = new Date().toISOString();
@@ -119,22 +135,34 @@ const ArrivalFormPage = () => {
 
 
     if (!warehouseOption?.label) {
-      setInputError('Select a warehouse')
+      setInputError("Select a warehouse");
       return;
     }
 
     if (!asinUpcOption) {
-      setInputError('Select ASIN or UPC')
+      setInputError("Select ASIN or UPC");
       return;
     }
 
     if (!storeOption) {
-      setInputError('Select Store')
+      setInputError("Select Store");
       return;
     }
 
-    if (!date || !asinUpcOption?.label || !storeOption?.label || !supplierId || !upin || !unitPrice || !productName || !quantity || !eda) {
-      setInputError('Please fill out all the inputs in order to submit the form')
+    if (
+      !date ||
+      !asinUpcOption?.label ||
+      !storeOption?.label ||
+      !supplierId ||
+      !upin ||
+      !unitPrice ||
+      !productName ||
+      !quantity ||
+      !eda
+    ) {
+      setInputError(
+        "Please fill out all the inputs in order to submit the form"
+      );
       return;
     }
 
@@ -158,30 +186,53 @@ const ArrivalFormPage = () => {
     }
 
     try {
-      const { status } = await mutateAsync(arrivalFormData)
+      const { status, data } = await mutateAsync(arrivalFormData);
       if (status === 201) {
-        setCountsRefetch(true)
-        form.reset()
-        setAsinUpcOption('')
-        setStoreOption('')
-        setProductName('')
-        setWarehouseOption(null)
+        const notification_link = "/dashboard/management/store/pending-arrival";
+        const notification_search = [data?.result?.insertedId];
+        const notificationStatus = "Submit a pending arrival form.";
+        axios
+          .post(`/api/v1/notifications_api/send_notification`, {
+            currentUser,
+            status: notificationStatus,
+            notification_search,
+            notification_link,
+            storeId: storeOption?.value,
+            warehouseId: warehouseOption?.value,
+          })
+          .then((res) => {
+            if (res?.data?.finalResult?.acknowledged) {
+              const notificationData = res.data.notificationData;
+              socket?.current?.emit("sendNotification", {
+                user,
+                notificationData,
+              });
+            }
+          })
+          .catch((err) => console.log(err));
+        setCountsRefetch(true);
+        form.reset();
+        setAsinUpcOption("");
+        setStoreOption("");
+        setProductName("");
+        setWarehouseOption(null);
         Swal.fire(
-          'Submitted',
-          'Pending arrival data has been submitted.',
-          'success'
-        )
+          "Submitted",
+          "Pending arrival data has been submitted.",
+          "success"
+        );
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   return (
     <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg h-full w-full m-auto rounded-xl">
+        className="border border-[#8633FF] shadow-lg h-full w-full m-auto rounded-xl"
+      >
         <div className="text-center mt-10">
           <p className="text-2xl font-bold">Pending Arrival Form</p>
         </div>
@@ -191,12 +242,26 @@ const ArrivalFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Warehouse</label>
-                  <SearchDropdown isLoading={warehouseLoading} isMulti={false} option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
+                  <SearchDropdown
+                    isLoading={warehouseLoading}
+                    isMulti={false}
+                    option={warehouseOption}
+                    optionData={warehouseData}
+                    placeholder="Select warehouse"
+                    setOption={setWarehouseOption}
+                  />
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">ASIN/UPC</label>
-                  <SearchDropdown isLoading={asinLoading} isMulti={false} option={asinUpcOption} optionData={asinUpcData} placeholder="Select ASIN or UPC" setOption={setAsinUpcOption} />
+                  <SearchDropdown
+                    isLoading={asinLoading}
+                    isMulti={false}
+                    option={asinUpcOption}
+                    optionData={asinUpcData}
+                    placeholder="Select ASIN or UPC"
+                    setOption={setAsinUpcOption}
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -213,7 +278,11 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">UPIN</label>
                   <input
-                    value={asinUpcOption && storeOption?.label ? `${storeOption?.label}_${asinUpcOption.label}` : ''}
+                    value={
+                      asinUpcOption && storeOption?.label
+                        ? `${storeOption?.label}_${asinUpcOption.label}`
+                        : ""
+                    }
                     type="text"
                     placeholder="Enter UPIN"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
@@ -240,7 +309,14 @@ const ArrivalFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <SearchDropdown isLoading={storeLoading} isMulti={false} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                  <SearchDropdown
+                    isLoading={storeLoading}
+                    isMulti={false}
+                    option={storeOption}
+                    optionData={allStoreData}
+                    placeholder="Select Store"
+                    setOption={setStoreOption}
+                  />
                 </div>
 
                 <div className="mt-4">
@@ -249,7 +325,6 @@ const ArrivalFormPage = () => {
                     type="text"
                     readOnly
                     value={asinUpc && asinUpc[0].code_type}
-
                     placeholder="Code type"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="codeType"
@@ -297,10 +372,20 @@ const ArrivalFormPage = () => {
               </div>
             </div>
 
-            <div className="mt-5">{inputError && <p className="w-[100%] flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {inputError}</p>}</div>
+            <div className="mt-5">
+              {inputError && (
+                <p className="w-[100%] flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded">
+                  <MdErrorOutline size={20} /> {inputError}
+                </p>
+              )}
+            </div>
 
             <div className="flex items-center justify-center mt-8">
-              <button type="submit" disabled={isLoading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-full capitalize">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-full capitalize"
+              >
                 {isLoading && <FaSpinner size={20} className="animate-spin" />}
                 <p>Pending Arrival Request</p>
               </button>
