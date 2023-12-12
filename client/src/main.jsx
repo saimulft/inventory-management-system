@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 import NotificationProvider from "./Providers/NotificationProvider.jsx";
 const queryClient = new QueryClient()
 import CryptoJS from "crypto-js"
-axios.defaults.baseURL = "https://ims-backend.nabilnewaz.com"
+axios.defaults.baseURL = "https://api.revealifydirectory.com"
 
 // interceptor for set token in headers
 axios.interceptors.request.use(
