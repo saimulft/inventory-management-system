@@ -383,7 +383,7 @@ export default function SingleConversation() {
   const online = checkOnline(currentChatUserEmail);
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-0 top-[73px] rounded z-50 overflow-hidden">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-[2%] bottom-[0%] z-50 rounded overflow-hidden">
       {/* conversation header */}
       <div
         style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}

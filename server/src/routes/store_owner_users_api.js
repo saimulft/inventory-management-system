@@ -17,7 +17,7 @@ const run = async () => {
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }
-            
+
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
             const login_data = {
