@@ -1,0 +1,12 @@
+FROM node:lts-slim
+
+WORKDIR /app
+COPY package.json .
+RUN npm install
+
+COPY . .
+
+EXPOSE 5000
+CMD ["npm", "start"]
+
+#docker run --restart=always -itd -p 5000:5000 -e MONGO_URI=mongodb://inventorymanagement:inventory1526management@161.35.44.25:27017 -e JWT_SECRET=7fe0b5339b6149c87c89876e74cca3d65c871d49a7508bac94a1a4c41b843528411a5823b04d5921d2bf6e0b016164c240b921eac4e49113a29d11b91b5b0592 nabilnewaz/ims-backend

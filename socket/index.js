@@ -2,9 +2,9 @@ import { Server } from "socket.io";
 
 const io = new Server(9000, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: ['http://localhost:5173'],
   },
-});
+})
 
 let users = [];
 const addUser = (userData, socketId) => {
@@ -74,9 +74,9 @@ io.on('connection', (socket) => {
 
   // seen unseen status
   socket.on("sentSeenUnseenStatus", ({ status, receiver }) => {
-  
+
     const user = getUser(receiver);
-   
+
     {
       user && io.to(user?.socketId)?.emit("getSeenUnseenStatus", status);
     }
@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
 
   // add current user
   socket.on("addCurrentUser", ({ currentUser }) => {
-    
+
     addCurrentUser(currentUser, socket.id);
   });
 
