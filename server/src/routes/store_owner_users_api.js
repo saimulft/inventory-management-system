@@ -35,6 +35,7 @@ const run = async () => {
                 const store_owner_user_data = {
                     admin_id: req.body.admin_id,
                     store_owner_id: result.insertedId.toString(),
+                    store_access_ids: req.body.store_access_ids,
                     full_name: req.body.full_name,
                     email: req.body.email,
                     username: req.body.username,

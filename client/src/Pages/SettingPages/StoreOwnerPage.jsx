@@ -1,22 +1,41 @@
-import Swal from "sweetalert2";
 import useAuth from "../../hooks/useAuth";
-import { v4 as uuidv4 } from 'uuid';
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
 import axios from "axios";
 import { useState } from "react";
 import ToastMessage from "../../Components/Shared/ToastMessage";
+import SearchDropdown from "../../Utilities/SearchDropdown";
 
 export default function StoreOwnerPage() {
   const { user } = useAuth()
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
+  const [storeOption, setStoreOption] = useState(null)
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (storeOwner) => {
       return axios.post('/api/v1/store_owner_api/create_store_owner', storeOwner)
     },
   })
+
+  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
+    queryKey: ['get_all_stores_data'],
+    queryFn: async () => {
+      try {
+        const res = await axios.post('/api/v1/store_api/get_stores_dropdown_data', { user })
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
+  const storeIDS = []
+  storeOption?.map(store => storeIDS.push(store.value))
 
   const handleCreateStoreOwner = async (event) => {
     event.preventDefault()
@@ -34,11 +53,11 @@ export default function StoreOwnerPage() {
       return setErrorMessage('Password and confirm password must be same!')
     }
 
-    else if(password.length < 6){
+    else if (password.length < 6) {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const storeOwner = { admin_id: user.admin_id, creator_email: user?.email, store_owner_id: uuidv4(), full_name: name, email, username, password, role: 'Store Owner' }
+    const storeOwner = { admin_id: user.admin_id, creator_email: user?.email, store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Owner' }
 
     try {
       const { status } = await mutateAsync(storeOwner)
@@ -120,6 +139,10 @@ export default function StoreOwnerPage() {
                 name="password"
                 required
               />
+            </div>
+            <div className="mt-3">
+              <label className="text-slate-500">Select Store</label>
+              <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
             </div>
           </div>
         </div>
