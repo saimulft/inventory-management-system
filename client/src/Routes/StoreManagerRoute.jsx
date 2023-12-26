@@ -8,6 +8,10 @@ const StoreManagerRoute = ({children}) => {
        return children;
     }
 
+    if(user.role === 'Store Owner'){
+        return <Navigate to="/dashboard/profit-tracker" replace={true} />
+    }
+
     return <Navigate to="/dashboard/management" replace={true} />
 };
 

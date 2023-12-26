@@ -1,7 +1,6 @@
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
-import { v4 as uuidv4 } from 'uuid';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import ToastMessage from "../../Components/Shared/ToastMessage";
@@ -12,6 +11,7 @@ export default function StoreManagerAdminPage() {
   const [errorMessage, setErrorMessage] = useState('')
   const [successMessage, setSuccessMessage] = useState('')
   const [storeOption, setStoreOption] = useState(null)
+
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (storeManagerAdmin) => {
       return axios.post('/api/v1/store_manager_admin_api/create_store_manager_admin', storeManagerAdmin)
@@ -60,7 +60,7 @@ export default function StoreManagerAdminPage() {
       return setErrorMessage('Please select store')
     }
 
-    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_manager_admin_id: uuidv4(), store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager Admin' }
+    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager Admin' }
 
     try {
       const { status } = await mutateAsync(storeManagerAdmin)

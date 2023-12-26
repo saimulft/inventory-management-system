@@ -124,13 +124,21 @@ const run = async () => {
     });
 
     // get all stores for profit tracker page
-    router.get('/profit_tracker_all_stores', verifyJWT, async (req, res) => {
+    router.post('/profit_tracker_all_stores', verifyJWT, async (req, res) => {
         try {
+            const role = req.role;
             const id = req.query.id
             const storeType = req.query.storeType
+            const store_access_ids = req.body.store_access_ids;
 
-            if (storeType && storeType !== 'All Store') {
-                const allStores = await all_stores_collection.find({ admin_id: id, store_type: storeType }).sort({ date: -1 }).toArray()
+            if (role === 'Admin' || role === 'Admin VA') {
+                let query = { admin_id: id }
+
+                if (storeType && storeType !== 'All Store') {
+                    query.store_type = storeType;
+                }
+
+                const allStores = await all_stores_collection.find(query).sort({ date: -1 }).toArray();
 
                 if (allStores.length) {
                     return res.status(200).json({ data: allStores, message: "Successfully get all stores" })
@@ -140,16 +148,24 @@ const run = async () => {
                 }
             }
 
-            const allStores = await all_stores_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
+            else if ((role === 'Store Owner' || role === 'Store Manager Admin' || role === 'Store Manager VA') && store_access_ids) {
+                let query = { _id: { $in: store_access_ids?.map(id => new ObjectId(id)) } };
 
-            if (allStores.length) {
-                res.status(200).json({ data: allStores, message: "Successfully get all stores" })
-            }
-            else {
-                res.status(204).json({ message: "No content" })
+                if (storeType && storeType !== 'All Store') {
+                    query.store_type = storeType;
+                }
+
+                const allStores = await all_stores_collection.find(query).sort({ date: -1 }).toArray();
+
+                if (allStores.length) {
+                    return res.status(200).json({ data: allStores, message: "Successfully get all stores" })
+                }
+                else {
+                    return res.status(204).json({ message: "No content" })
+                }
             }
         } catch (error) {
-            res.status(500).json({ message: 'Internal Server Error in all_asin_upc' });
+            res.status(500).json({ message: 'Internal Server Error' });
         }
     });
 
