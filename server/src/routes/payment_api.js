@@ -3,7 +3,7 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 
 const stripe = require('stripe')('sk_test_51M9AWiKa3gcPGhKTJaOAKnhWZgT7pA0dqch2kQ7uz7M5lXpt6dDckLjHdFIyYs1rgafA64sKm7eGH05O6aWWlo52006GcXLLcN');
-const YOUR_DOMAIN = 'http://localhost:5173';
+const YOUR_DOMAIN = 'https://revealifydirectory.com';
 
 const sendEmail = require("../utilities/send_email");
 const verifyJWT = require("../middlewares/verifyJWT");

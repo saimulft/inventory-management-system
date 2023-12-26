@@ -8,7 +8,7 @@ export const GlobalProvider = ({ children }) => {
   const socket = useRef();
 
   useEffect(() => {
-    socket.current = io("ws://localhost:9000");
+    socket.current = io("wss://api-socket.revealifydirectory.com");
   }, []);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
