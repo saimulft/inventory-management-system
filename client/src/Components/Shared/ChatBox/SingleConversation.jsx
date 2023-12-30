@@ -441,14 +441,14 @@ export default function SingleConversation() {
             }}
             id="message_input"
             rows="1"
-            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500    dark:focus:ring-purple-500 dark:focus:border-purple-500"
+            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500  "
             placeholder="Your message..."
           ></input>
           {switchLick ? (
             <button
               onClick={handleSentNewMassages}
               type="submit"
-              className="inline-flex justify-center p-2 text-purple-600 rounded-full cursor-pointer hover:bg-purple-100 dark:text-purple-500 dark:hover:bg-gray-600"
+              className="inline-flex justify-center p-2 text-purple-600 rounded-full cursor-pointer hover:bg-purple-100 "
             >
               <svg
                 className="w-5 h-5 rotate-90"

@@ -111,7 +111,7 @@ export default function AddNewConversation() {
   }
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-[2%] bottom-[0%] z-50 rounded overflow-hidden">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-1 bottom-[0%] z-50 rounded overflow-hidden">
       {/* add new conversation user list */}
       <div className="px-3 py-4  flex gap-3 justify-between text-xs font-medium ">
         <p className="text-lg font-bold">New Conversation</p>
