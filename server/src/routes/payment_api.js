@@ -19,22 +19,21 @@ const run = async () => {
         const document = await temp_stores_collection.findOne({ session_id: subscription.id });
         // // This is the url to which the customer will be redirected when they are done
         // // managing their billing with the portal.
+
         if (document) {
             const storeOwners = document.store_owners;
             delete document.store_owners;
             // Insert the document into the destination collection
             const result = await all_stores_collection.insertOne({ ...document, customer: subscription.customer });
-
             // if there is exist store owners for the store then update store owners info
             if (storeOwners) {
-                const query = { _id: { $in: storeOwners?.map(id => new ObjectId(id)) } }
-                await store_owner_users_collection.updateMany(
-                    { query },
-                    { $push: { "store_access_ids": result.insertedId.toString() } }
-                )
+                storeOwners?.map(async (storeOwnerId) => {
+                    await store_owner_users_collection.updateOne({ _id: new ObjectId(storeOwnerId) }, {
+                        $push: { "store_access_ids": result.insertedId.toString() }
+                    })
+                })
             }
 
-            // Delete the document from the source collection
             await temp_stores_collection.deleteOne({ session_id: subscription.id });
             console.log('Document moved successfully!');
         } else {
@@ -113,8 +112,8 @@ const run = async () => {
                     },
                 ],
                 mode: 'subscription',
-                success_url: req.body.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}` : `${YOUR_DOMAIN}/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: req.body.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?canceled=true` : `${YOUR_DOMAIN}/payment-status?canceled=true`,
+                success_url: req.body.all_data.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}` : `${YOUR_DOMAIN}/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: req.body.all_data.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?canceled=true` : `${YOUR_DOMAIN}/payment-status?canceled=true`,
             });
             const data = { ...req.body.all_data, session_id: session.id, store_owners: req.body.store_owners }
             const result = await temp_stores_collection.insertOne(data)
