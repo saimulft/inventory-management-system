@@ -441,7 +441,7 @@ export default function SingleConversation() {
             }}
             id="message_input"
             rows="1"
-            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500   dark:placeholder-gray-400  dark:focus:ring-purple-500 dark:focus:border-purple-500"
             placeholder="Your message..."
           ></input>
           {switchLick ? (
