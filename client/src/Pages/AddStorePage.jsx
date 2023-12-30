@@ -77,7 +77,7 @@ export default function AddStorePage() {
               <input
                 type="text"
                 placeholder="Enter store name"
-                className="input input-bordered input-primary w-full max-w-xs mt-2"
+                className="input input-bordered input-primary w-full max-w-xs mt-2 shadow-lg"
                 id="storeName"
                 name="storeName"
                 defaultValue={storeDetails?.store_name ? storeDetails?.store_name : ''}
@@ -90,7 +90,7 @@ export default function AddStorePage() {
               <input
                 type="text"
                 placeholder="Enter store manager name"
-                className="input input-bordered input-primary w-full max-w-xs mt-2"
+                className="input input-bordered input-primary w-full max-w-xs mt-2 shadow-lg"
                 id="storeManagerName"
                 name="storeManagerName"
                 defaultValue={storeDetails?.store_manager_name ? storeDetails?.store_manager_name : ''}
@@ -106,7 +106,7 @@ export default function AddStorePage() {
             <div className="flex flex-col mt-2">
               <label className="text-slate-500">Store type*</label>
               <select
-                className="select select-primary w-full mt-2"
+                className="select select-primary w-full mt-2 shadow-lg"
                 name="storeType"
                 id="storeType"
                 defaultValue={storeDetails?.store_type ? storeDetails?.store_type : ''}
@@ -126,7 +126,7 @@ export default function AddStorePage() {
             <div className="flex flex-col mt-2">
               <label className="text-slate-500">Store status*</label>
               <select
-                className="select select-primary w-full mt-2"
+                className="select select-primary w-full mt-2 shadow-lg"
                 name="storeStatus"
                 id="storeStatus"
                 required
