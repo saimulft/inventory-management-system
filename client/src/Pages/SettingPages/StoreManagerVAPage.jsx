@@ -30,7 +30,6 @@ const StoreManagerVAPage = () => {
         }
     })
 
-
     const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
         queryKey: ['get_all_stores_data'],
         queryFn: async () => {

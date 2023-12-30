@@ -30,8 +30,7 @@ const PreparingFormPage = () => {
   const [productName, setProductName] = useState('')
   const { user } = useAuth()
   const { setCountsRefetch } = useGlobal()
-  const asinId = asinUpcOption?.value
-  const asinUpc = asinUpcOption?.data?.filter(asinUpc => asinId === asinUpc._id)
+
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
@@ -44,7 +43,7 @@ const PreparingFormPage = () => {
             setProductName(res.data.data.product_name);
           }
           if (res.status === 204) {
-            setProductName("");
+            setProductName(asinUpcOption.product_name);
           }
         })
         .catch((err) => console.log(err));
@@ -155,7 +154,7 @@ const PreparingFormPage = () => {
       productName,
       storeName: storeOption?.label,
       storeId: storeOption?.value,
-      codeType: asinUpc && asinUpc[0].code_type,
+      codeType: asinUpcOption?.code_type,
       upin,
       quantity,
       trackingNumber,
@@ -424,7 +423,7 @@ const PreparingFormPage = () => {
                   <input
                     type="text"
                     readOnly
-                    value={asinUpc && asinUpc[0].code_type}
+                    value={asinUpcOption?.code_type}
                     placeholder="Enter product name"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="code"

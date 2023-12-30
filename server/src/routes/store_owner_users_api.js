@@ -3,13 +3,14 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const bcrypt = require("bcrypt")
 const sendEmail = require("../utilities/send_email")
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
     const store_owner_users_collection = db.collection("store_owner_users")
     const all_users_collection = db.collection("all_users")
 
-    // create new admin va 
+    // create new store owner 
     router.post('/create_store_owner', async (req, res) => {
         try {
             const inputEmail = req.body.email
@@ -17,7 +18,7 @@ const run = async () => {
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
             }
-            
+
             const hashed_password = await bcrypt.hash(req.body.password, 10)
 
             const login_data = {
@@ -35,6 +36,7 @@ const run = async () => {
                 const store_owner_user_data = {
                     admin_id: req.body.admin_id,
                     store_owner_id: result.insertedId.toString(),
+                    store_access_ids: req.body.store_access_ids,
                     full_name: req.body.full_name,
                     email: req.body.email,
                     username: req.body.username,
@@ -74,6 +76,26 @@ const run = async () => {
             }
         }
         catch (error) {
+            res.status(500).json({ message: 'Internal Server Error' });
+        }
+    })
+
+    router.get('/get_all_store_owner', verifyJWT, async (req, res) => {
+        try {
+            const admin_id = req.query.id;
+
+            const result = await store_owner_users_collection.find({ admin_id: admin_id }).toArray();
+
+            if (result.length) {
+                const data = result.map(item => {
+                    return { value: item._id, label: item.full_name }
+                })
+                return res.status(200).json({ data: data, message: 'Successfully got all store owner' })
+            }
+            else {
+                return res.status(204).json({ message: 'No content found' })
+            }
+        } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })

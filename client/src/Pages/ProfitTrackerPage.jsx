@@ -25,7 +25,7 @@ export default function ProfitTrackerPage() {
     queryKey: ['profit_tracker_all_stores'],
     queryFn: async () => {
       try {
-        const res = await axios.get(`/api/v1/store_api/profit_tracker_all_stores?id=${user.admin_id}&storeType=${storeType}`)
+        const res = await axios.post(`/api/v1/store_api/profit_tracker_all_stores?id=${user.admin_id}&storeType=${storeType}`, {store_access_ids: user?.store_access_ids})
         if (res.status === 200) {
           setLoading(false)
           return res.data.data;
@@ -41,7 +41,7 @@ export default function ProfitTrackerPage() {
     }
   })
 
-  // refetch all stores when streRefetch value is true
+  // refetch all stores when storeRefetch value is true
   useEffect(() => {
     if (storeRefetch) {
       setLoading(true)
@@ -118,7 +118,7 @@ export default function ProfitTrackerPage() {
         {/* store info  */}
         <div className="relative grid grid-cols-4 gap-6 mb-8 mt-8">
           {
-            loading || isLoading ? <Loading2 contentHeight="433px" /> :
+            isLoading || loading ? <Loading2 contentHeight="433px" /> :
               searchError ? <div className="absolute flex items-center justify-center w-full h-[calc(100vh-369px)] text-xl font-medium text-rose-500">{searchError}</div> :
                 !allStoreData.length ? <div className="absolute flex items-center justify-center w-full h-[calc(100vh-433px)] text-xl font-medium text-rose-500">No store added yet!</div> :
                   searchResults.length ? searchResults.map((singleStore, index) => {

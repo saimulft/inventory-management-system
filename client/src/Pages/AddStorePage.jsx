@@ -3,14 +3,39 @@ import { useNavigate } from "react-router-dom";
 import useStore from "../hooks/useStore";
 import { useState } from "react";
 import { MdErrorOutline } from "react-icons/md";
+import SearchDropdown from "../Utilities/SearchDropdown";
+import axios from "axios";
+import useAuth from "../hooks/useAuth";
+import { useQuery } from "@tanstack/react-query";
 
 export default function AddStorePage() {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.5)",
   };
   const [errorMessage, setErrorMessage] = useState('')
-  const { storeDetails, setStoreDetails } = useStore()
+  const { storeDetails, setStoreDetails, setStoreOwners } = useStore()
   const navigate = useNavigate()
+  const {user} = useAuth()
+  const [storeOwnerOption, setStoreOwnerOption] = useState(null)
+
+  const { data: allStoreOwner = [], isLoading: storeOwnerLoading } = useQuery({
+    queryKey: ['get_all_store_owner'],
+    queryFn: async () => {
+      try {
+        const res = await axios.get(`/api/v1/store_owner_api/get_all_store_owner?id=${user.admin_id}`)
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    }
+  })
+
+  const storeOwnerIDs = []
+  storeOwnerOption?.map(storeOwner => storeOwnerIDs.push(storeOwner.value))
 
   const handleNext = (event) => {
     event.preventDefault()
@@ -29,6 +54,7 @@ export default function AddStorePage() {
 
     const data = { store_name: storeName, store_manager_name: storeManagerName, store_type: storeType, store_status: storeStatus }
     setStoreDetails(data)
+    setStoreOwners(storeOwnerIDs)
 
     navigate("/dashboard/add-store/add-supplier")
   }
@@ -51,7 +77,7 @@ export default function AddStorePage() {
               <input
                 type="text"
                 placeholder="Enter store name"
-                className="input input-bordered input-primary w-full max-w-xs mt-2"
+                className="input input-bordered input-primary w-full max-w-xs mt-2 shadow-lg"
                 id="storeName"
                 name="storeName"
                 defaultValue={storeDetails?.store_name ? storeDetails?.store_name : ''}
@@ -64,7 +90,7 @@ export default function AddStorePage() {
               <input
                 type="text"
                 placeholder="Enter store manager name"
-                className="input input-bordered input-primary w-full max-w-xs mt-2"
+                className="input input-bordered input-primary w-full max-w-xs mt-2 shadow-lg"
                 id="storeManagerName"
                 name="storeManagerName"
                 defaultValue={storeDetails?.store_manager_name ? storeDetails?.store_manager_name : ''}
@@ -73,9 +99,14 @@ export default function AddStorePage() {
             </div>
 
             <div className="flex flex-col mt-2">
+              <label className="text-slate-500">Store Owner*</label>
+              <SearchDropdown isLoading={storeOwnerLoading} isMulti={true} option={storeOwnerOption} optionData={allStoreOwner} placeholder="Select Store" setOption={setStoreOwnerOption} />
+            </div>
+
+            <div className="flex flex-col mt-2">
               <label className="text-slate-500">Store type*</label>
               <select
-                className="select select-primary w-full mt-2"
+                className="select select-primary w-full mt-2 shadow-lg"
                 name="storeType"
                 id="storeType"
                 defaultValue={storeDetails?.store_type ? storeDetails?.store_type : ''}
@@ -95,7 +126,7 @@ export default function AddStorePage() {
             <div className="flex flex-col mt-2">
               <label className="text-slate-500">Store status*</label>
               <select
-                className="select select-primary w-full mt-2"
+                className="select select-primary w-full mt-2 shadow-lg"
                 name="storeStatus"
                 id="storeStatus"
                 required

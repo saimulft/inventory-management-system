@@ -20,6 +20,7 @@ const StoreProvider = ({ children }) => {
             country: ""
         }
     ]);
+    const [storeOwners, setStoreOwners] = useState([])
 
     const storeInfo = {
         storeDetails,
@@ -28,10 +29,11 @@ const StoreProvider = ({ children }) => {
         setSupplierInfoInputList,
         additionalPaymentInputList,
         setAdditionalPaymentInputList,
-        paymentLink, setPaymentLink
+        paymentLink, setPaymentLink,
+        storeOwners, setStoreOwners
     }
 
-    console.log(storeDetails)
+    // console.log(storeDetails)
 
     return (
         <StoreContext.Provider value={storeInfo}>

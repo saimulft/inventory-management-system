@@ -111,7 +111,9 @@ export default function ConversationUserList() {
     setError(false);
     setLoading(true);
     axios
-      .get(`/api/v1/conversations_api/user_messages_list?sender=${user?.email}`)
+      .get(
+        `/api/v1/conversations_api/user_messages_list?sender=${user?.email}`
+      )
       .then((res) => {
         setData(res?.data);
         setLoading(false);
@@ -302,7 +304,7 @@ export default function ConversationUserList() {
   }
 
   return (
-    <div className={`h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-0 top-[73px] z-50 rounded`}>
+    <div className={`h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-1 top-[73px] z-50 rounded`}>
       {/* chat head  */}
       <div className="p-3 flex justify-between items-center pt-3  border-gray-300">
         <p className="font-bold text-2xl">Chats</p>

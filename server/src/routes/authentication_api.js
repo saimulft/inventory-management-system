@@ -6,6 +6,8 @@ const bcrypt = require("bcrypt")
 const verifyJWT = require("../middlewares/verifyJWT")
 const sendEmail = require("../utilities/send_email")
 const { ObjectId } = require("mongodb")
+const getUserProfileData = require("../utilities/get_user_profile_data")
+
 const run = async () => {
     const db = await connectDatabase()
     const all_users_collection = db.collection("all_users")
@@ -32,7 +34,10 @@ const run = async () => {
                             role: data.role,
                             email: data.email
                         }, process.env.JWT_SECRET, { expiresIn: '7d' })
-                        res.status(200).json({ data: data, token: token });
+
+                        // send full user information after login 
+                        const result = await getUserProfileData(data.role, data.email)
+                        res.status(200).json({ data: result, token: token });
                     }
                     else {
                         res.status(403).json({ message: "Please verify your email to login" })
@@ -46,6 +51,7 @@ const run = async () => {
             }
         }
         catch (error) {
+            console.log(error)
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
@@ -60,34 +66,8 @@ const run = async () => {
                 const email = user.email;
                 const role = req.role;
 
-                if (role === 'Admin') {
-                    const result = await admin_users_collection.findOne({ email: email })
-                    return res.status(200).json({ data: result, status: 'success' })
-                }
-                else if (role === 'Admin VA') {
-                    const result = await admin_va_users_collection.findOne({ email: email })
-                    return res.status(200).json({ data: result, status: 'success' })
-                }
-                else if (role === 'Store Owner') {
-                    const result = await store_owner_users_collection.findOne({ email: email })
-                    return res.status(200).json({ data: result, status: 'success' })
-                }
-                else if (role === 'Store Manager Admin') {
-                    const result = await store_manager_admin_users_collection.findOne({ email: email })
-                    return res.status(200).json({ data: result, status: 'success' })
-                }
-                else if (role === 'Warehouse Admin') {
-                    const result = await warehouse_admin_users_collection.findOne({ email: email })
-                    return res.status(200).json({ data: result, status: 'success' })
-                }
-                else if (role === 'Store Manager VA') {
-                    const result = await store_manager_va_users_collection.findOne({ email: email })
-                    return res.status(200).json({ data: result, status: 'success' })
-                }
-                else if (role === 'Warehouse Manager VA') {
-                    const result = await warehouse_manager_va_users_collection.findOne({ email: email })
-                    return res.status(200).json({ data: result, status: 'success' })
-                }
+                const result = await getUserProfileData(role, email)
+                return res.status(200).json({ data: result, status: 'success' })
             }
             else {
                 return res.status(404).json({ message: "Failed to find user by email" })

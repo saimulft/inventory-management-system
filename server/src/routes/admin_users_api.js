@@ -94,9 +94,9 @@ const run = async () => {
     router.delete('/admin_users', async (req, res) => {
         try {
 
-            const result = await admin_users_collection.deleteOne({ admin_id:  req.body.admin_id })
+            const result = await admin_users_collection.deleteOne({ admin_id: req.body.admin_id })
             if (result.deletedCount) {
-                const response = await all_users_collection.deleteOne({ id:  req.body.admin_id })
+                const response = await all_users_collection.deleteOne({ id: req.body.admin_id })
                 if (response.deletedCount) {
                     res.status(200).json({ message: 'Admin  user deleted successfully', status: "success" });
                 }
@@ -110,11 +110,11 @@ const run = async () => {
     })
 
 
-    router.post('/get_all_users_list',verifyJWT, async (req, res) => {
+    router.post('/get_all_users_list', verifyJWT, async (req, res) => {
         try {
             const role = req.role;
             let query;
-            
+
             if (role === 'Admin' || 'Admin VA') {
                 query = { admin_id: req.body.user.admin_id }
             }
