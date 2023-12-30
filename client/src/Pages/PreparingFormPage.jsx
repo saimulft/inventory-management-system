@@ -137,7 +137,7 @@ const PreparingFormPage = () => {
       setFormError(`No product available under UPIN ${upin}`);
       return;
     }
-    if (!date || !asinUpcOption.label || !orderID || !upin || !quantity) {
+    if (!date || !asinUpcOption || !orderID || !upin || !quantity) {
       setFormError("Missing form field detected");
       return;
     }
