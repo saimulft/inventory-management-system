@@ -19,11 +19,10 @@ export default function SingleConversation() {
     checkOnline,
     socket,
     conversationData,
-    notificationAlert,
     conversationDataRefetch,
     setConversationDataRefetch,
-    isMessageSeen,
-    setIsMessageSeen,
+    singleConversationShow,
+    boxCloseRef
   } = useContext(ChatContext);
 
   const { currentChatUserName, currentChatUserEmail } =
@@ -300,7 +299,7 @@ export default function SingleConversation() {
         })
         .catch((error) => {
           console.log(error);
-          notificationAlert(true);
+          setNotificationAlert(true);
         });
     }
   };
@@ -317,15 +316,6 @@ export default function SingleConversation() {
       }
     });
   }, [socket]);
-
-  // get seen unseen status
-  //  useEffect(() => {
-  //   socket.current.on("getSeenUnseenStatus", (status) => {
-  //     // setIsMessageSeen(status);
-  //     console.log("get messages", status);
-  //   });
-  // }, [socket]);
-
 
   let content;
   if (!conversationLoading && conversationError) {
@@ -383,7 +373,7 @@ export default function SingleConversation() {
   const online = checkOnline(currentChatUserEmail);
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-[2%] bottom-[0%] z-50 rounded overflow-hidden">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-1 bottom-[0%] z-50 rounded overflow-hidden">
       {/* conversation header */}
       <div
         style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
@@ -451,14 +441,14 @@ export default function SingleConversation() {
             }}
             id="message_input"
             rows="1"
-            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500"
+            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500  "
             placeholder="Your message..."
           ></input>
           {switchLick ? (
             <button
               onClick={handleSentNewMassages}
               type="submit"
-              className="inline-flex justify-center p-2 text-purple-600 rounded-full cursor-pointer hover:bg-purple-100 dark:text-purple-500 dark:hover:bg-gray-600"
+              className="inline-flex justify-center p-2 text-purple-600 rounded-full cursor-pointer hover:bg-purple-100 "
             >
               <svg
                 className="w-5 h-5 rotate-90"
