@@ -26,6 +26,7 @@ export default function AddNewConversation() {
   const [addConversationSearchData, setAddConversationSearchData] = useState([
     ...data,
   ]);
+  const [searchError, setSearchError] = useState(false)
 
   // set default data
   useEffect(() => {
@@ -39,8 +40,10 @@ export default function AddNewConversation() {
       const searchData = data.filter((d) =>
         d?.full_name?.toLowerCase()?.includes(search)
       );
+      setSearchError(true)
       setAddConversationSearchData(searchData);
     } else {
+      setSearchError(false)
       setAddConversationSearchData(data);
     }
   };
@@ -59,7 +62,6 @@ export default function AddNewConversation() {
         setError(err);
         setLoading(false);
       });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   //set current Chat User Info
@@ -74,8 +76,6 @@ export default function AddNewConversation() {
         <p className="w-10 h-10 animate-spin border-4 border-purple-500 border-dotted rounded-full"></p>
       </div>
     );
-  } else if (!loading && error) {
-    content = 0;
   } else if (!loading && !error && data.length > 0) {
     content = addConversationSearchData?.map((user) => {
       const online = checkOnline(user.email)
@@ -111,7 +111,7 @@ export default function AddNewConversation() {
   }
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-0 top-[73px] z-50 rounded overflow-hidden">
+    <div ref={boxCloseRef} className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-0 top-[73px] z-50 rounded overflow-hidden">
       {/* add new conversation user list */}
       <div className="px-3 py-4  flex gap-3 justify-between text-xs font-medium ">
         <p className="text-lg font-bold">New Conversation</p>
@@ -148,12 +148,12 @@ export default function AddNewConversation() {
       {/* add new conversation list  */}
       <div className="new_conversation  h-[489px] overflow-y-scroll">
         {content}
-        {data.length < 1 && !loading && (
+        {data.length < 1 && !loading && !searchError && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
-            No user available!
+            No users available!
           </p>
         )}
-        {addConversationSearchData < 1 && !loading && (
+        {addConversationSearchData < 1 && !loading && searchError && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
             Search data not available!
           </p>

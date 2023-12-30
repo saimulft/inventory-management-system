@@ -19,11 +19,10 @@ export default function SingleConversation() {
     checkOnline,
     socket,
     conversationData,
-    notificationAlert,
     conversationDataRefetch,
     setConversationDataRefetch,
-    isMessageSeen,
-    setIsMessageSeen,
+    singleConversationShow,
+    boxCloseRef
   } = useContext(ChatContext);
 
   const { currentChatUserName, currentChatUserEmail } =
@@ -300,7 +299,7 @@ export default function SingleConversation() {
         })
         .catch((error) => {
           console.log(error);
-          notificationAlert(true);
+          setNotificationAlert(true);
         });
     }
   };
@@ -317,15 +316,6 @@ export default function SingleConversation() {
       }
     });
   }, [socket]);
-
-  // get seen unseen status
-  //  useEffect(() => {
-  //   socket.current.on("getSeenUnseenStatus", (status) => {
-  //     // setIsMessageSeen(status);
-  //     console.log("get messages", status);
-  //   });
-  // }, [socket]);
-
 
   let content;
   if (!conversationLoading && conversationError) {
@@ -383,7 +373,7 @@ export default function SingleConversation() {
   const online = checkOnline(currentChatUserEmail);
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border  right-0 top-[73px] rounded z-50 overflow-hidden">
+    <div className={`h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border ${singleConversationShow ? " bottom-0" : "top - [73px] "}  right-0  rounded z-50 overflow-hidden`}>
       {/* conversation header */}
       <div
         style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}

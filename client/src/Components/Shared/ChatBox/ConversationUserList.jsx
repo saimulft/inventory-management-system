@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AiOutlineClose, AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import axios from "axios";
@@ -21,17 +21,16 @@ export default function ConversationUserList() {
     setConversationData,
     conversationDataRefetch,
     setIsMessageSeen,
-    setMessageAlert
-
+    setMessageAlert,
   } = useContext(ChatContext);
+
+
 
   //set current Chat User Info
   const { setCurrentChatUserName, setCurrentChatUserEmail } =
     currentChatUserSetInfo || {};
-
   const [data, loading, error] = alreadyConversationUserState;
   const [setData, setLoading, setError] = alreadyConversationUserSetState;
-
   const [search, setSearch] = useState("");
   const [socketData, setSocketData] = useState({});
   const [filterData, setFilterData] = useState(Number);
@@ -303,7 +302,7 @@ export default function ConversationUserList() {
   }
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-0 top-[73px] z-50 rounded">
+    <div className={`h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-0 top-[73px] z-50 rounded`}>
       {/* chat head  */}
       <div className="p-3 flex justify-between items-center pt-3  border-gray-300">
         <p className="font-bold text-2xl">Chats</p>
