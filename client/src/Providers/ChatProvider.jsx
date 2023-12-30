@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { GlobalContext } from "./GlobalProviders";
 
@@ -127,7 +127,7 @@ export const ChatProvider = ({ children }) => {
     setConversationData,
     conversationDataRefetch,
     setConversationDataRefetch,
-    isMessageSeen, setIsMessageSeen, messageAlert, setMessageAlert
+    isMessageSeen, setIsMessageSeen, messageAlert, setMessageAlert,
   };
   return (
     <ChatContext.Provider value={chatInfo}>{children}</ChatContext.Provider>

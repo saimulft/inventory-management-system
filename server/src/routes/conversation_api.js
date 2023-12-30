@@ -12,7 +12,6 @@ const run = async () => {
   router.get("/add_users_list", async (req, res) => {
     try {
       const loginUser = req?.query?.user || {};
-
       const allConversations = await conversationsCollection
         .find({
           participants: { $all: [loginUser] },
@@ -26,12 +25,11 @@ const run = async () => {
       });
 
       const alreadyConversationExistJoin = alreadyExistUserEmail.join("");
-
       const user = await all_users_collection.findOne({ email: loginUser })
       if (user?.role == 'Admin') {
         const result = await all_users_collection.find({ admin_id: new ObjectId(user._id).toString() }).toArray();
         const newResult = result.filter(
-          (e) => !alreadyConversationExistJoin.includes(e.email)
+          (e) => !alreadyConversationExistJoin.includes(e.email) && e.email_verified
         );
 
         if (result.length) {

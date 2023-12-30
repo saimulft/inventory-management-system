@@ -58,12 +58,12 @@ export default function NotificationBox({ notificationsRef }) {
       navigate(generatedLink);
     }
     if (
-     ( user?.role == "Admin" ||
-      user?.role == "Admin VA" ||
-      user?.role == "Warehouse Admin" ||
-      user?.role == "Warehouse Manager VA") &&
-        !Array.isArray(url) &&
-        notification_search.length < 2
+      (user?.role == "Admin" ||
+        user?.role == "Admin VA" ||
+        user?.role == "Warehouse Admin" ||
+        user?.role == "Warehouse Manager VA") &&
+      !Array.isArray(url) &&
+      notification_search.length < 2
     ) {
       const link = url.split("/");
 
@@ -112,18 +112,18 @@ export default function NotificationBox({ notificationsRef }) {
       timeDifference < 60000
         ? "Just now"
         : timeDifference >= 60000 && timeDifference < 3600000
-        ? minutesDifference + "m ago"
-        : timeDifference >= 3600000 && timeDifference < 86400000
-        ? hoursDifference + "h ago"
-        : timeDifference >= 86400000 && timeDifference < 604800000
-        ? daysDifference + "d ago"
-        : timeDifference >= 604800000 && timeDifference < 2630016000
-        ? weeksDifference + "w ago"
-        : timeDifference >= 2630016000 && timeDifference < 31536000000
-        ? monthsDifference + "mo ago"
-        : timeDifference >= 31536000000
-        ? yearsDifference + "y ago"
-        : "";
+          ? minutesDifference + "m ago"
+          : timeDifference >= 3600000 && timeDifference < 86400000
+            ? hoursDifference + "h ago"
+            : timeDifference >= 86400000 && timeDifference < 604800000
+              ? daysDifference + "d ago"
+              : timeDifference >= 604800000 && timeDifference < 2630016000
+                ? weeksDifference + "w ago"
+                : timeDifference >= 2630016000 && timeDifference < 31536000000
+                  ? monthsDifference + "mo ago"
+                  : timeDifference >= 31536000000
+                    ? yearsDifference + "y ago"
+                    : "";
 
     return agoTime;
   };
@@ -199,7 +199,7 @@ export default function NotificationBox({ notificationsRef }) {
   return (
     <div>
       {isNotificationBoxOpen && (
-        <div className="  fixed right-10 top-[74px] shadow-2xl z-50 bg-white rounded-b-lg h-[600px] w-[400px] py-4">
+        <div className="  fixed right-[2px] top-[74px] shadow-2xl z-50 bg-white rounded-b-lg h-[600px] w-[400px] py-4">
           <div className="text-black px-4 py-2">
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-bold">Notifications</h3>
@@ -218,7 +218,7 @@ export default function NotificationBox({ notificationsRef }) {
                   onClick={() => handleReadAll(user?.email)}
                   className="bg-purple-100 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-200 transition hover:shadow text-sm"
                 >
-                 Read all
+                  Read all
                 </p>
               )}
             </div>
@@ -229,11 +229,11 @@ export default function NotificationBox({ notificationsRef }) {
             className="h-[488px]  overflow-y-scroll notifications_box"
           >
             <div>
-            <div className="flex justify-center">
-              {notificationLoading && (
-                <p className="h-10 w-10 border-purple-500 border-4 border-dotted rounded-full animate-spin "></p>
-              )}
-            </div>
+              <div className="flex justify-center">
+                {notificationLoading && (
+                  <p className="h-10 w-10 border-purple-500 border-4 border-dotted rounded-full animate-spin "></p>
+                )}
+              </div>
               {!notificationLoading && notifications?.map((notification) => {
                 const notification_link = notification?.notification_link;
                 const notification_search = notification?.notification_search;
@@ -242,25 +242,24 @@ export default function NotificationBox({ notificationsRef }) {
                     onClick={
                       notification_search?.length < 2
                         ? () => {
-                            handleNavigateUrl(
-                              notification_link,
-                              notification_search
-                            );
-                            handleNotificationSeen(
-                              notification?._id,
-                              user?.email
-                            );
-                          }
+                          handleNavigateUrl(
+                            notification_link,
+                            notification_search
+                          );
+                          handleNotificationSeen(
+                            notification?._id,
+                            user?.email
+                          );
+                        }
                         : null
                     }
                     key={notification?._id}
-                    className={`${
-                      handleNotificationSeenStyle(
-                        notification.isNotificationSeen
-                      )
-                        ? "bg-white"
-                        : "bg-gray-100 border-b"
-                    } hover:bg-gray-100 px-4 flex items-center gap-3 py-3 cursor-pointer  transition `}
+                    className={`${handleNotificationSeenStyle(
+                      notification.isNotificationSeen
+                    )
+                      ? "bg-white"
+                      : "bg-gray-100 border-b"
+                      } hover:bg-gray-100 px-4 flex items-center gap-3 py-3 cursor-pointer  transition `}
                   >
                     <div>
                       <div className=" h-14 w-14 rounded-full">
@@ -323,14 +322,14 @@ export default function NotificationBox({ notificationsRef }) {
                 );
               })}
             </div>
-           
+
             {notifications?.length == 0 && !notificationLoading && (
               <div className="text-xl font-medium text-center text-purple-500  mt-2">
                 Notifications data not available!
               </div>
             )}
           </div>
-          
+
         </div>
       )}
     </div>
