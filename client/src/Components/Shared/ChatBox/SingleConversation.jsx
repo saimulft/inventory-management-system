@@ -373,7 +373,7 @@ export default function SingleConversation() {
   const online = checkOnline(currentChatUserEmail);
 
   return (
-    <div className={`h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border ${singleConversationShow ? " bottom-0" : "top - [73px] "}  right-0  rounded z-50 overflow-hidden`}>
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-1 bottom-[0%] z-50 rounded overflow-hidden">
       {/* conversation header */}
       <div
         style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
@@ -441,7 +441,7 @@ export default function SingleConversation() {
             }}
             id="message_input"
             rows="1"
-            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500   dark:placeholder-gray-400  dark:focus:ring-purple-500 dark:focus:border-purple-500"
+            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500    dark:focus:ring-purple-500 dark:focus:border-purple-500"
             placeholder="Your message..."
           ></input>
           {switchLick ? (
