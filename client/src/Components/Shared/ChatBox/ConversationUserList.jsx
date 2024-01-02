@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineClose, AiOutlinePlus, AiOutlineSearch } from "react-icons/ai";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import axios from "axios";
@@ -24,8 +24,6 @@ export default function ConversationUserList() {
     setMessageAlert,
   } = useContext(ChatContext);
 
-
-
   //set current Chat User Info
   const { setCurrentChatUserName, setCurrentChatUserEmail } =
     currentChatUserSetInfo || {};
@@ -33,7 +31,6 @@ export default function ConversationUserList() {
   const [setData, setLoading, setError] = alreadyConversationUserSetState;
   const [search, setSearch] = useState("");
   const [socketData, setSocketData] = useState({});
-  const [filterData, setFilterData] = useState(Number);
   const [
     updateLestMessageUpdateConversationUserList,
     setUpdateLestMessageUpdateConversationUserList,
@@ -346,7 +343,7 @@ export default function ConversationUserList() {
             Let's begin conversation!
           </p>
         )}
-        {filterData < 1 && !loading && search && (
+        {userConversationListSearch.length < 1 && !loading && search && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
             Search data not available!
           </p>

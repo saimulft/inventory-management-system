@@ -37,7 +37,6 @@ export default function NotificationBox({ notificationsRef }) {
   // generate notification redirect url
   const handleNavigateUrl = (url, notification_search, status) => {
     setIsNotificationBoxOpen(false);
-    console.log(user.role);
 
     if (
       user?.role == "Store Manager Admin" ||
@@ -236,7 +235,9 @@ export default function NotificationBox({ notificationsRef }) {
               </div>
               {!notificationLoading && notifications?.map((notification) => {
                 const notification_link = notification?.notification_link;
+                console.log(notification_link)
                 const notification_search = notification?.notification_search;
+                console.log('notification search', notification_search)
                 return (
                   <div
                     onClick={
@@ -323,7 +324,7 @@ export default function NotificationBox({ notificationsRef }) {
               })}
             </div>
 
-            {notifications?.length == 0 && !notificationLoading && (
+            {!notificationLoading || notifications?.length == 0 && (
               <div className="text-xl font-medium text-center text-purple-500  mt-2">
                 Notifications data not available!
               </div>
