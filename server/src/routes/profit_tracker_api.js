@@ -10,7 +10,7 @@ const run = async () => {
     const all_stores_collection = db.collection("all_stores")
 
     // get specific store data for profit tracker
-    router.get('/single_store_data',verifyJWT, async (req, res) => {
+    router.get('/single_store_data', verifyJWT, async (req, res) => {
         try {
             const storeId = req.query.storeId
 
@@ -37,12 +37,12 @@ const run = async () => {
     })
 
     // get all store data for dashboard
-    router.get('/all_store_data',verifyJWT, async (req, res) => {
+    router.get('/all_store_data', verifyJWT, async (req, res) => {
         try {
             const adminId = req.query.adminId;
 
             const stockData = await all_stock_collection.find({ admin_id: adminId }).toArray()
-            const totalStore = await all_stores_collection.countDocuments({admin_id: adminId})
+            const totalStore = await all_stores_collection.countDocuments({ admin_id: adminId })
 
             if (stockData.length) {
                 return res.status(200).json({ data: stockData, total_store: totalStore, message: "Data got successfully" })
@@ -57,7 +57,7 @@ const run = async () => {
     })
 
     // get store graph data for dashboard and profit tracker
-    router.get('/single_store_graph_data',verifyJWT, async (req, res) => {
+    router.get('/single_store_graph_data', verifyJWT, async (req, res) => {
         try {
             const storeId = req.query.storeId
             const adminId = req.query.adminId
@@ -95,7 +95,7 @@ const run = async () => {
                         const tax = parseFloat(d.walmart_quantity) * parseFloat(d.average_tax)
                         const cashProfit = (parseFloat(d.amazon_price) + parseFloat(d.amazon_shipping)) - (supplierPrice + amazonFee + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost))
                         const costOfGoods = supplierPrice + parseFloat(d.shipping_cost) + tax + parseFloat(d.handling_cost)
-                        const roi = (cashProfit / costOfGoods) * 100;
+                        const roi = (cashProfit / costOfGoods) * 100 || 0;
                         const sales = parseInt(d.walmart_quantity) * parseFloat(d.amazon_price)
                         if (type === "netProfit") {
                             return sum + cashProfit
@@ -104,6 +104,7 @@ const run = async () => {
                             return sum + costOfGoods
                         }
                         if (type === "roi") {
+
                             return sum + roi
                         }
                         if (type === "sales") {
