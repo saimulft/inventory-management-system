@@ -39,8 +39,9 @@ export default function NotificationBox({ notificationsRef }) {
     setIsNotificationBoxOpen(false);
 
     if (
+      user?.role == "Admin" || user?.role == "Admin VA" ||
       user?.role == "Store Manager Admin" ||
-      user?.role == "Store Manager VA" ||
+      user?.role == "Store Manager VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA" ||
       (!Array.isArray(url) && notification_search.length < 2)
     ) {
       const link = url.split("/");
@@ -235,9 +236,7 @@ export default function NotificationBox({ notificationsRef }) {
               </div>
               {!notificationLoading && notifications?.map((notification) => {
                 const notification_link = notification?.notification_link;
-                console.log(notification_link)
                 const notification_search = notification?.notification_search;
-                console.log('notification search', notification_search)
                 return (
                   <div
                     onClick={
