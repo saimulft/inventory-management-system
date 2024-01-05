@@ -37,11 +37,11 @@ export default function NotificationBox({ notificationsRef }) {
   // generate notification redirect url
   const handleNavigateUrl = (url, notification_search, status) => {
     setIsNotificationBoxOpen(false);
-    console.log(user.role);
 
     if (
+      user?.role == "Admin" || user?.role == "Admin VA" ||
       user?.role == "Store Manager Admin" ||
-      user?.role == "Store Manager VA" ||
+      user?.role == "Store Manager VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA" ||
       (!Array.isArray(url) && notification_search.length < 2)
     ) {
       const link = url.split("/");
@@ -323,7 +323,7 @@ export default function NotificationBox({ notificationsRef }) {
               })}
             </div>
 
-            {notifications?.length == 0 && !notificationLoading && (
+            {!notificationLoading || notifications?.length == 0 && (
               <div className="text-xl font-medium text-center text-purple-500  mt-2">
                 Notifications data not available!
               </div>

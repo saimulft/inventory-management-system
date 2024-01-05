@@ -21,8 +21,6 @@ export default function SingleConversation() {
     conversationData,
     conversationDataRefetch,
     setConversationDataRefetch,
-    singleConversationShow,
-    boxCloseRef
   } = useContext(ChatContext);
 
   const { currentChatUserName, currentChatUserEmail } =
@@ -42,10 +40,6 @@ export default function SingleConversation() {
   const [switchLick, setSwitchLick] = useState("");
   const [messageSend, setMessageSend] = useState(false);
   const [messageSendSocket, setMessageSendSocket] = useState(false);
-
-  const lastMessageSenderEmail = conversation[conversation?.length - 1]?.sender;
-
-
 
   // render message data first time
   useEffect(() => {
@@ -97,7 +91,6 @@ export default function SingleConversation() {
 
   useEffect(() => {
     fetchConData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChatUserEmail, user?.email, loadNew]);
 
   // typing start data sent with socket
@@ -180,6 +173,7 @@ export default function SingleConversation() {
         );
 
         if (data?.data?.insertedId) {
+          setConversationDataRefetch(!conversationDataRefetch)
           const firstTimeData = {
             _id: data.data.insertedId,
             participants: [user?.email, currentChatUserEmail],
@@ -223,7 +217,6 @@ export default function SingleConversation() {
   // all useEffect
   useEffect(() => {
     scrollPositionSet();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [conversation]);
 
   useEffect(() => {
@@ -232,7 +225,6 @@ export default function SingleConversation() {
     } else {
       setConversation([...temporaryData, ...conversation]);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [temporaryData]);
 
   // update single message update state with socket data
@@ -400,9 +392,9 @@ export default function SingleConversation() {
             </div>
           </div>
         </div>
-        <div className="p-1 rounded-full hover:bg-purple-100 text-purple-500 cursor-pointer">
+        <div onClick={handleOpenSingleConversationShow} className="p-1 rounded-full hover:bg-purple-100 text-purple-500 cursor-pointer">
           <AiOutlineClose
-            onClick={handleOpenSingleConversationShow}
+
             size={22}
           />
         </div>
