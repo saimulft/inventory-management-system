@@ -242,8 +242,8 @@ const ProfitTrackerStatsPage = () => {
                             </div>
                         </div>}
 
-                        {view === "Table" && <div className="mt-12">
-                            <div className="overflow-x-auto mt-8 min-h-[calc(100vh-335px)] max-h-full">
+                        {view === "Table" && <div className="mt-12 overflow-x-scroll overflow-y-hidden">
+                            <div className=" mt-8 min-h-[calc(100vh-335px)] max-h-full">
                                 <table className="table table-sm border border-gray-300 border-collapse">
                                     <thead>
                                         <tr className="bg-gray-200 text-black">

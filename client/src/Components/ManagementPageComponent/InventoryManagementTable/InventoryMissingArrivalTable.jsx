@@ -351,7 +351,7 @@ if(missingArrivalStatus == "solved"){
         )}
       </div>
 
-      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-294px)] max-h-full">
+      <div className=" mt-8 min-h-[calc(100vh-294px)] max-h-full">
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
