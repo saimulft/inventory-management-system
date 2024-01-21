@@ -68,7 +68,7 @@ export default function AllUsersPage() {
 
 
   return (
-    <div className="overflow-x-auto py-10 min-h-[calc(100vh-310px)] max-h-full">
+    <div className=" py-10 min-h-[calc(100vh-310px)] max-h-full">
       <table className="table table-md">
         <thead>
           <tr className="bg-gray-100">

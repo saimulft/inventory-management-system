@@ -494,7 +494,7 @@ export default function StorePreparingRequestTable() {
         )}
       </div>
 
-      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
+      <div className=" mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
@@ -805,7 +805,7 @@ export default function StorePreparingRequestTable() {
       </div>
 
       {/* modal content  */}
-      <dialog id="my_modal_2" className="modal">
+      <dialog id="my_modal_2" className="modal overflow-hidden">
         <div
           style={{ marginLeft, maxWidth: "750px" }}
           className="modal-box py-10 px-10"
@@ -927,7 +927,7 @@ export default function StorePreparingRequestTable() {
                       <div className="ml-5">
                         {InvoiceImageFile && (
                           <p className="font-bold text-lg">
-                            {InvoiceImageFile.name}
+                            {InvoiceImageFile.name.slice(0,20)}..
                           </p>
                         )}
                         {!InvoiceImageFile && (
@@ -977,7 +977,7 @@ export default function StorePreparingRequestTable() {
                       <div className="ml-5">
                         {shippingImageFile && (
                           <p className="font-bold text-lg">
-                            {shippingImageFile.name}
+                            {shippingImageFile.name.slice(0,20)}...
                           </p>
                         )}
                         {!shippingImageFile && (

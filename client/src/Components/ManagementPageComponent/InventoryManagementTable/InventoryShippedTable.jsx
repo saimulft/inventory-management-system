@@ -317,30 +317,28 @@ export default function InventoryShippedTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            
+
             {!notificationSearchValue && (
               <>
-              <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                <p
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -349,9 +347,8 @@ export default function InventoryShippedTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -360,9 +357,8 @@ export default function InventoryShippedTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -371,9 +367,8 @@ export default function InventoryShippedTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -382,9 +377,8 @@ export default function InventoryShippedTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -393,9 +387,8 @@ export default function InventoryShippedTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -441,7 +434,7 @@ export default function InventoryShippedTable() {
         )}
       </div>
 
-      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
+      <div className=" mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <table className="table table-sm">
           <thead>
             <tr className="bg-gray-200">
@@ -514,7 +507,7 @@ export default function InventoryShippedTable() {
                                 </button>
                               </li>
                               {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                                user.role === "Admin VA" ? (
                                 <li>
                                   <button onClick={() => handleDelete(d._id)}>
                                     Delete
@@ -574,7 +567,7 @@ export default function InventoryShippedTable() {
                                 </button>
                               </li>
                               {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                                user.role === "Admin VA" ? (
                                 <li>
                                   <button onClick={() => handleDelete(d._id)}>
                                     Delete
@@ -667,7 +660,7 @@ export default function InventoryShippedTable() {
         </table>
 
         {/* pagination */}
-        {!isLoading &&
+        {!notificationSearchValue && !isLoading &&
           !searchError &&
           !searchResults.length &&
           data?.length > 15 && (
