@@ -49,7 +49,7 @@ export default function LoginPage() {
         navigate('/')
       }
     } catch (error) {
-      if (error.response.status === 403) {
+      if (error.response?.status === 403) {
         return setLoginError('Please verify your email in order to login!')
       }
       if (error.response.status === 401) {
