@@ -13,9 +13,6 @@ import { NotificationContext } from "../Providers/NotificationProvider";
 const ArrivalFormPage = () => {
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
-  const boxShadowStyle = {
-    boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
-  };
   const { user } = useAuth();
   const { setCountsRefetch } = useGlobal();
   const [inputError, setInputError] = useState("");
@@ -23,10 +20,6 @@ const ArrivalFormPage = () => {
   const [storeOption, setStoreOption] = useState(null);
   const [warehouseOption, setWarehouseOption] = useState(null);
   const [productName, setProductName] = useState("");
-  const asinId = asinUpcOption?.value;
-  const asinUpc = asinUpcOption?.data?.filter(
-    (asinUpc) => asinId === asinUpc._id
-  );
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
@@ -34,18 +27,20 @@ const ArrivalFormPage = () => {
       axios
         .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then((res) => {
+
           if (res.status === 200) {
             setProductName(res.data.data.product_name);
           }
           if (res.status === 204) {
-            setProductName(asinUpc[0]?.product_name);
+
+            setProductName(asinUpcOption.product_name);
           }
         })
         .catch((error) => {
           console.log(error);
         });
     }
-  }, [storeOption?.label, asinUpcOption, asinUpc, user]);
+  }, [storeOption?.label, asinUpcOption, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
     queryKey: ["asin_upc_data"],
@@ -174,7 +169,7 @@ const ArrivalFormPage = () => {
       store_name: storeOption?.label,
       store_id: storeOption?.value,
       asin_upc_code: asinUpcOption.label,
-      code_type: asinUpc[0]?.code_type,
+      code_type: asinUpcOption?.code_type,
       supplier_id: supplierId,
       product_name: productName,
       upin: upin,
@@ -226,7 +221,9 @@ const ArrivalFormPage = () => {
       console.log(error);
     }
   };
-
+  const boxShadowStyle = {
+    boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
+  };
   return (
     <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div
@@ -324,7 +321,7 @@ const ArrivalFormPage = () => {
                   <input
                     type="text"
                     readOnly
-                    value={asinUpc && asinUpc[0].code_type}
+                    value={asinUpcOption?.code_type}
                     placeholder="Code type"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="codeType"
