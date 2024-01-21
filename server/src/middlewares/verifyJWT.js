@@ -8,7 +8,6 @@ const verifyJWT = (req, res, next) => {
         }
         else {
             jwt.verify(token, process.env.JWT_SECRET, (err, decode) => {
-
                 if (err) {
                     return res.status(403).send({ error: true, message: "forbidden access" });
                 }
