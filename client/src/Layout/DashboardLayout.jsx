@@ -15,6 +15,7 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     setIsActiveSetting(settingActiveRoute);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

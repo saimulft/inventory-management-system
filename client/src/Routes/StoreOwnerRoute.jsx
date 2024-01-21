@@ -4,7 +4,7 @@ import useAuth from "../hooks/useAuth";
 const StoreOwnerRoute = ({children}) => {
     const { user } = useAuth();
 
-    if (user.role === 'Admin' || user.role === 'Admin VA' || user.role === 'Store Owner') {
+    if (user.role === 'Admin' || user.role === 'Admin VA' || user.role === 'Store Manager Admin' || user.role === 'Store Manager VA' || user.role === 'Store Owner') {
        return children;
     }
 
