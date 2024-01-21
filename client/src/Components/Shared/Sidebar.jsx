@@ -300,7 +300,7 @@ export default function Sidebar() {
         </div>
 
         {/* bottom part of the slider  */}
-        <div className="flex flex-col justify-between w-full h-[calc(100vh-100px)] items-center mt-10 relative">
+        {/* <div className="flex flex-col justify-between w-full h-[calc(100vh-100px)] items-center mt-10 relative">
           <div className={`absolute bottom-0`}>
             <NavLink
               onClick={() => setPageName('Support')}
@@ -345,7 +345,7 @@ export default function Sidebar() {
                 {isSidebarOpen && <p className="whitespace-nowrap">Login</p>}
               </NavLink>}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
