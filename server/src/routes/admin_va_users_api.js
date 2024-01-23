@@ -37,7 +37,6 @@ const run = async () => {
                     admin_va_id: result.insertedId.toString(),
                     full_name: req.body.full_name,
                     email: req.body.email,
-                    username: req.body.username,
                     role: req.body.role,
                     phone: null,
                     address: null,

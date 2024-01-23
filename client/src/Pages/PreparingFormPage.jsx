@@ -10,6 +10,10 @@ import { useQuery } from "@tanstack/react-query";
 import useGlobal from "../hooks/useGlobal";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import { NotificationContext } from "../Providers/NotificationProvider";
+import { format } from "date-fns";
+import { IoCalendarOutline } from "react-icons/io5";
+import { Calendar } from "react-date-range";
+
 const PreparingFormPage = () => {
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
@@ -30,7 +34,8 @@ const PreparingFormPage = () => {
   const [productName, setProductName] = useState('')
   const { user } = useAuth()
   const { setCountsRefetch } = useGlobal()
-
+  const [date, setDate] = useState(null)
+  const [openDateCalendar, setOpenDateCalendar] = useState(false)
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
@@ -117,7 +122,6 @@ const PreparingFormPage = () => {
     setFormError("");
     event.preventDefault();
     const form = event.target;
-    const date = new Date(form.date.value).toISOString();
     const createdAt = new Date().toISOString();
     const orderID = form.orderID.value;
     const courier = form.courier.value;
@@ -142,11 +146,12 @@ const PreparingFormPage = () => {
       return;
     }
 
+    const isoDate = new Date(date).toISOString();
     const formData = new FormData();
     let preparingFormvalue = {
       adminId: user?.admin_id,
       creatorEmail: user?.email,
-      date,
+      date: isoDate,
       asin_upc_code: asinUpcOption.label,
       createdAt,
       orderID,
@@ -221,6 +226,7 @@ const PreparingFormPage = () => {
           );
           form.reset();
           setProductName("");
+          setDate(null)
           setWarehouseOption(null);
           setStoreOption(null);
           setAsinUpcOption(null);
@@ -284,15 +290,23 @@ const PreparingFormPage = () => {
           <form className="w-full" onSubmit={hadnlePreparingForm}>
             <div className="flex gap-7">
               <div className="w-full">
-                <div>
-                  <label className="text-slate-500">Date</label>
-                  <input
-                    type="date"
-                    placeholder="Enter store name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="date"
-                    name="date"
-                  />
+                <div className="relative">
+                  <p className="text-slate-500">Date</p>
+                  <div className="w-full mt-2 shadow-lg rounded-lg bg-white px-4 h-12 border border-[#8633FF] flex justify-between items-center">
+                    <span>{date ? format(new Date(date), 'yyyy/MM/dd') : 'YYYY/MM/DD'}</span>
+                    <span onClick={() => setOpenDateCalendar(!openDateCalendar)} className="hover:cursor-pointer"><IoCalendarOutline size={18} /></span>
+                  </div>
+
+                  {openDateCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 top-full z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                    <Calendar
+                      color='#8633FF'
+                      date={date ? date : null}
+                      onChange={(date) => {
+                        setDate(date)
+                        setOpenDateCalendar(false)
+                      }}
+                    />
+                  </div>}
                 </div>
 
                 <div className="mt-4">

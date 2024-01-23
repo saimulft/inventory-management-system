@@ -39,7 +39,6 @@ const run = async () => {
                     store_access_ids: req.body.store_access_ids,
                     full_name: req.body.full_name,
                     email: req.body.email,
-                    username: req.body.username,
                     role: req.body.role,
                     phone: null,
                     address: null,

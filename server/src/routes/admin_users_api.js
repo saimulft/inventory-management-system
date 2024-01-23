@@ -19,7 +19,6 @@ const run = async () => {
     // create a new admin
     router.post('/admin_signup', async (req, res) => {
         try {
-
             const isExist = await all_users_collection.findOne({ email: req.body.email })
             if (isExist) {
                 return res.status(200).json({ message: "Email already exist" })
@@ -42,12 +41,12 @@ const run = async () => {
                     email: req.body.email,
                     role: req.body.role,
                     phone: req.body.phone,
-                    address: req.body.address,
-                    city: req.body.city,
-                    state: req.body.state,
-                    zip: req.body.zip,
-                    country: req.body.country,
-                    whatsapp_number: req.body.whatsapp_number,
+                    address: null,
+                    city: null,
+                    state: null,
+                    zip: null,
+                    country: null,
+                    whatsapp_number: null,
                 }
                 const response = await admin_users_collection.insertOne(admin_user_data)
 

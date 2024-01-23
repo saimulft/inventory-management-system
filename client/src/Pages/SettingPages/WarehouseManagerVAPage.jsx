@@ -1,6 +1,5 @@
 import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
-import { v4 as uuidv4 } from 'uuid';
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import ToastMessage from "../../Components/Shared/ToastMessage";
@@ -45,7 +44,6 @@ const WarehouseManagerVAPage = () => {
         const email = form.email.value;
         const password = form.password.value;
         const confirmPassword = form.confirmPassword.value;
-        const username = form.username.value;
 
         if (password !== confirmPassword) {
             return setErrorMessage('Password and confirm password must be same!')
@@ -60,7 +58,7 @@ const WarehouseManagerVAPage = () => {
         }
 
         const warehouseManagerVA = {
-            admin_id: user.admin_id, creator_email: user?.email, warehouse_manager_va_id: uuidv4(), full_name: name, email, username, password, role: 'Warehouse Manager VA',
+            admin_id: user.admin_id, creator_email: user?.email, full_name: name, email, password, role: 'Warehouse Manager VA',
             warehouse_admin_id: user.role === 'Warehouse Admin' ? user.warehouse_admin_id : warehouseAdminOption.warehouse_admin_id,
             warehouse_id: user.role === 'Warehouse Admin' ? user.warehouse_id : warehouseAdminOption.value
         }
@@ -92,7 +90,7 @@ const WarehouseManagerVAPage = () => {
                 <form onSubmit={handleCreateWarehouseManagerVA}>
                     <div className="flex gap-4 w-full mt-5">
                         <div className="w-1/2">
-                            <div className="mt-3">
+                            <div className="mt-4">
                                 <label className="text-slate-500">Name*</label>
                                 <input
                                     type="text"
@@ -103,44 +101,7 @@ const WarehouseManagerVAPage = () => {
                                     required
                                 />
                             </div>
-                            <div className="mt-3">
-                                <label className="text-slate-500">Email*</label>
-                                <input
-                                    type="email"
-                                    placeholder="Enter owner email"
-                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                    id="email"
-                                    name="email"
-                                    required
-                                />
-                            </div>
-                            <div className="mt-3">
-                                <label className="text-slate-500">Confirm Password*</label>
-                                <input
-                                    type="password"
-                                    placeholder="Confirm password"
-                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div className="w-1/2">
-                            <div className="mt-3">
-                                <label className="text-slate-500">Username*</label>
-                                <input
-                                    type="text"
-                                    placeholder="Enter username"
-                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                    id="username"
-                                    name="username"
-                                    required
-                                />
-                            </div>
-
-                            <div className="mt-3">
+                            <div className="mt-4">
                                 <label className="text-slate-500">Password*</label>
                                 <input
                                     type="password"
@@ -158,6 +119,31 @@ const WarehouseManagerVAPage = () => {
                                     <SearchDropdown isLoading={warehouseAdminLoading} isMulti={false} option={warehouseAdminOption} optionData={allWarehouseAdmin} placeholder="Select warehouse admin" setOption={setWarehouseAdminOption} />
                                 </div> : ''
                             }
+                        </div>
+
+                        <div className="w-1/2">
+                            <div className="mt-4">
+                                <label className="text-slate-500">Email*</label>
+                                <input
+                                    type="email"
+                                    placeholder="Enter owner email"
+                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                    id="email"
+                                    name="email"
+                                    required
+                                />
+                            </div>
+                            <div className="mt-4">
+                                <label className="text-slate-500">Confirm Password*</label>
+                                <input
+                                    type="password"
+                                    placeholder="Confirm password"
+                                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    required
+                                />
+                            </div>
                         </div>
                     </div>
 
