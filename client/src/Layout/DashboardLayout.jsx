@@ -27,7 +27,7 @@ export default function DashboardLayout() {
         <Sidebar />
       </div>
       <div className={` ${isSidebarOpen ? "w-[81.5%]" : "w-[94%] "}`}>
-        <Container>
+        <Container> 
           <div className="sticky top-0 z-50">
             <Navbar />
           </div>

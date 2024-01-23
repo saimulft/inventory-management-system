@@ -175,7 +175,7 @@ export default function StorePreparingRequestTable() {
       formData.append("file", shippingImageFile, `shipping.${shipping}`);
     }
     setLoading(true);
-    
+
     axios
       .put("/api/v1/preparing_form_api/preparing_form_update", formData, {
         headers: {
@@ -218,18 +218,12 @@ export default function StorePreparingRequestTable() {
           setTimeout(() => {
             setSuccessMessage("");
           }, 1000);
-        } else {
-          setLoading(false);
-          setFormError("Already up to date");
-          setTimeout(() => {
-            setFormError("A");
-          }, 1000);
-        }
+        } 
       })
       .catch((err) => {
         console.log(err);
         setLoading(false);
-        setFormError("Already up to date");
+        setFormError("Something went wrong");
         setTimeout(() => {
           setFormError("");
         }, 1000);
@@ -370,30 +364,28 @@ export default function StorePreparingRequestTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-           
+
             {!notificationSearchValue && (
               <>
-               <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                <p
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -402,9 +394,8 @@ export default function StorePreparingRequestTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -413,9 +404,8 @@ export default function StorePreparingRequestTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -424,9 +414,8 @@ export default function StorePreparingRequestTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -435,9 +424,8 @@ export default function StorePreparingRequestTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -446,9 +434,8 @@ export default function StorePreparingRequestTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -578,7 +565,7 @@ export default function StorePreparingRequestTable() {
                                 </button>
                               </li>
                               {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                                user.role === "Admin VA" ? (
                                 <li>
                                   <button
                                     onClick={() =>
@@ -656,7 +643,7 @@ export default function StorePreparingRequestTable() {
                                   </button>
                                 </li>
                                 {user.role === "Admin" ||
-                                user.role === "Admin VA" ? (
+                                  user.role === "Admin VA" ? (
                                   <li>
                                     <button
                                       onClick={() =>
@@ -740,7 +727,7 @@ export default function StorePreparingRequestTable() {
                               </button>
                             </li>
                             {user.role === "Admin" ||
-                            user.role === "Admin VA" ? (
+                              user.role === "Admin VA" ? (
                               <li>
                                 <button
                                   onClick={() =>
@@ -772,7 +759,7 @@ export default function StorePreparingRequestTable() {
         {!isLoading &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && !notificationSearchValue &&(
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -788,7 +775,7 @@ export default function StorePreparingRequestTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}
@@ -824,9 +811,8 @@ export default function StorePreparingRequestTable() {
               </div>
 
               <div
-                className={`flex items-center ${
-                  isEditable && "justify-between mt-2"
-                }`}
+                className={`flex items-center ${isEditable && "justify-between mt-2"
+                  }`}
               >
                 <label className="font-bold ">Quantity : </label>
                 <input
@@ -834,31 +820,28 @@ export default function StorePreparingRequestTable() {
                   onChange={(e) => setQuantity(e.target.value)}
                   type="number"
                   defaultValue={singleData?.quantity}
-                  className={`${
-                    isEditable
+                  className={`${isEditable
                       ? "border border-[#8633FF] outline-[#8633FF] mt-1"
                       : "outline-none"
-                  } py-1 pl-2 rounded`}
+                    } py-1 pl-2 rounded`}
                   id="date"
                   name="date"
                   readOnly={!isEditable}
                 />
               </div>
               <div
-                className={`flex items-center ${
-                  isEditable && "justify-between mt-2"
-                }`}
+                className={`flex items-center ${isEditable && "justify-between mt-2"
+                  }`}
               >
                 <label className="font-bold ">Product name : </label>
                 <input
                   onChange={(e) => setProductName(e.target.value)}
                   type="text"
                   defaultValue={singleData?.product_name}
-                  className={`${
-                    isEditable
+                  className={`${isEditable
                       ? "border border-[#8633FF] outline-[#8633FF] mt-1"
                       : "outline-none"
-                  } py-1 pl-2 rounded`}
+                    } py-1 pl-2 rounded`}
                   id="date"
                   name="date"
                   readOnly={!isEditable}
@@ -927,7 +910,7 @@ export default function StorePreparingRequestTable() {
                       <div className="ml-5">
                         {InvoiceImageFile && (
                           <p className="font-bold text-lg">
-                            {InvoiceImageFile.name.slice(0,20)}..
+                            {InvoiceImageFile.name.slice(0, 20)}{InvoiceImageFile.name.length > 20 && '...'}
                           </p>
                         )}
                         {!InvoiceImageFile && (
@@ -977,7 +960,7 @@ export default function StorePreparingRequestTable() {
                       <div className="ml-5">
                         {shippingImageFile && (
                           <p className="font-bold text-lg">
-                            {shippingImageFile.name.slice(0,20)}...
+                            {shippingImageFile.name?.slice(0, 20)}{shippingImageFile.name.length > 20 && '...'}
                           </p>
                         )}
                         {!shippingImageFile && (

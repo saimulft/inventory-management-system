@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sp-api-sdk/auth": "^2.0.4",
+    "@sp-api-sdk/listings-items-api-2021-08-01": "^2.1.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
