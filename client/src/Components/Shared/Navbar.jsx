@@ -1,13 +1,13 @@
 import { AiOutlineMessage, AiOutlineSearch, AiOutlineSetting } from "react-icons/ai";
 import { BsBell } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
-import useGlobal from "../../hooks/useGlobal";
 import { ChatContext } from "../../Providers/ChatProvider";
 import { useContext, useEffect, useRef, useState } from "react";
 import { NotificationContext } from "../../Providers/NotificationProvider";
 import { BiLogOut, BiSupport } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 import Cookies from "js-cookie";
+import PageName from "./PageName";
 
 export default function Navbar() {
   const {
@@ -22,15 +22,12 @@ export default function Navbar() {
   const { notificationAlert } = useContext(NotificationContext);
 
   const { user, setUser } = useAuth()
-  const { pageName } = useGlobal()
   const [profileModal, setProfileModal] = useState(false)
   const profileButtonRef = useRef(null)
   const profileModalRef = useRef(null)
 
   useEffect(() => {
-
     const clickOutside = (e) => {
-
       if (
         profileButtonRef.current &&
         !profileButtonRef.current.contains(e.target) &&
@@ -47,14 +44,15 @@ export default function Navbar() {
     }
 
   }, [])
+
   const handleLogout = () => {
     Cookies.remove('imstoken')
     setUser(null)
   }
-  const defaultPageName = user?.role === 'Admin' || user?.role === 'Admin VA' ? 'Dashboard' : user?.role === 'Store Owner' ? 'Profit Tracker' : 'Management';
+
   return (
     <div className="flex items-center px-8 ps-3 pe-3 bg-[#2e2e30]  text-white shadow-sm py-3">
-      <div className="text-lg font-medium w-full ">{pageName ? pageName : defaultPageName}</div>
+      <div className="text-lg font-medium w-full "><PageName /></div>
       {/* notification, messeage and profile  */}
       <div className="w-full flex justify-end items-center gap-4  z-[1]">
         <div className="bg-[#454547] p-3 rounded relative hidden">

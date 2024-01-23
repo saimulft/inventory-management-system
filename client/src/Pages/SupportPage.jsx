@@ -37,8 +37,9 @@ export default function SupportPage() {
           <div className="flex flex-col mt-2">
             <label className="text-slate-500">Message*</label>
             <textarea
-              className="textarea textarea-primary mt-2"
-              placeholder="Bio"
+              rows={4}
+              className="textarea textarea-primary mt-2 focus:outline-none shadow-lg text-base"
+              placeholder="Type your message"
             ></textarea>
           </div>
           <button className="flex items-center justify-center bg-[#8633FF] w-full mt-8 py-2 rounded-md text-white">

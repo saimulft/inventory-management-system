@@ -342,8 +342,11 @@ const PreparingFormPage = () => {
                     <option defaultValue="Select courier">
                       Select courier
                     </option>
-                    <option value="test1">Test1</option>
-                    <option value="test2">Test2</option>
+                    <option value="FedEx">FedEx</option>
+                    <option value="Sky Postal">Sky Postal</option>
+                    <option value="United Percel Service">United Percel Service</option>
+                    <option value="Pace Couriers">Pace Couriers</option>
+                    <option value="Central Courier Company">Central Courier Company</option>
                   </select>
                 </div>
 
