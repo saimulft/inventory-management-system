@@ -1,23 +1,15 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import Sidebar from "../Components/Shared/Sidebar";
 import Navbar from "../Components/Shared/Navbar";
 import Container from "../Components/Shared/Container";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import ChatBox from "../Components/Shared/ChatBox/ChatBox";
 import NotificationBox from "../Components/Shared/NotificationBox/NotificationBox";
 
 export default function DashboardLayout() {
   const { isSidebarOpen } = useContext(GlobalContext);
-  const url = useLocation();
-  const settingActiveRoute = url?.pathname?.split("/")[3];
-  const { setIsActiveSetting } = useContext(GlobalContext);
-
-  useEffect(() => {
-    setIsActiveSetting(settingActiveRoute);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
+  
   return (
     <div className="flex bg-[#fafbfc]">
       <div

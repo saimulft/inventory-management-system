@@ -12,7 +12,6 @@ export const GlobalProvider = ({ children }) => {
   }, []);
 
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isActiveSetting, setIsActiveSetting] = useState("profile");
   const [countsRefetch, setCountsRefetch] = useState(false)
   const [storeRefetch, setStoreRefetch] = useState(false)
   const modalMarginLeft = isSidebarOpen ? "18.5%" : "6%";
@@ -21,8 +20,6 @@ export const GlobalProvider = ({ children }) => {
   const GlobalInfo = {
     isSidebarOpen,
     setIsSidebarOpen,
-    isActiveSetting,
-    setIsActiveSetting,
     modalMarginLeft,
     countsRefetch,
     setCountsRefetch,

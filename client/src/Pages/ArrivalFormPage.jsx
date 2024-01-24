@@ -110,6 +110,12 @@ const ArrivalFormPage = () => {
     }
   };
 
+  const handlePriceKeyDown = (event) => {
+    const alphabetKeys = /^[0-9]*\.*$/;
+    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
+      event.preventDefault();
+    }
+  };
 
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (arrivalFormData) => {
@@ -296,7 +302,8 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Unit Price</label>
                   <input
-                    type="number"
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
                     placeholder="Enter unit price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="unitPrice"
@@ -365,7 +372,7 @@ const ArrivalFormPage = () => {
                     <span onClick={() => setOpenEdaCalendar(!openEdaCalendar)} className="hover:cursor-pointer"><IoCalendarOutline size={18} /></span>
                   </div>
 
-                  {openEdaCalendar && <div style={{boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)"}} className='absolute bg-white right-0 bottom-[48px] z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                  {openEdaCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 bottom-[48px] z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
                     <Calendar
                       color='#8633FF'
                       date={eda ? eda : null}

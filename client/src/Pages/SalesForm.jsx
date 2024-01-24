@@ -9,7 +9,6 @@ import { FaSpinner } from "react-icons/fa";
 
 
 const SalesForm = () => {
-
     const { user } = useAuth()
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [errorMessage, setErrorMessage] = useState('')

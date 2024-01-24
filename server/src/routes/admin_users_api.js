@@ -123,7 +123,7 @@ const run = async () => {
                 query = { creator_email: req.body.user.email };
             }
 
-            const result = await all_users_collection.find(query).toArray()
+            const result = await all_users_collection.find(query, {projection: {password: 0}}).toArray()
 
             if (result.length) {
                 res.status(200).json(result);

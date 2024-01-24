@@ -257,15 +257,28 @@ const run = async () => {
 
     router.get('/get_all_stores_subscriptions', verifyJWT, async (req, res) => {
         try {
-            const adminId = req.query.adminId;
+            const { admin_id, store_access_ids } = req.query;
 
-            const result = await all_stores_collection.find({ admin_id: adminId }).sort({ date: -1 }).toArray()
-
-            if (result.length) {
-                res.status(200).json({ data: result, message: "Successfully get all stores subscriptions" })
+            if (req.role === 'Admin') {
+                const result = await all_stores_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()
+                
+                if (result.length) {
+                    res.status(200).json({ data: result, message: "Successfully get all store subscriptions" })
+                }
+                else {
+                    res.status(204).json({ message: "No data found" })
+                }
             }
-            else {
-                res.status(204).json({ message: "No data found" })
+            if (req.role === 'Store Owner') {
+                const access_ids = store_access_ids.map(id => new ObjectId(id))
+                const result = await all_stores_collection.find({ _id: { $in: access_ids } }).sort({ date: -1 }).toArray()
+
+                if (result.length) {
+                    res.status(200).json({ data: result, message: "Successfully get all accessed store subscriptions" })
+                }
+                else {
+                    res.status(204).json({ message: "No data found" })
+                }
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal server error' })

@@ -1,11 +1,10 @@
-import { AiOutlinePieChart, AiOutlineSetting } from "react-icons/ai";
+import { AiOutlinePieChart } from "react-icons/ai";
 import { PiWarehouseDuotone } from "react-icons/pi";
 import { GiProgression } from "react-icons/gi";
 import { GoChecklist } from "react-icons/go";
-import { BiLogIn, BiLogOut, BiSupport } from "react-icons/bi";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { BsHouseCheck, BsPlusCircle } from "react-icons/bs";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { GlobalContext } from "../../Providers/GlobalProviders";
 import { NavLink, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
@@ -13,21 +12,10 @@ import Cookies from "js-cookie";
 import useStore from "../../hooks/useStore";
 
 export default function Sidebar() {
-  const [settingActive, setSettingActive] = useState(false);
   const { setStoreDetails } = useStore()
-  const url = useLocation();
-  const route = url?.pathname?.split("/")[2];
-  const { user, setUser } = useAuth()
-
-  useEffect(() => {
-    if (route?.includes("settings")) {
-      setSettingActive(true);
-    } else {
-      setSettingActive(false);
-    }
-  }, [route]);
-
-  const { isSidebarOpen, setIsSidebarOpen, setIsActiveSetting } = useContext(GlobalContext);
+  const { user, setUser } = useAuth()  
+  const { isSidebarOpen, setIsSidebarOpen } = useContext(GlobalContext);
+  const {pathname} = useLocation();
 
   const handleLogout = () => {
     Cookies.remove('imstoken')
@@ -314,11 +302,8 @@ export default function Sidebar() {
               {isSidebarOpen && <p className="whitespace-nowrap">Support</p>}
             </NavLink>
             <NavLink
-              onClick={() => {
-                setIsActiveSetting("profile")
-              }}
               to="/dashboard/settings/profile"
-              className={`${settingActive
+              className={`${pathname?.includes("settings")
                 ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                 : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
                 }`}
