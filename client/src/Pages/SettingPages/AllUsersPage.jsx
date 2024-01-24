@@ -7,15 +7,19 @@ import Loading from "../../Components/Shared/Loading";
 import { useState } from "react";
 import Select from 'react-select';
 import { FaRegEdit, FaSpinner } from "react-icons/fa";
+import { HiOutlineEye } from "react-icons/hi";
 
 export default function AllUsersPage() {
   const { user } = useAuth()
   const [isOpenUserModal, setIsOpenUserModal] = useState(false)
+  const [isOpenWarehouseModal, setIsOpenWarehouseModal] = useState(false)
   const [singleUser, setSingleUser] = useState({})
   const [storeOption, setStoreOption] = useState([])
   const [matchedOpiton, setMatchedOption] = useState([])
   const [updateLoading, setUpdateLoading] = useState(false)
+  const [warehouseLoading, setWarehouseLoading] = useState(false)
   const [updateMessage, setUpdateMssage] = useState('')
+  const [warehouseDetails, setWareHouseDetails] = useState({})
 
   const { data = [], refetch, isLoading } = useQuery({
     queryKey: ['all_users_list'],
@@ -113,6 +117,18 @@ export default function AllUsersPage() {
       .catch(err => console.log(err))
   }
 
+  const handleView = (user) => {
+    setIsOpenWarehouseModal(true)
+    setWarehouseLoading(true)
+    axios.get(`/api/v1/admin_api/get_ware_house_user_details?email=${user.email}&role=${user.role}`)
+      .then(res => {
+        if (res.status === 200) {
+          setWareHouseDetails(res.data.warehouse)
+        }
+      })
+      .catch(err => console.log(err))
+      .finally(() => setWarehouseLoading(false))
+  }
   const handleAccessUpdate = (email, role) => {
 
     if (!matchedOpiton.length) {
@@ -167,6 +183,13 @@ export default function AllUsersPage() {
                         <FaRegEdit />
                         Edit
                       </button>}
+                      {(user.role === 'Warehouse Admin' || user.role === 'Warehouse Manager VA') && <button onClick={() => {
+                        handleView(user)
+                        setSingleUser(user)
+                      }} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
+                        <HiOutlineEye />
+                        View
+                      </button>}
                     </div>
                   </td>
                 </tr>
@@ -201,6 +224,21 @@ export default function AllUsersPage() {
               <button onClick={() => handleAccessUpdate(singleUser.email, singleUser.role)} disabled={updateLoading} className="bg-[#8633FF] flex gap-x-2 items-center py-2 px-5 rounded-md text-white  right-7 bottom-7"> Update</button>
             </div>
           </div>
+        </div>
+      </div>}
+      {isOpenWarehouseModal && <div onClick={() => { setIsOpenWarehouseModal(false) }} className="flex justify-center items-center w-full h-screen fixed bg-[#00000030] top-0 left-0 right-0 bottom-0 z-50">
+        <div onClick={(e) => e.stopPropagation()} className="relative w-[30%] min-h-[25%] bg-white rounded-md p-5 ">
+          <h1 className="text-xl font-medium">{singleUser?.full_name}</h1>
+          <p className="font-medium text-gray-400 mb-2">{singleUser?.role}</p>
+
+          {warehouseLoading ? <FaSpinner size={28} className="animate-spin text-[#8633FF] mt-8 mx-auto" /> : <div>
+            <p className="font-bold">Warehouse Name : {warehouseDetails.warehouse_name}</p>
+            <p className="font-bold">Warehouse Adress : {warehouseDetails.address}</p>
+            <p className="font-bold">Warehouse City : {warehouseDetails.city}</p>
+            <p className="font-bold">Warehouse Country : {warehouseDetails.country}</p>
+            <p className="font-bold">Warehouse State : {warehouseDetails.state}</p>
+          </div>}
+
         </div>
       </div>}
 

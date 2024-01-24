@@ -16,6 +16,7 @@ const run = async () => {
     const store_manager_va_users_collection = db.collection("store_manager_va_users")
     const warehouse_manager_va_users_collection = db.collection("warehouse_manager_va_users")
     const all_store_collection = db.collection("all_stores")
+    const warehouse_collection = db.collection("warehouses")
 
     // create a new admin
     router.post('/admin_signup', async (req, res) => {
@@ -221,11 +222,11 @@ const run = async () => {
             const role = req.query.role
             const email = req.query.email
             if (role === "Store Manager Admin") {
-                const user = await store_manager_admin_users_collection.findOne({email:email})
+                const user = await store_manager_admin_users_collection.findOne({ email: email })
                 const access_ids = user.store_access_ids.map(id => new ObjectId(id))
-                const stores = await all_store_collection.find({_id:{$in:access_ids}},{ projection: { _id: 1, store_name: 1, } }).toArray()
+                const stores = await all_store_collection.find({ _id: { $in: access_ids } }, { projection: { _id: 1, store_name: 1, } }).toArray()
                 return res.status(200).json({ stores: stores })
-            }   
+            }
             const result = await all_store_collection.find({ admin_id: admin_id }, { projection: { _id: 1, store_name: 1 } }).toArray()
             if (result.length) {
                 return res.status(200).json({ stores: result })
@@ -301,6 +302,32 @@ const run = async () => {
             res.status(500).json({ message: "Internal Server Error" })
         }
 
+    })
+
+    router.get('/get_ware_house_user_details', verifyJWT, async (req, res) => {
+
+        try {
+            const email = req.query.email
+            const role = req.query.role
+            let collection;
+            if (role === "Warehouse Admin") {
+                collection = warehouse_admin_users_collection
+            }
+            if (role === "Warehouse Manager VA") {
+                collection = warehouse_manager_va_users_collection
+            }
+            const result = await collection.findOne({ email: email })
+            if (result) {
+                const warehouseDetails = await warehouse_collection.findOne({ _id: new ObjectId(result.warehouse_id) })
+                return res.status(200).json({ warehouse: warehouseDetails })
+            }
+            else {
+                res.status(204).json({ message: "No user found" })
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: "Internal Server Error" })
+        }
     })
 }
 run()
