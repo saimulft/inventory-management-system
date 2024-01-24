@@ -112,7 +112,6 @@ export default function ConversationUserList() {
         `/api/v1/conversations_api/user_messages_list?sender=${user?.email}`
       )
       .then((res) => {
-        console.log(res.data)
         setData(res?.data);
         setLoading(false);
       })
