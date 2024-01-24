@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
@@ -49,6 +49,19 @@ export default function StorePendingArrivalTable() {
   ]);
   const [openEdaCalendar, setOpenEdaCalendar] = useState(false)
   const [eda, setEda] = useState(null)
+  const calendarRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef?.current?.contains(event.target)) {
+        setOpenEdaCalendar(false)
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [])
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -738,7 +751,7 @@ export default function StorePendingArrivalTable() {
                 {user.role === "Admin" || user.role === "Admin VA" ? (
                   <BiSolidEdit
                     onClick={() => {
-                      if(isEditable){
+                      if (isEditable) {
                         setEda(null)
                         setOpenEdaCalendar(false)
                       }
@@ -793,19 +806,20 @@ export default function StorePendingArrivalTable() {
                     {(isEditable && eda) ? format(new Date(eda), 'yyyy/MM/dd') : (isEditable && !eda) ? 'YYYY/MM/DD' : singleData.eda &&
                       format(new Date(singleData.eda), "yyyy/MM/dd")}
                   </span>
-                  {isEditable && <span onClick={() => setOpenEdaCalendar(!openEdaCalendar)} className="hover:cursor-pointer"><IoCalendarOutline /></span>}
+                  {isEditable && <div ref={calendarRef}>
+                    <span onClick={() => setOpenEdaCalendar(!openEdaCalendar)}><IoCalendarOutline /></span>
+                    {openEdaCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 top-full z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                      <Calendar
+                        color='#8633FF'
+                        date={eda ? eda : null}
+                        onChange={(date) => {
+                          setEda(date)
+                          setOpenEdaCalendar(false)
+                        }}
+                      />
+                    </div>}
+                  </div>}
                 </div>
-
-                {openEdaCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 top-full z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
-                  <Calendar
-                    color='#8633FF'
-                    date={eda ? eda : null}
-                    onChange={(date) => {
-                      setEda(date)
-                      setOpenEdaCalendar(false)
-                    }}
-                  />
-                </div>}
               </div>
             </div>
 

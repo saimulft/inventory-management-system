@@ -1,7 +1,7 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from "react-icons/md";
 import { IoCalendarOutline } from "react-icons/io5";
@@ -25,6 +25,19 @@ const ArrivalFormPage = () => {
   const [productName, setProductName] = useState("");
   const [eda, setEda] = useState(null)
   const [openEdaCalendar, setOpenEdaCalendar] = useState(false)
+  const calendarRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef?.current?.contains(event.target)) {
+        setOpenEdaCalendar(false)
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [])
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
@@ -369,19 +382,20 @@ const ArrivalFormPage = () => {
                   <p className="text-slate-500">EDA</p>
                   <div className="w-full mt-2 shadow-lg rounded-lg bg-white px-4 h-12 border border-[#8633FF] flex justify-between items-center">
                     <span>{eda ? format(new Date(eda), 'yyyy/MM/dd') : 'YYYY/MM/DD'}</span>
-                    <span onClick={() => setOpenEdaCalendar(!openEdaCalendar)} className="hover:cursor-pointer"><IoCalendarOutline size={18} /></span>
+                    <div ref={calendarRef}>
+                      <span onClick={() => setOpenEdaCalendar(!openEdaCalendar)}><IoCalendarOutline size={18} /></span>
+                      {openEdaCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 bottom-[48px] z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                        <Calendar
+                          color='#8633FF'
+                          date={eda ? eda : null}
+                          onChange={(date) => {
+                            setEda(date)
+                            setOpenEdaCalendar(false)
+                          }}
+                        />
+                      </div>}
+                    </div>
                   </div>
-
-                  {openEdaCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 bottom-[48px] z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
-                    <Calendar
-                      color='#8633FF'
-                      date={eda ? eda : null}
-                      onChange={(date) => {
-                        setEda(date)
-                        setOpenEdaCalendar(false)
-                      }}
-                    />
-                  </div>}
                 </div>
               </div>
             </div>

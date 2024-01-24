@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
@@ -36,10 +36,23 @@ const PreparingFormPage = () => {
   const { setCountsRefetch } = useGlobal()
   const [date, setDate] = useState(null)
   const [openDateCalendar, setOpenDateCalendar] = useState(false)
+  const calendarRef = useRef(null)
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef?.current?.contains(event.target)) {
+        setOpenDateCalendar(false)
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [])
 
   useEffect(() => {
     if (storeOption?.label && asinUpcOption) {
-      const upin = `${storeOption?.label}_${asinUpcOption.label}`;
+      const upin = `${storeOption?.label}_${asinUpcOption?.label}`;
 
       axios
         .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
@@ -48,7 +61,7 @@ const PreparingFormPage = () => {
             setProductName(res.data.data.product_name);
           }
           if (res.status === 204) {
-            setProductName(asinUpcOption.product_name);
+            setProductName(asinUpcOption?.product_name);
           }
         })
         .catch((err) => console.log(err));
@@ -56,12 +69,12 @@ const PreparingFormPage = () => {
   }, [storeOption?.label, asinUpcOption, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
-    queryKey: ["asin_upc_data"],
+    queryKey: ["asin_upc_data", storeOption?.value],
     queryFn: async () => {
       try {
         const res = await axios.post(
-          "/api/v1/asin_upc_api/get_asin_upc_dropdown_data",
-          { user }
+          "/api/v1/asin_upc_api/get_store_based_asin_upc_data",
+          { user: user, store_id: storeOption?.value }
         );
         if (res.status === 200) {
           return res.data.data;
@@ -73,6 +86,7 @@ const PreparingFormPage = () => {
       }
     },
   });
+
   const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
     queryKey: ["get_all_stores_data"],
     queryFn: async () => {
@@ -109,6 +123,7 @@ const PreparingFormPage = () => {
       }
     },
   });
+
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -152,7 +167,7 @@ const PreparingFormPage = () => {
       adminId: user?.admin_id,
       creatorEmail: user?.email,
       date: isoDate,
-      asin_upc_code: asinUpcOption.label,
+      asin_upc_code: asinUpcOption?.label,
       createdAt,
       orderID,
       courier,
@@ -290,23 +305,25 @@ const PreparingFormPage = () => {
           <form className="w-full" onSubmit={hadnlePreparingForm}>
             <div className="flex gap-7">
               <div className="w-full">
+
                 <div className="relative">
                   <p className="text-slate-500">Date</p>
                   <div className="w-full mt-2 shadow-lg rounded-lg bg-white px-4 h-12 border border-[#8633FF] flex justify-between items-center">
                     <span>{date ? format(new Date(date), 'yyyy/MM/dd') : 'YYYY/MM/DD'}</span>
-                    <span onClick={() => setOpenDateCalendar(!openDateCalendar)} className="hover:cursor-pointer"><IoCalendarOutline size={18} /></span>
+                    <div ref={calendarRef}>
+                      <span onClick={() => setOpenDateCalendar(!openDateCalendar)}><IoCalendarOutline size={18} /></span>
+                      {openDateCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 top-full z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                        <Calendar
+                          color='#8633FF'
+                          date={date ? date : null}
+                          onChange={(date) => {
+                            setDate(date)
+                            setOpenDateCalendar(false)
+                          }}
+                        />
+                      </div>}
+                    </div>
                   </div>
-
-                  {openDateCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 top-full z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
-                    <Calendar
-                      color='#8633FF'
-                      date={date ? date : null}
-                      onChange={(date) => {
-                        setDate(date)
-                        setOpenDateCalendar(false)
-                      }}
-                    />
-                  </div>}
                 </div>
 
                 <div className="mt-4">
@@ -456,7 +473,7 @@ const PreparingFormPage = () => {
                     value={
                       storeOption?.label &&
                       asinUpcOption &&
-                      `${storeOption?.label}_${asinUpcOption.label}`
+                      `${storeOption?.label}_${asinUpcOption?.label}`
                     }
                     type="text"
                     placeholder="Enter UPIN"

@@ -12,8 +12,6 @@ export default function BillingAndSubscriptionPage() {
   const [loading, setLoading] = useState(false)
   const [sessionId, setSessionId] = useState(null)
 
-  console.log(user)
-
   const { data: plans = [], isLoading } = useQuery({
     queryKey: ['my_plans'],
     queryFn: async () => {
