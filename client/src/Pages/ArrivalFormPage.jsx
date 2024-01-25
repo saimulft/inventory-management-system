@@ -12,6 +12,7 @@ import { GlobalContext } from "../Providers/GlobalProviders";
 import { NotificationContext } from "../Providers/NotificationProvider";
 import { Calendar } from "react-date-range";
 import { format } from "date-fns";
+import PulseLoader from "react-spinners/PulseLoader";
 
 const ArrivalFormPage = () => {
   const { socket } = useContext(GlobalContext);
@@ -23,6 +24,7 @@ const ArrivalFormPage = () => {
   const [storeOption, setStoreOption] = useState(null);
   const [warehouseOption, setWarehouseOption] = useState(null);
   const [productName, setProductName] = useState("");
+  const [productNameLoading, setProductNameLoading] = useState(false)
   const [eda, setEda] = useState(null)
   const [openEdaCalendar, setOpenEdaCalendar] = useState(false)
   const calendarRef = useRef(null)
@@ -40,8 +42,9 @@ const ArrivalFormPage = () => {
   }, [])
 
   useEffect(() => {
-    if (storeOption?.label && asinUpcOption) {
-      const upin = `${storeOption?.label}_${asinUpcOption.label}`;
+    if (storeOption?.slug && asinUpcOption) {
+      const upin = `${storeOption?.slug}_${asinUpcOption.label}`;
+      setProductNameLoading(true)
       axios
         .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then((res) => {
@@ -50,15 +53,15 @@ const ArrivalFormPage = () => {
             setProductName(res.data.data.product_name);
           }
           if (res.status === 204) {
-
             setProductName(asinUpcOption.product_name);
           }
         })
         .catch((error) => {
           console.log(error);
-        });
+        })
+        .finally(() => setProductNameLoading(false))
     }
-  }, [storeOption?.label, asinUpcOption, user]);
+  }, [storeOption?.slug, asinUpcOption, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
     queryKey: ["asin_upc_data"],
@@ -169,7 +172,7 @@ const ArrivalFormPage = () => {
     if (
       !date ||
       !asinUpcOption?.label ||
-      !storeOption?.label ||
+      !storeOption?.slug ||
       !supplierId ||
       !upin ||
       !unitPrice ||
@@ -188,7 +191,7 @@ const ArrivalFormPage = () => {
       admin_id: user.admin_id,
       date: date,
       creator_email: user?.email,
-      store_name: storeOption?.label,
+      store_name: storeOption?.slug,
       store_id: storeOption?.value,
       asin_upc_code: asinUpcOption.label,
       code_type: asinUpcOption?.code_type,
@@ -247,6 +250,7 @@ const ArrivalFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
+  
   return (
     <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div
@@ -299,8 +303,8 @@ const ArrivalFormPage = () => {
                   <label className="text-slate-500">UPIN</label>
                   <input
                     value={
-                      asinUpcOption && storeOption?.label
-                        ? `${storeOption?.label}_${asinUpcOption.label}`
+                      asinUpcOption && storeOption?.slug
+                        ? `${storeOption?.slug}_${asinUpcOption.label}`
                         : ""
                     }
                     type="text"
@@ -353,7 +357,8 @@ const ArrivalFormPage = () => {
                   />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 relative">
+                  {productNameLoading && <span className="absolute top-[43px] right-4"><PulseLoader color="#D1D5DB" size={4} /></span>}
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"

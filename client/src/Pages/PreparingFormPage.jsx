@@ -13,6 +13,7 @@ import { NotificationContext } from "../Providers/NotificationProvider";
 import { format } from "date-fns";
 import { IoCalendarOutline } from "react-icons/io5";
 import { Calendar } from "react-date-range";
+import PulseLoader from "react-spinners/PulseLoader";
 
 const PreparingFormPage = () => {
   const { socket } = useContext(GlobalContext);
@@ -32,6 +33,7 @@ const PreparingFormPage = () => {
   const [warehouseOption, setWarehouseOption] = useState(null)
   const [asinUpcOption, setAsinUpcOption] = useState()
   const [productName, setProductName] = useState('')
+  const [productNameLoading, setProductNameLoading] = useState(false)
   const { user } = useAuth()
   const { setCountsRefetch } = useGlobal()
   const [date, setDate] = useState(null)
@@ -51,22 +53,23 @@ const PreparingFormPage = () => {
   }, [])
 
   useEffect(() => {
-    if (storeOption?.label && asinUpcOption) {
-      const upin = `${storeOption?.label}_${asinUpcOption?.label}`;
-
+    if (storeOption?.slug && asinUpcOption) {
+      const upin = `${storeOption?.slug}_${asinUpcOption?.label}`;
+      setProductNameLoading(true)
       axios
         .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then((res) => {
           if (res.status === 200) {
             setProductName(res.data.data.product_name);
           }
-          if (res.status === 204) {
-            setProductName(asinUpcOption?.product_name);
-          }
+          // if (res.status === 204) {
+          //   setProductName(asinUpcOption?.product_name);
+          // }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .finally(() => setProductNameLoading(false))
     }
-  }, [storeOption?.label, asinUpcOption, user]);
+  }, [storeOption?.slug, asinUpcOption, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
     queryKey: ["asin_upc_data", storeOption?.value],
@@ -140,7 +143,7 @@ const PreparingFormPage = () => {
     const createdAt = new Date().toISOString();
     const orderID = form.orderID.value;
     const courier = form.courier.value;
-    const upin = `${storeOption?.label}_${asinUpcOption?.label}`;
+    const upin = `${storeOption?.slug}_${asinUpcOption?.label}`;
     const quantity = form.quantity.value;
     const trackingNumber = form.trackingNumber.value;
 
@@ -148,7 +151,7 @@ const PreparingFormPage = () => {
       setFormError("Missing warehouse");
       return;
     }
-    if (!storeOption?.label) {
+    if (!storeOption?.slug) {
       setFormError("Select  Store");
       return;
     }
@@ -172,7 +175,7 @@ const PreparingFormPage = () => {
       orderID,
       courier,
       productName,
-      storeName: storeOption?.label,
+      storeName: storeOption?.slug,
       storeId: storeOption?.value,
       codeType: asinUpcOption?.code_type,
       upin,
@@ -337,7 +340,8 @@ const PreparingFormPage = () => {
                   />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 relative">
+                  {productNameLoading && <span className="absolute top-[43px] right-4"><PulseLoader color="#D1D5DB" size={4} /></span>}
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
@@ -471,9 +475,9 @@ const PreparingFormPage = () => {
                     required
                     readOnly
                     value={
-                      storeOption?.label &&
+                      storeOption?.slug &&
                       asinUpcOption &&
-                      `${storeOption?.label}_${asinUpcOption?.label}`
+                      `${storeOption?.slug}_${asinUpcOption?.label}`
                     }
                     type="text"
                     placeholder="Enter UPIN"

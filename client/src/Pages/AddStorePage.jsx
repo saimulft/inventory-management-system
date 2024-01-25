@@ -52,7 +52,7 @@ export default function AddStorePage() {
       return setErrorMessage('Please select store status')
     }
 
-    const data = { store_name: storeName, store_manager_name: storeManagerName, store_type: storeType, store_status: storeStatus }
+    const data = { store_name: storeName, slug: storeName, store_manager_name: storeManagerName, store_type: storeType, store_status: storeStatus }
     setStoreDetails(data)
     setStoreOwners(storeOwnerIDs)
 
