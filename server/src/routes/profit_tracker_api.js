@@ -20,8 +20,7 @@ const run = async () => {
 
             if (store) {
                 if (storeResult.length) {
-
-                    return res.status(200).json({ data: storeResult, store_name: store.store_name, message: "Data successfully get" })
+                    return res.status(200).json({ data: storeResult, store_name: store.store_name, total_order: store.total_order, message: "Data successfully get" })
                 }
                 else {
                     return res.status(200).json({ store_name: store.store_name, message: "Data got successfully" })
@@ -42,10 +41,11 @@ const run = async () => {
             const adminId = req.query.adminId;
 
             const stockData = await all_stock_collection.find({ admin_id: adminId }).toArray()
-            const totalStore = await all_stores_collection.countDocuments({ admin_id: adminId })
+            const totalStore = await all_stores_collection.find({admin_id: adminId}).toArray()
+            const totalOrder = totalStore.reduce((sum, store) => sum + parseFloat(store?.total_order), 0);
 
             if (stockData.length) {
-                return res.status(200).json({ data: stockData, total_store: totalStore, message: "Data got successfully" })
+                return res.status(200).json({ data: stockData, total_store: totalStore?.length, total_order: totalOrder, message: "Data got successfully" })
             }
             else {
                 res.status(204).json({ message: "No data found" })
