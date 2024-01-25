@@ -171,7 +171,7 @@ export default function ConversationUserList() {
     const lastMsg =
       data?.lastMassages?.text == "*like**"
         ? "👍"
-        : data?.lastMassages?.text.length <= 11
+        : data?.lastMassages?.text?.length <= 11
           ? data?.lastMassages?.text
           : data?.lastMassages?.text.slice(0, 11) + "...";
 
@@ -233,7 +233,7 @@ export default function ConversationUserList() {
     );
   } else if (!loading && error) {
     content = <p></p>;
-  } else if (!loading && !error && data.length > 0) {
+  } else if (!loading && !error && data?.length > 0) {
 
     content = dataSortByTime(userConversationListSearch(data))?.map(
       (userData) => {
@@ -338,12 +338,12 @@ export default function ConversationUserList() {
       {/* user chat list  */}
       <div className="chat_list h-[calc(100%_-_126px)] overflow-y-scroll">
         {content}
-        {data.length < 1 && !loading && !search && (
+        {data?.length < 1 && !loading && !search && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
             Let's begin conversation!
           </p>
         )}
-        {userConversationListSearch.length < 1 && !loading && search && (
+        {userConversationListSearch?.length < 1 && !loading && search && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
             Search data not available!
           </p>
