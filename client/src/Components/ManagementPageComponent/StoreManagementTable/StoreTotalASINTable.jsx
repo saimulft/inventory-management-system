@@ -15,6 +15,7 @@ import ReactPaginate from "react-paginate";
 import useGlobal from "../../../hooks/useGlobal";
 import { useLocation } from "react-router-dom";
 import ViewImage from "../../Shared/ViewImage";
+import handlePriceKeyDown from "../../../Utilities/handlePriceKeyDown";
 
 export default function InventoryTotalASINTable() {
   const [photoUploadType, setPhotoUploadType] = useState(null);
@@ -70,13 +71,6 @@ export default function InventoryTotalASINTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
-
-  const handlePriceKeyDown = (event) => {
-    const alphabetKeys = /^[0-9]*\.*$/;
-    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
-      event.preventDefault();
-    }
-  };
 
   const handleCustomDateSearch = () => {
     setSearchError("");

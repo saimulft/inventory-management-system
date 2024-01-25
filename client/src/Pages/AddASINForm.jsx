@@ -9,6 +9,7 @@ import Compressor from "compressorjs";
 import useGlobal from "../hooks/useGlobal";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import { NotificationContext } from "../Providers/NotificationProvider";
+import handlePriceKeyDown from "../Utilities/handlePriceKeyDown";
 
 const AddASINForm = () => {
   const { socket } = useContext(GlobalContext);
@@ -296,8 +297,9 @@ const AddASINForm = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Min Price</label>
                   <input
+                    onKeyDown={handlePriceKeyDown}
                     required
-                    type="number"
+                    type="text"
                     placeholder="Enter min price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="minPrice"

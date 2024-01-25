@@ -13,6 +13,7 @@ import { NotificationContext } from "../Providers/NotificationProvider";
 import { Calendar } from "react-date-range";
 import { format } from "date-fns";
 import PulseLoader from "react-spinners/PulseLoader";
+import handlePriceKeyDown from "../Utilities/handlePriceKeyDown";
 
 const ArrivalFormPage = () => {
   const { socket } = useContext(GlobalContext);
@@ -121,13 +122,6 @@ const ArrivalFormPage = () => {
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
-    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
-      event.preventDefault();
-    }
-  };
-
-  const handlePriceKeyDown = (event) => {
-    const alphabetKeys = /^[0-9]*\.*$/;
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
       event.preventDefault();
     }
