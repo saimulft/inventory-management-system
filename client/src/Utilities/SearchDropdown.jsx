@@ -15,4 +15,4 @@ const SearchDropdown = ({ setOption, option, optionData, placeholder, isMulti, i
     )
 }
 
-export default SearchDropdown
+export default SearchDropdown;
