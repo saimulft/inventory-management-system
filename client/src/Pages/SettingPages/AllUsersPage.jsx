@@ -227,7 +227,7 @@ export default function AllUsersPage() {
         </div>
       </div>}
       {isOpenWarehouseModal && <div onClick={() => { setIsOpenWarehouseModal(false) }} className="flex justify-center items-center w-full h-screen fixed bg-[#00000030] top-0 left-0 right-0 bottom-0 z-50">
-        <div onClick={(e) => e.stopPropagation()} className="relative w-[30%] min-h-[25%] bg-white rounded-md p-5 ">
+        <div onClick={(e) => e.stopPropagation()} className="relative w-[30%] min-h-[25%] bg-white rounded-md p-5 overflow-hidden">
           <h1 className="text-xl font-medium">{singleUser?.full_name}</h1>
           <p className="font-medium text-gray-400 mb-2">{singleUser?.role}</p>
 

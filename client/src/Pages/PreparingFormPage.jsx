@@ -308,40 +308,18 @@ const PreparingFormPage = () => {
 
                 <div className="mt-4">
                   <label className="text-slate-500">Product Name</label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={productName}
-                    required
-                    placeholder="Enter product name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
-                    id="productName"
-                    name="productName"
-                  />
+                  <input type="text" readOnly value={productName} required placeholder="Enter product name" className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed" id="productName" name="productName" />
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">Order ID</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="Enter merchant order number"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="orderId"
-                    name="orderID"
-                  />
+                  <input type="text" required placeholder="Enter merchant order number" className="input input-bordered input-primary w-full mt-2 shadow-lg" id="orderId" name="orderID" />
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">Courier</label>
-                  <select
-                    className="select select-primary w-full mt-2 shadow-lg"
-                    name="courier"
-                    id="courier"
-                  >
-                    <option defaultValue="Select courier">
-                      Select courier
-                    </option>
+                  <select className="select select-primary w-full mt-2 shadow-lg" name="courier" id="courier">
+                    <option defaultValue="Select courier"> Select courier</option>
                     <option value="test1">Test1</option>
                     <option value="test2">Test2</option>
                   </select>
@@ -363,28 +341,17 @@ const PreparingFormPage = () => {
                         <div>
                           {InvoiceImageFile && (
                             <p className="text-md font-semibold">
-                              {InvoiceImageFile.name.slice(0, 32)}
+                              {InvoiceImageFile.name.slice(0, 20)}
                             </p>
                           )}
                           {!InvoiceImageFile && (
-                            <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
-                              Select a file or drag and drop
-                            </p>
+                            <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">Select a file or drag and drop</p>
                           )}
 
-                          <p className="text-xs text-gray-500 dark:text-gray-400">
-                            PNG, JPG or PDF, file size no more than 5MB
-                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">PNG, JPG or PDF, file size no more than 5MB </p>
                         </div>
                       </div>
-                      <input
-                        id="invoice-dropzone"
-                        name="invoice-dropzone"
-                        accept="image/*,application/pdf"
-                        type="file"
-                        onChange={handleInvoiceImage}
-                        className="hidden"
-                      />
+                      <input id="invoice-dropzone" name="invoice-dropzone" accept="image/*,application/pdf" type="file" onChange={handleInvoiceImage} className="hidden" />
                       <div className="ml-5">
                         <button
                           onClick={() => {
@@ -409,66 +376,33 @@ const PreparingFormPage = () => {
               <div className="w-full">
                 <div>
                   <label className="text-slate-500">Store name</label>
-                  <SearchDropdown
-                    isLoading={storeLoading}
-                    option={storeOption}
-                    optionData={allStoreData}
-                    placeholder="Select Store"
-                    setOption={setStoreOption}
-                  />
+                  <SearchDropdown isLoading={storeLoading} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">Code type</label>
-                  <input
-                    type="text"
-                    readOnly
-                    value={asinUpcOption?.code_type}
-                    placeholder="Enter product name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="code"
-                    name="code"
-                  />
+                  <input type="text" readOnly value={asinUpcOption?.code_type} placeholder="Enter product name" className="input input-bordered input-primary w-full mt-2 shadow-lg" id="code" name="code" />
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">UPIN</label>
-                  <input
-                    required
-                    readOnly
+                  <input required readOnly
                     value={
                       storeOption?.label &&
                       asinUpcOption &&
                       `${storeOption?.label}_${asinUpcOption.label}`
-                    }
-                    type="text"
-                    placeholder="Enter UPIN"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
-                    id="upin"
-                    name="upin"
+                    } type="text" placeholder="Enter UPIN" className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed" id="upin" name="upin"
                   />
                 </div>
 
                 <div className="mt-4">
                   <label className="text-slate-500">Quantity</label>
-                  <input
-                    onKeyDown={handleKeyDown}
-                    required
-                    type="text"
-                    placeholder="Enter quantity"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="quantity"
-                    name="quantity"
+                  <input onKeyDown={handleKeyDown} required type="text" placeholder="Enter quantity" className="input input-bordered input-primary w-full mt-2 shadow-lg" id="quantity" name="quantity"
                   />
                 </div>
                 <div className="mt-4">
                   <label className="text-slate-500">Tracking Number</label>
-                  <input
-                    type="text"
-                    placeholder="Enter tracking number"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="trackingNumber"
-                    name="trackingNumber"
+                  <input type="text" placeholder="Enter tracking number" className="input input-bordered input-primary w-full mt-2 shadow-lg" id="trackingNumber" name="trackingNumber"
                   />
                 </div>
 
@@ -488,37 +422,23 @@ const PreparingFormPage = () => {
                         <div>
                           {shippingImageFile && (
                             <p className="text-md font-semibold">
-                              {shippingImageFile.name.slice(0, 32)}
+                              {shippingImageFile.name.slice(0, 20)}
                             </p>
                           )}
                           {!shippingImageFile && (
-                            <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold">
-                              Select a file or drag and drop
-                            </p>
+                            <p className="text-xs text-gray-700 dark:text-gray-400 font-semibold"> Select a file or drag and drop</p>
                           )}
-                          <p className="text-xs  text-gray-500 dark:text-gray-400">
-                            PNG, JPG or PDF, file size no more than 5MB
-                          </p>
+                          <p className="text-xs  text-gray-500 dark:text-gray-400"> PNG, JPG or PDF, file size no more than 5MB </p>
                         </div>
                       </div>
-                      <input
-                        id="shippingLabel-dropzone"
-                        name="shippingLabel-dropzone"
-                        type="file"
-                        accept="image/*,application/pdf"
-                        onChange={handleShippingImage}
-                        className="hidden"
-                      />
+                      <input id="shippingLabel-dropzone" name="shippingLabel-dropzone" type="file" accept="image/*,application/pdf" onChange={handleShippingImage} className="hidden" />
                       <div className="ml-5">
                         <button
                           onClick={() => {
                             document
                               .getElementById("shippingLabel-dropzone")
                               .click();
-                          }}
-                          type="button"
-                          className="w-[100px] btn btn-outline btn-primary btn-xs"
-                        >
+                          }} type="button" className="w-[100px] btn btn-outline btn-primary btn-xs" >
                           select file
                         </button>
                       </div>
@@ -535,21 +455,11 @@ const PreparingFormPage = () => {
             </div>
             <div className="mt-4">
               <label className="text-slate-500">Warehouse</label>
-              <SearchDropdown
-                isLoading={warehouseLoading}
-                option={warehouseOption}
-                optionData={warehouseData}
-                placeholder="Select warehouse"
-                setOption={setWarehouseOption}
-              />
+              <SearchDropdown isLoading={warehouseLoading} option={warehouseOption} optionData={warehouseData} placeholder="Select warehouse" setOption={setWarehouseOption} />
             </div>
             <ToastMessage errorMessage={formError} />
             <div className="flex items-center justify-center mt-8">
-              <button
-                type="submit"
-                disabled={loading}
-                className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full"
-              >
+              <button type="submit" disabled={loading} className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white rounded-lg w-full">
                 {loading && <FaSpinner size={20} className="animate-spin" />}
                 Preparing Request
               </button>
