@@ -40,7 +40,6 @@ const run = async () => {
                     full_name: req.body.full_name,
                     email: req.body.email,
                     creator_email: req.body.creator_email,
-                    username: req.body.username,
                     role: req.body.role,
                     phone: null,
                     address: null,

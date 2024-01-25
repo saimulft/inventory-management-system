@@ -15,7 +15,8 @@ export default function AllUsersPage() {
   const [isOpenWarehouseModal, setIsOpenWarehouseModal] = useState(false)
   const [singleUser, setSingleUser] = useState({})
   const [storeOption, setStoreOption] = useState([])
-  const [matchedOpiton, setMatchedOption] = useState([])
+  const [matchedOption, setMatchedOption] = useState([])
+  const [matchedOptionLoading, setMatchedOptionLoading] = useState(false)
   const [updateLoading, setUpdateLoading] = useState(false)
   const [warehouseLoading, setWarehouseLoading] = useState(false)
   const [updateMessage, setUpdateMssage] = useState('')
@@ -43,6 +44,7 @@ export default function AllUsersPage() {
       }
     }
   })
+
   useQuery({
     queryKey: ['all_store_options'],
     queryFn: async () => {
@@ -105,6 +107,7 @@ export default function AllUsersPage() {
     setMatchedOption([])
     setIsOpenUserModal(true)
     setSingleUser(user)
+    setMatchedOptionLoading(true)
     axios.get(`/api/v1/admin_api/get_user_access_data?email=${user.email}&role=${user.role}`)
       .then(res => {
         if (res.status === 200) {
@@ -115,6 +118,7 @@ export default function AllUsersPage() {
         }
       })
       .catch(err => console.log(err))
+      .finally(() => setMatchedOptionLoading(false))
   }
 
   const handleView = (user) => {
@@ -129,12 +133,12 @@ export default function AllUsersPage() {
       .catch(err => console.log(err))
       .finally(() => setWarehouseLoading(false))
   }
-  const handleAccessUpdate = (email, role) => {
 
-    if (!matchedOpiton.length) {
+  const handleAccessUpdate = (email, role) => {
+    if (!matchedOption.length) {
       return
     }
-    const updatedIds = matchedOpiton?.map(op => op.value)
+    const updatedIds = matchedOption?.map(op => op.value)
     setUpdateLoading(true)
     axios.post(`/api/v1/admin_api/update_user_access_data?email=${email}&role=${role}`, { updatedIds: updatedIds })
       .then(res => {
@@ -211,9 +215,9 @@ export default function AllUsersPage() {
             options={storeOption}
             isMulti
             onChange={setMatchedOption}
-            defaultValue={matchedOpiton}
-            key={matchedOpiton.length}
-            isLoading={matchedOpiton.length <= 0}
+            defaultValue={matchedOption}
+            key={matchedOption.length}
+            isLoading={matchedOptionLoading}
           />
 
           <div className="flex  justify-between items-center mt-4">

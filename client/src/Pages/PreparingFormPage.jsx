@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import useAuth from "../hooks/useAuth";
 import Swal from "sweetalert2";
@@ -10,6 +10,11 @@ import { useQuery } from "@tanstack/react-query";
 import useGlobal from "../hooks/useGlobal";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import { NotificationContext } from "../Providers/NotificationProvider";
+import { format } from "date-fns";
+import { IoCalendarOutline } from "react-icons/io5";
+import { Calendar } from "react-date-range";
+import PulseLoader from "react-spinners/PulseLoader";
+
 const PreparingFormPage = () => {
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
@@ -28,35 +33,51 @@ const PreparingFormPage = () => {
   const [warehouseOption, setWarehouseOption] = useState(null)
   const [asinUpcOption, setAsinUpcOption] = useState()
   const [productName, setProductName] = useState('')
+  const [productNameLoading, setProductNameLoading] = useState(false)
   const { user } = useAuth()
   const { setCountsRefetch } = useGlobal()
-
+  const [date, setDate] = useState(null)
+  const [openDateCalendar, setOpenDateCalendar] = useState(false)
+  const calendarRef = useRef(null)
 
   useEffect(() => {
-    if (storeOption?.label && asinUpcOption) {
-      const upin = `${storeOption?.label}_${asinUpcOption.label}`;
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef?.current?.contains(event.target)) {
+        setOpenDateCalendar(false)
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [])
 
+  useEffect(() => {
+    if (storeOption?.slug && asinUpcOption) {
+      const upin = `${storeOption?.slug}_${asinUpcOption?.label}`;
+      setProductNameLoading(true)
       axios
         .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then((res) => {
           if (res.status === 200) {
             setProductName(res.data.data.product_name);
           }
-          if (res.status === 204) {
-            setProductName(asinUpcOption.product_name);
-          }
+          // if (res.status === 204) {
+          //   setProductName(asinUpcOption?.product_name);
+          // }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => console.log(err))
+        .finally(() => setProductNameLoading(false))
     }
-  }, [storeOption?.label, asinUpcOption, user]);
+  }, [storeOption?.slug, asinUpcOption, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
-    queryKey: ["asin_upc_data"],
+    queryKey: ["asin_upc_data", storeOption?.value],
     queryFn: async () => {
       try {
         const res = await axios.post(
-          "/api/v1/asin_upc_api/get_asin_upc_dropdown_data",
-          { user }
+          "/api/v1/asin_upc_api/get_store_based_asin_upc_data",
+          { user: user, store_id: storeOption?.value }
         );
         if (res.status === 200) {
           return res.data.data;
@@ -68,6 +89,7 @@ const PreparingFormPage = () => {
       }
     },
   });
+
   const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
     queryKey: ["get_all_stores_data"],
     queryFn: async () => {
@@ -104,6 +126,7 @@ const PreparingFormPage = () => {
       }
     },
   });
+
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
     if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
@@ -117,11 +140,10 @@ const PreparingFormPage = () => {
     setFormError("");
     event.preventDefault();
     const form = event.target;
-    const date = new Date(form.date.value).toISOString();
     const createdAt = new Date().toISOString();
     const orderID = form.orderID.value;
     const courier = form.courier.value;
-    const upin = `${storeOption?.label}_${asinUpcOption?.label}`;
+    const upin = `${storeOption?.slug}_${asinUpcOption?.label}`;
     const quantity = form.quantity.value;
     const trackingNumber = form.trackingNumber.value;
 
@@ -129,7 +151,7 @@ const PreparingFormPage = () => {
       setFormError("Missing warehouse");
       return;
     }
-    if (!storeOption?.label) {
+    if (!storeOption?.slug) {
       setFormError("Select  Store");
       return;
     }
@@ -142,17 +164,18 @@ const PreparingFormPage = () => {
       return;
     }
 
+    const isoDate = new Date(date).toISOString();
     const formData = new FormData();
     let preparingFormvalue = {
       adminId: user?.admin_id,
       creatorEmail: user?.email,
-      date,
-      asin_upc_code: asinUpcOption.label,
+      date: isoDate,
+      asin_upc_code: asinUpcOption?.label,
       createdAt,
       orderID,
       courier,
       productName,
-      storeName: storeOption?.label,
+      storeName: storeOption?.slug,
       storeId: storeOption?.value,
       codeType: asinUpcOption?.code_type,
       upin,
@@ -221,6 +244,7 @@ const PreparingFormPage = () => {
           );
           form.reset();
           setProductName("");
+          setDate(null)
           setWarehouseOption(null);
           setStoreOption(null);
           setAsinUpcOption(null);
@@ -284,15 +308,25 @@ const PreparingFormPage = () => {
           <form className="w-full" onSubmit={hadnlePreparingForm}>
             <div className="flex gap-7">
               <div className="w-full">
-                <div>
-                  <label className="text-slate-500">Date</label>
-                  <input
-                    type="date"
-                    placeholder="Enter store name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="date"
-                    name="date"
-                  />
+
+                <div className="relative">
+                  <p className="text-slate-500">Date</p>
+                  <div className="w-full mt-2 shadow-lg rounded-lg bg-white px-4 h-12 border border-[#8633FF] flex justify-between items-center">
+                    <span>{date ? format(new Date(date), 'yyyy/MM/dd') : 'YYYY/MM/DD'}</span>
+                    <div ref={calendarRef}>
+                      <span onClick={() => setOpenDateCalendar(!openDateCalendar)}><IoCalendarOutline size={18} /></span>
+                      {openDateCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 top-full z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                        <Calendar
+                          color='#8633FF'
+                          date={date ? date : null}
+                          onChange={(date) => {
+                            setDate(date)
+                            setOpenDateCalendar(false)
+                          }}
+                        />
+                      </div>}
+                    </div>
+                  </div>
                 </div>
 
                 <div className="mt-4">
@@ -306,7 +340,8 @@ const PreparingFormPage = () => {
                   />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 relative">
+                  {productNameLoading && <span className="absolute top-[43px] right-4"><PulseLoader color="#D1D5DB" size={4} /></span>}
                   <label className="text-slate-500">Product Name</label>
                   <input type="text" readOnly value={productName} required placeholder="Enter product name" className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed" id="productName" name="productName" />
                 </div>
@@ -388,7 +423,7 @@ const PreparingFormPage = () => {
                   <label className="text-slate-500">UPIN</label>
                   <input required readOnly
                     value={
-                      storeOption?.label &&
+                      storeOption?.slug &&
                       asinUpcOption &&
                       `${storeOption?.label}_${asinUpcOption.label}`
                     } type="text" placeholder="Enter UPIN" className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed" id="upin" name="upin"

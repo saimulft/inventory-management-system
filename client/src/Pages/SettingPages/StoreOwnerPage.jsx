@@ -47,7 +47,6 @@ export default function StoreOwnerPage() {
     const email = form.email.value;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
-    const username = form.username.value;
 
     if (password !== confirmPassword) {
       return setErrorMessage('Password and confirm password must be same!')
@@ -57,7 +56,7 @@ export default function StoreOwnerPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const storeOwner = { admin_id: user.admin_id, creator_email: user?.email, store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Owner' }
+    const storeOwner = { admin_id: user.admin_id, creator_email: user?.email, store_access_ids: storeIDS, full_name: name, email, password, role: 'Store Owner' }
 
     try {
       const { status } = await mutateAsync(storeOwner)
@@ -82,7 +81,7 @@ export default function StoreOwnerPage() {
       <form onSubmit={handleCreateStoreOwner}>
         <div className="flex gap-4 w-full mt-5">
           <div className="w-1/2">
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="text-slate-500">Name*</label>
               <input
                 type="text"
@@ -93,43 +92,7 @@ export default function StoreOwnerPage() {
                 required
               />
             </div>
-            <div className="mt-3">
-              <label className="text-slate-500">Email*</label>
-              <input
-                type="email"
-                placeholder="Enter email"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="email"
-                name="email"
-                required
-              />
-            </div>
-            <div className="mt-3">
-              <label className="text-slate-500">Confirm password*</label>
-              <input
-                type="password"
-                placeholder="Confirm password"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="confirmPassword"
-                name="confirmPassword"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="w-1/2">
-            <div className="mt-3">
-              <label className="text-slate-500">Username*</label>
-              <input
-                type="text"
-                placeholder="Enter username"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="username"
-                name="username"
-                required
-              />
-            </div>
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="text-slate-500">Password*</label>
               <input
                 type="password"
@@ -140,9 +103,34 @@ export default function StoreOwnerPage() {
                 required
               />
             </div>
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="text-slate-500">Select Store</label>
               <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+            </div>
+          </div>
+
+          <div className="w-1/2">
+            <div className="mt-4">
+              <label className="text-slate-500">Email*</label>
+              <input
+                type="email"
+                placeholder="Enter email"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
+            <div className="mt-4">
+              <label className="text-slate-500">Confirm password*</label>
+              <input
+                type="password"
+                placeholder="Confirm password"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+              />
             </div>
           </div>
         </div>

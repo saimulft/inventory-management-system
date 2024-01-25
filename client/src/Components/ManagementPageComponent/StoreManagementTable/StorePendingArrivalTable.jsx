@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
@@ -11,11 +11,12 @@ import { FaSpinner } from "react-icons/fa";
 import { AiOutlineSearch } from "react-icons/ai";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
-import { DateRange } from "react-date-range";
+import { Calendar, DateRange } from "react-date-range";
 import useGlobal from "../../../hooks/useGlobal";
 import { useLocation } from "react-router-dom";
 import { NotificationContext } from "../../../Providers/NotificationProvider";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
+import { IoCalendarOutline } from "react-icons/io5";
 
 export default function StorePendingArrivalTable() {
   const location = useLocation();
@@ -46,7 +47,21 @@ export default function StorePendingArrivalTable() {
       key: "selection",
     },
   ]);
+  const [openEdaCalendar, setOpenEdaCalendar] = useState(false)
+  const [eda, setEda] = useState(null)
+  const calendarRef = useRef(null)
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef?.current?.contains(event.target)) {
+        setOpenEdaCalendar(false)
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [])
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -176,31 +191,31 @@ export default function StorePendingArrivalTable() {
           .then((res) => {
             if (res.status === 200) {
               const notification_link =
-            "/dashboard/management/store/pending-arrival";
-          const notification_search = [data?._id];
-          const status = "A pending arrival entry has been deleted.";
-          axios
-            .post(`/api/v1/notifications_api/send_notification`, {
-              currentUser,
-              status,
-              notification_link,
-              notification_search,
-              storeId: data?.store_id,
-              warehouseId: data?.warehouse_id
-            })
-            .then((res) => {
-              if (res.data?.finalResult?.acknowledged) {
-                // send real time notification data
-                const notificationData = res.data?.notificationData;
-                if (notificationData) {
-                  socket?.current?.emit("sendNotification", {
-                    user,
-                    notificationData,
-                  });
-                }
-              }
-            })
-            .catch((err) => console.log(err));
+                "/dashboard/management/store/pending-arrival";
+              const notification_search = [data?._id];
+              const status = "A pending arrival entry has been deleted.";
+              axios
+                .post(`/api/v1/notifications_api/send_notification`, {
+                  currentUser,
+                  status,
+                  notification_link,
+                  notification_search,
+                  storeId: data?.store_id,
+                  warehouseId: data?.warehouse_id
+                })
+                .then((res) => {
+                  if (res.data?.finalResult?.acknowledged) {
+                    // send real time notification data
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      });
+                    }
+                  }
+                })
+                .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -224,9 +239,12 @@ export default function StorePendingArrivalTable() {
     const form = event.target;
     const productName = form.productName.value;
     const quantity = form.quantity.value;
-    const eda = form.eda.value;
     const courier = form.courier.value;
     const supplierTracking = form.supplierTracking.value;
+
+    if (!productName && !quantity && !eda && !courier && !supplierTracking) {
+      return setErrorMessage("No data entered");
+    }
 
     const updatedData = {
       product_name: productName,
@@ -235,10 +253,6 @@ export default function StorePendingArrivalTable() {
       courier: courier,
       supplier_tracking: supplierTracking,
     };
-
-    if (!productName && !quantity && !eda && !courier && !supplierTracking) {
-      return setErrorMessage("No data entered");
-    }
 
     axios
       .put(
@@ -333,30 +347,28 @@ export default function StorePendingArrivalTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-           
+
             {!notificationSearchValue && (
               <>
-                 <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                <p
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -365,9 +377,8 @@ export default function StorePendingArrivalTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -376,9 +387,8 @@ export default function StorePendingArrivalTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -387,9 +397,8 @@ export default function StorePendingArrivalTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -398,9 +407,8 @@ export default function StorePendingArrivalTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -409,9 +417,8 @@ export default function StorePendingArrivalTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -490,7 +497,7 @@ export default function StorePendingArrivalTable() {
                     </p>
                   )} */}
 
-                { searchResults.length ? (
+                {searchResults.length ? (
                   displayedDataFilter.map((d, index) => {
                     return (
                       <tr className={`${index % 2 == 1 && ""}`} key={index}>
@@ -532,7 +539,7 @@ export default function StorePendingArrivalTable() {
                                 </button>
                               </li>
                               {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                                user.role === "Admin VA" ? (
                                 <li>
                                   <button onClick={() => handleDelete(d._id)}>
                                     Delete
@@ -592,7 +599,7 @@ export default function StorePendingArrivalTable() {
                                   </button>
                                 </li>
                                 {user.role === "Admin" ||
-                                user.role === "Admin VA" ? (
+                                  user.role === "Admin VA" ? (
                                   <li>
                                     <button onClick={() => handleDelete(d._id)}>
                                       Delete
@@ -669,7 +676,7 @@ export default function StorePendingArrivalTable() {
                               </button>
                             </li>
                             {user.role === "Admin" ||
-                            user.role === "Admin VA" ? (
+                              user.role === "Admin VA" ? (
                               <li>
                                 <button
                                   onClick={() =>
@@ -697,7 +704,7 @@ export default function StorePendingArrivalTable() {
         {!isLoading && !notificationSearchValue &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && !notificationSearchValue &&(
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -713,7 +720,7 @@ export default function StorePendingArrivalTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}
@@ -733,7 +740,7 @@ export default function StorePendingArrivalTable() {
       <dialog id="my_modal_2" className="modal">
         <div
           style={{ marginLeft, maxWidth: "750px" }}
-          className="modal-box py-10 px-10"
+          className="modal-box overflow-visible py-10 px-10"
         >
           <form
             onSubmit={(event) => handleUpdate(event, singleData)}
@@ -743,7 +750,13 @@ export default function StorePendingArrivalTable() {
               <div className="flex items-center mb-6 gap-2">
                 {user.role === "Admin" || user.role === "Admin VA" ? (
                   <BiSolidEdit
-                    onClick={() => setIsEditable(!isEditable)}
+                    onClick={() => {
+                      if (isEditable) {
+                        setEda(null)
+                        setOpenEdaCalendar(false)
+                      }
+                      setIsEditable(!isEditable)
+                    }}
                     size={24}
                     className="cursor-pointer"
                   />
@@ -751,67 +764,62 @@ export default function StorePendingArrivalTable() {
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <div
-                className={`flex items-center ${
-                  isEditable && "justify-between"
-                }`}
+                className={`flex items-center ${isEditable && "justify-between"
+                  }`}
               >
                 <label className="font-bold">Product Name: </label>
                 <input
                   type="text"
                   defaultValue={singleData.product_name}
-                  className={`${
-                    isEditable
-                      ? "border border-[#8633FF] outline-[#8633FF] mt-1"
-                      : "outline-none"
-                  } py-1 pl-2 rounded`}
+                  className={`${isEditable
+                    ? "border border-[#8633FF] outline-[#8633FF] mt-1"
+                    : "outline-none"
+                    } py-1 pl-2 rounded`}
                   id="productName"
                   name="productName"
                   readOnly={!isEditable}
                 />
               </div>
               <div
-                className={`flex items-center ${
-                  isEditable && "justify-between mt-2"
-                }`}
+                className={`flex items-center ${isEditable && "justify-between mt-2"
+                  }`}
               >
                 <label className="font-bold">Quantity: </label>
                 <input
                   onKeyDown={handleKeyDown}
                   type="text"
                   defaultValue={singleData.quantity}
-                  className={`${
-                    isEditable
-                      ? "border border-[#8633FF] outline-[#8633FF] mt-1"
-                      : "outline-none"
-                  } py-1 pl-2 rounded`}
+                  className={`${isEditable
+                    ? "border border-[#8633FF] outline-[#8633FF] mt-1"
+                    : "outline-none"
+                    } py-1 pl-2 rounded`}
                   id="quantity"
                   name="quantity"
                   readOnly={!isEditable}
                 />
               </div>
-              <div
-                className={`flex items-center ${
-                  isEditable && "justify-between mt-2"
-                }`}
-              >
-                <label className="font-bold">EDA: </label>
-                <input
-                  type={isEditable ? "date" : "text"}
-                  defaultValue={
-                    isEditable
-                      ? ""
-                      : singleData.eda &&
-                        format(new Date(singleData.eda), "yyyy/MM/dd")
-                  }
-                  className={`${
-                    isEditable
-                      ? "border border-[#8633FF] outline-[#8633FF] mt-1"
-                      : "outline-none"
-                  } w-[191px] py-1 pl-2 rounded`}
-                  id="eda"
-                  name="eda"
-                  readOnly={!isEditable}
-                />
+
+              <div className={`relative flex items-center ${isEditable && "justify-between mt-3"}`}>
+                <p className="font-bold">EDA:</p>
+                <div className={`px-2 py-1 w-[191px] rounded ${isEditable && "h-9 border border-[#8633FF] flex justify-between items-center"}`}>
+                  <span>
+                    {(isEditable && eda) ? format(new Date(eda), 'yyyy/MM/dd') : (isEditable && !eda) ? 'YYYY/MM/DD' : singleData.eda &&
+                      format(new Date(singleData.eda), "yyyy/MM/dd")}
+                  </span>
+                  {isEditable && <div ref={calendarRef}>
+                    <span onClick={() => setOpenEdaCalendar(!openEdaCalendar)}><IoCalendarOutline /></span>
+                    {openEdaCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 top-full z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                      <Calendar
+                        color='#8633FF'
+                        date={eda ? eda : null}
+                        onChange={(date) => {
+                          setEda(date)
+                          setOpenEdaCalendar(false)
+                        }}
+                      />
+                    </div>}
+                  </div>}
+                </div>
               </div>
             </div>
 
@@ -828,9 +836,11 @@ export default function StorePendingArrivalTable() {
                     <option defaultValue="Select Courier">
                       Select Courier
                     </option>
-                    <option value="Courier-1">Courier-1</option>
-                    <option value="Courier-2">Courier-2</option>
-                    <option value="Courier-3">Courier-3</option>
+                    <option value="FedEx">FedEx</option>
+                    <option value="Sky Postal">Sky Postal</option>
+                    <option value="United Percel Service">United Percel Service</option>
+                    <option value="Pace Couriers">Pace Couriers</option>
+                    <option value="Central Courier Company">Central Courier Company</option>
                   </select>
                 </div>
                 <div className="flex flex-col mt-2">

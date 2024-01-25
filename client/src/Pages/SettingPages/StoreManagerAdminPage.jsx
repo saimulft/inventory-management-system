@@ -36,7 +36,7 @@ export default function StoreManagerAdminPage() {
 
   const storeIDS = []
   storeOption?.map(store => storeIDS.push(store.value))
-  
+
   const handleCreateStoreManagerAdmin = async (event) => {
     event.preventDefault()
     setErrorMessage('')
@@ -46,7 +46,6 @@ export default function StoreManagerAdminPage() {
     const email = form.email.value;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
-    const username = form.username.value;
 
     if (password !== confirmPassword) {
       return setErrorMessage('Password and confirm password must be same!')
@@ -60,7 +59,7 @@ export default function StoreManagerAdminPage() {
       return setErrorMessage('Please select store')
     }
 
-    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager Admin' }
+    const storeManagerAdmin = { admin_id: user.admin_id, creator_email: user?.email, store_access_ids: storeIDS, full_name: name, email, password, role: 'Store Manager Admin' }
 
     try {
       const { status } = await mutateAsync(storeManagerAdmin)
@@ -86,7 +85,7 @@ export default function StoreManagerAdminPage() {
       <form onSubmit={handleCreateStoreManagerAdmin}>
         <div className="flex gap-4 w-full mt-5">
           <div className="w-1/2">
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="text-slate-500">Name*</label>
               <input
                 type="text"
@@ -97,43 +96,7 @@ export default function StoreManagerAdminPage() {
                 required
               />
             </div>
-            <div className="mt-3">
-              <label className="text-slate-500">Email*</label>
-              <input
-                type="email"
-                placeholder="Enter email"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="email"
-                name="email"
-                required
-              />
-            </div>
-            <div className="mt-3">
-              <label className="text-slate-500">Confirm password*</label>
-              <input
-                type="password"
-                placeholder="Confirm password"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="confirmPassword"
-                name="confirmPassword"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="w-1/2">
-            <div className="mt-3">
-              <label className="text-slate-500">Username*</label>
-              <input
-                type="text"
-                placeholder="Enter username"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="username"
-                name="username"
-                required
-              />
-            </div>
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="text-slate-500">Password*</label>
               <input
                 type="password"
@@ -144,9 +107,34 @@ export default function StoreManagerAdminPage() {
                 required
               />
             </div>
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="text-slate-500">Select Store</label>
               <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
+            </div>
+          </div>
+
+          <div className="w-1/2">
+            <div className="mt-4">
+              <label className="text-slate-500">Email*</label>
+              <input
+                type="email"
+                placeholder="Enter email"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="email"
+                name="email"
+                required
+              />
+            </div>
+            <div className="mt-4">
+              <label className="text-slate-500">Confirm password*</label>
+              <input
+                type="password"
+                placeholder="Confirm password"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="confirmPassword"
+                name="confirmPassword"
+                required
+              />
             </div>
           </div>
         </div>

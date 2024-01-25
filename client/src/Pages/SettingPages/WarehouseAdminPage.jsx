@@ -1,7 +1,6 @@
 import countries from "../../Utilities/countries";
 import { FaSpinner } from "react-icons/fa";
 import useAuth from "../../hooks/useAuth";
-import { v4 as uuidv4 } from 'uuid';
 import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
@@ -24,11 +23,10 @@ export default function WareHouseAdminPage() {
     setSuccessMessage('')
 
     const form = event.target;
-    const name = form.ownerName.value;
+    const name = form.managerName.value;
     const email = form.email.value;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
-    const username = form.username.value;
     const warehouseName = form.warehouseName.value;
     const address = form.address.value;
     const city = form.city.value;
@@ -44,7 +42,7 @@ export default function WareHouseAdminPage() {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const warehouseAdmin = { admin_id: user.admin_id, creator_email: user?.email, warehouse_admin_id: uuidv4(), full_name: name, email, username, password, role: 'Warehouse Admin', warehouse_name: warehouseName, address, city, state, zip: zipCode, country }
+    const warehouseAdmin = { admin_id: user.admin_id, creator_email: user?.email, full_name: name, email, password, role: 'Warehouse Admin', warehouse_name: warehouseName, address, city, state, zip: zipCode, country }
 
     try {
       const { status } = await mutateAsync(warehouseAdmin)
@@ -71,7 +69,7 @@ export default function WareHouseAdminPage() {
         <form onSubmit={handleCreateWarehouseAdmin}>
           <div className="flex gap-4 w-full mt-5">
             <div className="w-1/2">
-              <div className="mt-3">
+              <div className="mt-4">
                 <label className="text-slate-500">Warehouse Name*</label>
                 <input
                   type="text"
@@ -79,29 +77,6 @@ export default function WareHouseAdminPage() {
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="warehouseName"
                   name="warehouseName"
-                  required
-                />
-              </div>
-              <div className="mt-3">
-                <label className="text-slate-500">Username*</label>
-                <input
-                  type="text"
-                  placeholder="Enter username"
-                  className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                  id="username"
-                  name="username"
-                  required
-                />
-              </div>
-
-              <div className="mt-3">
-                <label className="text-slate-500">Password*</label>
-                <input
-                  type="password"
-                  placeholder="Enter password"
-                  className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                  id="password"
-                  name="password"
                   required
                 />
               </div>
@@ -119,6 +94,18 @@ export default function WareHouseAdminPage() {
               </div>
 
               <div className="mt-4">
+                <label className="text-slate-500">Password*</label>
+                <input
+                  type="password"
+                  placeholder="Enter password"
+                  className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                  id="password"
+                  name="password"
+                  required
+                />
+              </div>
+
+              <div className="mt-4">
                 <label className="text-slate-500">State*</label>
                 <input
                   type="text"
@@ -129,32 +116,49 @@ export default function WareHouseAdminPage() {
                   required
                 />
               </div>
+
+              <div className="mt-4 flex flex-col">
+                <label className="text-slate-500">Country*</label>
+                <select
+                  className="select select-primary w-full mt-2 shadow-lg"
+                  name="country"
+                  id="country"
+                  required
+                >
+                  <option disabled selected>
+                    Select your country
+                  </option>
+                  {countries}
+                </select>
+              </div>
             </div>
 
             <div className="w-1/2">
-              <div className="mt-3">
-                <label className="text-slate-500">Owner Name*</label>
+              <div className="mt-4">
+                <label className="text-slate-500">Manager Name*</label>
                 <input
                   type="text"
-                  placeholder="Enter owner name"
+                  placeholder="Enter warehouse manager name"
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                  id="ownerName"
-                  name="ownerName"
+                  id="managerName"
+                  name="managerName"
                   required
                 />
               </div>
-              <div className="mt-3">
+
+              <div className="mt-4">
                 <label className="text-slate-500">Email*</label>
                 <input
                   type="email"
-                  placeholder="Enter owner email"
+                  placeholder="Enter warehouse manager email"
                   className="input input-bordered input-primary w-full mt-2 shadow-lg"
                   id="email"
                   name="email"
                   required
                 />
               </div>
-              <div className="mt-3">
+
+              <div className="mt-4">
                 <label className="text-slate-500">Confirm Password*</label>
                 <input
                   type="password"
@@ -190,21 +194,6 @@ export default function WareHouseAdminPage() {
                 />
               </div>
             </div>
-          </div>
-
-          <div className="mt-3 flex flex-col">
-            <label className="text-slate-500">Country*</label>
-            <select
-              className="select select-primary w-full mt-2 shadow-lg"
-              name="country"
-              id="country"
-              required
-            >
-              <option disabled selected>
-                Select your country
-              </option>
-              {countries}
-            </select>
           </div>
 
           <ToastMessage successMessage={successMessage} errorMessage={errorMessage} />

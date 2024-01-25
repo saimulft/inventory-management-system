@@ -2,7 +2,6 @@ import { useState } from "react";
 import useAuth from "../../hooks/useAuth";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { v4 as uuidv4 } from 'uuid';
 import ToastMessage from "../../Components/Shared/ToastMessage";
 import { FaSpinner } from "react-icons/fa";
 import SearchDropdown from "../../Utilities/SearchDropdown";
@@ -67,7 +66,6 @@ const StoreManagerVAPage = () => {
         const email = form.email.value;
         const password = form.password.value;
         const confirmPassword = form.confirmPassword.value;
-        const username = form.username.value;
 
         if (password !== confirmPassword) {
             return setErrorMessage('Password and confirm password must be same!')
@@ -82,9 +80,9 @@ const StoreManagerVAPage = () => {
         }
 
         const storeManagerVA = {
-            admin_id: user.admin_id, creator_email: user?.email, store_manager_va_id: uuidv4(),
-             store_manager_admin_id: user.role === "Store Manager Admin" ? user.store_manager_admin_id : storeManagerOption?.store_manager_admin_id,
-            store_access_ids: storeIDS, full_name: name, email, username, password, role: 'Store Manager VA'
+            admin_id: user.admin_id, creator_email: user?.email,
+            store_manager_admin_id: user.role === "Store Manager Admin" ? user.store_manager_admin_id : storeManagerOption?.store_manager_admin_id,
+            store_access_ids: storeIDS, full_name: name, email, password, role: 'Store Manager VA'
         }
 
         try {
@@ -112,7 +110,7 @@ const StoreManagerVAPage = () => {
             <form onSubmit={handleCreateStoreManagerVA}>
                 <div className="flex gap-4 w-full mt-5">
                     <div className="w-1/2">
-                        <div className="mt-3">
+                        <div className="mt-4">
                             <label className="text-slate-500">Name*</label>
                             <input
                                 type="text"
@@ -123,43 +121,7 @@ const StoreManagerVAPage = () => {
                                 required
                             />
                         </div>
-                        <div className="mt-3">
-                            <label className="text-slate-500">Email*</label>
-                            <input
-                                type="email"
-                                placeholder="Enter email"
-                                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                id="email"
-                                name="email"
-                                required
-                            />
-                        </div>
-                        <div className="mt-3">
-                            <label className="text-slate-500">Confirm password*</label>
-                            <input
-                                type="password"
-                                placeholder="Confirm password"
-                                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                required
-                            />
-                        </div>
-                    </div>
-
-                    <div className="w-1/2">
-                        <div className="mt-3">
-                            <label className="text-slate-500">Username*</label>
-                            <input
-                                type="text"
-                                placeholder="Enter username"
-                                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                id="username"
-                                name="username"
-                                required
-                            />
-                        </div>
-                        <div className="mt-3">
+                        <div className="mt-4">
                             <label className="text-slate-500">Password*</label>
                             <input
                                 type="password"
@@ -170,24 +132,52 @@ const StoreManagerVAPage = () => {
                                 required
                             />
                         </div>
+
                         {
-                            user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-3">
+                            user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-4">
                                 <label className="text-slate-500">Store Manager Admin</label>
                                 <SearchDropdown isLoading={storeManagerLoading} isMulti={false} option={storeManagerOption} optionData={allStoreManager} placeholder="Select" setOption={setStoreManagerOption} />
-                            </div> : <div className="mt-3">
+                            </div> : <div className="mt-4">
                                 <label className="text-slate-500">Select Store</label>
                                 <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                             </div>
                         }
                     </div>
+
+                    <div className="w-1/2">
+                        <div className="mt-4">
+                            <label className="text-slate-500">Email*</label>
+                            <input
+                                type="email"
+                                placeholder="Enter email"
+                                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                id="email"
+                                name="email"
+                                required
+                            />
+                        </div>
+                        <div className="mt-4">
+                            <label className="text-slate-500">Confirm password*</label>
+                            <input
+                                type="password"
+                                placeholder="Confirm password"
+                                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                required
+                            />
+                        </div>
+
+                        {
+                            user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-4">
+                                <label className="text-slate-500">Select Store</label>
+                                <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={filteredStoreData} placeholder="Select Store" setOption={setStoreOption} />
+                            </div> : ''
+                        }
+                    </div>
                 </div>
 
-                {
-                    user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-3">
-                        <label className="text-slate-500">Select Store</label>
-                        <SearchDropdown isLoading={storeLoading} isMulti={true} option={storeOption} optionData={filteredStoreData} placeholder="Select Store" setOption={setStoreOption} />
-                    </div> : ''
-                }
+
 
                 <ToastMessage successMessage={successMessage} errorMessage={errorMessage} />
 

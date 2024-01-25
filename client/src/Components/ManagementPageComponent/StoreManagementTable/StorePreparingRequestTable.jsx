@@ -859,9 +859,11 @@ export default function StorePreparingRequestTable() {
                     name="courier"
                   >
                     <option value="Select courier">Select courier</option>
-                    <option value="Courier-1">Courier-1</option>
-                    <option value="Courier-2">Courier-2</option>
-                    <option value="Courier-3">Courier-3</option>
+                    <option value="FedEx">FedEx</option>
+                    <option value="Sky Postal">Sky Postal</option>
+                    <option value="United Percel Service">United Percel Service</option>
+                    <option value="Pace Couriers">Pace Couriers</option>
+                    <option value="Central Courier Company">Central Courier Company</option>
                   </select>
                 </div>
                 <div className="flex flex-col mt-2">
