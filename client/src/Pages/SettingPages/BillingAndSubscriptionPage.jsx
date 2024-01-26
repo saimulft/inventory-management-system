@@ -49,11 +49,11 @@ export default function BillingAndSubscriptionPage() {
   }
 
   return (
-    <div>
+    <>
       {/* previous billing and subscription page */}
       {/* <BillingAndSubscription /> */}
 
-      <div className="min-h-[calc(100vh-310px)] max-h-full grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 py-10 relative">
+      <div className="min-h-[calc(100vh-310px)] max-h-full grid gap-8 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 py-10 relative">
         {!isLoading && !plans.length ? <div className="absolute top-[250px] flex flex-col space-y-3 items-center justify-center w-full text-gray-500 text-xl font-medium">
           <p>You don&apos;t have any subscription or package!</p>
           {user.role === 'Admin' && <div>Go to <Link to="/dashboard/add-store" className="underline hover:text-[#8633FF]">Add Store</Link> page.</div>}</div> : <></>}
@@ -86,21 +86,17 @@ export default function BillingAndSubscriptionPage() {
                     </div>
               }
               <div>
-                <p className="text-sm">For {plan.store_name}</p>
                 <p className="text-xl font-medium">{plan.subscription_plan}</p>
+                <p className="text-sm">For {plan.store_name}</p>
               </div>
             </div>
-            <p className="mt-2 text-sm">
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Pariatur,
-              iste.
-            </p>
-            <div className="flex mt-2">
-              <h1 className="text-3xl font-bold">${plan.subscription_plan === 'Basic' && plan.subscription_type === 'monthly' ? '99' : plan.subscription_plan === 'Basic' && plan.subscription_type === 'yearly' ? '1,499' : plan.subscription_plan === 'Pro' && plan.subscription_type === 'monthly' ? '199' : plan.subscription_plan === 'Pro' && plan.subscription_type === 'yearly' ? '2,990' : ''}</h1>
+            <div className="flex my-4">
+              <h1 className="text-4xl font-bold">${plan.subscription_plan === 'Basic' && plan.subscription_type === 'monthly' ? '99' : plan.subscription_plan === 'Basic' && plan.subscription_type === 'yearly' ? '1,499' : plan.subscription_plan === 'Pro' && plan.subscription_type === 'monthly' ? '199' : plan.subscription_plan === 'Pro' && plan.subscription_type === 'yearly' ? '2,990' : ''}</h1>
 
               <p className="mt-auto">/{plan.subscription_type === 'monthly' ? 'Month' : 'Year'}</p>
             </div>
-            <p className="line-through">$1,788</p>
-            <p className="my-2 font-bold">What is included</p>
+            <hr className="h[1px] w-full bg-gray-200" />
+            <p className="mt-4 mb-2 font-bold">What is included</p>
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <div className="bg-[#8633FF] h-5 w-5 flex justify-center items-center rounded-full text-white text-xs">
@@ -121,13 +117,13 @@ export default function BillingAndSubscriptionPage() {
                 <p>All analytics feature</p>
               </div>
             </div>
-            <button disabled={loading} onClick={() => handleManageSubscription(plan.session_id)} className="bg-[#8633FF] font-medium flex justify-center items-center gap-2 text-white w-full mt-8 py-2 rounded">
+            <button disabled={loading} onClick={() => handleManageSubscription(plan.session_id)} className="bg-[#8633FF] font-medium flex justify-center items-center gap-2 text-white w-full mt-7 py-2 rounded">
               {loading && sessionId === plan.session_id ? <FaSpinner size={20} className="animate-spin" /> : ''}
               <span>Manage Subscription</span>
             </button>
           </div>)
         }
       </div>
-    </div>
+    </>
   );
 }

@@ -272,7 +272,7 @@ const run = async () => {
             const { admin_id, store_access_ids } = req.query;
 
             if (req.role === 'Admin') {
-                const result = await all_stores_collection.find({ admin_id: admin_id }).sort({ date: -1 }).toArray()
+                const result = await all_stores_collection.find({ admin_id: admin_id }, {projection: {store_name: 1, subscription_plan: 1, subscription_type: 1, session_id: 1}}).sort({ date: -1 }).toArray()
                 
                 if (result.length) {
                     res.status(200).json({ data: result, message: "Successfully get all store subscriptions" })
@@ -283,7 +283,7 @@ const run = async () => {
             }
             if (req.role === 'Store Owner') {
                 const access_ids = store_access_ids.map(id => new ObjectId(id))
-                const result = await all_stores_collection.find({ _id: { $in: access_ids } }).sort({ date: -1 }).toArray()
+                const result = await all_stores_collection.find({ _id: { $in: access_ids } }, {projection: {store_name: 1, subscription_plan: 1, subscription_type: 1, session_id: 1}}).sort({ date: -1 }).toArray()
 
                 if (result.length) {
                     res.status(200).json({ data: result, message: "Successfully get all accessed store subscriptions" })
