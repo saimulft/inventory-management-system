@@ -484,7 +484,7 @@ export default function InventoryPendingArrivalTable() {
       </div>
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <div className="overflow-x-auto overflow-y-hidden">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
           <table className="table table-sm">
             <thead>
               <tr className="bg-gray-200">

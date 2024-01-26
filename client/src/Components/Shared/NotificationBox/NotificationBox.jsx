@@ -20,6 +20,7 @@ export default function NotificationBox({ notificationsRef }) {
   const [refetch, setRefetch] = useState(false);
   const [notificationAlertData, setNotificationAlertData] = useState([]);
   const [notificationLoading, setNotificationLoading] = useState();
+  console.log(notifications)
 
   const handleNotificationsData = () => {
     axios
@@ -323,8 +324,8 @@ export default function NotificationBox({ notificationsRef }) {
               })}
             </div>
 
-            {!notificationLoading || notifications?.length == 0 && (
-              <div className="text-xl font-medium text-center text-purple-500  mt-2">
+            {!notificationLoading && notifications?.length == 0 && (
+              <div className="text-lg font-medium text-center text-purple-500  mt-2">
                 Notifications data not available!
               </div>
             )}
