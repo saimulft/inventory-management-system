@@ -237,7 +237,7 @@ export default function ConversationUserList() {
     );
   } else if (!loading && error) {
     content = <p></p>;
-  } else if (!loading && !error && data.length > 0) {
+  } else if (!loading && !error && data?.length > 0) {
 
     content = dataSortByTime(userConversationListSearch(data))?.map(
       (userData) => {
@@ -345,7 +345,7 @@ export default function ConversationUserList() {
       {/* user chat list  */}
       <div className="chat_list h-[calc(100%_-_126px)] overflow-y-scroll">
         {content}
-        {data.length < 1 && !loading && !search && (
+        {data?.length < 1 && !loading && !search && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
             Let&apos;s begin conversation!
           </p>
