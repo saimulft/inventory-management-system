@@ -56,7 +56,7 @@ export default function Sidebar() {
                   className={({ isActive }) =>
                     isActive
                       ? `bg-[#8633FF] text-white rounded ps-3 pe-3 my-2 ${isSidebarOpen ? "w-56" : ""
-                      } py-[10px] border-b border-[#3e3e41] flex items-center gap-2 text-sm rounded-t`
+                      } py-[10px] border-b border-[#3e3e41] transition-all duration-100 flex items-center gap-2 text-sm rounded-t`
                       : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 ps-3 ${isSidebarOpen ? "w-56" : ""
                       } pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t`
                   }

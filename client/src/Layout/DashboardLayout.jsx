@@ -13,12 +13,12 @@ export default function DashboardLayout() {
   return (
     <div className="flex bg-[#fafbfc]">
       <div
-        className={`transition-all ease-out duration-300 delay-0 ${isSidebarOpen ? "w-[18.5%]" : "w-[6%] "
+        className={`transition-all ease-out duration-300 delay-0 ${isSidebarOpen ? "w-[18.5%]" : "w-[6%]"
           }`}
       >
         <Sidebar />
       </div>
-      <div className={` ${isSidebarOpen ? "w-[81.5%]" : "w-[94%] "}`}>
+      <div className={`transition-all ease-out duration-300 delay-0 ${isSidebarOpen ? "w-[81.5%]" : "w-[94%]"}`}>
         <Container> 
           <div className="sticky top-0 z-50">
             <Navbar />
