@@ -359,7 +359,7 @@ export default function InventoryPendingArrivalTable() {
       <h3 className="text-center text-2xl font-medium">
         Pending Arrival
         <span className={`${notificationSearchValue && "hidden"}`}>
-          : {data.length}
+          : {searchError ? 0 : searchResults?.length ? searchResults?.length : data?.length}
         </span>
       </h3>
 
@@ -483,234 +483,236 @@ export default function InventoryPendingArrivalTable() {
         )}
       </div>
 
-      <div className=" mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <table className="table table-sm">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Date</th>
-              <th>Store Name</th>
-              <th>ASIN/UPC</th>
-              <th>Code Type</th>
-              <th>Product Name</th>
-              <th>Supplier ID</th>
-              <th>UPIN</th>
-              <th>Unit Price</th>
-              <th>Quantity</th>
-              <th>Courier</th>
-              <th>Supplier Tracking</th>
-              <th>EDA</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
+      <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
+        <div className="overflow-x-auto overflow-y-hidden">
+          <table className="table table-sm">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Date</th>
+                <th>Store Name</th>
+                <th>ASIN/UPC</th>
+                <th>Code Type</th>
+                <th>Product Name</th>
+                <th>Supplier ID</th>
+                <th>UPIN</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Courier</th>
+                <th>Supplier Tracking</th>
+                <th>EDA</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody className="relative">
+              {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
             )} */}
-            {searchError ? (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                {searchError}
-              </p>
-            ) : (
-              <>
-                {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
-                        <th className="font-normal">{d.store_name}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.supplier_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.unit_price}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.courier ? d.courier : "-"}</td>
-                        <td>
-                          {d.supplier_tracking ? d.supplier_tracking : "-"}
-                        </td>
-                        <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
-                        <td>
-                          <div className="dropdown dropdown-end">
-                            <label tabIndex={0}>
-                              <BiDotsVerticalRounded
-                                onClick={() => setSingleData(d)}
-                                cursor="pointer"
-                              />
-                            </label>
-                            <ul
-                              tabIndex={0}
-                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                            >
-                              <li>
-                                <button
-                                  onClick={() => {
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal();
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                              {user.role === "Admin" ||
-                                user.role === "Admin VA" ? (
+              {searchError ? (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  {searchError}
+                </p>
+              ) : (
+                <>
+                  {searchResults.length ? (
+                    displayedDataFilter.map((d, index) => {
+                      return (
+                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                          <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
+                          <th className="font-normal">{d.store_name}</th>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.supplier_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.unit_price}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier ? d.courier : "-"}</td>
+                          <td>
+                            {d.supplier_tracking ? d.supplier_tracking : "-"}
+                          </td>
+                          <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
+                          <td>
+                            <div className="dropdown dropdown-end">
+                              <label tabIndex={0}>
+                                <BiDotsVerticalRounded
+                                  onClick={() => setSingleData(d)}
+                                  cursor="pointer"
+                                />
+                              </label>
+                              <ul
+                                tabIndex={0}
+                                className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                              >
                                 <li>
-                                  <button onClick={() => handleDelete(d._id)}>
-                                    Delete
+                                  <button
+                                    onClick={() => {
+                                      document
+                                        .getElementById("my_modal_2")
+                                        .showModal();
+                                    }}
+                                  >
+                                    Edit
                                   </button>
                                 </li>
-                              ) : (
-                                ""
-                              )}
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : isLoading ? (
-                  <Loading />
-                ) : !notificationSearchData && !notificationSearchValue ? (
-                  displayAllData?.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
-                        <th className="font-normal">{d.store_name}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.supplier_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.unit_price}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.courier ? d.courier : "-"}</td>
-                        <td>
-                          {d.supplier_tracking ? d.supplier_tracking : "-"}
-                        </td>
-                        <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
-                        <td>
-                          <div className="dropdown dropdown-end">
-                            <label tabIndex={0}>
-                              <BiDotsVerticalRounded
-                                onClick={() => setSingleData(d)}
-                                cursor="pointer"
-                              />
-                            </label>
-                            <ul
-                              tabIndex={0}
-                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                            >
-                              <li>
-                                <button
-                                  onClick={() => {
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal();
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                              {user.role === "Admin" ||
-                                user.role === "Admin VA" ? (
+                                {user.role === "Admin" ||
+                                  user.role === "Admin VA" ? (
+                                  <li>
+                                    <button onClick={() => handleDelete(d._id)}>
+                                      Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  ""
+                                )}
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : isLoading ? (
+                    <Loading />
+                  ) : !notificationSearchData && !notificationSearchValue ? (
+                    displayAllData?.map((d, index) => {
+                      return (
+                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                          <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
+                          <th className="font-normal">{d.store_name}</th>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.supplier_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.unit_price}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier ? d.courier : "-"}</td>
+                          <td>
+                            {d.supplier_tracking ? d.supplier_tracking : "-"}
+                          </td>
+                          <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
+                          <td>
+                            <div className="dropdown dropdown-end">
+                              <label tabIndex={0}>
+                                <BiDotsVerticalRounded
+                                  onClick={() => setSingleData(d)}
+                                  cursor="pointer"
+                                />
+                              </label>
+                              <ul
+                                tabIndex={0}
+                                className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                              >
                                 <li>
-                                  <button onClick={() => handleDelete(d._id)}>
-                                    Delete
+                                  <button
+                                    onClick={() => {
+                                      document
+                                        .getElementById("my_modal_2")
+                                        .showModal();
+                                    }}
+                                  >
+                                    Edit
                                   </button>
                                 </li>
-                              ) : (
-                                ""
-                              )}
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  (notificationSearchData && <tr>
-                    <th>
-                      {notificationSearchData?.date && format(
-                        new Date(notificationSearchData?.date),
-                        "yyyy/MM/dd"
-                      )}
-                    </th>
-                    <th className="font-normal">
-                      {notificationSearchData?.store_name}
-                    </th>
-                    <td>{notificationSearchData?.asin_upc_code}</td>
-                    <td>{notificationSearchData?.code_type}</td>
-                    <td>{notificationSearchData?.product_name}</td>
-                    <td>{notificationSearchData?.supplier_id}</td>
-                    <td>{notificationSearchData?.upin}</td>
-                    <td>{notificationSearchData?.unit_price}</td>
-                    <td>{notificationSearchData?.quantity}</td>
-                    <td>
-                      {notificationSearchData?.courier
-                        ? notificationSearchData?.courier
-                        : "-"}
-                    </td>
-                    <td>
-                      {notificationSearchData?.supplier_tracking
-                        ? notificationSearchData?.supplier_tracking
-                        : "-"}
-                    </td>
-                    <td>
-                      {notificationSearchData?.date && format(
-                        new Date(notificationSearchData?.eda),
-                        "yyyy/MM/dd"
-                      )}
-                    </td>
-                    <td>
-                      <div className="dropdown dropdown-end">
-                        <label tabIndex={0}>
-                          <BiDotsVerticalRounded
-                            onClick={() =>
-                              setSingleData(notificationSearchData)
-                            }
-                            cursor="pointer"
-                          />
-                        </label>
-                        <ul
-                          tabIndex={0}
-                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                        >
-                          <li>
-                            <button
-                              onClick={() => {
-                                document
-                                  .getElementById("my_modal_2")
-                                  .showModal();
-                              }}
-                            >
-                              Edit
-                            </button>
-                          </li>
-                          {user.role === "Admin" || user.role === "Admin VA" ? (
+                                {user.role === "Admin" ||
+                                  user.role === "Admin VA" ? (
+                                  <li>
+                                    <button onClick={() => handleDelete(d._id)}>
+                                      Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  ""
+                                )}
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    (notificationSearchData && <tr>
+                      <th>
+                        {notificationSearchData?.date && format(
+                          new Date(notificationSearchData?.date),
+                          "yyyy/MM/dd"
+                        )}
+                      </th>
+                      <th className="font-normal">
+                        {notificationSearchData?.store_name}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.product_name}</td>
+                      <td>{notificationSearchData?.supplier_id}</td>
+                      <td>{notificationSearchData?.upin}</td>
+                      <td>{notificationSearchData?.unit_price}</td>
+                      <td>{notificationSearchData?.quantity}</td>
+                      <td>
+                        {notificationSearchData?.courier
+                          ? notificationSearchData?.courier
+                          : "-"}
+                      </td>
+                      <td>
+                        {notificationSearchData?.supplier_tracking
+                          ? notificationSearchData?.supplier_tracking
+                          : "-"}
+                      </td>
+                      <td>
+                        {notificationSearchData?.date && format(
+                          new Date(notificationSearchData?.eda),
+                          "yyyy/MM/dd"
+                        )}
+                      </td>
+                      <td>
+                        <div className="dropdown dropdown-end">
+                          <label tabIndex={0}>
+                            <BiDotsVerticalRounded
+                              onClick={() =>
+                                setSingleData(notificationSearchData)
+                              }
+                              cursor="pointer"
+                            />
+                          </label>
+                          <ul
+                            tabIndex={0}
+                            className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                          >
                             <li>
                               <button
-                                onClick={() =>
-                                  handleDelete(notificationSearchData?._id)
-                                }
+                                onClick={() => {
+                                  document
+                                    .getElementById("my_modal_2")
+                                    .showModal();
+                                }}
                               >
-                                Delete
+                                Edit
                               </button>
                             </li>
-                          ) : (
-                            ""
-                          )}
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>)
-                )}
-              </>
-            )}
-          </tbody>
-        </table>
+                            {user.role === "Admin" || user.role === "Admin VA" ? (
+                              <li>
+                                <button
+                                  onClick={() =>
+                                    handleDelete(notificationSearchData?._id)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </li>
+                            ) : (
+                              ""
+                            )}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>)
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* pagination */}
         {!isLoading && !notificationSearchValue &&
