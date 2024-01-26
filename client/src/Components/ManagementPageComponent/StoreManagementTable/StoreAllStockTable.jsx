@@ -59,7 +59,7 @@ export default function StoreAllStockTable() {
     setSearchResults(filteredData);
   };
 
- 
+
   const itemsPerPage = 15;
   const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
 
@@ -150,12 +150,11 @@ export default function StoreAllStockTable() {
               </p>
             ) : (
               <>
-                {/* {notificationSearchData == undefined &&
-                  notificationSearchValue && (
-                    <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                      All stock notified data not available!
-                    </p>
-                  )} */}
+                {notificationSearchData == undefined && notificationSearchValue && (
+                  <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                    Data move to the next sequence!
+                  </p>
+                )}
 
                 {searchResults.length ? (
                   displayedDataFilter.map((d, index) => {
@@ -231,7 +230,7 @@ export default function StoreAllStockTable() {
         {!isLoading &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && !notificationSearchValue &&(
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -247,7 +246,7 @@ export default function StoreAllStockTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}

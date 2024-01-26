@@ -3,8 +3,10 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { ChatContext } from "../../../Providers/ChatProvider";
 import useAuth from "../../../hooks/useAuth";
 import axios from "axios";
+import moment from 'moment';
 import { AiOutlineClose } from "react-icons/ai";
 import ChatLoading from "../../ChatLoading/ChatLoading";
+// import { HiDotsVertical } from "react-icons/hi";
 
 export default function SingleConversation() {
   const specificComponentRef = useRef(null);
@@ -37,9 +39,13 @@ export default function SingleConversation() {
   const [temporaryData, setTemporaryData] = useState([]);
   const [calcScrollHeight, setCalcScrollHeight] = useState(0);
   const [chatLoadingStatus, setChatLoadingStatus] = useState(false);
-  const [switchLick, setSwitchLick] = useState("");
+  const [activeMessage, setActiveMessage] = useState("");
   const [messageSend, setMessageSend] = useState(false);
   const [messageSendSocket, setMessageSendSocket] = useState(false);
+  // const [tooltipOpenID, setTooltipOpenID] = useState("")
+  // const [isTooltipOpen, setIsTooltipOpen] = useState(false)
+  // const [generateRandomID, setGenerateRandomID] = useState("")
+
 
   // render message data first time
   useEffect(() => {
@@ -121,6 +127,7 @@ export default function SingleConversation() {
     try {
       e.preventDefault();
       setMessageSend(true);
+      setActiveMessage('')
       let msg = document.getElementById("message_input")?.value;
       if (msg || text) {
         const date = new Date();
@@ -140,6 +147,7 @@ export default function SingleConversation() {
           const randomId = Math.floor(
             100000 + Math.random() * 9000000000000000
           );
+          // setGenerateRandomID(JSON.stringify(randomId))
           setConversation([...conversation, { ...message, _id: randomId }]);
           specificComponentRef.current.scrollTop =
             specificComponentRef.current.scrollHeight;
@@ -155,9 +163,13 @@ export default function SingleConversation() {
             },
           }
         );
+
         if (data?.data) {
           socket.current.on("");
+          // const localUpdatedMessages = conversation.filter(message => message._id != generateRandomID)
+          // setConversation([...localUpdatedMessages, data.data])
         }
+
         const seenMassageStatus = (sender, receiver) => {
           const emailToUsername = (email) => email.split("@")[0];
           const userValue = {
@@ -193,8 +205,6 @@ export default function SingleConversation() {
         } else if (data?.data?._id) {
           socket.current?.emit("sendMessage", data?.data);
           typingStop();
-          const updateDataLestMessage = { data: data?.data, isMessageSeen };
-          console.log(updateDataLestMessage);
           socket.current?.emit("sentLestMessageUpdateConversationUserList", {
             ...data?.data,
             isMessageSeen,
@@ -257,9 +267,8 @@ export default function SingleConversation() {
       if (specificComponentRef.current) {
         // Calculate the scroll position relative to the specific component
         const componentScrollTop = specificComponentRef.current.scrollTop;
-
         if (parseInt(componentScrollTop) == 0 && !conversationLoading) {
-          specificComponentRef.current.scrollTop = 5;
+          specificComponentRef.current.scrollTop = 1;
           setLoadNew((e) => !e);
         }
       }
@@ -286,15 +295,26 @@ export default function SingleConversation() {
         .patch(
           `/api/v1/conversations_api/messages/seen_messages?id=${conversationId}&email=${currentUserEmail}`
         )
-        .then((res) => {
+        .then(() => {
           setConversationDataRefetch(!conversationDataRefetch);
         })
         .catch((error) => {
           console.log(error);
-          setNotificationAlert(true);
         });
     }
   };
+
+  // const deleteMessage = (msgID) => {
+  //   axios.patch(`/api/v1/conversations_api/messages/delete_message?conversation_id=${conversationData._id}&message_id=${msgID}`)
+  //     .then(res => {
+  //       if (res.data.success) {
+  //         const deletedMessageID = res.data.messageData.messageID
+  //         const updatedMessages = conversation.filter(singleMessage => singleMessage._id != deletedMessageID)
+  //         setConversation(updatedMessages)
+  //       }
+  //     })
+  //     .catch((error) => console.log(error))
+  // }
 
   /// get single message on socket
   useEffect(() => {
@@ -311,8 +331,9 @@ export default function SingleConversation() {
 
   let content;
   if (!conversationLoading && conversationError) {
-    content = <p>Something is Wrong !</p>;
+    content = <p className="text-center mt-4 text-lg font-medium text-red-500">Something is Wrong !</p>;
   } else if (conversation?.length > 0 || !conversationError) {
+    let previousTime = ''
     content = conversation
       ?.filter((message) => Object.keys(message).length > 0)
       ?.sort((a, b) => {
@@ -322,125 +343,144 @@ export default function SingleConversation() {
       })
       ?.map((msg, key) => {
         const currentUser = msg?.sender == user?.email;
-        const msgLengthCheck = msg?.text?.length <= 26;
-        const text = msg?.text == "*like**" ? "👍" : msg?.text;
+        const msgLengthCheck = msg?.text?.length <= 19;
+        const text = msg?.text
+        const calculateAgoTime = (time) => {
+          const lastMessageDate = new Date(time);
+          const currentDate = new Date();
+          const timeDifference = currentDate - lastMessageDate;
+
+          const agoTime = timeDifference < 60000
+            ? "Just now" :
+            timeDifference >= 60000 && timeDifference < 86400000
+              ? "Today, " + moment(msg.timestamp).format('h:mm a')
+              : timeDifference >= 86400000 && timeDifference < 31536000000
+                ? moment(msg.timestamp).format('MMM D YYYY, h:mm a')
+                : "";
+
+          if (previousTime != agoTime) {
+            previousTime = agoTime
+            return agoTime
+          }
+          else {
+            return ""
+          }
+        };
+
         if (text == "demo") {
           return;
         }
+
+        const calculateAgoTimeValue = calculateAgoTime(msg.timestamp)
         return (
           <div id="messages_text" key={key}>
+            <p className={`text-center py-2 text-xs text-[#817d7d] ${calculateAgoTimeValue ? "block" : 'hidden'} `}>{calculateAgoTimeValue}</p>
             <div
-              className={`flex my-[4px] px-2 ${currentUser ? "justify-end " : "justify-start items-end "
-                } ${conversation?.length - 1 == key && !chatLoadingStatus && " mb-5"
-                }`}
+              className={`flex items-center gap-1 my-[6px] px-2 ${currentUser ? "justify-end " : "justify-start items-end "
+                } ${conversation?.length - 1 == key && !chatLoadingStatus && " mb-[6px] "
+                } group `}
             >
-              {!currentUser && (
-                <div className="w-[30px] h-[30px] rounded-full bg-black ml-1 mr-0.5 overflow-hidden">
-                  <img
-                    className="w-full h-full"
-                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
-                    alt="user"
-                  />
-                </div>
-              )}
+              {/* <div className="relative">
+                {currentUser && < p onClick={() => {
+                  setTooltipOpenID(msg._id)
+                  setIsTooltipOpen(true)
+                }} className={` ${tooltipOpenID == msg._id ? "visible" : "invisible"} group-hover:visible text-[17px] text-[#8a8989] hover:bg-[#eaeaea] transition duration-150 cursor-pointer p-[6px] rounded-full`} > <HiDotsVertical /></p>}
+                {tooltipOpenID == msg._id && <p id="msg_dl" onClick={() => deleteMessage(msg._id)} className="absolute z-[120] bottom-7 rounded bg-[#eaeaea] hover:bg-[#e0e0e0] text-sm px-3 py-1 right-6 shadow">Delete</p>}
+              </div> */}
               <div
                 className={`${currentUser
-                  ? msg?.text == "*like**"
-                    ? "bg-transparent  text-4xl"
-                    : "bg-purple-600 text-white  break-words"
-                  : msg?.text == "*like**"
-                    ? "bg-transparent text-4xl"
-                    : "bg-gray-200 text-black break-words"
+                  ? "bg-purple-600 text-white  break-words"
+                  : "bg-[#eaeaea] text-black break-words"
                   } ${msgLengthCheck ? "rounded-full" : "rounded-xl"
-                  }  mx-0.5  py-[5px] px-3 max-w-[65%]`}
+                  }  mx-0.5 py-[6px] px-3 max-w-[65%] cursor-pointer ${msgLengthCheck.length}`}
               >
-                {text}
+                <p className="text-[15px]">{text}</p>
               </div>
             </div>
-          </div>
+          </div >
         );
       });
   }
-
   const online = checkOnline(currentChatUserEmail);
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-1 bottom-[0%] z-50 rounded overflow-hidden">
-      {/* conversation header */}
-      <div
-        style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
-        className="px-3 py-2 mb-1  flex gap-3 justify-between items-center text-xs font-medium  "
-      >
-        <div className="flex gap-3 items-center">
-          <img
-            className="w-10  rounded-full"
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
-            alt=""
-          />
-          <div>
-            <p className="font-medium text-base">
-              {currentChatUserName ? currentChatUserName : "Anonymous"}
-            </p>
-            <div className="text-sm flex items-center">
-              <div
-                className={`w-2.5 h-2.5 rounded-full ${online ? "bg-green-500" : "bg-gray-400"
-                  } `}
-              ></div>
-              <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>
-                {online ? "Online" : "Offline"}
-              </div>
+    <>
+      {/* {isTooltipOpen && <div className="absolute bg-[#494a4963] top-0 right-0 bottom-0 left-0 z-40"></div>} */}
+      <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-1 bottom-[0%] z-30 rounded overflow-hidden">
+        {/* conversation header */}
+        <div
+          style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
+          className="px-3 py-2 mb-1  flex gap-3 justify-between items-center text-xs font-medium"
+        >
+          <div className="flex gap-3 items-center">
+            <img
+              className="w-10  rounded-full"
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
+              alt=""
+            />
+            <div>
+              <p className="font-medium text-base">
+                {currentChatUserName ? currentChatUserName : "Anonymous"}
+              </p>
+              {!chatLoadingStatus && <div className="text-sm flex items-center">
+                <div
+                  className={`w-2.5 h-2.5 rounded-full ${online ? "bg-green-500" : "bg-gray-400"
+                    } `}
+                ></div>
+                <div className={` pl-1 ${!online && "text-[#8C8D90]"}`}>
+                  {online ? "Online" : "Offline"}
+                </div>
+              </div>}
+              {chatLoadingStatus && online && <ChatLoading />}
             </div>
           </div>
-        </div>
-        <div onClick={handleOpenSingleConversationShow} className="p-1 rounded-full hover:bg-purple-100 text-purple-500 cursor-pointer">
-          <AiOutlineClose
-
-            size={22}
-          />
-        </div>
-      </div>
-
-      {/* message body */}
-      <div
-        ref={specificComponentRef}
-        className="text-base message_body"
-        style={{
-          height: "calc(100% - 120px)",
-          overflowY: "auto",
-        }}
-      >
-        {conversationLoading && (
-          <div className="flex justify-center">
-            <p className="w-10 h-10 animate-spin border-4 border-purple-500 border-dotted rounded-full"></p>
+          <div onClick={handleOpenSingleConversationShow} className=" rounded-full p-[3px] hover:bg-purple-100 text-purple-500 cursor-pointer">
+            <AiOutlineClose
+              size={22}
+            />
           </div>
-        )}
-        {content}
-        {chatLoadingStatus && online && <ChatLoading />}
-      </div>
+        </div>
 
-      {/* sent message box  */}
-      <form
-        style={{ boxShadow: "0px -1px 6px 0px rgba(0, 0, 0, 0.1)" }}
-        className=""
-      >
-        <div className="flex items-center px-3 py-2 ">
-          <input
-            autoFocus
-            onFocus={handleSeenUnseen}
-            onChange={(e) => {
-              handleTyping(e);
-              setSwitchLick(e.target.value);
-            }}
-            id="message_input"
-            rows="1"
-            className="block mx-4 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500  "
-            placeholder="Your message..."
-          ></input>
-          {switchLick ? (
+        {/* message body */}
+        <div
+          ref={specificComponentRef}
+          className="text-base message_body"
+          style={{
+            height: "calc(100% - 120px)",
+            overflowY: "auto",
+          }}
+        >
+          {conversationLoading && (
+            <div className="flex justify-center">
+              <p className="w-10 h-10 animate-spin border-4 border-purple-500 border-dotted rounded-full"></p>
+            </div>
+          )}
+          {content}
+        </div>
+
+        {/* sent message box  */}
+        <form
+          style={{ boxShadow: "0px -1px 6px 0px rgba(0, 0, 0, 0.1)" }}
+          className=""
+        >
+          <div className="flex items-center px-3 py-2 ">
+            <input
+              autoFocus
+              onFocus={handleSeenUnseen}
+              onChange={(e) => {
+                handleTyping(e);
+                setActiveMessage(e.target.value);
+              }}
+              id="message_input"
+              rows="1"
+              className="block mx-2 py-2 px-4 w-full text-sm text-gray-900 outline-none rounded-full bg-white  border border-gray-300 focus:ring-purple-500 focus:border-purple-500  "
+              placeholder="Your message..."
+            ></input>
             <button
+              disabled={!activeMessage}
               onClick={handleSentNewMassages}
               type="submit"
-              className="inline-flex justify-center p-2 text-purple-600 rounded-full cursor-pointer hover:bg-purple-100 "
+              className={`inline-flex justify-center items-center p-[10px]  rounded-full  ${activeMessage ? "text-purple-600 hover:bg-purple-200 " : ""} `}
             >
               <svg
                 className="w-5 h-5 rotate-90"
@@ -452,16 +492,9 @@ export default function SingleConversation() {
                 <path d="m17.914 18.594-8-18a1 1 0 0 0-1.828 0l-8 18a1 1 0 0 0 1.157 1.376L8 18.281V9a1 1 0 0 1 2 0v9.281l6.758 1.689a1 1 0 0 0 1.156-1.376Z" />
               </svg>
             </button>
-          ) : (
-            <button
-              onClick={(e) => handleSentNewMassages(e, "*like**")}
-              className="text-[20px] hover:text-[22px] transition-all	duration-100"
-            >
-              👍
-            </button>
-          )}
-        </div>
-      </form>
-    </div>
+          </div>
+        </form>
+      </div>
+    </>
   );
 }

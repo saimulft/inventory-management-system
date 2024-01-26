@@ -54,7 +54,7 @@ export default function InventoryTotalASINTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
-  
+
   const handleCustomDateSearch = () => {
     setSearchError("");
     const startDate = rangeDate[0].startDate;
@@ -168,30 +168,28 @@ export default function InventoryTotalASINTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            
+
             {!notificationSearchValue && (
               <>
-              <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                <p
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -200,9 +198,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -211,9 +208,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -222,9 +218,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -233,9 +228,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -244,9 +238,8 @@ export default function InventoryTotalASINTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -307,11 +300,11 @@ export default function InventoryTotalASINTable() {
             </tr>
           </thead>
           <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
+            {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Pending arrival notified data not available!
+                Data move to the next sequence!
               </p>
-            )} */}
+            )}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}

@@ -21,20 +21,20 @@ export default function InventoryMissingArrivalTable() {
   const queryParams = new URLSearchParams(location.search);
   const notificationSearchValue = queryParams.get("notification_search");
   const missingArrivalStatus = queryParams.get("missing_arrival_status");
- 
+
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
   const [activeTab, setActiveTab] = useState('active');
   console.log("🚀 ~ file: InventoryMissingArrivalTable.jsx:28 ~ InventoryMissingArrivalTable ~ activeTab:", activeTab)
 
-useEffect(()=>{
-if(!missingArrivalStatus || missingArrivalStatus == "active"){
-  setActiveTab("active")
-}
-if(missingArrivalStatus == "solved"){
-  setActiveTab("solved")
-}
-},[missingArrivalStatus])
+  useEffect(() => {
+    if (!missingArrivalStatus || missingArrivalStatus == "active") {
+      setActiveTab("active")
+    }
+    if (missingArrivalStatus == "solved") {
+      setActiveTab("solved")
+    }
+  }, [missingArrivalStatus])
 
   const [singleData, setSingleData] = useState({});
   const [successMessage, setSuccessMessage] = useState("");
@@ -122,31 +122,31 @@ if(missingArrivalStatus == "solved"){
           .then((res) => {
             if (res.status === 200) {
               const notification_link =
-              "/dashboard/management/store/missing-arrival";
-            const notification_search = [res.data?.result?.insertedId];
-            const status = "A missing arrival entry has been deleted.";
-            axios
-              .post(`/api/v1/notifications_api/send_notification`, {
-                currentUser,
-                status,
-                notification_link,
-                notification_search,
-                storeId: data?.store_id,
-                warehouseId: data?.warehouse_id
-              })
-              .then((res) => {
-                // send real time notification data
-                if (res.data?.finalResult?.acknowledged) {
-                  const notificationData = res.data?.notificationData;
-                  if (notificationData) {
-                    socket?.current?.emit("sendNotification", {
-                      user,
-                      notificationData,
-                    });
+                "/dashboard/management/store/missing-arrival";
+              const notification_search = [res.data?.result?.insertedId];
+              const status = "A missing arrival entry has been deleted.";
+              axios
+                .post(`/api/v1/notifications_api/send_notification`, {
+                  currentUser,
+                  status,
+                  notification_link,
+                  notification_search,
+                  storeId: data?.store_id,
+                  warehouseId: data?.warehouse_id
+                })
+                .then((res) => {
+                  // send real time notification data
+                  if (res.data?.finalResult?.acknowledged) {
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      });
+                    }
                   }
-                }
-              })
-              .catch((err) => console.log(err));
+                })
+                .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -257,7 +257,7 @@ if(missingArrivalStatus == "solved"){
       });
   };
   // pagination code
- 
+
   const itemsPerPage = 15;
   const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
 
@@ -293,11 +293,10 @@ if(missingArrivalStatus == "solved"){
             onClick={() => {
               setActiveTab("active");
             }}
-            className={`px-3 rounded-s-md py-2 cursor-pointer ${
-              activeTab === "active"
-                ? "bg-[#8633FF] text-white"
-                : "border-2 border-[#8633FF] text-[#8633FF]"
-            }  `}
+            className={`px-3 rounded-s-md py-2 cursor-pointer ${activeTab === "active"
+              ? "bg-[#8633FF] text-white"
+              : "border-2 border-[#8633FF] text-[#8633FF]"
+              }  `}
           >
             Active
           </div>
@@ -305,11 +304,10 @@ if(missingArrivalStatus == "solved"){
             onClick={() => {
               setActiveTab("solved");
             }}
-            className={`px-3 rounded-e-md py-2 cursor-pointer ${
-              activeTab === "solved"
-                ? "bg-[#8633FF] text-white"
-                : "border-2 border-[#8633FF] text-[#8633FF]"
-            }  `}
+            className={`px-3 rounded-e-md py-2 cursor-pointer ${activeTab === "solved"
+              ? "bg-[#8633FF] text-white"
+              : "border-2 border-[#8633FF] text-[#8633FF]"
+              }  `}
           >
             Solved
           </div>
@@ -371,11 +369,11 @@ if(missingArrivalStatus == "solved"){
             </tr>
           </thead>
           <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
+            {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Pending arrival notified data not available!
+                Data move to the next sequence!
               </p>
-            )} */}
+            )}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -424,7 +422,7 @@ if(missingArrivalStatus == "solved"){
                                 </button>
                               </li>
                               {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                                user.role === "Admin VA" ? (
                                 <li>
                                   <button onClick={() => handleDelete(d._id)}>
                                     Delete
@@ -484,7 +482,7 @@ if(missingArrivalStatus == "solved"){
                                   </button>
                                 </li>
                                 {user.role === "Admin" ||
-                                user.role === "Admin VA" ? (
+                                  user.role === "Admin VA" ? (
                                   <li>
                                     <button onClick={() => handleDelete(d._id)}>
                                       Delete
@@ -584,7 +582,7 @@ if(missingArrivalStatus == "solved"){
         {!notificationSearchValue && !isLoading &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && !notificationSearchValue &&(
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -600,7 +598,7 @@ if(missingArrivalStatus == "solved"){
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}

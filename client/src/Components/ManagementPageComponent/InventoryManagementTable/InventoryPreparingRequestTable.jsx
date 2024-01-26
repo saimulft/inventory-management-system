@@ -60,14 +60,16 @@ export default function InventoryPreparingRequestTable() {
       }
     },
   });
-  
+
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
 
-  const handleRTS = async (_id, quantity, upin, data ) => {
+  console.log(notificationSearchData)
+
+  const handleRTS = async (_id, quantity, upin, data) => {
     console.log(data);
-    
+
     try {
       setLoading(true);
       const res = await axios.post(
@@ -314,30 +316,28 @@ export default function InventoryPreparingRequestTable() {
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-          
+
             {!notificationSearchValue && (
               <>
                 <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -346,9 +346,8 @@ export default function InventoryPreparingRequestTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -357,9 +356,8 @@ export default function InventoryPreparingRequestTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -368,9 +366,8 @@ export default function InventoryPreparingRequestTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -379,9 +376,8 @@ export default function InventoryPreparingRequestTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -390,9 +386,8 @@ export default function InventoryPreparingRequestTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -459,11 +454,11 @@ export default function InventoryPreparingRequestTable() {
             </tr>
           </thead>
           <tbody>
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
+            {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Pending arrival notified data not available!
+                Data move to the next sequence!
               </p>
-            )} */}
+            )}
             {searchError ? (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 {searchError}
@@ -651,7 +646,7 @@ export default function InventoryPreparingRequestTable() {
         {!isLoading &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && !notificationSearchValue &&(
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -667,7 +662,7 @@ export default function InventoryPreparingRequestTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}

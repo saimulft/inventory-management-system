@@ -20,6 +20,7 @@ export default function Sidebar() {
   const route = url?.pathname?.split("/")[2];
   const { user, setUser } = useAuth()
   const { setPageName } = useGlobal()
+  const { socket } = useContext(GlobalContext);
 
   useEffect(() => {
     if (route?.includes("settings")) {
@@ -31,9 +32,13 @@ export default function Sidebar() {
 
   const { isSidebarOpen, setIsSidebarOpen, setIsActiveSetting } = useContext(GlobalContext);
 
+  const socketId = socket?.current?.id
   const handleLogout = () => {
     Cookies.remove('imstoken')
     setUser(null)
+    socket?.current?.emit("removeUser", {
+      socketId,
+    });
   }
 
   return (
@@ -57,7 +62,6 @@ export default function Sidebar() {
               </div>
             </div>
           </div>
-
           {
             user?.role === 'Admin' || user?.role === 'Admin VA' ?
               <>
