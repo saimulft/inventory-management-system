@@ -26,9 +26,9 @@ function FileDownload({ fileName }) {
     };
 
     return (
-        <div>
+        <>
             {fileName.startsWith('file') ? <button className="bg-[#8633FF] w-[80px] text-white px-3 py-1 text-xs" onClick={handleDownload}>Download</button> : <Link target="_blank" to={fileName} ><button className="bg-[#8633FF] w-[80px] text-white px-3 py-1 text-xs">Visit Link</button></Link>}
-        </div>
+        </>
     );
 }
 

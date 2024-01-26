@@ -109,7 +109,7 @@ export default function Checkout() {
   const handleGetStarted = async (data) => {
     setIsloading(true)
     setPlanSelected(data.subscription_plan)
-    const allData = { all_data: {...storeDetails, subscription_plan: data.subscription_plan, subscription_type: data.subscription_type, lookup_key: data.lookup_key}, store_owners: storeOwners.length ? storeOwners : null }
+    const allData = { all_data: {...storeDetails, subscription_plan: data.subscription_plan, subscription_type: data.subscription_type, lookup_key: data.lookup_key, total_order: 0, pending_form_submitted: 0, preparing_form_submitted: 0}, store_owners: storeOwners.length ? storeOwners : null }
 
     axios.post('api/v1/payment_api/create-checkout-session', allData)
       .then(function (response) {

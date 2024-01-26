@@ -161,7 +161,7 @@ export default function InventoryTotalASINTable() {
       <h3 className="text-center text-2xl font-medium">
         Total ASIN/UPC
         <span className={`${notificationSearchValue && "hidden"}`}>
-          : {data.length}
+          : {searchError ? 0 : searchResults?.length ? searchResults?.length : data?.length}
         </span>
       </h3>
 
@@ -286,54 +286,34 @@ export default function InventoryTotalASINTable() {
         )}
       </div>
 
-      <div className="  mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <table className="table table-sm">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Product Image</th>
-              <th>Date</th>
-              <th>ASIN/UPC</th>
-              <th>Product Name</th>
-              <th>Min Price</th>
-              <th>Code Type</th>
-              <th>Store Manager</th>
-            </tr>
-          </thead>
-          <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
+      <div className="overflow-x-auto  mt-8 min-h-[calc(100vh-288px)] max-h-full">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Product Image</th>
+                <th>Date</th>
+                <th>ASIN/UPC</th>
+                <th>Product Name</th>
+                <th>Min Price</th>
+                <th>Code Type</th>
+                <th>Store Manager</th>
+              </tr>
+            </thead>
+            <tbody className="relative">
+              {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Pending arrival notified data not available!
+                Data move to the next sequence!
               </p>
             )} */}
-            {searchError ? (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                {searchError}
-              </p>
-            ) : (
-              <>
-                {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <td>
-                          {d.product_image && (
-                            <ViewImage fileName={d.product_image} />
-                          )}
-                        </td>
-                        <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td className="text-[#8633FF]">{d.product_name}</td>
-                        <td>{d.min_price}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.store_manager_name}</td>
-                      </tr>
-                    );
-                  })
-                ) : !notificationSearchValue ? (
-                  isLoading ? (
-                    <Loading />
-                  ) : (
-                    displayAllData?.map((d, index) => {
+              {searchError ? (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  {searchError}
+                </p>
+              ) : (
+                <>
+                  {searchResults.length ? (
+                    displayedDataFilter.map((d, index) => {
                       return (
                         <tr className={`${index % 2 == 1 && ""}`} key={index}>
                           <td>
@@ -350,33 +330,55 @@ export default function InventoryTotalASINTable() {
                         </tr>
                       );
                     })
-                  )
-                ) : (
-                  (notificationSearchValue && <tr>
-                    <td>
-                      {notificationSearchData?.product_image && (
-                        <ViewImage
-                          fileName={notificationSearchData.product_image}
-                        />
-                      )}
-                    </td>
-                    <th>
-                      {notificationSearchData?.date &&
-                        format(new Date(notificationSearchData.date), "y/MM/d")}
-                    </th>
-                    <td>{notificationSearchData?.asin_upc_code}</td>
-                    <td className="text-[#8633FF]">
-                      {notificationSearchData?.product_name}
-                    </td>
-                    <td>{notificationSearchData?.min_price}</td>
-                    <td>{notificationSearchData?.code_type}</td>
-                    <td>{notificationSearchData?.store_manager_name}</td>
-                  </tr>)
-                )}
-              </>
-            )}
-          </tbody>
-        </table>
+                  ) : !notificationSearchValue ? (
+                    isLoading ? (
+                      <Loading />
+                    ) : (
+                      displayAllData?.map((d, index) => {
+                        return (
+                          <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                            <td>
+                              {d.product_image && (
+                                <ViewImage fileName={d.product_image} />
+                              )}
+                            </td>
+                            <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                            <td>{d.asin_upc_code}</td>
+                            <td className="text-[#8633FF]">{d.product_name}</td>
+                            <td>{d.min_price}</td>
+                            <td>{d.code_type}</td>
+                            <td>{d.store_manager_name}</td>
+                          </tr>
+                        );
+                      })
+                    )
+                  ) : (
+                    (notificationSearchValue && <tr>
+                      <td>
+                        {notificationSearchData?.product_image && (
+                          <ViewImage
+                            fileName={notificationSearchData.product_image}
+                          />
+                        )}
+                      </td>
+                      <th>
+                        {notificationSearchData?.date &&
+                          format(new Date(notificationSearchData.date), "y/MM/d")}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td className="text-[#8633FF]">
+                        {notificationSearchData?.product_name}
+                      </td>
+                      <td>{notificationSearchData?.min_price}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.store_manager_name}</td>
+                    </tr>)
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* pagination */}
         {!isLoading &&

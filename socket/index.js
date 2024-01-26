@@ -8,24 +8,28 @@ const io = new Server(9000, {
 
 let users = [];
 const addUser = (userData, socketId) => {
-  !users.some((user) => user?.email == userData?.email) &&
+  !users.find((user) => user?.email == userData?.email) &&
     users?.push({ ...userData, socketId });
 };
 
 // add current user with creator email
 let currentUsers = [];
 const addCurrentUser = (currentUserData, socketId) => {
+  console.log('clg user2', { ...currentUserData, socketId })
   !currentUsers.some(
     (currentUser) => currentUser?.email == currentUserData?.email
   ) && currentUsers?.push({ ...currentUserData, socketId });
 };
+// console.log(currentUsers)
 
 const removeUser = (socketId) => {
-  users = users.filter((user) => user.socketId !== socketId);
+  const remove = currentUsers.filter((user) => user.socketId != socketId);
+  currentUsers = remove
 };
 
+
 const getUser = (receiver) => {
-  return users?.find((user) => user?.email == receiver);
+  return currentUsers?.find((user) => user?.email == receiver);
 };
 
 io.on('connection', (socket) => {
@@ -65,18 +69,15 @@ io.on('connection', (socket) => {
   });
 
   // typing status
+  let otherParticipants = {}
   socket.on("typing", ({ isTyping: status, receiver }) => {
-    const user = getUser(receiver);
-    {
-      user && io.to(user?.socketId).emit("getTyping", status);
-    }
+    otherParticipants = getUser(receiver);
+    { otherParticipants && io.to(otherParticipants?.socketId).emit("getTyping", status); }
   });
 
   // seen unseen status
   socket.on("sentSeenUnseenStatus", ({ status, receiver }) => {
-
     const user = getUser(receiver);
-
     {
       user && io.to(user?.socketId)?.emit("getSeenUnseenStatus", status);
     }
@@ -84,8 +85,8 @@ io.on('connection', (socket) => {
 
   // add current user
   socket.on("addCurrentUser", ({ currentUser }) => {
-
     addCurrentUser(currentUser, socket.id);
+    io.emit("getCurrentUsers", currentUsers);
   });
 
   // notification
@@ -358,8 +359,14 @@ io.on('connection', (socket) => {
     }
   });
 
+  socket.on("removeUser", ({ socketId }) => {
+    removeUser(socketId)
+  })
+
   //disconnect
   socket.on("disconnect", () => {
+    console.log('disconnected')
+    { otherParticipants && io.to(otherParticipants?.socketId).emit("getTyping", false); }
     removeUser(socket.id);
     io.emit("getUsers", users);
   });

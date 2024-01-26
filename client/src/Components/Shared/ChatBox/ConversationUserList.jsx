@@ -22,7 +22,12 @@ export default function ConversationUserList() {
     conversationDataRefetch,
     setIsMessageSeen,
     setMessageAlert,
+    setConversationDataRefetch
   } = useContext(ChatContext);
+
+  socket?.current?.on("updateRemoveUser", () => {
+    setConversationDataRefetch(!conversationDataRefetch)
+  })
 
   //set current Chat User Info
   const { setCurrentChatUserName, setCurrentChatUserEmail } =
@@ -169,11 +174,9 @@ export default function ConversationUserList() {
   // last message slice defined sender status
   const massagesSliceAndSenderStatus = (data) => {
     const lastMsg =
-      data?.lastMassages?.text == "*like**"
-        ? "👍"
-        : data?.lastMassages?.text?.length <= 11
-          ? data?.lastMassages?.text
-          : data?.lastMassages?.text.slice(0, 11) + "...";
+      data?.lastMassages?.text?.length <= 11
+        ? data?.lastMassages?.text
+        : data?.lastMassages?.text?.slice(0, 11) + "...";
 
     const senderStatus = user.email == data?.lastMassages?.sender ? "You:" : "";
     const result = senderStatus + " " + lastMsg;
@@ -186,6 +189,7 @@ export default function ConversationUserList() {
 
     return email;
   };
+
   // user Conversation List Search
   const userConversationListSearch = (data) => {
     if (search) {
@@ -261,38 +265,41 @@ export default function ConversationUserList() {
               setConversationData(userData);
             }}
             key={userData?._id}
-            className=" flex gap-3 items-center text-xs font-medium hover:bg-gray-100   py-2 px-4 cursor-pointer "
+            className=" flex gap-3 justify-between group items-center text-xs font-medium hover:bg-gray-100   py-2 px-4 cursor-pointer "
           >
-            <div className="w-14 h-14  rounded-full relative">
-              <img
-                className="w-14  rounded-full"
-                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
-                alt=""
-              />
-              <div
-                className={`absolute w-3 h-3 rounded-full bottom-[74%] left-[74%] ${online && "bg-green-500"
-                  }    `}
-              ></div>
-            </div>
+            <div className="flex gap-3 items-center text-xs font-medium">
+              <div className="w-14 h-14  rounded-full relative">
+                <img
+                  className="w-14  rounded-full"
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS3Z9rMHYtAHW14fQYWqzPoARdimFbyhm0Crw&usqp=CAU"
+                  alt=""
+                />
+                <div
+                  className={`absolute w-3 h-3 rounded-full bottom-[74%] left-[74%] ${online && "bg-green-500"
+                    }    `}
+                ></div>
+              </div>
 
-            <div>
-              <p className=" text-base">{senderName}</p>
-              <div className="text-sm flex items-center">
-                <span
-                  className={`${messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
-                    } text-xs`}
-                >
-                  {massagesSliceAndSenderStatus(userData)}
-                </span>
-                <span
-                  className={`${messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
-                    } pl-2 flex items-center text-xs `}
-                >
-                  <BsDot />{" "}
-                  {calculateAgoTime(userData?.lastMassages?.timestamp)}
-                </span>
+              <div>
+                <p className=" text-base">{senderName}</p>
+                <div className="text-sm flex items-center">
+                  <span
+                    className={`${messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
+                      } text-xs`}
+                  >
+                    {massagesSliceAndSenderStatus(userData)}
+                  </span>
+                  <span
+                    className={`${messageSeenUnseenStatus(userData) ? "text-[#8C8D90]" : ""
+                      } pl-2 flex items-center text-xs `}
+                  >
+                    <BsDot />
+                    {calculateAgoTime(userData?.lastMassages?.timestamp)}
+                  </span>
+                </div>
               </div>
             </div>
+
           </div>
         );
       }
@@ -340,10 +347,10 @@ export default function ConversationUserList() {
         {content}
         {data?.length < 1 && !loading && !search && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
-            Let's begin conversation!
+            Let&apos;s begin conversation!
           </p>
         )}
-        {userConversationListSearch?.length < 1 && !loading && search && (
+        {userConversationListSearch(data).length < 1 && !loading && search && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
             Search data not available!
           </p>

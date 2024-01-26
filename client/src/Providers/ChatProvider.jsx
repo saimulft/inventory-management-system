@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import useAuth from "../hooks/useAuth";
 import { GlobalContext } from "./GlobalProviders";
 
@@ -8,7 +8,6 @@ export const ChatProvider = ({ children }) => {
   const [isMessageSeen, setIsMessageSeen] = useState(false)
   const [messageAlert, setMessageAlert] = useState(true)
 
-
   // chat head information
   const [currentChatUserName, setCurrentChatUserName] = useState("");
   const [currentChatUserEmail, setCurrentChatUserEmail] = useState("");
@@ -17,8 +16,8 @@ export const ChatProvider = ({ children }) => {
     setCurrentChatUserName,
     setCurrentChatUserEmail,
   };
-  const [conversationData, setConversationData] = useState();
 
+  const [conversationData, setConversationData] = useState();
   const { socket } = useContext(GlobalContext);
 
   // user info
@@ -26,18 +25,21 @@ export const ChatProvider = ({ children }) => {
   const [activeUsers, setActiveUsers] = useState([]);
 
   useEffect(() => {
-    if (user) {
-      socket.current?.emit("addUsers", user || {});
-      socket.current?.on("getUsers", (users) => {
-        setActiveUsers(users);
-      });
-    }
-  }, [user]);
+    socket.current?.on("getCurrentUsers", (users) => {
+      setActiveUsers(users);
+    });
+  }, [user, socket]);
 
   const checkOnline = (userEmail) =>
     activeUsers?.find((active) => active?.email == userEmail);
+
   const currentReceiverFind = (participants) =>
     participants.find((p) => p != user?.email);
+
+  socket?.current?.on("updateRemoveUser", (users) => {
+    setActiveUsers(users)
+  })
+
 
   // message box open close handle state
   const [isChatBoxOpen, setIsChatBoxOpen] = useState(false);
@@ -45,8 +47,6 @@ export const ChatProvider = ({ children }) => {
   const [addNewConversation, setAddNewConversation] = useState(false);
   const [newConversationAdd, setNewConversationAdd] = useState(false);
 
-  // message box open close handle state
-  const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false);
 
   // message box open close handle function
   // single conversation show
@@ -97,9 +97,10 @@ export const ChatProvider = ({ children }) => {
     setAlreadyConversationUserError,
   ];
 
+  // message box open close handle state
+  const [isNotificationBoxOpen, setIsNotificationBoxOpen] = useState(false);
   // chat info
   const chatInfo = {
-    // new code
     socket,
     activeUsers,
     checkOnline,

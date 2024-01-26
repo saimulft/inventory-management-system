@@ -16,10 +16,15 @@ export default function Sidebar() {
   const { user, setUser } = useAuth()  
   const { isSidebarOpen, setIsSidebarOpen } = useContext(GlobalContext);
   const {pathname} = useLocation();
+  const { socket } = useContext(GlobalContext);
 
+  const socketId = socket?.current?.id
   const handleLogout = () => {
     Cookies.remove('imstoken')
     setUser(null)
+    socket?.current?.emit("removeUser", {
+      socketId,
+    });
   }
 
   return (
@@ -43,7 +48,6 @@ export default function Sidebar() {
               </div>
             </div>
           </div>
-
           {
             user?.role === 'Admin' || user?.role === 'Admin VA' ?
               <>

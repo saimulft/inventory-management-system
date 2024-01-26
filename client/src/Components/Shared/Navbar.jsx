@@ -8,6 +8,7 @@ import { BiLogOut, BiSupport } from "react-icons/bi";
 import { NavLink, useLocation } from "react-router-dom";
 import Cookies from "js-cookie";
 import PageName from "./PageName";
+import { GlobalContext } from "../../Providers/GlobalProviders";
 
 export default function Navbar() {
   const {
@@ -25,7 +26,8 @@ export default function Navbar() {
   const [profileModal, setProfileModal] = useState(false)
   const profileButtonRef = useRef(null)
   const profileModalRef = useRef(null)
-  const {pathname} = useLocation()
+  const { pathname } = useLocation()
+  const { socket } = useContext(GlobalContext);
 
   useEffect(() => {
     const clickOutside = (e) => {
@@ -46,9 +48,13 @@ export default function Navbar() {
 
   }, [])
 
+  const socketId = socket?.current?.id
   const handleLogout = () => {
     Cookies.remove('imstoken')
     setUser(null)
+    socket?.current?.emit("removeUser", {
+      socketId,
+    });
   }
 
   return (
