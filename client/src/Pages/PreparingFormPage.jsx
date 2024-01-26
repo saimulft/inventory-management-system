@@ -355,8 +355,11 @@ const PreparingFormPage = () => {
                   <label className="text-slate-500">Courier</label>
                   <select className="select select-primary w-full mt-2 shadow-lg" name="courier" id="courier">
                     <option defaultValue="Select courier"> Select courier</option>
-                    <option value="test1">Test1</option>
-                    <option value="test2">Test2</option>
+                    <option value="FedEx">FedEx</option>
+                    <option value="Sky Postal">Sky Postal</option>
+                    <option value="United Percel Service">United Percel Service</option>
+                    <option value="Pace Couriers">Pace Couriers</option>
+                    <option value="Central Courier Company">Central Courier Company</option>
                   </select>
                 </div>
 
