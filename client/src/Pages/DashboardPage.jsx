@@ -141,7 +141,7 @@ export default function DashboardPage() {
                                 <div className="h-8 w-8 flex justify-center items-center rounded-full bg-purple-400 text-white">
                                     <BiSolidFoodMenu />
                                 </div>
-                                <h6 className="mt-2 text-xl font-medium">0</h6>
+                                <h6 className="mt-2 text-xl font-medium">{data.total_order ? data.total_order : 0}</h6>
                                 <p className="my-1 text-sm">Total Order</p>
                             </div>
 

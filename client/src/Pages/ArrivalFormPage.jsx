@@ -237,8 +237,12 @@ const ArrivalFormPage = () => {
           "success"
         );
       }
+      else if (data?.status === 'exceeded'){
+        setInputError(data?.message)
+      }
     } catch (error) {
       console.log(error);
+      setInputError("Something went wrong to send pending arrival form request");
     }
   };
   const boxShadowStyle = {

@@ -208,6 +208,7 @@ const PreparingFormPage = () => {
         },
       })
       .then((res) => {
+        console.log(res)
         if (res.status === 201) {
           console.log(currentUser);
           const notification_link =
@@ -224,8 +225,6 @@ const PreparingFormPage = () => {
               warehouseId: warehouseOption?.value,
             })
             .then((res) => {
-              console.log(res.data);
-
               if (res?.data?.finalResult?.acknowledged) {
                 // send real time notification data
                 const notificationData = res.data.notificationData;
@@ -252,17 +251,19 @@ const PreparingFormPage = () => {
           setShippingImageFile(null);
           setInvoiceImageSrc(null);
           setShippingImageSrc(null);
-          setLoading(false);
-        } else {
-          setLoading(false);
+        }
+        else if (res.data?.status === 'exceeded'){
+          setFormError(res.data?.message)
+        }
+        else {
           setFormError("Something went wrong to send preparing form request");
         }
       })
       .catch((err) => {
         console.log(err);
-        setLoading(false);
         setFormError("Something went wrong to send preparing form request");
-      });
+      })
+      .finally(() => setLoading(false))
   };
 
   const handleInvoiceImage = (e) => {
