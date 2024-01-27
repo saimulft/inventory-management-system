@@ -67,12 +67,12 @@ export default function AddStorePage() {
       >
         <div className="lg:py-20 lg:px-28 p-10 max-w-[700px] w-[600px]">
           <form onSubmit={handleNext}>
-            <h4 className="text-xl font-bold">Add New Store</h4>
-            <p className="text-slate-400">
+            <h4 className="text-2xl font-bold">Add New Store</h4>
+            <p className="text-slate-400 mt-2">
               Please fill out the details to add a new store
             </p>
 
-            <div className="flex flex-col mt-4 w-full">
+            <div className="flex flex-col mt-6 w-full">
               <label className="text-slate-500">Store name*</label>
               <input
                 type="text"
@@ -85,7 +85,7 @@ export default function AddStorePage() {
               />
             </div>
 
-            <div className="flex flex-col mt-2 w-full">
+            <div className="flex flex-col mt-4 w-full">
               <label className="text-slate-500">Store manager name*</label>
               <input
                 type="text"
@@ -98,12 +98,12 @@ export default function AddStorePage() {
               />
             </div>
 
-            <div className="flex flex-col mt-2">
-              <label className="text-slate-500">Store Owner*</label>
+            <div className="flex flex-col mt-4">
+              <label className="text-slate-500">Store owner*</label>
               <SearchDropdown isLoading={storeOwnerLoading} isMulti={true} option={storeOwnerOption} optionData={allStoreOwner} placeholder="Select Store" setOption={setStoreOwnerOption} />
             </div>
 
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col mt-4">
               <label className="text-slate-500">Store type*</label>
               <select
                 className="select select-primary w-full mt-2 shadow-lg"
@@ -123,7 +123,7 @@ export default function AddStorePage() {
               </select>
             </div>
 
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col mt-4">
               <label className="text-slate-500">Store status*</label>
               <select
                 className="select select-primary w-full mt-2 shadow-lg"
