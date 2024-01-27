@@ -406,7 +406,7 @@ export default function SingleConversation() {
   return (
     <>
       {/* {isTooltipOpen && <div className="absolute bg-[#494a4963] top-0 right-0 bottom-0 left-0 z-40"></div>} */}
-      <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-1 bottom-[0%] z-30 rounded overflow-hidden">
+      <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#e2e2e2c4] right-1 bottom-[0%] z-30 rounded overflow-hidden">
         {/* conversation header */}
         <div
           style={{ boxShadow: "0px 1px 6px 0px rgba(0, 0, 0, 0.1)" }}
@@ -434,7 +434,7 @@ export default function SingleConversation() {
               {chatLoadingStatus && online && <ChatLoading />}
             </div>
           </div>
-          <div onClick={handleOpenSingleConversationShow} className=" rounded-full p-[3px] hover:bg-purple-100 text-purple-500 cursor-pointer">
+          <div onClick={handleOpenSingleConversationShow} className="p-1 rounded-full hover:bg-purple-100 text-purple-500 cursor-pointer">
             <AiOutlineClose
               size={22}
             />

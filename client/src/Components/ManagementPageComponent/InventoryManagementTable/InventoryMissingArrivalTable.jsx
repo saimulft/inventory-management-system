@@ -350,7 +350,7 @@ export default function InventoryMissingArrivalTable() {
       </div>
 
       <div className="mt-8 min-h-[calc(100vh-294px)] max-h-full">
-        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
           <table className="table table-sm">
             <thead>
               <tr className="bg-gray-200">
@@ -370,11 +370,11 @@ export default function InventoryMissingArrivalTable() {
               </tr>
             </thead>
             <tbody className="relative">
-              {/* {notificationSearchData == undefined && notificationSearchValue && (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Data move to the next sequence!
-              </p>
-            )} */}
+              {notificationSearchData == undefined && notificationSearchValue && (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  Data move to the next sequence!
+                </p>
+              )}
               {searchError ? (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                   {searchError}

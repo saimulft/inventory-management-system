@@ -308,7 +308,7 @@ export default function ConversationUserList() {
   }
 
   return (
-    <div className={`h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] right-1 bottom-0 z-50 rounded`}>
+    <div className={`h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#e2e2e2c4] right-1 bottom-0 z-50 rounded`}>
       {/* chat head  */}
       <div className="p-3 flex justify-between items-center pt-3  border-gray-300">
         <p className="font-bold text-2xl">Chats</p>
