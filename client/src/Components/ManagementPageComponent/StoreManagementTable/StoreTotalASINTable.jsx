@@ -5,7 +5,6 @@ import { AiOutlineCloudUpload, AiOutlineSearch } from "react-icons/ai";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import FileDownload from "../../Shared/FileDownload";
 import Swal from "sweetalert2";
 import Compressor from "compressorjs";
 import { FaSpinner } from "react-icons/fa";
@@ -15,6 +14,8 @@ import { DateRange } from "react-date-range";
 import ReactPaginate from "react-paginate";
 import useGlobal from "../../../hooks/useGlobal";
 import { useLocation } from "react-router-dom";
+import ViewImage from "../../Shared/ViewImage";
+import handlePriceKeyDown from "../../../Utilities/handlePriceKeyDown";
 
 export default function InventoryTotalASINTable() {
   const [photoUploadType, setPhotoUploadType] = useState(null);
@@ -70,13 +71,6 @@ export default function InventoryTotalASINTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
-
-  const handlePriceKeyDown = (event) => {
-    const alphabetKeys = /^[0-9]*\.*$/;
-    if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
-      event.preventDefault();
-    }
-  };
 
   const handleCustomDateSearch = () => {
     setSearchError("");
@@ -326,7 +320,7 @@ export default function InventoryTotalASINTable() {
       }
     }
   };
- 
+
   const itemsPerPage = 15;
   const maxVisiblePages = 10;
 
@@ -354,7 +348,7 @@ export default function InventoryTotalASINTable() {
       <h3 className="text-center text-2xl font-medium">
         Total ASIN/UPC
         <span className={`${notificationSearchValue && "hidden"}`}>
-          : {data.length}
+          : {searchError ? 0 : searchResults?.length ? searchResults?.length : data?.length}
         </span>
       </h3>
       <div className="relative flex justify-between items-center mt-4">
@@ -477,110 +471,48 @@ export default function InventoryTotalASINTable() {
           </form>
         )}
       </div>
-      <div className="overflow-x-auto  mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <table className="table table-sm">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Date</th>
-              <th>ASIN/UPC</th>
-              <th>Product Name</th>
-              <th>Min Price</th>
-              <th>Code Type</th>
-              <th>Store Manager</th>
-              <th>Product Image</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
+      <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Product Image</th>
+                <th>Date</th>
+                <th>ASIN/UPC</th>
+                <th>Product Name</th>
+                <th>Min Price</th>
+                <th>Code Type</th>
+                <th>Store Manager</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody className="relative">
+              {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                 Pending arrival notified data not available!
               </p>
             )} */}
-            {searchError ? (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                {searchError}
-              </p>
-            ) : (
-              <>
-                {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td className="text-[#8633FF]">{d.product_name}</td>
-                        <td>{d.min_price}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.store_manager_name}</td>
-                        <td>
-                          {d.product_image && (
-                            <FileDownload fileName={d.product_image} />
-                          )}
-                        </td>
-                        <td>
-                          <div className="dropdown dropdown-end">
-                            <label tabIndex={0}>
-                              <BiDotsVerticalRounded
-                                onClick={() => setSingleData(d)}
-                                cursor="pointer"
-                              />
-                            </label>
-                            <ul
-                              tabIndex={0}
-                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                            >
-                              <li>
-                                <button
-                                  onClick={() => {
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal();
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                              {user.role === "Admin" ||
-                                user.role === "Admin VA" ? (
-                                <li>
-                                  <button
-                                    onClick={() =>
-                                      handleDelete(d._id, d.product_image)
-                                    }
-                                  >
-                                    Delete
-                                  </button>
-                                </li>
-                              ) : (
-                                ""
-                              )}
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : !notificationSearchValue ? (
-                  isLoading ? (
-                    <Loading />
-                  ) : (
-                    displayAllData?.map((d, index) => {
+              {searchError ? (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  {searchError}
+                </p>
+              ) : (
+                <>
+                  {searchResults.length ? (
+                    displayedDataFilter.map((d, index) => {
                       return (
                         <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                          <th>
-                            {d.date && format(new Date(d.date), "y/MM/d")}
-                          </th>
+                          <td>
+                            {d.product_image && (
+                              <ViewImage fileName={d.product_image} />
+                            )}
+                          </td>
+                          <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                           <td>{d.asin_upc_code}</td>
                           <td className="text-[#8633FF]">{d.product_name}</td>
                           <td>{d.min_price}</td>
                           <td>{d.code_type}</td>
                           <td>{d.store_manager_name}</td>
-                          <td>
-                            {d.product_image && (
-                              <FileDownload fileName={d.product_image} />
-                            )}
-                          </td>
                           <td>
                             <div className="dropdown dropdown-end">
                               <label tabIndex={0}>
@@ -624,82 +556,146 @@ export default function InventoryTotalASINTable() {
                         </tr>
                       );
                     })
-                  )
-                ) : (
-                  <tr>
-                    <th>
-                      {notificationSearchData?.date &&
-                        format(
-                          new Date(notificationSearchData?.date),
-                          "y/MM/d"
-                        )}
-                    </th>
-                    <td>{notificationSearchData?.asin_upc_code}</td>
-                    <td className="text-[#8633FF]">
-                      {notificationSearchData?.product_name}
-                    </td>
-                    <td>{notificationSearchData?.min_price}</td>
-                    <td>{notificationSearchData?.code_type}</td>
-                    <td>{notificationSearchData?.store_manager_name}</td>
-                    <td>
-                      {notificationSearchData?.product_image && (
-                        <FileDownload
-                          fileName={notificationSearchData?.product_image}
-                        />
-                      )}
-                    </td>
-                    <td>
-                      <div className="dropdown dropdown-end">
-                        <label tabIndex={0}>
-                          <BiDotsVerticalRounded
-                            onClick={() =>
-                              setSingleData(notificationSearchData)
-                            }
-                            cursor="pointer"
+                  ) : !notificationSearchValue ? (
+                    isLoading ? (
+                      <Loading />
+                    ) : (
+                      displayAllData?.map((d, index) => {
+                        return (
+                          <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                            <td>
+                              {d.product_image && (
+                                <ViewImage fileName={d.product_image} />
+                              )}
+                            </td>
+                            <th>
+                              {d.date && format(new Date(d.date), "y/MM/d")}
+                            </th>
+                            <td>{d.asin_upc_code}</td>
+                            <td className="text-[#8633FF]">{d.product_name}</td>
+                            <td>{d.min_price}</td>
+                            <td>{d.code_type}</td>
+                            <td>{d.store_manager_name}</td>
+                            <td>
+                              <div className="dropdown dropdown-end">
+                                <label tabIndex={0}>
+                                  <BiDotsVerticalRounded
+                                    onClick={() => setSingleData(d)}
+                                    cursor="pointer"
+                                  />
+                                </label>
+                                <ul
+                                  tabIndex={0}
+                                  className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                                >
+                                  <li>
+                                    <button
+                                      onClick={() => {
+                                        document
+                                          .getElementById("my_modal_2")
+                                          .showModal();
+                                      }}
+                                    >
+                                      Edit
+                                    </button>
+                                  </li>
+                                  {user.role === "Admin" ||
+                                    user.role === "Admin VA" ? (
+                                    <li>
+                                      <button
+                                        onClick={() =>
+                                          handleDelete(d._id, d.product_image)
+                                        }
+                                      >
+                                        Delete
+                                      </button>
+                                    </li>
+                                  ) : (
+                                    ""
+                                  )}
+                                </ul>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )
+                  ) : (
+                    <tr>
+                      <td>
+                        {notificationSearchData?.product_image && (
+                          <ViewImage
+                            fileName={notificationSearchData?.product_image}
                           />
-                        </label>
-                        <ul
-                          tabIndex={0}
-                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                        >
-                          <li>
-                            <button
-                              onClick={() => {
-                                document
-                                  .getElementById("my_modal_2")
-                                  .showModal();
-                              }}
-                            >
-                              Edit
-                            </button>
-                          </li>
-                          {user.role === "Admin" || user.role === "Admin VA" ? (
+                        )}
+                      </td>
+                      <th>
+                        {notificationSearchData?.date &&
+                          format(
+                            new Date(notificationSearchData?.date),
+                            "y/MM/d"
+                          )}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td className="text-[#8633FF]">
+                        {notificationSearchData?.product_name}
+                      </td>
+                      <td>{notificationSearchData?.min_price}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.store_manager_name}</td>
+                      <td>
+                        <div className="dropdown dropdown-end">
+                          <label tabIndex={0}>
+                            <BiDotsVerticalRounded
+                              onClick={() =>
+                                setSingleData(notificationSearchData)
+                              }
+                              cursor="pointer"
+                            />
+                          </label>
+                          <ul
+                            tabIndex={0}
+                            className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                          >
                             <li>
                               <button
-                                onClick={() =>
-                                  handleDelete(notificationSearchData._id, notificationSearchData.product_image)
-                                }
+                                onClick={() => {
+                                  document
+                                    .getElementById("my_modal_2")
+                                    .showModal();
+                                }}
                               >
-                                Delete
+                                Edit
                               </button>
                             </li>
-                          ) : (
-                            ""
-                          )}
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </>
-            )}
-          </tbody>
-        </table>
+                            {user.role === "Admin" || user.role === "Admin VA" ? (
+                              <li>
+                                <button
+                                  onClick={() =>
+                                    handleDelete(notificationSearchData._id, notificationSearchData.product_image)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </li>
+                            ) : (
+                              ""
+                            )}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* pagination */}
         {!isLoading &&
           !searchError &&
-          !searchResults.length &&!notificationSearchValue &&
+          !searchResults.length && !notificationSearchValue &&
           data?.length > 15 && (
             <div>
               <ReactPaginate
@@ -716,7 +712,7 @@ export default function InventoryTotalASINTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}
@@ -731,6 +727,7 @@ export default function InventoryTotalASINTable() {
           />
         )}
       </div>
+
       {/* modal content  */}
       <dialog id="my_modal_2" className="modal">
         <div style={{ marginLeft, maxWidth: "450px" }} className="modal-box">

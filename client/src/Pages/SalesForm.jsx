@@ -6,10 +6,10 @@ import { useState } from "react";
 import ToastMessage from "../Components/Shared/ToastMessage";
 import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
+import handlePriceKeyDown from "../Utilities/handlePriceKeyDown";
 
 
 const SalesForm = () => {
-
     const { user } = useAuth()
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [errorMessage, setErrorMessage] = useState('')
@@ -76,12 +76,6 @@ const SalesForm = () => {
             .finally(() => setLoading(false))
     }
 
-    const handlePriceKeyDown = (event) => {
-        const alphabetKeys = /^[0-9]*\.*$/;
-        if (!alphabetKeys.test(event.key) && event.key != "Backspace") {
-            event.preventDefault();
-        }
-    };
     const handleKeyDown = (event) => {
         const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
         if (!alphabetKeys.test(event.key) && event.key != "Backspace") {

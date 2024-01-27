@@ -1,12 +1,10 @@
-import { useContext } from "react";
-import { Link, Outlet } from "react-router-dom";
-import { GlobalContext } from "../Providers/GlobalProviders";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 export default function SettingsPage() {
-  const { setIsActiveSetting, isActiveSetting } = useContext(GlobalContext);
   const { user } = useAuth()
   const boxShadowStyle = { boxShadow: "2px 2px 22px 2px rgba(0,0,0,0.2)"};
+  const { pathname } = useLocation();
 
   return (
     <div
@@ -17,8 +15,7 @@ export default function SettingsPage() {
         <div className="flex mb-6 rounded overflow-hidden">
           <Link to="/dashboard/settings/profile">
             <button
-              onClick={() => setIsActiveSetting("profile")}
-              className={`border border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-s ${isActiveSetting == "profile" && "bg-[#8633FF] text-white"
+              className={`border border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-s ${pathname?.includes("profile") && "bg-[#8633FF] text-white"
                 }`}
             >
               Profile
@@ -29,8 +26,7 @@ export default function SettingsPage() {
             user?.role === 'Admin' || user?.role === 'Admin VA' || user?.role === 'Store Manager Admin' || user?.role === 'Warehouse Admin' ?
               <Link to="/dashboard/settings/add-users">
                 <button
-                  onClick={() => setIsActiveSetting("add-users")}
-                  className={`border border-l-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "add-users" && "bg-[#8633FF] text-white"
+                  className={`border border-l-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${pathname?.includes("add-users") && "bg-[#8633FF] text-white"
                     }`}
                 >
                   Add Users
@@ -42,8 +38,7 @@ export default function SettingsPage() {
             user?.role === 'Admin' || user?.role === 'Admin VA' || user?.role === 'Store Manager Admin' || user?.role === 'Warehouse Admin' ?
               <Link to="/dashboard/settings/all-users">
                 <button
-                  onClick={() => setIsActiveSetting("all-users")}
-                  className={`border border-l-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "all-users" && "bg-[#8633FF] text-white"
+                  className={`border border-l-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${pathname?.includes("all-users") && "bg-[#8633FF] text-white"
                     }`}
                 >
                   All Users
@@ -53,9 +48,8 @@ export default function SettingsPage() {
 
           {/* <Link to="/dashboard/settings/pending-users">
             <button
-              onClick={() => setIsActiveSetting("pending-users")}
               className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${
-                isActiveSetting == "pending-users" && "bg-[#8633FF] text-white"
+                pathname?.includes("pending-users") && "bg-[#8633FF] text-white"
               }`}
             >
               Pending Users
@@ -66,8 +60,7 @@ export default function SettingsPage() {
             user?.role === 'Super Admin' &&
             <Link to="/dashboard/settings/all-admin-users">
               <button
-                onClick={() => setIsActiveSetting("all-admin-users")}
-                className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${isActiveSetting == "all-admin-users" && "bg-[#8633FF] text-white"
+                className={`border border-r-0 border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] ${pathname?.includes("all-admin-users") && "bg-[#8633FF] text-white"
                   }`}
               >
                 Admin Users
@@ -79,8 +72,7 @@ export default function SettingsPage() {
             user?.role === 'Admin' || user?.role === 'Store Owner' ?
               <Link to="/dashboard/settings/billing-subscription">
                 <button
-                  onClick={() => setIsActiveSetting("billing-subscription")}
-                  className={`border border-l-0  border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-e ${isActiveSetting == "billing-subscription" &&
+                  className={`border border-l-0  border-[#8633FF] px-4 py-2 font-medium text-[#8633FF] rounded-e ${pathname?.includes("billing-subscription") &&
                     "bg-[#8633FF] text-white"
                     }`}
                 >

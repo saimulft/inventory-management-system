@@ -6,14 +6,14 @@ export default function SupportPage() {
     <div className="flex items-center justify-center p-20">
       <div
         style={boxShadowStyle}
-        className="border border-[#8633FF] shadow-lg max-h-[600px] max-w-[600px] m-auto rounded-xl flex justify-center items-center py-16 px-10 "
+        className="border border-[#8633FF] shadow-lg h-fit max-w-[700px] w-[600px] m-auto rounded-xl lg:py-20 lg:px-28 p-10"
       >
         <form>
-          <h4 className="text-xl font-bold">Create a Support Ticket</h4>
+          <h4 className="text-2xl font-bold">Create a Support Ticket</h4>
           <p className="text-slate-400 mt-2">
             Please fill out the details to create a support ticket
           </p>
-          <div className="mt-2">
+          <div className="mt-6">
             <label className="text-slate-500">Name*</label>
             <input
               type="text"
@@ -23,7 +23,7 @@ export default function SupportPage() {
               name="fromDate"
             />
           </div>
-          <div className="mt-2">
+          <div className="mt-4">
             <label className="text-slate-500">Email*</label>
             <input
               type="text"
@@ -34,14 +34,15 @@ export default function SupportPage() {
             />
           </div>
 
-          <div className="flex flex-col mt-2">
+          <div className="flex flex-col mt-4">
             <label className="text-slate-500">Message*</label>
             <textarea
-              className="textarea textarea-primary mt-2"
-              placeholder="Bio"
+              rows={4}
+              className="textarea textarea-primary mt-2 focus:outline-none shadow-lg text-base"
+              placeholder="Type your message"
             ></textarea>
           </div>
-          <button className="flex items-center justify-center bg-[#8633FF] w-full mt-8 py-2 rounded-md text-white">
+          <button className="flex items-center justify-center bg-[#8633FF] w-full mt-8 py-3 rounded-md text-white">
             <p>Send</p>
           </button>
         </form>

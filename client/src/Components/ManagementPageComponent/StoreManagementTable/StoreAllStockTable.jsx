@@ -59,7 +59,6 @@ export default function StoreAllStockTable() {
     setSearchResults(filteredData);
   };
 
- 
   const itemsPerPage = 15;
   const maxVisiblePages = 10; // Adjust the number of maximum visible pages as needed
 
@@ -83,12 +82,13 @@ export default function StoreAllStockTable() {
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const displayAllData = data.slice(startIndex, endIndex);
+
   return (
     <div className="px-8 py-12">
       <h3 className="text-center text-2xl font-medium">
         All Stocks
         <span className={`${notificationSearchValue && "hidden"}`}>
-          : {data.length}
+          : {searchError ? 0 : searchResults?.length ? searchResults?.length : data?.length}
         </span>
       </h3>
 
@@ -128,58 +128,38 @@ export default function StoreAllStockTable() {
         </div>
       )}
 
-      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <table className="table table-sm">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Store Name</th>
-              <th>UPIN</th>
-              <th>Product Name</th>
-              <th>Total Received</th>
-              <th>Total Sold</th>
-              <th>Stock</th>
-              <th>Purchase Price</th>
-              <th>Sold Price</th>
-              <th>Remaining Price</th>
-            </tr>
-          </thead>
-          <tbody className="relative">
-            {searchError ? (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                {searchError}
-              </p>
-            ) : (
-              <>
-                {/* {notificationSearchData == undefined &&
+      <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Store Name</th>
+                <th>UPIN</th>
+                <th>Product Name</th>
+                <th>Total Received</th>
+                <th>Total Sold</th>
+                <th>Stock</th>
+                <th>Purchase Price</th>
+                <th>Sold Price</th>
+                <th>Remaining Price</th>
+              </tr>
+            </thead>
+            <tbody className="relative">
+              {searchError ? (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  {searchError}
+                </p>
+              ) : (
+                <>
+                  {/* {notificationSearchData == undefined &&
                   notificationSearchValue && (
                     <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                       All stock notified data not available!
                     </p>
                   )} */}
 
-                {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{d.store_name}</th>
-                        <td>{d.upin}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.received_quantity}</td>
-                        <td>{d.total_sold ? `${d.total_sold}` : "-"}</td>
-                        <td>{d.stock}</td>
-                        <td>${d.unit_price}</td>
-                        <td>{d.sold_price ? `$${d.sold_price}` : "-"}</td>
-                        <td>
-                          {d.remaining_price ? `$${d.remaining_price}` : "-"}
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : !notificationSearchValue ? (
-                  isLoading ? (
-                    <Loading />
-                  ) : (
-                    displayAllData?.map((d, index) => {
+                  {searchResults.length ? (
+                    displayedDataFilter.map((d, index) => {
                       return (
                         <tr className={`${index % 2 == 1 && ""}`} key={index}>
                           <th>{d.store_name}</th>
@@ -196,42 +176,64 @@ export default function StoreAllStockTable() {
                         </tr>
                       );
                     })
-                  )
-                ) : (
-                  <tr>
-                    <th>{notificationSearchData?.store_name}</th>
-                    <td>{notificationSearchData?.upin}</td>
-                    <td>{notificationSearchData?.product_name}</td>
-                    <td>{notificationSearchData?.received_quantity}</td>
-                    <td>
-                      {notificationSearchData?.total_sold
-                        ? `${notificationSearchData?.total_sold}`
-                        : "-"}
-                    </td>
-                    <td>{notificationSearchData?.stock}</td>
-                    <td>${notificationSearchData?.unit_price}</td>
-                    <td>
-                      {notificationSearchData?.sold_price
-                        ? `$${notificationSearchData?.sold_price}`
-                        : "-"}
-                    </td>
-                    <td>
-                      {notificationSearchData?.remaining_price
-                        ? `$${notificationSearchData?.remaining_price}`
-                        : "-"}
-                    </td>
-                  </tr>
-                )}
-              </>
-            )}
-          </tbody>
-        </table>
+                  ) : !notificationSearchValue ? (
+                    isLoading ? (
+                      <Loading />
+                    ) : (
+                      displayAllData?.map((d, index) => {
+                        return (
+                          <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                            <th>{d.store_name}</th>
+                            <td>{d.upin}</td>
+                            <td>{d.product_name}</td>
+                            <td>{d.received_quantity}</td>
+                            <td>{d.total_sold ? `${d.total_sold}` : "-"}</td>
+                            <td>{d.stock}</td>
+                            <td>${d.unit_price}</td>
+                            <td>{d.sold_price ? `$${d.sold_price}` : "-"}</td>
+                            <td>
+                              {d.remaining_price ? `$${d.remaining_price}` : "-"}
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )
+                  ) : (
+                    <tr>
+                      <th>{notificationSearchData?.store_name}</th>
+                      <td>{notificationSearchData?.upin}</td>
+                      <td>{notificationSearchData?.product_name}</td>
+                      <td>{notificationSearchData?.received_quantity}</td>
+                      <td>
+                        {notificationSearchData?.total_sold
+                          ? `${notificationSearchData?.total_sold}`
+                          : "-"}
+                      </td>
+                      <td>{notificationSearchData?.stock}</td>
+                      <td>${notificationSearchData?.unit_price}</td>
+                      <td>
+                        {notificationSearchData?.sold_price
+                          ? `$${notificationSearchData?.sold_price}`
+                          : "-"}
+                      </td>
+                      <td>
+                        {notificationSearchData?.remaining_price
+                          ? `$${notificationSearchData?.remaining_price}`
+                          : "-"}
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* pagination */}
         {!isLoading &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && !notificationSearchValue &&(
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -247,7 +249,7 @@ export default function StoreAllStockTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}

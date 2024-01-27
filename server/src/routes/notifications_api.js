@@ -19,6 +19,10 @@ const run = async () => {
   const warehouse_manager_va_users_collection = db?.collection(
     "warehouse_manager_va_users"
   );
+  const store_owner_collection = db?.collection(
+    "store_owner_users"
+  );
+
   const admin_va_users_collection = db.collection("admin_va_users");
   const notification_collection = db.collection("notifications");
 
@@ -38,6 +42,10 @@ const run = async () => {
       if (userRole == "Admin VA") {
         query = { email: currentUserEmail, role: userRole };
         result = await admin_va_users_collection.findOne(query);
+      }
+      if (userRole == "Store Owner") {
+        query = { email: currentUserEmail, role: userRole };
+        result = await store_owner_collection.findOne(query);
       }
       if (userRole == "Store Manager Admin") {
         query = { email: currentUserEmail, role: userRole };
@@ -667,10 +675,10 @@ const run = async () => {
     }
   });
 
-  router.patch('/notifications/read_all', async(req, res) => {
+  router.patch('/notifications/read_all', async (req, res) => {
     const email = req?.query?.email
     const notificationSeenObjKey = email.split("@")[0]
-    const query = {[`isNotificationSeen.${notificationSeenObjKey}`]: false}
+    const query = { [`isNotificationSeen.${notificationSeenObjKey}`]: false }
     const updatedData = {
       $set: {
         [`isNotificationSeen.${notificationSeenObjKey}`]: true,

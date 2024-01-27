@@ -310,37 +310,35 @@ export default function InventoryShippedTable() {
       <h3 className="text-center text-2xl font-medium">
         Shipped
         <span className={`${notificationSearchValue && "hidden"}`}>
-          : {data.length}
+          : {searchError ? 0 : searchResults?.length ? searchResults?.length : data?.length}
         </span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            
+
             {!notificationSearchValue && (
               <>
-              <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                <p
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -349,9 +347,8 @@ export default function InventoryShippedTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -360,9 +357,8 @@ export default function InventoryShippedTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -371,9 +367,8 @@ export default function InventoryShippedTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -382,9 +377,8 @@ export default function InventoryShippedTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -393,9 +387,8 @@ export default function InventoryShippedTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -441,233 +434,235 @@ export default function InventoryShippedTable() {
         )}
       </div>
 
-      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <table className="table table-sm">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Date</th>
-              <th>Store Name</th>
-              <th>ASIN/UPC</th>
-              <th>Code Type</th>
-              <th>Product Name</th>
-              <th>Order ID</th>
-              <th>UPIN</th>
-              <th>Quantity</th>
-              <th>Courier</th>
-              <th>Supplier Tracking</th>
-              <th>Shipping level</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
+      <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Date</th>
+                <th>Store Name</th>
+                <th>ASIN/UPC</th>
+                <th>Code Type</th>
+                <th>Product Name</th>
+                <th>Order ID</th>
+                <th>UPIN</th>
+                <th>Quantity</th>
+                <th>Courier</th>
+                <th>Supplier Tracking</th>
+                <th>Shipping level</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody className="relative">
+              {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Pending arrival notified data not available!
+                Data move to the next sequence!
               </p>
             )} */}
-            {searchError ? (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                {searchError}
-              </p>
-            ) : (
-              <>
-                {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                        <td className="font-normal">{d.store_name}</td>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.order_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.courier}</td>
-                        <td className="text-[#8633FF]">{d.tracking_number}</td>
-                        <td>
-                          {d.shipping_file && (
-                            <FileDownload fileName={d.shipping_file} />
-                          )}
-                        </td>
-                        <td>
-                          <div className="dropdown dropdown-end">
-                            <label tabIndex={0}>
-                              <BiDotsVerticalRounded
-                                onClick={() => setSingleData(d)}
-                                cursor="pointer"
-                              />
-                            </label>
-                            <ul
-                              tabIndex={0}
-                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                            >
-                              <li>
-                                <button
-                                  onClick={() =>
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal()
-                                  }
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                              {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+              {searchError ? (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  {searchError}
+                </p>
+              ) : (
+                <>
+                  {searchResults.length ? (
+                    displayedDataFilter.map((d, index) => {
+                      return (
+                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                          <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                          <td className="font-normal">{d.store_name}</td>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.order_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier}</td>
+                          <td className="text-[#8633FF]">{d.tracking_number}</td>
+                          <td>
+                            {d.shipping_file && (
+                              <FileDownload fileName={d.shipping_file} />
+                            )}
+                          </td>
+                          <td>
+                            <div className="dropdown dropdown-end">
+                              <label tabIndex={0}>
+                                <BiDotsVerticalRounded
+                                  onClick={() => setSingleData(d)}
+                                  cursor="pointer"
+                                />
+                              </label>
+                              <ul
+                                tabIndex={0}
+                                className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                              >
                                 <li>
-                                  <button onClick={() => handleDelete(d._id)}>
-                                    Delete
+                                  <button
+                                    onClick={() =>
+                                      document
+                                        .getElementById("my_modal_2")
+                                        .showModal()
+                                    }
+                                  >
+                                    Edit
                                   </button>
                                 </li>
-                              ) : (
-                                ""
-                              )}
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : isLoading ? (
-                  <Loading />
-                ) : !notificationSearchValue ? (
-                  displayAllData?.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                        <td className="font-normal">{d.store_name}</td>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.order_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.courier}</td>
-                        <td className="text-[#8633FF]">{d.tracking_number}</td>
-                        <td>
-                          {d.shipping_file && (
-                            <FileDownload fileName={d.shipping_file} />
-                          )}
-                        </td>
-                        <td>
-                          <div className="dropdown dropdown-end">
-                            <label tabIndex={0}>
-                              <BiDotsVerticalRounded
-                                onClick={() => setSingleData(d)}
-                                cursor="pointer"
-                              />
-                            </label>
-                            <ul
-                              tabIndex={0}
-                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                            >
-                              <li>
-                                <button
-                                  onClick={() =>
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal()
-                                  }
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                              {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                                {user.role === "Admin" ||
+                                  user.role === "Admin VA" ? (
+                                  <li>
+                                    <button onClick={() => handleDelete(d._id)}>
+                                      Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  ""
+                                )}
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : isLoading ? (
+                    <Loading />
+                  ) : !notificationSearchValue ? (
+                    displayAllData?.map((d, index) => {
+                      return (
+                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                          <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                          <td className="font-normal">{d.store_name}</td>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.order_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier}</td>
+                          <td className="text-[#8633FF]">{d.tracking_number}</td>
+                          <td>
+                            {d.shipping_file && (
+                              <FileDownload fileName={d.shipping_file} />
+                            )}
+                          </td>
+                          <td>
+                            <div className="dropdown dropdown-end">
+                              <label tabIndex={0}>
+                                <BiDotsVerticalRounded
+                                  onClick={() => setSingleData(d)}
+                                  cursor="pointer"
+                                />
+                              </label>
+                              <ul
+                                tabIndex={0}
+                                className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                              >
                                 <li>
-                                  <button onClick={() => handleDelete(d._id)}>
-                                    Delete
+                                  <button
+                                    onClick={() =>
+                                      document
+                                        .getElementById("my_modal_2")
+                                        .showModal()
+                                    }
+                                  >
+                                    Edit
                                   </button>
                                 </li>
-                              ) : (
-                                ""
-                              )}
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  <tr>
-                    <th>
-                      {notificationSearchData?.date &&
-                        format(
-                          new Date(notificationSearchData?.date),
-                          "y/MM/d"
-                        )}
-                    </th>
-                    <td className="font-normal">
-                      {notificationSearchData?.store_name}
-                    </td>
-                    <td>{notificationSearchData?.asin_upc_code}</td>
-                    <td>{notificationSearchData?.code_type}</td>
-                    <td>{notificationSearchData?.product_name}</td>
-                    <td>{notificationSearchData?.order_id}</td>
-                    <td>{notificationSearchData?.upin}</td>
-                    <td>{notificationSearchData?.quantity}</td>
-                    <td>{notificationSearchData?.courier}</td>
-                    <td className="text-[#8633FF]">
-                      {notificationSearchData?.tracking_number}
-                    </td>
-                    <td>
-                      {notificationSearchData?.shipping_file && (
-                        <FileDownload
-                          fileName={notificationSearchData?.shipping_file}
-                        />
-                      )}
-                    </td>
-                    <td>
-                      <div className="dropdown dropdown-end">
-                        <label tabIndex={0}>
-                          <BiDotsVerticalRounded
-                            onClick={() =>
-                              setSingleData(notificationSearchData)
-                            }
-                            cursor="pointer"
+                                {user.role === "Admin" ||
+                                  user.role === "Admin VA" ? (
+                                  <li>
+                                    <button onClick={() => handleDelete(d._id)}>
+                                      Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  ""
+                                )}
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    <tr>
+                      <th>
+                        {notificationSearchData?.date &&
+                          format(
+                            new Date(notificationSearchData?.date),
+                            "y/MM/d"
+                          )}
+                      </th>
+                      <td className="font-normal">
+                        {notificationSearchData?.store_name}
+                      </td>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.product_name}</td>
+                      <td>{notificationSearchData?.order_id}</td>
+                      <td>{notificationSearchData?.upin}</td>
+                      <td>{notificationSearchData?.quantity}</td>
+                      <td>{notificationSearchData?.courier}</td>
+                      <td className="text-[#8633FF]">
+                        {notificationSearchData?.tracking_number}
+                      </td>
+                      <td>
+                        {notificationSearchData?.shipping_file && (
+                          <FileDownload
+                            fileName={notificationSearchData?.shipping_file}
                           />
-                        </label>
-                        <ul
-                          tabIndex={0}
-                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                        >
-                          <li>
-                            <button
+                        )}
+                      </td>
+                      <td>
+                        <div className="dropdown dropdown-end">
+                          <label tabIndex={0}>
+                            <BiDotsVerticalRounded
                               onClick={() =>
-                                document
-                                  .getElementById("my_modal_2")
-                                  .showModal()
+                                setSingleData(notificationSearchData)
                               }
-                            >
-                              Edit
-                            </button>
-                          </li>
-                          {user.role === "Admin" || user.role === "Admin VA" ? (
+                              cursor="pointer"
+                            />
+                          </label>
+                          <ul
+                            tabIndex={0}
+                            className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                          >
                             <li>
                               <button
                                 onClick={() =>
-                                  handleDelete(notificationSearchData?._id)
+                                  document
+                                    .getElementById("my_modal_2")
+                                    .showModal()
                                 }
                               >
-                                Delete
+                                Edit
                               </button>
                             </li>
-                          ) : (
-                            ""
-                          )}
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </>
-            )}
-          </tbody>
-        </table>
+                            {user.role === "Admin" || user.role === "Admin VA" ? (
+                              <li>
+                                <button
+                                  onClick={() =>
+                                    handleDelete(notificationSearchData?._id)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </li>
+                            ) : (
+                              ""
+                            )}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* pagination */}
-        {!isLoading &&
+        {!notificationSearchValue && !isLoading &&
           !searchError &&
           !searchResults.length &&
           data?.length > 15 && (

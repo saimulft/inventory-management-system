@@ -49,7 +49,7 @@ export default function LoginPage() {
         navigate('/')
       }
     } catch (error) {
-      if (error.response.status === 403) {
+      if (error.response?.status === 403) {
         return setLoginError('Please verify your email in order to login!')
       }
       if (error.response.status === 401) {
@@ -63,11 +63,9 @@ export default function LoginPage() {
 
   return (
     <div className="bg-white py-20 rounded-lg w-full min-h-screen max-h-full flex items-center">
-      <div
-        style={boxShadowStyle}
-        className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl"
-      >
+      <div style={boxShadowStyle} className="border border-[#8633FF] h-fit w-fit m-auto rounded-xl">
         <div className="relative">{loginError && <p className="absolute left-1/2 transform -translate-x-1/2 w-[calc(100%-26px)] flex gap-1 items-center justify-center text-center mt-3 text-sm font-medium text-rose-600 bg-rose-100 border py-2 px-4 rounded"><MdErrorOutline size={20} /> {loginError}</p>}</div>
+
         <div className="lg:py-20 lg:px-28 p-10 max-w-[700px] w-[600px]">
           <form onSubmit={handleLogin}>
             <h4 className="text-xl font-bold">Login Your Account!</h4>
@@ -104,8 +102,6 @@ export default function LoginPage() {
             <div onClick={() => navigate('/reset_password')} className="cursor-pointer hover:underline text-[#8633FF] mt-2.5">
               Forgot your password?
             </div>
-
-
 
             <div className="flex items-center justify-center mt-8 bg-[#8633FF] rounded-lg">
               <button type="submit" disabled={isLoading} className="flex gap-2 py-3 justify-center items-center text-white w-full capitalize ">

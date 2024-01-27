@@ -1,14 +1,19 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import useAuth from "../hooks/useAuth";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { FaSpinner } from "react-icons/fa";
 import { MdErrorOutline } from "react-icons/md";
+import { IoCalendarOutline } from "react-icons/io5";
 import Swal from "sweetalert2";
 import SearchDropdown from "../Utilities/SearchDropdown";
 import useGlobal from "../hooks/useGlobal";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import { NotificationContext } from "../Providers/NotificationProvider";
+import { Calendar } from "react-date-range";
+import { format } from "date-fns";
+import PulseLoader from "react-spinners/PulseLoader";
+import handlePriceKeyDown from "../Utilities/handlePriceKeyDown";
 
 const ArrivalFormPage = () => {
   const { socket } = useContext(GlobalContext);
@@ -20,10 +25,27 @@ const ArrivalFormPage = () => {
   const [storeOption, setStoreOption] = useState(null);
   const [warehouseOption, setWarehouseOption] = useState(null);
   const [productName, setProductName] = useState("");
+  const [productNameLoading, setProductNameLoading] = useState(false)
+  const [eda, setEda] = useState(null)
+  const [openEdaCalendar, setOpenEdaCalendar] = useState(false)
+  const calendarRef = useRef(null)
 
   useEffect(() => {
-    if (storeOption?.label && asinUpcOption) {
-      const upin = `${storeOption?.label}_${asinUpcOption.label}`;
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef?.current?.contains(event.target)) {
+        setOpenEdaCalendar(false)
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [])
+
+  useEffect(() => {
+    if (storeOption?.slug && asinUpcOption) {
+      const upin = `${storeOption?.slug}_${asinUpcOption.label}`;
+      setProductNameLoading(true)
       axios
         .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then((res) => {
@@ -32,15 +54,15 @@ const ArrivalFormPage = () => {
             setProductName(res.data.data.product_name);
           }
           if (res.status === 204) {
-
             setProductName(asinUpcOption.product_name);
           }
         })
         .catch((error) => {
           console.log(error);
-        });
+        })
+        .finally(() => setProductNameLoading(false))
     }
-  }, [storeOption?.label, asinUpcOption, user]);
+  }, [storeOption?.slug, asinUpcOption, user]);
 
   const { data: asinUpcData = [], isLoading: asinLoading } = useQuery({
     queryKey: ["asin_upc_data"],
@@ -105,7 +127,6 @@ const ArrivalFormPage = () => {
     }
   };
 
-
   const { mutateAsync, isLoading } = useMutation({
     mutationFn: (arrivalFormData) => {
       return axios.post(
@@ -125,8 +146,6 @@ const ArrivalFormPage = () => {
     const upin = form.upin.value;
     const unitPrice = form.unitPrice.value;
     const quantity = form.quantity.value;
-    const eda = form.eda.value;
-
 
 
     if (!warehouseOption?.label) {
@@ -147,7 +166,7 @@ const ArrivalFormPage = () => {
     if (
       !date ||
       !asinUpcOption?.label ||
-      !storeOption?.label ||
+      !storeOption?.slug ||
       !supplierId ||
       !upin ||
       !unitPrice ||
@@ -166,7 +185,7 @@ const ArrivalFormPage = () => {
       admin_id: user.admin_id,
       date: date,
       creator_email: user?.email,
-      store_name: storeOption?.label,
+      store_name: storeOption?.slug,
       store_id: storeOption?.value,
       asin_upc_code: asinUpcOption.label,
       code_type: asinUpcOption?.code_type,
@@ -210,6 +229,7 @@ const ArrivalFormPage = () => {
         setAsinUpcOption("");
         setStoreOption("");
         setProductName("");
+        setEda(null)
         setWarehouseOption(null);
         Swal.fire(
           "Submitted",
@@ -217,13 +237,18 @@ const ArrivalFormPage = () => {
           "success"
         );
       }
+      else if (data?.status === 'exceeded'){
+        setInputError(data?.message)
+      }
     } catch (error) {
       console.log(error);
+      setInputError("Something went wrong to send pending arrival form request");
     }
   };
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
+  
   return (
     <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div
@@ -276,8 +301,8 @@ const ArrivalFormPage = () => {
                   <label className="text-slate-500">UPIN</label>
                   <input
                     value={
-                      asinUpcOption && storeOption?.label
-                        ? `${storeOption?.label}_${asinUpcOption.label}`
+                      asinUpcOption && storeOption?.slug
+                        ? `${storeOption?.slug}_${asinUpcOption.label}`
                         : ""
                     }
                     type="text"
@@ -292,7 +317,8 @@ const ArrivalFormPage = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Unit Price</label>
                   <input
-                    type="number"
+                    onKeyDown={handlePriceKeyDown}
+                    type="text"
                     placeholder="Enter unit price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="unitPrice"
@@ -329,7 +355,8 @@ const ArrivalFormPage = () => {
                   />
                 </div>
 
-                <div className="mt-4">
+                <div className="mt-4 relative">
+                  {productNameLoading && <span className="absolute top-[43px] right-4"><PulseLoader color="#D1D5DB" size={4} /></span>}
                   <label className="text-slate-500">Product Name</label>
                   <input
                     type="text"
@@ -354,18 +381,25 @@ const ArrivalFormPage = () => {
                   />
                 </div>
 
-                <div className="mt-4">
-                  <label className="text-slate-500">EDA</label>
-                  <input
-                    type="date"
-                    placeholder="Enter store name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                    id="eda"
-                    name="eda"
-                  />
+                <div className="mt-4 relative">
+                  <p className="text-slate-500">EDA</p>
+                  <div className="w-full mt-2 shadow-lg rounded-lg bg-white px-4 h-12 border border-[#8633FF] flex justify-between items-center">
+                    <span>{eda ? format(new Date(eda), 'yyyy/MM/dd') : 'YYYY/MM/DD'}</span>
+                    <div ref={calendarRef}>
+                      <span onClick={() => setOpenEdaCalendar(!openEdaCalendar)}><IoCalendarOutline size={18} /></span>
+                      {openEdaCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 bottom-[48px] z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                        <Calendar
+                          color='#8633FF'
+                          date={eda ? eda : null}
+                          onChange={(date) => {
+                            setEda(date)
+                            setOpenEdaCalendar(false)
+                          }}
+                        />
+                      </div>}
+                    </div>
+                  </div>
                 </div>
-
-
               </div>
             </div>
 

@@ -1,39 +1,30 @@
-import { AiOutlinePieChart, AiOutlineSetting } from "react-icons/ai";
+import { AiOutlinePieChart } from "react-icons/ai";
 import { PiWarehouseDuotone } from "react-icons/pi";
 import { GiProgression } from "react-icons/gi";
 import { GoChecklist } from "react-icons/go";
-import { BiLogIn, BiLogOut, BiSupport } from "react-icons/bi";
 import { RiMenuFoldFill } from "react-icons/ri";
 import { BsHouseCheck, BsPlusCircle } from "react-icons/bs";
-import { useContext, useEffect, useState } from "react";
+import { useContext } from "react";
 import { GlobalContext } from "../../Providers/GlobalProviders";
 import { NavLink, useLocation } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import Cookies from "js-cookie";
-import useGlobal from "../../hooks/useGlobal";
 import useStore from "../../hooks/useStore";
 
 export default function Sidebar() {
-  const [settingActive, setSettingActive] = useState(false);
   const { setStoreDetails } = useStore()
-  const url = useLocation();
-  const route = url?.pathname?.split("/")[2];
-  const { user, setUser } = useAuth()
-  const { setPageName } = useGlobal()
+  const { user, setUser } = useAuth()  
+  const { isSidebarOpen, setIsSidebarOpen } = useContext(GlobalContext);
+  const {pathname} = useLocation();
+  const { socket } = useContext(GlobalContext);
 
-  useEffect(() => {
-    if (route?.includes("settings")) {
-      setSettingActive(true);
-    } else {
-      setSettingActive(false);
-    }
-  }, [route]);
-
-  const { isSidebarOpen, setIsSidebarOpen, setIsActiveSetting } = useContext(GlobalContext);
-
+  const socketId = socket?.current?.id
   const handleLogout = () => {
     Cookies.remove('imstoken')
     setUser(null)
+    socket?.current?.emit("removeUser", {
+      socketId,
+    });
   }
 
   return (
@@ -57,17 +48,15 @@ export default function Sidebar() {
               </div>
             </div>
           </div>
-
           {
             user?.role === 'Admin' || user?.role === 'Admin VA' ?
               <>
                 <NavLink
-                  onClick={() => setPageName('Dashboard')}
                   to="/dashboard/home"
                   className={({ isActive }) =>
                     isActive
                       ? `bg-[#8633FF] text-white rounded ps-3 pe-3 my-2 ${isSidebarOpen ? "w-56" : ""
-                      } py-[10px] border-b border-[#3e3e41] flex items-center gap-2 text-sm rounded-t`
+                      } py-[10px] border-b border-[#3e3e41] transition-all duration-100 flex items-center gap-2 text-sm rounded-t`
                       : `text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 ps-3 ${isSidebarOpen ? "w-56" : ""
                       } pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm rounded-t`
                   }
@@ -77,7 +66,6 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Management')}
                   to="/dashboard/management"
                   className={({ isActive }) =>
                     isActive
@@ -90,7 +78,6 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('All Stores')}
                   to="/dashboard/all-stores"
                   className={({ isActive }) =>
                     isActive
@@ -103,8 +90,8 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => { setPageName('Add Store'); setStoreDetails(null) }}
                   to="/dashboard/add-store"
+                  onClick={() => setStoreDetails(null)}
                   className={({ isActive }) =>
                     isActive
                       ? `${isSidebarOpen ? 'ml-[20px]' : ''} bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm`
@@ -116,7 +103,6 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Profit Tracker')}
                   to="/dashboard/profit-tracker"
                   className={({ isActive }) =>
                     isActive
@@ -129,7 +115,6 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Pending Arrival')}
                   to="/dashboard/pending-arrival-from"
                   className={({ isActive }) =>
                     isActive
@@ -142,8 +127,8 @@ export default function Sidebar() {
                     <p className="whitespace-nowrap">Pending Arrival Form </p>
                   )}
                 </NavLink>
+
                 <NavLink
-                  onClick={() => setPageName('Sales Form')}
                   to="/dashboard/sales-form"
                   className={({ isActive }) =>
                     isActive
@@ -158,7 +143,6 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Preparing Request')}
                   to="/dashboard/preparing-request-from"
                   className={({ isActive }) =>
                     isActive
@@ -173,7 +157,6 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Add ASIN/UPC')}
                   to="/dashboard/add-ASIN-UPC-from"
                   className={({ isActive }) =>
                     isActive
@@ -193,7 +176,6 @@ export default function Sidebar() {
           {
             user?.role === 'Store Owner' &&
             <NavLink
-              onClick={() => setPageName('Profit Tracker')}
               to="/dashboard/profit-tracker"
               className={({ isActive }) =>
                 isActive
@@ -210,7 +192,6 @@ export default function Sidebar() {
             user?.role === 'Store Manager Admin' || user?.role === 'Store Manager VA' ?
               <>
                 <NavLink
-                  onClick={() => setPageName('Management')}
                   to="/dashboard/management"
                   className={({ isActive }) =>
                     isActive
@@ -223,7 +204,18 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Pending Arrival')}
+                  to="/dashboard/profit-tracker"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
+                  }
+                >
+                  <GiProgression size={24} />
+                  {isSidebarOpen && <p>Profit tracker</p>}
+                </NavLink>
+
+                <NavLink
                   to="/dashboard/pending-arrival-from"
                   className={({ isActive }) =>
                     isActive
@@ -238,7 +230,20 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Preparing Request')}
+                  to="/dashboard/sales-form"
+                  className={({ isActive }) =>
+                    isActive
+                      ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm rounded-b"
+                      : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm  rounded-b"
+                  }
+                >
+                  <GoChecklist size={24} />
+                  {isSidebarOpen && (
+                    <p className="whitespace-nowrap">Sales Form</p>
+                  )}
+                </NavLink>
+
+                <NavLink
                   to="/dashboard/preparing-request-from"
                   className={({ isActive }) =>
                     isActive
@@ -253,7 +258,6 @@ export default function Sidebar() {
                 </NavLink>
 
                 <NavLink
-                  onClick={() => setPageName('Add ASIN/UPC')}
                   to="/dashboard/add-ASIN-UPC-from"
                   className={({ isActive }) =>
                     isActive
@@ -272,7 +276,6 @@ export default function Sidebar() {
           {
             user?.role === 'Warehouse Admin' || user?.role === 'Warehouse Manager VA' ?
               <NavLink
-                onClick={() => setPageName('Management')}
                 to="/dashboard/management"
                 className={({ isActive }) =>
                   isActive
@@ -287,10 +290,9 @@ export default function Sidebar() {
         </div>
 
         {/* bottom part of the slider  */}
-        <div className="flex flex-col justify-between w-full h-[calc(100vh-100px)] items-center mt-10 relative">
+        {/* <div className="flex flex-col justify-between w-full h-[calc(100vh-100px)] items-center mt-10 relative">
           <div className={`absolute bottom-0`}>
             <NavLink
-              onClick={() => setPageName('Support')}
               to="/dashboard/support"
               className={({ isActive }) =>
                 isActive
@@ -304,12 +306,8 @@ export default function Sidebar() {
               {isSidebarOpen && <p className="whitespace-nowrap">Support</p>}
             </NavLink>
             <NavLink
-              onClick={() => {
-                setIsActiveSetting("profile")
-                setPageName('Settings')
-              }}
               to="/dashboard/settings/profile"
-              className={`${settingActive
+              className={`${pathname?.includes("settings")
                 ? "bg-[#8633FF] text-white rounded ps-3 pe-3 py-[10px] border-b my-2 border-[#38383c] flex items-center gap-2 text-sm"
                 : "text-gray-400 hover:bg-[#3f3f41] transition-all duration-100 my-2 hover:text-gray-100 ps-3 pe-3 py-[10px] border-b border-[#38383c] flex items-center gap-2 text-sm"
                 }`}
@@ -332,7 +330,7 @@ export default function Sidebar() {
                 {isSidebarOpen && <p className="whitespace-nowrap">Login</p>}
               </NavLink>}
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );

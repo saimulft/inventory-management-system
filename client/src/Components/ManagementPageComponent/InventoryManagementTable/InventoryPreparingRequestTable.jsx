@@ -60,14 +60,14 @@ export default function InventoryPreparingRequestTable() {
       }
     },
   });
-  
+
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
 
-  const handleRTS = async (_id, quantity, upin, data ) => {
+  const handleRTS = async (_id, quantity, upin, data) => {
     console.log(data);
-    
+
     try {
       setLoading(true);
       const res = await axios.post(
@@ -307,37 +307,35 @@ export default function InventoryPreparingRequestTable() {
       <h3 className="text-center text-2xl font-medium">
         Preparing Request
         <span className={`${notificationSearchValue && "hidden"}`}>
-          : {data.length}
+          : {searchError ? 0 : searchResults?.length ? searchResults?.length : data?.length}
         </span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-          
+
             {!notificationSearchValue && (
               <>
                 <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -346,9 +344,8 @@ export default function InventoryPreparingRequestTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -357,9 +354,8 @@ export default function InventoryPreparingRequestTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -368,9 +364,8 @@ export default function InventoryPreparingRequestTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -379,9 +374,8 @@ export default function InventoryPreparingRequestTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -390,9 +384,8 @@ export default function InventoryPreparingRequestTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -438,220 +431,228 @@ export default function InventoryPreparingRequestTable() {
         )}
       </div>
 
-      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <table className="table table-sm">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Date</th>
-              <th>Store Name</th>
-              <th>ASIN/UPC</th>
-              <th>Code Type</th>
-              <th>Product Name</th>
-              <th>Order ID</th>
-              <th>UPIN</th>
-              <th>Quantity</th>
-              <th>Courier</th>
-              <th>Supplier Tracking</th>
-              <th>Invoice level</th>
-              <th>Shipping level</th>
-              <th>Notes</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
+      <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Date</th>
+                <th>Store Name</th>
+                <th>ASIN/UPC</th>
+                <th>Code Type</th>
+                <th>Product Name</th>
+                <th>Order ID</th>
+                <th>UPIN</th>
+                <th>Quantity</th>
+                <th>Courier</th>
+                <th>Supplier Tracking</th>
+                <th>Invoice level</th>
+                <th>Shipping level</th>
+                <th>Notes</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* {notificationSearchData == undefined && notificationSearchValue && (
               <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Pending arrival notified data not available!
+                Data move to the next sequence!
               </p>
             )} */}
-            {searchError ? (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                {searchError}
-              </p>
-            ) : (
-              <>
-                {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr
-                        className={`${index % 2 == 1 && ""} py-2`}
-                        key={index}
-                      >
-                        <th>{format(new Date(d.date), "y/MM/d")}</th>
-                        <th className="font-normal">{d.store_name}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.order_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.courier}</td>
-                        <td>{d.tracking_number}</td>
-                        <td>
-                          {d.invoice_file && (
-                            <FileDownload fileName={d.invoice_file} />
-                          )}
-                        </td>
-                        <td>
-                          {d.shipping_file && (
-                            <FileDownload fileName={d.shipping_file} />
-                          )}
-                        </td>
-                        <td>{d.notes}</td>
-                        <td className="flex gap-2">
+              {searchError ? (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  {searchError}
+                </p>
+              ) : (
+                <>
+                  {searchResults.length ? (
+                    displayedDataFilter.map((d, index) => {
+                      return (
+                        <tr
+                          className={`${index % 2 == 1 && ""} py-2`}
+                          key={index}
+                        >
+                          <th>{format(new Date(d.date), "y/MM/d")}</th>
+                          <th className="font-normal">{d.store_name}</th>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.order_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier}</td>
+                          <td>{d.tracking_number}</td>
+                          <td>
+                            {d.invoice_file && (
+                              <FileDownload fileName={d.invoice_file} />
+                            )}
+                          </td>
+                          <td>
+                            {d.shipping_file && (
+                              <FileDownload fileName={d.shipping_file} />
+                            )}
+                          </td>
+                          <td>{d.notes}</td>
+                          <td>
+                            <div className="flex gap-2">
+                              <button
+                                disabled={loading}
+                                onClick={() => {
+                                  handleRTS(d._id, d.quantity, d.upin, d);
+                                }}
+                                className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
+                              >
+                                <LiaShippingFastSolid />
+
+                                <p>RTS</p>
+                              </button>
+
+                              <button
+                                disabled={loading}
+                                onClick={() => {
+                                  handleOOS(d);
+                                }}
+                                className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
+                              >
+                                <LiaShippingFastSolid />
+                                <p>OOS</p>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : isLoading ? (
+                    <Loading />
+                  ) : !notificationSearchValue ? (
+                    displayAllData?.map((d, index) => {
+                      return (
+                        <tr
+                          className={`${index % 2 == 1 && ""} py-2`}
+                          key={index}
+                        >
+                          <th>{format(new Date(d.date), "y/MM/d")}</th>
+                          <th className="font-normal">{d.store_name}</th>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.order_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier}</td>
+                          <td>{d.tracking_number}</td>
+                          <td>
+                            {d.invoice_file && (
+                              <FileDownload fileName={d.invoice_file} />
+                            )}
+                          </td>
+                          <td>
+                            {d.shipping_file && (
+                              <FileDownload fileName={d.shipping_file} />
+                            )}
+                          </td>
+                          <td>{d.notes}</td>
+                          <td>
+                            <div className="flex gap-2">
+                              <button
+                                disabled={loading}
+                                onClick={() => {
+                                  handleRTS(d._id, d.quantity, d.upin, d);
+                                }}
+                                className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
+                              >
+                                <LiaShippingFastSolid />
+                                <p>RTS</p>
+                              </button>
+
+                              <button
+                                disabled={loading}
+                                onClick={() => {
+                                  handleOOS(d);
+                                }}
+                                className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
+                              >
+                                <LiaShippingFastSolid />
+                                <p>OOS</p>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    (notificationSearchData && <tr>
+                      <th>
+                        {format(new Date(notificationSearchData?.date), "y/MM/d")}
+                      </th>
+                      <th className="font-normal">
+                        {notificationSearchData?.store_name}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.product_name}</td>
+                      <td>{notificationSearchData?.order_id}</td>
+                      <td>{notificationSearchData?.upin}</td>
+                      <td>{notificationSearchData?.quantity}</td>
+                      <td>{notificationSearchData?.courier}</td>
+                      <td>{notificationSearchData?.tracking_number}</td>
+                      <td>
+                        {notificationSearchData?.invoice_file && (
+                          <FileDownload
+                            fileName={notificationSearchData?.invoice_file}
+                          />
+                        )}
+                      </td>
+                      <td>
+                        {notificationSearchData?.shipping_file && (
+                          <FileDownload
+                            fileName={notificationSearchData?.shipping_file}
+                          />
+                        )}
+                      </td>
+                      <td>{notificationSearchData?.notes}</td>
+                      <td>
+                        <div className="flex gap-2">
                           <button
                             disabled={loading}
                             onClick={() => {
-                              handleRTS(d._id, d.quantity, d.upin, d);
+                              handleRTS(
+                                notificationSearchData?._id,
+                                notificationSearchData?.quantity,
+                                notificationSearchData?.upin,
+                                notificationSearchData
+                              );
                             }}
                             className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
                           >
                             <LiaShippingFastSolid />
-
                             <p>RTS</p>
                           </button>
 
                           <button
                             disabled={loading}
                             onClick={() => {
-                              handleOOS(d);
+                              handleOOS(notificationSearchData);
                             }}
                             className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
                           >
                             <LiaShippingFastSolid />
                             <p>OOS</p>
                           </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : isLoading ? (
-                  <Loading />
-                ) : !notificationSearchValue ? (
-                  displayAllData?.map((d, index) => {
-                    return (
-                      <tr
-                        className={`${index % 2 == 1 && ""} py-2`}
-                        key={index}
-                      >
-                        <th>{format(new Date(d.date), "y/MM/d")}</th>
-                        <th className="font-normal">{d.store_name}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.order_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.courier}</td>
-                        <td>{d.tracking_number}</td>
-                        <td>
-                          {d.invoice_file && (
-                            <FileDownload fileName={d.invoice_file} />
-                          )}
-                        </td>
-                        <td>
-                          {d.shipping_file && (
-                            <FileDownload fileName={d.shipping_file} />
-                          )}
-                        </td>
-                        <td>{d.notes}</td>
-                        <td className="flex gap-2">
-                          <button
-                            disabled={loading}
-                            onClick={() => {
-                              handleRTS(d._id, d.quantity, d.upin, d);
-                            }}
-                            className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
-                          >
-                            <LiaShippingFastSolid />
-                            <p>RTS</p>
-                          </button>
-
-                          <button
-                            disabled={loading}
-                            onClick={() => {
-                              handleOOS(d);
-                            }}
-                            className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
-                          >
-                            <LiaShippingFastSolid />
-                            <p>OOS</p>
-                          </button>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  (notificationSearchData && <tr>
-                    <th>
-                      {format(new Date(notificationSearchData?.date), "y/MM/d")}
-                    </th>
-                    <th className="font-normal">
-                      {notificationSearchData?.store_name}
-                    </th>
-                    <td>{notificationSearchData?.asin_upc_code}</td>
-                    <td>{notificationSearchData?.code_type}</td>
-                    <td>{notificationSearchData?.product_name}</td>
-                    <td>{notificationSearchData?.order_id}</td>
-                    <td>{notificationSearchData?.upin}</td>
-                    <td>{notificationSearchData?.quantity}</td>
-                    <td>{notificationSearchData?.courier}</td>
-                    <td>{notificationSearchData?.tracking_number}</td>
-                    <td>
-                      {notificationSearchData?.invoice_file && (
-                        <FileDownload
-                          fileName={notificationSearchData?.invoice_file}
-                        />
-                      )}
-                    </td>
-                    <td>
-                      {notificationSearchData?.shipping_file && (
-                        <FileDownload
-                          fileName={notificationSearchData?.shipping_file}
-                        />
-                      )}
-                    </td>
-                    <td>{notificationSearchData?.notes}</td>
-                    <td className="flex gap-2">
-                      <button
-                        disabled={loading}
-                        onClick={() => {
-                          handleRTS(
-                            notificationSearchData?._id,
-                            notificationSearchData?.quantity,
-                            notificationSearchData?.upin,
-                            notificationSearchData
-                          );
-                        }}
-                        className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
-                      >
-                        <LiaShippingFastSolid />
-                        <p>RTS</p>
-                      </button>
-
-                      <button
-                        disabled={loading}
-                        onClick={() => {
-                          handleOOS(notificationSearchData);
-                        }}
-                        className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition hover:text-white text-[#8633FF] py-[2px]"
-                      >
-                        <LiaShippingFastSolid />
-                        <p>OOS</p>
-                      </button>
-                    </td>
-                  </tr>)
-                )}
-              </>
-            )}
-          </tbody>
-        </table>
+                        </div>
+                      </td>
+                    </tr>)
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* pagination */}
         {!isLoading &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && !notificationSearchValue &&(
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -667,7 +668,7 @@ export default function InventoryPreparingRequestTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}

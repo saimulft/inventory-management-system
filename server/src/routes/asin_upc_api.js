@@ -9,6 +9,7 @@ const run = async () => {
 
     const db = await connectDatabase()
     const asin_upc_collection = db.collection("asin_upc")
+    const all_stock_collection = db.collection("all_stock")
 
     // upload asin upc image 
     const storage = multer.diskStorage({
@@ -91,7 +92,7 @@ const run = async () => {
 
     })
 
-    //   get asin or upc by email
+    // get all asin or upc by email for dropdown
     router.post('/get_asin_upc_dropdown_data', async (req, res) => {
         try {
             const user = req.body.user;
@@ -107,7 +108,29 @@ const run = async () => {
         }
     });
 
-    //   get asin or upc by id
+    // get store based asin upc for dropdown
+    router.post('/get_store_based_asin_upc_data', async (req, res) => {
+        try {
+            const { store_id } = req.body;
+
+            if (store_id) {
+                const asinUpcData = await all_stock_collection.find({store_id: store_id}).project({label: "$asin_upc_code", value: "$asin_upc_code", code_type: "$code_type", _id: 0}).toArray()
+                if(asinUpcData.length){
+                    return res.status(200).json({ data: asinUpcData, message: "Successfully get asin_upc" })
+                }
+                else {
+                    return res.status(204).json({ message: "No content" })
+                }
+            }
+            else {
+                return res.status(204).json({ message: "No content" })
+            }
+        } catch (error) {
+            res.status(500).json({ message: 'Internal Server Error in asin_upc' });
+        }
+    });
+
+    // get single asin or upc by id
     router.get('/get_asin_upc_by_id', async (req, res) => {
         const id = req.query.id;
         try {
@@ -124,7 +147,7 @@ const run = async () => {
         }
     });
 
-    // get all asin upc for admin
+    // get all asin upc for table
     router.get('/get_all_asin_upc', async (req, res) => {
 
         try {
