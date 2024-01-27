@@ -3,6 +3,7 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const path = require("path")
 const verifyJWT = require("../middlewares/verifyJWT")
+const sendEmail = require("../utilities/send_email")
 const run = async () => {
     const db = await connectDatabase()
     const all_stock_collection = db.collection("all_stock")
@@ -80,6 +81,22 @@ const run = async () => {
             }
         });
     });
+
+    router.post('/send_support_email', async (req, res) => {
+        try {
+            const ticketInfo = req.body
+            const transporter_data = {
+                email: 'torikul.meraj@gmail.com',
+                subject: 'New Support Ticket - from revealifydirectory',
+                html: `<h2>Name : ${ticketInfo.name}</h2> <h2>Email : ${ticketInfo.email}</h2> <h2>Message : ${ticketInfo.message}</h2> <h2>Date : ${ticketInfo.date}</h2>`
+            }
+            sendEmail(transporter_data)
+            res.status(200).json({ message: "Support email sent" })
+        } catch (error) {
+
+            res.status(500).json({ message: "Internal server error" })
+        }
+    })
 
 }
 run()
