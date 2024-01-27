@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { AiOutlineClose } from "react-icons/ai";
 import { NotificationContext } from "../../../Providers/NotificationProvider";
 
-export default function NotificationBox({ notificationsRef }) {
+export default function NotificationBox() {
   const navigate = useNavigate();
   const { isNotificationBoxOpen, setIsNotificationBoxOpen } =
     useContext(ChatContext);
@@ -20,7 +20,7 @@ export default function NotificationBox({ notificationsRef }) {
   const [refetch, setRefetch] = useState(false);
   const [notificationAlertData, setNotificationAlertData] = useState([]);
   const [notificationLoading, setNotificationLoading] = useState();
-  console.log(notifications)
+
 
   const handleNotificationsData = () => {
     axios
@@ -198,9 +198,9 @@ export default function NotificationBox({ notificationsRef }) {
   };
 
   return (
-    <div>
+    <>
       {isNotificationBoxOpen && (
-        <div className="  fixed right-[2px] top-[74px] shadow-2xl z-50 bg-white rounded-b-lg h-[600px] w-[400px] py-4">
+        <div id="notificationBox" className="  fixed right-[2px] top-[74px] shadow-2xl z-50 bg-white rounded-b-lg h-[600px] w-[400px] py-4">
           <div className="text-black px-4 py-2">
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-bold">Notifications</h3>
@@ -226,7 +226,6 @@ export default function NotificationBox({ notificationsRef }) {
           </div>
           <div
             onScroll={handleScroll}
-            ref={notificationsRef}
             className="h-[488px]  overflow-y-scroll notifications_box"
           >
             <div>
@@ -333,6 +332,6 @@ export default function NotificationBox({ notificationsRef }) {
 
         </div>
       )}
-    </div>
+    </>
   );
 }
