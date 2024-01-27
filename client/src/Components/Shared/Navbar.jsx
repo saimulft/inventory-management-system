@@ -31,18 +31,15 @@ export default function Navbar() {
   useEffect(() => {
     const notificationBox = document.getElementById('notificationBox')
     const notificationButtonRef = document.getElementById('notificationButtonRef')
-    const profileButtonRef = document.getElementById('profileButtonRef')
-    const profileModalRef = document.getElementById('profileModalRef')
+    const profile_container = document.getElementById('profile_container')
 
     const clickOutside = (e) => {
-      if (profileButtonRef && !profileButtonRef.contains(e.target) &&
-        profileModalRef && !profileModalRef.contains(e.target)
-      ) {
+      if (profile_container && !profile_container?.contains(e.target)) {
         setProfileModal(false)
       }
       if (
-        notificationButtonRef && !notificationButtonRef.contains(e.target) &&
-        notificationBox && !notificationBox.contains(e.target)
+        notificationButtonRef && !notificationButtonRef?.contains(e.target) &&
+        notificationBox && !notificationBox?.contains(e.target)
       ) {
         setIsNotificationBoxOpen(false)
       }
@@ -117,7 +114,7 @@ export default function Navbar() {
         </div>
 
         <div className="flex gap-3">
-          <div className="relative">
+          <div id="profile_container" className="relative">
 
             <label id="profileButtonRef" onClick={() => setProfileModal(!profileModal)} className="btn btn-ghost btn-circle avatar w-12 border-2 border-[#8633FF]">
               <div className="w-10 rounded-full">

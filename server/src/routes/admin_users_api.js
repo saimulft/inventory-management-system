@@ -305,7 +305,7 @@ const run = async () => {
     })
 
     router.get('/get_ware_house_user_details', verifyJWT, async (req, res) => {
-
+ 
         try {
             const email = req.query.email
             const role = req.query.role
