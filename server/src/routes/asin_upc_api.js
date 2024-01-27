@@ -8,8 +8,8 @@ const fs = require('fs')
 const run = async () => {
 
     const db = await connectDatabase()
-    const asin_upc_collection = db.collection("asin_upc")
-    const all_stock_collection = db.collection("all_stock")
+    const asin_upc_collection = db?.collection("asin_upc")
+    const all_stock_collection = db?.collection("all_stock")
 
     // upload asin upc image 
     const storage = multer.diskStorage({
@@ -114,8 +114,8 @@ const run = async () => {
             const { store_id } = req.body;
 
             if (store_id) {
-                const asinUpcData = await all_stock_collection.find({store_id: store_id}).project({label: "$asin_upc_code", value: "$asin_upc_code", code_type: "$code_type", _id: 0}).toArray()
-                if(asinUpcData.length){
+                const asinUpcData = await all_stock_collection.find({ store_id: store_id }).project({ label: "$asin_upc_code", value: "$asin_upc_code", code_type: "$code_type", _id: 0 }).toArray()
+                if (asinUpcData.length) {
                     return res.status(200).json({ data: asinUpcData, message: "Successfully get asin_upc" })
                 }
                 else {
@@ -149,10 +149,19 @@ const run = async () => {
 
     // get all asin upc for table
     router.get('/get_all_asin_upc', async (req, res) => {
-
         try {
+            const notificationSearch = req.query.notification_search
             const id = req.query.id
-            const asinUpcData = await asin_upc_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
+
+            let asinUpcData;
+            if (notificationSearch != 'null') {
+                asinUpcData = await asin_upc_collection.findOne({ _id: new ObjectId(notificationSearch) })
+                console.log(asinUpcData)
+                asinUpcData = [asinUpcData]
+            }
+            else if (id) {
+                asinUpcData = await asin_upc_collection.find({ admin_id: id }).sort({ date: -1 }).toArray()
+            }
             if (asinUpcData) {
                 res.status(200).json({ data: asinUpcData, message: "successfully all get asin_upc" })
             }

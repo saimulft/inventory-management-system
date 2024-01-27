@@ -6,7 +6,7 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const all_stock_collection = db.collection("all_stock")
+    const all_stock_collection = db?.collection("all_stock")
 
     router.put('/update_stock_product', async (req, res) => {
 
@@ -31,7 +31,7 @@ const run = async () => {
             if (updateProduct.modifiedCount) {
                 res.status(200).json({ message: "Data updated" })
             }
-            else{
+            else {
                 res.status(204).json({ message: "Data up to date" })
             }
         } catch (error) {

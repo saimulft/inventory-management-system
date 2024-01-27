@@ -5,14 +5,14 @@ const path = require("path")
 const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
     const db = await connectDatabase()
-    const all_stock_collection = db.collection("all_stock")
-    const pending_arrival_collection = db.collection("pending_arrival")
-    const preparing_form_data_collection = db.collection("preparing_form_data")
-    const ready_to_ship_collection = db.collection("ready_to_ship_data")
-    const shipped_data_collection = db.collection("shipped_data")
-    const out_of_stock_collection = db.collection("out_of_stock")
-    const missing_arrival_collection = db.collection("missing_arrival")
-    const asin_upc_collection = db.collection("asin_upc")
+    const all_stock_collection = db?.collection("all_stock")
+    const pending_arrival_collection = db?.collection("pending_arrival")
+    const preparing_form_data_collection = db?.collection("preparing_form_data")
+    const ready_to_ship_collection = db?.collection("ready_to_ship_data")
+    const shipped_data_collection = db?.collection("shipped_data")
+    const out_of_stock_collection = db?.collection("out_of_stock")
+    const missing_arrival_collection = db?.collection("missing_arrival")
+    const asin_upc_collection = db?.collection("asin_upc")
 
     // const collections = [
     //     'all_stock',
@@ -25,7 +25,7 @@ const run = async () => {
     //     'asin_upc',
     // ];
     // for (const collectionName of collections) {
-    //     const collection = db.collection(collectionName);
+    //     const collection = db?.collection(collectionName);
     //     const count = await collection.countDocuments(query);
     //     counts[collectionName] = count;
     // }

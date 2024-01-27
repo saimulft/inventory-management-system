@@ -9,9 +9,9 @@ const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
 
     const db = await connectDatabase()
-    const preparing_form_collection = db.collection("preparing_form_data")
-    const all_stock_collection = db.collection("all_stock")
-    const all_stores_collection = db.collection("all_stores")
+    const preparing_form_collection = db?.collection("preparing_form_data")
+    const all_stock_collection = db?.collection("all_stock")
+    const all_stores_collection = db?.collection("all_stores")
 
     // upload asin upc image 
     const storage = multer.diskStorage({

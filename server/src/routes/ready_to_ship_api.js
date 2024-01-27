@@ -7,9 +7,9 @@ const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
 
     const db = await connectDatabase()
-    const ready_to_ship_collection = db.collection("ready_to_ship_data")
-    const preparing_form_collection = db.collection("preparing_form_data")
-    const all_stock_collection = db.collection("all_stock")
+    const ready_to_ship_collection = db?.collection("ready_to_ship_data")
+    const preparing_form_collection = db?.collection("preparing_form_data")
+    const all_stock_collection = db?.collection("all_stock")
 
     router.post("/ready_to_ship", async (req, res) => {
         try {
@@ -53,7 +53,7 @@ const run = async () => {
     })
 
 
-    router.post('/get_all_RTS_data',verifyJWT, async (req, res) => {
+    router.post('/get_all_RTS_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
             const role = req.role;
@@ -71,7 +71,7 @@ const run = async () => {
             }
 
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
-                query = { warehouse_id: user.warehouse_id}
+                query = { warehouse_id: user.warehouse_id }
             }
 
             const data = await ready_to_ship_collection.find(query).sort({ date: -1 }).toArray()

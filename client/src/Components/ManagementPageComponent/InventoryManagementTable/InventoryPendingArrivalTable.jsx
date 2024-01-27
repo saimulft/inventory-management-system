@@ -19,9 +19,7 @@ import { useLocation } from "react-router-dom";
 import { IoCalendarOutline } from "react-icons/io5";
 
 export default function InventoryPendingArrivalTable() {
-  const location = useLocation();
-  const queryParams = new URLSearchParams(location.search);
-  const notificationSearchValue = queryParams.get("notification_search");
+
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
   const [singleData, setSingleData] = useState({});
@@ -68,6 +66,10 @@ export default function InventoryPendingArrivalTable() {
     }
   };
 
+
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const notificationSearchValue = queryParams.get("notification_search");
   const {
     data = [],
     refetch,
@@ -77,7 +79,7 @@ export default function InventoryPendingArrivalTable() {
     queryFn: async () => {
       try {
         const res = await axios.post(
-          "/api/v1/pending_arrival_api/get_all_pending_arrival_data",
+          `/api/v1/pending_arrival_api/get_all_pending_arrival_data?notification_search=${notificationSearchValue}`,
           { user }
         );
         if (res.status === 200) {
@@ -91,8 +93,9 @@ export default function InventoryPendingArrivalTable() {
     },
   });
 
+
   const notificationSearchData = data?.find(
-    (d) => d._id == notificationSearchValue
+    (d) => d?._id == notificationSearchValue
   );
 
   const handleSearch = (e) => {
@@ -519,7 +522,7 @@ export default function InventoryPendingArrivalTable() {
                     displayedDataFilter.map((d, index) => {
                       return (
                         <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                          <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
+                          <th>{format(new Date(d?.date), "yyyy/MM/dd")}</th>
                           <th className="font-normal">{d.store_name}</th>
                           <td>{d.asin_upc_code}</td>
                           <td>{d.code_type}</td>
@@ -532,7 +535,7 @@ export default function InventoryPendingArrivalTable() {
                           <td>
                             {d.supplier_tracking ? d.supplier_tracking : "-"}
                           </td>
-                          <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
+                          <td>{format(new Date(d?.eda), "yyyy/MM/dd")}</td>
                           <td>
                             <div className="dropdown dropdown-end">
                               <label tabIndex={0}>
@@ -578,7 +581,7 @@ export default function InventoryPendingArrivalTable() {
                     displayAllData?.map((d, index) => {
                       return (
                         <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                          <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
+                          <th>{format(new Date(d?.date), "yyyy/MM/dd")}</th>
                           <th className="font-normal">{d.store_name}</th>
                           <td>{d.asin_upc_code}</td>
                           <td>{d.code_type}</td>
@@ -591,7 +594,7 @@ export default function InventoryPendingArrivalTable() {
                           <td>
                             {d.supplier_tracking ? d.supplier_tracking : "-"}
                           </td>
-                          <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
+                          <td>{format(new Date(d?.eda), "yyyy/MM/dd")}</td>
                           <td>
                             <div className="dropdown dropdown-end">
                               <label tabIndex={0}>

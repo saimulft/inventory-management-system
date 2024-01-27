@@ -11,9 +11,9 @@ const { ObjectId } = require("mongodb");
 
 const run = async () => {
     const db = await connectDatabase()
-    const temp_stores_collection = db.collection("temp_store")
-    const all_stores_collection = db.collection("all_stores")
-    const store_owner_users_collection = db.collection("store_owner_users")
+    const temp_stores_collection = db?.collection("temp_store")
+    const all_stores_collection = db?.collection("all_stores")
+    const store_owner_users_collection = db?.collection("store_owner_users")
 
     const handleAfterSuccessfulPayment = async (subscription) => {
         const document = await temp_stores_collection.findOne({ session_id: subscription.id });
@@ -24,10 +24,10 @@ const run = async () => {
             const storeOwners = document.store_owners;
             delete document.store_owners;
 
-            if(subscription.plan.amount == 149900 || subscription.plan.amount == 9900){
+            if (subscription.plan.amount == 149900 || subscription.plan.amount == 9900) {
                 document.max_form_submission_limit = 300;
             }
-            if(subscription.plan.amount == 299900 || subscription.plan.amount == 19900){
+            if (subscription.plan.amount == 299900 || subscription.plan.amount == 19900) {
                 document.max_form_submission_limit = 1000;
             }
 
@@ -272,8 +272,8 @@ const run = async () => {
             const { admin_id, store_access_ids } = req.query;
 
             if (req.role === 'Admin') {
-                const result = await all_stores_collection.find({ admin_id: admin_id }, {projection: {store_name: 1, subscription_plan: 1, subscription_type: 1, session_id: 1}}).sort({ date: -1 }).toArray()
-                
+                const result = await all_stores_collection.find({ admin_id: admin_id }, { projection: { store_name: 1, subscription_plan: 1, subscription_type: 1, session_id: 1 } }).sort({ date: -1 }).toArray()
+
                 if (result.length) {
                     res.status(200).json({ data: result, message: "Successfully get all store subscriptions" })
                 }
@@ -283,7 +283,7 @@ const run = async () => {
             }
             if (req.role === 'Store Owner') {
                 const access_ids = store_access_ids.map(id => new ObjectId(id))
-                const result = await all_stores_collection.find({ _id: { $in: access_ids } }, {projection: {store_name: 1, subscription_plan: 1, subscription_type: 1, session_id: 1}}).sort({ date: -1 }).toArray()
+                const result = await all_stores_collection.find({ _id: { $in: access_ids } }, { projection: { store_name: 1, subscription_plan: 1, subscription_type: 1, session_id: 1 } }).sort({ date: -1 }).toArray()
 
                 if (result.length) {
                     res.status(200).json({ data: result, message: "Successfully get all accessed store subscriptions" })

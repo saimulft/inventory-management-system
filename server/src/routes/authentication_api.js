@@ -10,14 +10,14 @@ const getUserProfileData = require("../utilities/get_user_profile_data")
 
 const run = async () => {
     const db = await connectDatabase()
-    const all_users_collection = db.collection("all_users")
-    const admin_users_collection = db.collection("admin_users")
-    const admin_va_users_collection = db.collection("admin_va_users")
-    const store_owner_users_collection = db.collection("store_owner_users")
-    const store_manager_admin_users_collection = db.collection("store_manager_admin_users")
-    const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
-    const store_manager_va_users_collection = db.collection("store_manager_va_users")
-    const warehouse_manager_va_users_collection = db.collection("warehouse_manager_va_users")
+    const all_users_collection = db?.collection("all_users")
+    const admin_users_collection = db?.collection("admin_users")
+    const admin_va_users_collection = db?.collection("admin_va_users")
+    const store_owner_users_collection = db?.collection("store_owner_users")
+    const store_manager_admin_users_collection = db?.collection("store_manager_admin_users")
+    const warehouse_admin_users_collection = db?.collection("warehouse_admin_users")
+    const store_manager_va_users_collection = db?.collection("store_manager_va_users")
+    const warehouse_manager_va_users_collection = db?.collection("warehouse_manager_va_users")
 
 
     // user login

@@ -6,8 +6,8 @@ const sendEmail = require("../utilities/send_email")
 
 const run = async () => {
     const db = await connectDatabase()
-    const store_manager_va_users_collection = db.collection("store_manager_va_users")
-    const all_users_collection = db.collection("all_users")
+    const store_manager_va_users_collection = db?.collection("store_manager_va_users")
+    const all_users_collection = db?.collection("all_users")
 
     // create new admin va 
     router.post('/create_store_manager_va', async (req, res) => {

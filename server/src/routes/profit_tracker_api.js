@@ -6,8 +6,8 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const all_stock_collection = db.collection("all_stock")
-    const all_stores_collection = db.collection("all_stores")
+    const all_stock_collection = db?.collection("all_stock")
+    const all_stores_collection = db?.collection("all_stores")
 
     // get specific store data for profit tracker
     router.get('/single_store_data', verifyJWT, async (req, res) => {
@@ -41,7 +41,7 @@ const run = async () => {
             const adminId = req.query.adminId;
 
             const stockData = await all_stock_collection.find({ admin_id: adminId }).toArray()
-            const totalStore = await all_stores_collection.find({admin_id: adminId}).toArray()
+            const totalStore = await all_stores_collection.find({ admin_id: adminId }).toArray()
             const totalOrder = totalStore.reduce((sum, store) => sum + parseFloat(store?.total_order), 0);
 
             if (stockData.length) {

@@ -6,10 +6,10 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const pending_arrival_collection = db.collection("pending_arrival")
-    const missing_arrival_collection = db.collection("missing_arrival")
-    const all_stock_collection = db.collection("all_stock")
-    const all_stores_collection = db.collection("all_stores")
+    const pending_arrival_collection = db?.collection("pending_arrival")
+    const missing_arrival_collection = db?.collection("missing_arrival")
+    const all_stock_collection = db?.collection("all_stock")
+    const all_stores_collection = db?.collection("all_stores")
 
     // insert pending arrival data
     router.post('/insert_pending_arrival_form_data', async (req, res) => {
@@ -70,22 +70,32 @@ const run = async () => {
         try {
             const user = req.body.user;
             const role = req.role;
-
+            const notificationSearch = req.query.notification_search
             let query;
+            let result;
 
-            if (role === 'Admin' || role === 'Admin VA') {
-                query = { admin_id: user.admin_id }
+            if (notificationSearch != "null") {
+                console.log(notificationSearch)
+                result = await pending_arrival_collection.findOne({ _id: new ObjectId(notificationSearch) })
+                result = [result]
             }
 
-            else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
-                const store_access_ids = req.body.user.store_access_ids;
-                query = { store_id: { $in: store_access_ids.map(id => id) } };
+            else {
+                if (role === 'Admin' || role === 'Admin VA') {
+                    query = { admin_id: user.admin_id }
+                }
+
+                else if (role === 'Store Manager Admin' || role === 'Store Manager VA') {
+                    const store_access_ids = req.body.user.store_access_ids;
+                    query = { store_id: { $in: store_access_ids.map(id => id) } };
+                }
+
+                else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
+                    query = { warehouse_id: user.warehouse_id }
+                }
+                result = await pending_arrival_collection.find(query).sort({ date: -1 }).toArray()
             }
 
-            else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
-                query = { warehouse_id: user.warehouse_id }
-            }
-            const result = await pending_arrival_collection.find(query).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got pending arrival data" })
             }

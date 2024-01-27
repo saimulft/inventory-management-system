@@ -4,9 +4,9 @@ const connectDatabase = require('../config/connectDatabase')
 
 const run = async () => {
     const db = await connectDatabase()
-    const stores_collection = db.collection("stores")
-    const asin_upc_collection = db.collection("asin_upc")
-    const warehouses_collection = db.collection("warehouses")
+    const stores_collection = db?.collection("stores")
+    const asin_upc_collection = db?.collection("asin_upc")
+    const warehouses_collection = db?.collection("warehouses")
 
 
     //   get stores by admin id
@@ -17,7 +17,7 @@ const run = async () => {
             if (result) {
                 res.status(200).json({ message: "Successfully get stores data" })
             }
-            else{
+            else {
                 res.status(204).json({ message: "No content" })
             }
         } catch (error) {
