@@ -111,17 +111,16 @@ export default function AddNewConversation() {
   }
 
   return (
-    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#cacaca] right-1 bottom-[0%] z-50 rounded overflow-hidden">
+    <div className="h-[600px] w-[400px] fixed bg-white shadow-2xl shadow-[#b1b1b1] border border-[#e2e2e2c4] right-1 bottom-[0%] z-50 rounded overflow-hidden">
       {/* add new conversation user list */}
       <div className="px-3 py-4  flex gap-3 justify-between text-xs font-medium ">
         <p className="text-lg font-bold">New Conversation</p>
-        <div className="p-1 rounded-full hover:bg-purple-100 text-purple-500">
+        <div onClick={() => {
+          handleOpenSingleConversationShow();
+          setAddNewConversation(false);
+          setSingleConversationShow(false);
+        }} className="p-1 rounded-full hover:bg-purple-100 text-purple-500">
           <AiOutlineClose
-            onClick={() => {
-              handleOpenSingleConversationShow();
-              setAddNewConversation(false);
-              setSingleConversationShow(false);
-            }}
             size={22}
             className="cursor-pointer "
           />
