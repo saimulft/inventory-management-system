@@ -23,11 +23,15 @@ const run = async () => {
         if (document) {
             const storeOwners = document.store_owners;
             delete document.store_owners;
+            document.subscription_status = "Active";
+            document.total_order = 0;
+            document.pending_form_submitted = 0;
+            document.preparing_form_submitted = 0;
 
-            if (subscription.plan.amount == 149900 || subscription.plan.amount == 9900) {
+            if (subscription.amount_total == 149900 || subscription.amount_total == 9900) {
                 document.max_form_submission_limit = 300;
             }
-            if (subscription.plan.amount == 299900 || subscription.plan.amount == 19900) {
+            if (subscription.amount_total == 299900 || subscription.amount_total == 19900) {
                 document.max_form_submission_limit = 1000;
             }
 
@@ -67,7 +71,7 @@ const run = async () => {
                     $set: {
                         subscription_plan: "Basic",
                         subscription_type: "yearly",
-                        store_status: "Active",
+                        subscription_status: "Active",
                         max_form_submission_limit: 300,
                     }
                 })
@@ -76,7 +80,7 @@ const run = async () => {
                     $set: {
                         subscription_plan: "Pro",
                         subscription_type: "yearly",
-                        store_status: "Active",
+                        subscription_status: "Active",
                         max_form_submission_limit: 1000,
                     }
                 })
@@ -85,7 +89,7 @@ const run = async () => {
                     $set: {
                         subscription_plan: "Basic",
                         subscription_type: "monthly",
-                        store_status: "Active",
+                        subscription_status: "Active",
                         max_form_submission_limit: 300,
                     }
                 })
@@ -94,14 +98,14 @@ const run = async () => {
                     $set: {
                         subscription_plan: "Pro",
                         subscription_type: "monthly",
-                        store_status: "Active",
+                        subscription_status: "Active",
                         max_form_submission_limit: 1000,
                     }
                 })
             if (subscription.cancellation_details.reason) {
                 await all_stores_collection.updateOne({ customer: subscription.customer }, {
                     $set: {
-                        store_status: "Inactive"
+                        subscription_status: "Inactive"
                     }
                 })
             }
