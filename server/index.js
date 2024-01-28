@@ -37,8 +37,10 @@ const conversations_api = require("./src/routes/conversation_api")
 const sales_form_api = require("./src/routes/sales_form_api")
 const notifications_api = require("./src/routes/notifications_api")
 const amazon_api = require("./src/routes/amazon_api")
-
 const payment_api = require("./src/routes/payment_api")
+const cronJob = require("./src/utilities/cron")
+
+cronJob.start()
 
 app.use('/api/v1/payment_api', payment_api)
 app.use(express.json())
