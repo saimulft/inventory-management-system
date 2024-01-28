@@ -787,6 +787,7 @@ export default function StorePreparingRequestTable() {
           />
         )}
       </div>
+      
 
       {/* modal content  */}
       {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
