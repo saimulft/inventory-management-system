@@ -5,12 +5,12 @@ const router = express.Router();
 
 const run = async () => {
   const db = await connectDatabase();
-  const all_users_collection = db?.collection("all_users");
-  const admin_users_collection = db?.collection("admin_users");
-  const store_manager_admin_users_collection = db?.collection(
+  const all_users_collection = db.collection("all_users");
+  const admin_users_collection = db.collection("admin_users");
+  const store_manager_admin_users_collection = db.collection(
     "store_manager_admin_users"
   );
-  const store_manager_va_users_collection = db?.collection(
+  const store_manager_va_users_collection = db.collection(
     "store_manager_va_users"
   );
   const warehouse_admin_users_collection = db?.collection(
@@ -23,8 +23,8 @@ const run = async () => {
     "store_owner_users"
   );
 
-  const admin_va_users_collection = db?.collection("admin_va_users");
-  const notification_collection = db?.collection("notifications");
+  const admin_va_users_collection = db.collection("admin_va_users");
+  const notification_collection = db.collection("notifications");
 
   // get current user
   router.get("/current_user", async (req, res) => {
@@ -79,8 +79,6 @@ const run = async () => {
       storeId,
       warehouseId,
     } = req.body;
-
-    console.log({ currentUser })
     const notificationSenderRole = currentUser?.role;
     const notificationSenderName = currentUser?.full_name;
 

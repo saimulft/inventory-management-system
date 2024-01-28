@@ -3,32 +3,17 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const path = require("path")
 const verifyJWT = require("../middlewares/verifyJWT")
+const sendEmail = require("../utilities/send_email")
 const run = async () => {
     const db = await connectDatabase()
-    const all_stock_collection = db?.collection("all_stock")
-    const pending_arrival_collection = db?.collection("pending_arrival")
-    const preparing_form_data_collection = db?.collection("preparing_form_data")
-    const ready_to_ship_collection = db?.collection("ready_to_ship_data")
-    const shipped_data_collection = db?.collection("shipped_data")
-    const out_of_stock_collection = db?.collection("out_of_stock")
-    const missing_arrival_collection = db?.collection("missing_arrival")
-    const asin_upc_collection = db?.collection("asin_upc")
-
-    // const collections = [
-    //     'all_stock',
-    //     'pending_arrival',
-    //     'preparing_form_data',
-    //     'ready_to_ship_data',
-    //     'shipped_data',
-    //     'out_of_stock',
-    //     'missing_arrival',
-    //     'asin_upc',
-    // ];
-    // for (const collectionName of collections) {
-    //     const collection = db?.collection(collectionName);
-    //     const count = await collection.countDocuments(query);
-    //     counts[collectionName] = count;
-    // }
+    const all_stock_collection = db.collection("all_stock")
+    const pending_arrival_collection = db.collection("pending_arrival")
+    const preparing_form_data_collection = db.collection("preparing_form_data")
+    const ready_to_ship_collection = db.collection("ready_to_ship_data")
+    const shipped_data_collection = db.collection("shipped_data")
+    const out_of_stock_collection = db.collection("out_of_stock")
+    const missing_arrival_collection = db.collection("missing_arrival")
+    const asin_upc_collection = db.collection("asin_upc")
 
     // Define a route to get document counts for all collections
     router.post('/collections-docs-counts', verifyJWT, async (req, res) => {
@@ -78,8 +63,24 @@ const run = async () => {
             if (err) {
                 res.status(404).json({ message: 'File not found' });
             }
-        });
+        });    
     });
+
+    router.post('/send_support_email', async (req, res) => {
+        try {
+            const ticketInfo = req.body
+            const transporter_data = {
+                email: 'torikul.meraj@gmail.com',
+                subject: 'New Support Ticket - from revealifydirectory',
+                html: `<h2>Name : ${ticketInfo.name}</h2> <h2>Email : ${ticketInfo.email}</h2> <h2>Message : ${ticketInfo.message}</h2> <h2>Date : ${ticketInfo.date}</h2>`
+            }
+            sendEmail(transporter_data)
+            res.status(200).json({ message: "Support email sent" })
+        } catch (error) {
+
+            res.status(500).json({ message: "Internal server error" })
+        }
+    })
 
 }
 run()

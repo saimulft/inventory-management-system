@@ -5,25 +5,25 @@ const sendEmail = async (transporter_data) => {
     try {
         const transporter =
             nodemailer.createTransport({
-                host: "smtp.gmail.com",
+                host: "smtp.titan.email",
                 port: 587,
                 secure: false,
                 requireTLS: true,
                 auth: {
-                    user: "toriqulislam142@gmail.com",
-                    pass: 'nqle nukt eqfy kcko'
+                    user: "alert@developerlook.net",
+                    pass: 'AlphaK7!jSA'
                 }
             })
 
         const mailOption = {
-            from: "toriqulislam142@gamil.com",
+            from: "alert@developerlook.net",
             to: email,
             subject: subject,
             html: html
         }
 
-        transporter.sendMail(mailOption)
-
+        await transporter.sendMail(mailOption)
+            
     }
     catch (error) {
         res.status(500).json({ message: 'Nodemailer error' });

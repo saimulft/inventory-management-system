@@ -14,7 +14,9 @@ import NotificationProvider from "./Providers/NotificationProvider.jsx";
 const queryClient = new QueryClient()
 import CryptoJS from "crypto-js"
 axios.defaults.baseURL = "http://localhost:5000"
-
+import AOS from 'aos';
+import 'aos/dist/aos.css'; 
+AOS.init();
 // interceptor for set token in headers
 axios.interceptors.request.use(
   (config) => {

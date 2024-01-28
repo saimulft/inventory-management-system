@@ -7,8 +7,8 @@ const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
 
     const db = await connectDatabase()
-    const out_of_stock_collection = db?.collection("out_of_stock")
-    const preparing_form_collection = db?.collection("preparing_form_data")
+    const out_of_stock_collection = db.collection("out_of_stock")
+    const preparing_form_collection = db.collection("preparing_form_data")
 
     // insert out of stock data
     router.post("/out_of_stock", async (req, res) => {
@@ -37,7 +37,7 @@ const run = async () => {
     })
 
     //get out of stock data
-    router.post('/get_all_OOS_data', verifyJWT, async (req, res) => {
+    router.post('/get_all_OOS_data',verifyJWT, async (req, res) => {
         try {
             const user = req.body.user
             const role = req.role

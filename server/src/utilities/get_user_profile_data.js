@@ -2,13 +2,13 @@ const connectDatabase = require("../config/connectDatabase")
 
 const getUserProfileData = async (role, email) => {
     const db = await connectDatabase()
-    const admin_users_collection = db?.collection("admin_users")
-    const admin_va_users_collection = db?.collection("admin_va_users")
-    const store_owner_users_collection = db?.collection("store_owner_users")
-    const store_manager_admin_users_collection = db?.collection("store_manager_admin_users")
-    const warehouse_admin_users_collection = db?.collection("warehouse_admin_users")
-    const store_manager_va_users_collection = db?.collection("store_manager_va_users")
-    const warehouse_manager_va_users_collection = db?.collection("warehouse_manager_va_users")
+    const admin_users_collection = db.collection("admin_users")
+    const admin_va_users_collection = db.collection("admin_va_users")
+    const store_owner_users_collection = db.collection("store_owner_users")
+    const store_manager_admin_users_collection = db.collection("store_manager_admin_users")
+    const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
+    const store_manager_va_users_collection = db.collection("store_manager_va_users")
+    const warehouse_manager_va_users_collection = db.collection("warehouse_manager_va_users")
 
     if (role === 'Admin') {
         const result = await admin_users_collection.findOne({ email: email })

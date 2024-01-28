@@ -438,7 +438,7 @@ export default function InventoryOutOfStockTable() {
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm">
+          <table className="table table-sm mb-[80px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -596,7 +596,7 @@ export default function InventoryOutOfStockTable() {
                       );
                     })
                   ) : (
-                    (notificationSearchData && <tr>
+                    <tr>
                       <th>
                         {notificationSearchData?.date &&
                           format(new Date(notificationSearchData.date), "y/MM/d")}
@@ -663,7 +663,7 @@ export default function InventoryOutOfStockTable() {
                           </ul>
                         </div>
                       </td>
-                    </tr>)
+                    </tr>
                   )}
                 </>
               )}

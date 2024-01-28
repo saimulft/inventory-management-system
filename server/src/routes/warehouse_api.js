@@ -5,7 +5,7 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const warehouses_collection = db?.collection("warehouses")
+    const warehouses_collection = db.collection("warehouses")
 
     router.get('/get_warehouse_dropdown_data', verifyJWT, async (req, res) => {
         try {

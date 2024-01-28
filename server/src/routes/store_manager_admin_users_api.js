@@ -7,8 +7,8 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const store_manager_admin_users_collection = db?.collection("store_manager_admin_users")
-    const all_users_collection = db?.collection("all_users")
+    const store_manager_admin_users_collection = db.collection("store_manager_admin_users")
+    const all_users_collection = db.collection("all_users")
 
     // create new admin va 
     router.post('/create_store_manager_admin', async (req, res) => {

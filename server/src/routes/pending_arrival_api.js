@@ -2,12 +2,14 @@ const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const { ObjectId } = require("mongodb")
+const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
     const pending_arrival_collection = db.collection("pending_arrival")
     const missing_arrival_collection = db.collection("missing_arrival")
     const all_stock_collection = db.collection("all_stock")
+    const all_stores_collection = db.collection("all_stores")
 
     // insert pending arrival data
     router.post('/insert_pending_arrival_form_data', async (req, res) => {
@@ -29,37 +31,45 @@ const run = async () => {
                 warehouse_name: req.body.warehouse_name,
                 warehouse_id: req.body.warehouse_id,
 
-                amazon_quantity: req.body.amazon_quantity,
-                customer_name: req.body.customer_name,
-                amazon_shipping: req.body.amazon_shipping,
-                shipping_cost: req.body.shipping_cost,
-                handling_cost: req.body.handling_cost,
-                walmart_quantity: req.body.walmart_quantity,
-                amazon_price: req.body.amazon_price,
-                average_price: req.body.average_price,
-                average_tax: req.body.average_tax,
-                order_number: req.body.order_number,
+                amazon_quantity: 0,
+                customer_name: 'N/A',
+                amazon_shipping: 0,
+                shipping_cost: 0,
+                handling_cost: 0,
+                walmart_quantity: 0,
+                amazon_price: 0,
+                average_price: 0,
+                average_tax: 0,
+                order_number: "N/A",
             }
 
-            const result = await pending_arrival_collection.insertOne(data)
-
-            if (result.acknowledged) {
-                res.status(201).json({ message: "Successfully inserted pending arrival data", result })
+            const storeData = await all_stores_collection.findOne({ _id: new ObjectId(req.body.store_id) })
+            if (storeData) {
+                if (storeData?.pending_form_submitted < storeData?.max_form_submission_limit) {
+                    const result = await pending_arrival_collection.insertOne(data)
+                    await all_stores_collection.updateOne(
+                        { _id: new ObjectId(req.body.storeId) },
+                        { $set: { pending_form_submitted: storeData?.pending_form_submitted + 1 } }
+                    )
+                    res.status(201).json({ message: "Successfully inserted pending arrival data", result })
+                }
+                else {
+                    res.json({ status: 'exceeded', message: `Your pending arrival request limit for ${storeData.store_name} store has exceeded!` })
+                }
             }
             else {
                 res.status(500).json({ message: "Internal server error while inserting pending arrival data" })
             }
-
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
         }
     })
 
     //get all pending arrival data
-    router.post('/get_all_pending_arrival_data', async (req, res) => {
+    router.post('/get_all_pending_arrival_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
-            const role = user.role;
+            const role = req.role;
 
             let query;
 
@@ -75,7 +85,6 @@ const run = async () => {
             else if (role === 'Warehouse Admin' || role === 'Warehouse Manager VA') {
                 query = { warehouse_id: user.warehouse_id }
             }
-
             const result = await pending_arrival_collection.find(query).sort({ date: -1 }).toArray()
             if (result.length) {
                 res.status(200).json({ data: result, message: "Successfully got pending arrival data" })

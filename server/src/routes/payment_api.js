@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
+const { addMonths } = require('date-fns');
 
 const stripe = require('stripe')('sk_test_51M9AWiKa3gcPGhKTJaOAKnhWZgT7pA0dqch2kQ7uz7M5lXpt6dDckLjHdFIyYs1rgafA64sKm7eGH05O6aWWlo52006GcXLLcN');
 const YOUR_DOMAIN = 'http://localhost:5173';
@@ -11,9 +12,9 @@ const { ObjectId } = require("mongodb");
 
 const run = async () => {
     const db = await connectDatabase()
-    const temp_stores_collection = db?.collection("temp_store")
-    const all_stores_collection = db?.collection("all_stores")
-    const store_owner_users_collection = db?.collection("store_owner_users")
+    const temp_stores_collection = db.collection("temp_store")
+    const all_stores_collection = db.collection("all_stores")
+    const store_owner_users_collection = db.collection("store_owner_users")
 
     const handleAfterSuccessfulPayment = async (subscription) => {
         const document = await temp_stores_collection.findOne({ session_id: subscription.id });
@@ -27,6 +28,11 @@ const run = async () => {
             document.total_order = 0;
             document.pending_form_submitted = 0;
             document.preparing_form_submitted = 0;
+        
+            const currentDate = new Date();
+            const renewDate = addMonths(currentDate, 1);
+            const isoRenewDate = renewDate.toISOString();
+            document.renew_date = isoRenewDate;
 
             if (subscription.amount_total == 149900 || subscription.amount_total == 9900) {
                 document.max_form_submission_limit = 300;
@@ -66,6 +72,10 @@ const run = async () => {
     const changeSub = async (subscription) => {
         const document = await all_stores_collection.findOne({ customer: subscription.customer });
         if (document) {
+            const currentDate = new Date();
+            const renew_date = addMonths(currentDate, 1);
+            const isoRenewDate = renew_date.toISOString()
+
             if (subscription.plan.amount == 149900 && !subscription.cancellation_details.reason)
                 await all_stores_collection.updateOne({ customer: subscription.customer }, {
                     $set: {
@@ -73,6 +83,7 @@ const run = async () => {
                         subscription_type: "yearly",
                         subscription_status: "Active",
                         max_form_submission_limit: 300,
+                        renew_date: isoRenewDate,
                     }
                 })
             if (subscription.plan.amount == 299900 && !subscription.cancellation_details.reason)
@@ -82,6 +93,7 @@ const run = async () => {
                         subscription_type: "yearly",
                         subscription_status: "Active",
                         max_form_submission_limit: 1000,
+                        renew_date: isoRenewDate,
                     }
                 })
             if (subscription.plan.amount == 9900 && !subscription.cancellation_details.reason)
@@ -91,6 +103,7 @@ const run = async () => {
                         subscription_type: "monthly",
                         subscription_status: "Active",
                         max_form_submission_limit: 300,
+                        renew_date: isoRenewDate,
                     }
                 })
             if (subscription.plan.amount == 19900 && !subscription.cancellation_details.reason)
@@ -100,6 +113,7 @@ const run = async () => {
                         subscription_type: "monthly",
                         subscription_status: "Active",
                         max_form_submission_limit: 1000,
+                        renew_date: isoRenewDate,
                     }
                 })
             if (subscription.cancellation_details.reason) {
@@ -128,8 +142,8 @@ const run = async () => {
                     },
                 ],
                 mode: 'subscription',
-                success_url: req.body.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}` : `${YOUR_DOMAIN}/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}`,
-                cancel_url: req.body.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?canceled=true` : `${YOUR_DOMAIN}/payment-status?canceled=true`,
+                success_url: req.body.all_data.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}` : `${YOUR_DOMAIN}/payment-status?success=true&session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: req.body.all_data.payment_option == 'yourself' ? `${YOUR_DOMAIN}/dashboard/payment-status?canceled=true` : `${YOUR_DOMAIN}/payment-status?canceled=true`,
             });
             const data = { ...req.body.all_data, session_id: session.id, store_owners: req.body.store_owners }
             const result = await temp_stores_collection.insertOne(data)

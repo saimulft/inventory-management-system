@@ -6,8 +6,8 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const all_stores_collection = db?.collection("all_stores")
-    const all_stock_collection = db?.collection("all_stock")
+    const all_stores_collection = db.collection("all_stores")
+    const all_stock_collection = db.collection("all_stock")
 
     // add new store
     router.post('/add_new_store', async (req, res) => {

@@ -5,8 +5,8 @@ const router = express.Router();
 
 const run = async () => {
   const db = await connectDatabase();
-  const all_users_collection = db?.collection("all_users");
-  const conversationsCollection = db?.collection("coversations");
+  const all_users_collection = db.collection("all_users");
+  const conversationsCollection = db.collection("coversations");
 
   // get all all users
   router.get("/add_users_list", async (req, res) => {

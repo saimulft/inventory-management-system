@@ -7,9 +7,9 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const warehouse_admin_users_collection = db?.collection("warehouse_admin_users")
-    const all_users_collection = db?.collection("all_users")
-    const warehouses_collection = db?.collection("warehouses")
+    const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
+    const all_users_collection = db.collection("all_users")
+    const warehouses_collection = db.collection("warehouses")
 
     // create new warehouse admin
     router.post('/create_warehouse_admin', async (req, res) => {

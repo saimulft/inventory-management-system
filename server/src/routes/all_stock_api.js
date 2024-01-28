@@ -5,7 +5,7 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const all_stock_collection = db?.collection("all_stock")
+    const all_stock_collection = db.collection("all_stock")
 
     //get all stock data
     router.post('/get_all_stock_data', verifyJWT, async (req, res) => {
@@ -75,7 +75,7 @@ const run = async () => {
         }
     })
 
-    router.post('/get_all_stock_dropdown_data', async (req, res) => {
+    router.post('/get_all_stock_dropdown_data', async (req, res) => { 
         try {
             const user = req.body.user;
 

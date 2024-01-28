@@ -7,16 +7,16 @@ const { ObjectId } = require("mongodb")
 const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
     const db = await connectDatabase()
-    const all_users_collection = db?.collection("all_users")
-    const admin_users_collection = db?.collection("admin_users")
-    const admin_va_users_collection = db?.collection("admin_va_users")
-    const store_owner_users_collection = db?.collection("store_owner_users")
-    const store_manager_admin_users_collection = db?.collection("store_manager_admin_users")
-    const warehouse_admin_users_collection = db?.collection("warehouse_admin_users")
-    const store_manager_va_users_collection = db?.collection("store_manager_va_users")
-    const warehouse_manager_va_users_collection = db?.collection("warehouse_manager_va_users")
-    const all_store_collection = db?.collection("all_stores")
-    const warehouse_collection = db?.collection("warehouses")
+    const all_users_collection = db.collection("all_users")
+    const admin_users_collection = db.collection("admin_users")
+    const admin_va_users_collection = db.collection("admin_va_users")
+    const store_owner_users_collection = db.collection("store_owner_users")
+    const store_manager_admin_users_collection = db.collection("store_manager_admin_users")
+    const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
+    const store_manager_va_users_collection = db.collection("store_manager_va_users")
+    const warehouse_manager_va_users_collection = db.collection("warehouse_manager_va_users")
+    const all_store_collection = db.collection("all_stores")
+    const warehouse_collection = db.collection("warehouses")
 
     // create a new admin
     router.post('/admin_signup', async (req, res) => {
@@ -124,7 +124,7 @@ const run = async () => {
                 query = { creator_email: req.body.user.email };
             }
 
-            const result = await all_users_collection.find(query, { projection: { password: 0 } }).toArray()
+            const result = await all_users_collection.find(query, {projection: {password: 0}}).toArray()
 
             if (result.length) {
                 res.status(200).json(result);
@@ -305,7 +305,7 @@ const run = async () => {
     })
 
     router.get('/get_ware_house_user_details', verifyJWT, async (req, res) => {
-
+ 
         try {
             const email = req.query.email
             const role = req.query.role

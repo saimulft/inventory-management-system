@@ -6,11 +6,11 @@ const verifyJWT = require("../middlewares/verifyJWT")
 
 const run = async () => {
     const db = await connectDatabase()
-    const missing_arrival_collection = db?.collection("missing_arrival")
-    const all_stock_collection = db?.collection("all_stock")
+    const missing_arrival_collection = db.collection("missing_arrival")
+    const all_stock_collection = db.collection("all_stock")
 
     //get all missing arrival data
-    router.post('/get_all_missing_arrival_data', verifyJWT, async (req, res) => {
+    router.post('/get_all_missing_arrival_data',verifyJWT, async (req, res) => {
         try {
             const user = req.body.user
             const role = req.role
@@ -110,7 +110,7 @@ const run = async () => {
                             return res.status(203).json({ status: 'failed', message: 'Data not modified' })
                         }
                     }
-                    else {
+                    else{
                         return res.status(200).json({ status: 'success', message: 'Data modified successful' });
                     }
                 }

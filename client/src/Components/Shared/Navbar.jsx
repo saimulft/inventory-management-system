@@ -2,7 +2,7 @@ import { AiOutlineMessage, AiOutlineSearch, AiOutlineSetting } from "react-icons
 import { BsBell } from "react-icons/bs";
 import useAuth from "../../hooks/useAuth";
 import { ChatContext } from "../../Providers/ChatProvider";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NotificationContext } from "../../Providers/NotificationProvider";
 import { BiLogOut, BiSupport } from "react-icons/bi";
 import { NavLink, useLocation } from "react-router-dom";
@@ -24,20 +24,24 @@ export default function Navbar() {
 
   const { user, setUser } = useAuth()
   const [profileModal, setProfileModal] = useState(false)
-  const profileButtonRef = useRef(null)
-  const profileModalRef = useRef(null)
-  const { pathname } = useLocation()
   const { socket } = useContext(GlobalContext);
+  const { pathname } = useLocation()
+
 
   useEffect(() => {
+    const notificationBox = document.getElementById('notificationBox')
+    const notificationButtonRef = document.getElementById('notificationButtonRef')
+    const profile_container = document.getElementById('profile_container')
+
     const clickOutside = (e) => {
-      if (
-        profileButtonRef.current &&
-        !profileButtonRef.current.contains(e.target) &&
-        profileModalRef.current &&
-        !profileModalRef.current.contains(e.target)
-      ) {
+      if (profile_container && !profile_container?.contains(e.target)) {
         setProfileModal(false)
+      }
+      if (
+        notificationButtonRef && !notificationButtonRef?.contains(e.target) &&
+        notificationBox && !notificationBox?.contains(e.target)
+      ) {
+        setIsNotificationBoxOpen(false)
       }
 
     }
@@ -46,7 +50,7 @@ export default function Navbar() {
       document.removeEventListener('click', clickOutside)
     }
 
-  }, [])
+  }, [isNotificationBoxOpen, setIsNotificationBoxOpen])
 
   const socketId = socket?.current?.id
   const handleLogout = () => {
@@ -68,7 +72,7 @@ export default function Navbar() {
 
         {/* notification btn  */}
         <div className="relative">
-          <div
+          <div id="notificationButtonRef"
             onClick={() => {
               setIsNotificationBoxOpen(!isNotificationBoxOpen)
               setIsChatBoxOpen(false)
@@ -110,14 +114,14 @@ export default function Navbar() {
         </div>
 
         <div className="flex gap-3">
-          <div className="relative">
+          <div id="profile_container" className="relative">
 
-            <label ref={profileButtonRef} onClick={() => setProfileModal(!profileModal)} className="btn btn-ghost btn-circle avatar w-12 border-2 border-[#8633FF]">
+            <label id="profileButtonRef" onClick={() => setProfileModal(!profileModal)} className="btn btn-ghost btn-circle avatar w-12 border-2 border-[#8633FF]">
               <div className="w-10 rounded-full">
                 <img src="https://cdn-icons-png.flaticon.com/512/6596/6596121.png" />
               </div>
             </label>
-            {profileModal && <div ref={profileModalRef} className="bg-[#2e2e30] w-[200px]  absolute z-10 right-0 top-[115%] rounded-md">
+            {profileModal && <div id="profileModalRef" className="bg-[#2e2e30] w-[200px]  absolute z-10 right-0 top-[115%] rounded-md">
               <NavLink
                 onClick={() => setProfileModal(false)}
                 to="/dashboard/support"

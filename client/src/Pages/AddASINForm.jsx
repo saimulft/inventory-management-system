@@ -66,29 +66,6 @@ const AddASINForm = () => {
               setLoding(false);
               setInputError("");
               Swal.fire("Added", "ASIN or UPC has been added.", "success");
-
-              const notification_link = "/dashboard/management/store/total-asin";
-              const notification_search = [res?.data?.result?.insertedId];
-              const status = "Submit a ASIN/UPC form.";
-              axios
-                .post(`/api/v1/notifications_api/send_notification`, {
-                  currentUser,
-                  status,
-                  notification_link,
-                  notification_search
-                })
-                .then((res) => {
-                  if (res.data?.finalResult?.acknowledged) {
-                    // send real time notification data
-                    const notificationData = res.data?.notificationData;
-                    if (notificationData) {
-                      socket?.current?.emit("sendNotification", {
-                        user,
-                        notificationData,
-                      });
-                    }
-                  }
-                })
             }
           })
           .catch((err) => {
@@ -172,9 +149,7 @@ const AddASINForm = () => {
             axios
               .post("/api/v1/asin_upc_api/insert_asin_upc", asinInfo)
               .then((res) => {
-                console.log({ res })
                 if (res.status === 201) {
-
                   const notification_link = "/dashboard/management/store/total-asin";
                   const notification_search = [res?.data?.result?.insertedId];
                   const status = "Submit a ASIN/UPC form.";

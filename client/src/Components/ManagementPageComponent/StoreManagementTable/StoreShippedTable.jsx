@@ -30,6 +30,7 @@ export default function StoreShippedTable() {
       key: "selection",
     },
   ]);
+  const [isOpenInfo, setIsOpenInfo] = useState(false)
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["ready_to_ship_data"],
@@ -287,7 +288,7 @@ export default function StoreShippedTable() {
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm">
+          <table className="table table-sm mb-[80px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -337,7 +338,7 @@ export default function StoreShippedTable() {
                           </td>
                           <td
                             onClick={() =>
-                              document.getElementById("my_modal_2").showModal()
+                              setIsOpenInfo(true)
                             }
                             className="cursor-pointer"
                           >
@@ -377,7 +378,7 @@ export default function StoreShippedTable() {
                             </td>
                             <td
                               onClick={() =>
-                                document.getElementById("my_modal_2").showModal()
+                                setIsOpenInfo(true)
                               }
                               className="cursor-pointer"
                             >
@@ -422,7 +423,7 @@ export default function StoreShippedTable() {
                         </td>
                         <td
                           onClick={() =>
-                            document.getElementById("my_modal_2").showModal()
+                            setIsOpenInfo(true)
                           }
                           className="cursor-pointer"
                         >
@@ -477,8 +478,8 @@ export default function StoreShippedTable() {
       </div>
 
       {/* modal content  */}
-      <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft }} className="modal-box py-10 px-10">
+      {isOpenInfo && <div onClick={() => setIsOpenInfo(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
+        <div data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, width: "550px" }} className="py-10 px-10 bg-white rounded-lg overflow-hidden">
           <div className="flex">
             <div>
               <div className="flex items-center mb-6 gap-2">
@@ -535,7 +536,7 @@ export default function StoreShippedTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
         <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">

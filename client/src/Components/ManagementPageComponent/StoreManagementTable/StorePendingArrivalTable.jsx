@@ -47,6 +47,7 @@ export default function StorePendingArrivalTable() {
       key: "selection",
     },
   ]);
+  const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false)
   const [openEdaCalendar, setOpenEdaCalendar] = useState(false)
   const [eda, setEda] = useState(null)
   const calendarRef = useRef(null)
@@ -466,7 +467,7 @@ export default function StorePendingArrivalTable() {
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm">
+          <table className="table table-sm mb-[80px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -531,9 +532,7 @@ export default function StorePendingArrivalTable() {
                                 <li>
                                   <button
                                     onClick={() => {
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal();
+                                      setIsOpenUpdateModal(true)
                                     }}
                                   >
                                     Edit
@@ -592,8 +591,7 @@ export default function StorePendingArrivalTable() {
                                     <button
                                       onClick={() => {
                                         document
-                                          .getElementById("my_modal_2")
-                                          .showModal();
+                                        setIsOpenUpdateModal(true)
                                       }}
                                     >
                                       Edit
@@ -669,8 +667,7 @@ export default function StorePendingArrivalTable() {
                                 <button
                                   onClick={() => {
                                     document
-                                      .getElementById("my_modal_2")
-                                      .showModal();
+                                    setIsOpenUpdateModal(true)
                                   }}
                                 >
                                   Edit
@@ -739,10 +736,11 @@ export default function StorePendingArrivalTable() {
       </div>
 
       {/* modal content  */}
-      <dialog id="my_modal_2" className="modal">
+      {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center  bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]"  >
         <div
+          data-aos="fade-up" onClick={(e) => e.stopPropagation()}
           style={{ marginLeft, maxWidth: "750px" }}
-          className="modal-box overflow-visible py-10 px-10"
+          className="py-10 px-10 bg-white rounded-lg"
         >
           <form
             onSubmit={(event) => handleUpdate(event, singleData)}
@@ -884,7 +882,7 @@ export default function StorePendingArrivalTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
 
       {/* Date range modal */}
       <dialog id="date_range_modal" className="modal">

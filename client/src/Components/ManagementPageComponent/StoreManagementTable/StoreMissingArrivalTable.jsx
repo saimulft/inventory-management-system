@@ -32,7 +32,7 @@ export default function StoreMissingArrivalTable() {
   const [searchError, setSearchError] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const { isSidebarOpen, setCountsRefetch } = useGlobal();
-
+  const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false)
   useEffect(() => {
     if (!missingArrivalStatus || missingArrivalStatus == "active") {
       setActiveTab("active")
@@ -342,8 +342,8 @@ export default function StoreMissingArrivalTable() {
       </div>
 
       <div className="mt-8 min-h-[calc(100vh-294px)] max-h-full">
-        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm mb-[80px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -402,9 +402,7 @@ export default function StoreMissingArrivalTable() {
                                   <li>
                                     <button
                                       onClick={() =>
-                                        document
-                                          .getElementById("my_modal_2")
-                                          .showModal()
+                                       setIsOpenUpdateModal(true)
                                       }
                                     >
                                       Edit
@@ -464,9 +462,7 @@ export default function StoreMissingArrivalTable() {
                                 <li>
                                   <button
                                     onClick={() =>
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal()
+                                      setIsOpenUpdateModal(true)
                                     }
                                   >
                                     Edit
@@ -538,9 +534,7 @@ export default function StoreMissingArrivalTable() {
                               <li>
                                 <button
                                   onClick={() =>
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal()
+                                    setIsOpenUpdateModal(true)
                                   }
                                 >
                                   Edit
@@ -609,10 +603,9 @@ export default function StoreMissingArrivalTable() {
       </div>
 
       {/* modal content */}
-      <dialog id="my_modal_2" className="modal">
+      {isOpenUpdateModal &&<div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
         <div
-          style={{ marginLeft, maxWidth: "450px" }}
-          className="modal-box py-10 px-10"
+          data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, width: "450px" }} className=" py-10 px-10 bg-white rounded-lg"
         >
           <form
             onSubmit={(event) => handleUpdate(event, singleData)}
@@ -672,7 +665,7 @@ export default function StoreMissingArrivalTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
     </div>
   );
 }
