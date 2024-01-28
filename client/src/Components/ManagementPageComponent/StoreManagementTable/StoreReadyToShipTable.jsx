@@ -285,7 +285,7 @@ export default function StorePreparingRequestTable() {
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm mb-[80px]">
+          <table className="table table-sm mb-[95px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>

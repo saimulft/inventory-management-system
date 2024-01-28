@@ -343,7 +343,7 @@ export default function StoreMissingArrivalTable() {
 
       <div className="mt-8 min-h-[calc(100vh-294px)] max-h-full">
         <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading || (notificationSearchData == undefined && notificationSearchValue)) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm mb-[80px]">
+          <table className="table table-sm mb-[95px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -603,69 +603,70 @@ export default function StoreMissingArrivalTable() {
       </div>
 
       {/* modal content */}
-      {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
-        <div
-          data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, width: "450px" }} className=" py-10 px-10 bg-white rounded-lg"
-        >
-          <form
-            onSubmit={(event) => handleUpdate(event, singleData)}
-            className="flex gap-10"
+      {
+        isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
+          <div
+            data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, width: "450px" }} className=" py-10 px-10 bg-white rounded-lg"
           >
-            <div className="w-full">
-              <h3 className="text-2xl font-medium mb-6">Update</h3>
-              <div>
-                <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">Status</label>
-                  <select
-                    className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
-                    id="missingStatus"
-                    name="missingStatus"
+            <form
+              onSubmit={(event) => handleUpdate(event, singleData)}
+              className="flex gap-10"
+            >
+              <div className="w-full">
+                <h3 className="text-2xl font-medium mb-6">Update</h3>
+                <div>
+                  <div className="flex flex-col mt-2">
+                    <label className=" font-bold mb-1">Status</label>
+                    <select
+                      className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
+                      id="missingStatus"
+                      name="missingStatus"
+                    >
+                      <option defaultValue="Select Status">Select Status</option>
+                      <option value="active">Active</option>
+                      <option value="solved">Solved</option>
+                    </select>
+                  </div>
+                  <div className="flex flex-col mt-2">
+                    <label className=" font-bold mb-1">Note</label>
+                    <input
+                      type="text"
+                      placeholder="Enter Note"
+                      className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
+                      id="notes"
+                      name="notes"
+                    />
+                  </div>
+
+                  <div className="mt-3">
+                    {successMessage && (
+                      <p className="w-full flex gap-2 items-center justify-center text-center text-sm font-medium text-green-600 bg-green-100 border py-1 px-4 rounded">
+                        <BsCheck2Circle size={20} /> {successMessage}
+                      </p>
+                    )}
+
+                    {errorMessage && (
+                      <p className="w-full flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-1 px-4 rounded">
+                        <MdErrorOutline size={20} /> {errorMessage}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="bg-[#8633FF] flex gap-2 items-center justify-center mt-5 w-full py-[6px] rounded text-white font-medium"
                   >
-                    <option defaultValue="Select Status">Select Status</option>
-                    <option value="active">Active</option>
-                    <option value="solved">Solved</option>
-                  </select>
+                    {loading && <FaSpinner size={20} className="animate-spin" />}
+                    Update
+                  </button>
                 </div>
-                <div className="flex flex-col mt-2">
-                  <label className=" font-bold mb-1">Note</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Note"
-                    className="border border-[#8633FF] outline-[#8633FF] py-2 text-xs pl-2 rounded"
-                    id="notes"
-                    name="notes"
-                  />
-                </div>
-
-                <div className="mt-3">
-                  {successMessage && (
-                    <p className="w-full flex gap-2 items-center justify-center text-center text-sm font-medium text-green-600 bg-green-100 border py-1 px-4 rounded">
-                      <BsCheck2Circle size={20} /> {successMessage}
-                    </p>
-                  )}
-
-                  {errorMessage && (
-                    <p className="w-full flex gap-1 items-center justify-center text-center text-sm font-medium text-rose-600 bg-rose-100 border py-1 px-4 rounded">
-                      <MdErrorOutline size={20} /> {errorMessage}
-                    </p>
-                  )}
-                </div>
-
-                <button
-                  type="submit"
-                  className="bg-[#8633FF] flex gap-2 items-center justify-center mt-5 w-full py-[6px] rounded text-white font-medium"
-                >
-                  {loading && <FaSpinner size={20} className="animate-spin" />}
-                  Update
-                </button>
               </div>
-            </div>
+            </form>
+          </div>
+          <form method="dialog" className="modal-backdrop">
+            <button>close</button>
           </form>
-        </div>
-        <form method="dialog" className="modal-backdrop">
-          <button>close</button>
-        </form>
-      </div>}
+        </div>}
     </div>
   );
 }

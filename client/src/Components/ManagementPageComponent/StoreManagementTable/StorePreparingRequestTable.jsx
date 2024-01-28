@@ -484,7 +484,7 @@ export default function StorePreparingRequestTable() {
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm mb-[80px]">
+          <table className="table table-sm mb-[95px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -787,7 +787,7 @@ export default function StorePreparingRequestTable() {
           />
         )}
       </div>
-      
+
 
       {/* modal content  */}
       {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">

@@ -37,6 +37,7 @@ export default function InventoryOutOfStockTable() {
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
+  const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false)
 
   const {
     data = [],
@@ -138,19 +139,17 @@ export default function InventoryOutOfStockTable() {
     const form = event.target;
     const productName = form.productName.value;
     const quantity = form.quantity.value;
-    const upin = form.upin.value;
     const status = form.status.value;
     const remark = form.remark.value;
 
     const updatedData = {
       product_name: productName ? productName : singleData.product_name,
       quantity: quantity ? quantity : singleData.quantity,
-      upin: upin ? upin : singleData.upin,
       status: status && status !== "Select Status" ? status : null,
       notes: remark ? remark : singleData.notes,
     };
 
-    if (!productName && !quantity && !upin && !remark && !status) {
+    if (!productName && !quantity && !remark && !status) {
       return setErrorMessage("No data entered");
     }
 
@@ -438,7 +437,7 @@ export default function InventoryOutOfStockTable() {
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm mb-[80px]">
+          <table className="table table-sm mb-[95px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -507,9 +506,7 @@ export default function InventoryOutOfStockTable() {
                                 <li>
                                   <button
                                     onClick={() =>
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal()
+                                      setIsOpenUpdateModal(true)
                                     }
                                   >
                                     Edit
@@ -571,9 +568,7 @@ export default function InventoryOutOfStockTable() {
                                 <li>
                                   <button
                                     onClick={() =>
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal()
+                                      setIsOpenUpdateModal(true)
                                     }
                                   >
                                     Edit
@@ -639,9 +634,7 @@ export default function InventoryOutOfStockTable() {
                             <li>
                               <button
                                 onClick={() =>
-                                  document
-                                    .getElementById("my_modal_2")
-                                    .showModal()
+                                  setIsOpenUpdateModal(true)
                                 }
                               >
                                 Edit
@@ -708,10 +701,9 @@ export default function InventoryOutOfStockTable() {
       </div>
 
       {/* modal content  */}
-      <dialog id="my_modal_2" className="modal">
+      {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
         <div
-          style={{ marginLeft, maxWidth: "750px" }}
-          className="modal-box py-10 px-10"
+          data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, maxWidth: "750px" }} className=" py-10 px-10 bg-white rounded-lg"
         >
           <form
             onSubmit={(event) => handleUpdate(event, singleData)}
@@ -762,23 +754,7 @@ export default function InventoryOutOfStockTable() {
                   readOnly={!isEditable}
                 />
               </div>
-              <div
-                className={`flex items-center ${isEditable && "justify-between mt-2"
-                  }`}
-              >
-                <label className="font-bold">UPIN: </label>
-                <input
-                  type="text"
-                  defaultValue={singleData.upin}
-                  className={`${isEditable
-                    ? "border border-[#8633FF] outline-[#8633FF] mt-1"
-                    : "outline-none w-full"
-                    } py-1 pl-2 rounded`}
-                  id="upin"
-                  name="upin"
-                  readOnly={!isEditable}
-                />
-              </div>
+
             </div>
 
             <div className="w-1/2">
@@ -834,7 +810,7 @@ export default function InventoryOutOfStockTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
         <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">

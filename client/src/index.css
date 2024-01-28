@@ -37,7 +37,7 @@ select {
 /* css for pagination */
 /* Pagination.css */
 .pagination {
-    margin-top: -40px;
+    margin-top: -60px;
     display: flex;
     list-style: none;
     padding: 0;
