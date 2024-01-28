@@ -465,8 +465,8 @@ export default function StorePendingArrivalTable() {
       </div>
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading ) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm mb-[80px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -491,12 +491,12 @@ export default function StorePendingArrivalTable() {
                 </p>
               ) : (
                 <>
-                  {/* {notificationSearchData == undefined &&
-                  notificationSearchValue && (
-                    <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                      Pending arrival notified data not available!
-                    </p>
-                  )} */}
+                  {notificationSearchData == undefined &&
+                    notificationSearchValue && (
+                      <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                        Data move to the next sequence!
+                      </p>
+                    )}
 
                   {searchResults.length ? (
                     displayedDataFilter.map((d, index) => {
@@ -701,7 +701,7 @@ export default function StorePendingArrivalTable() {
             </tbody>
           </table>
         </div>
-        
+
         {/* pagination */}
         {!isLoading && !notificationSearchValue &&
           !searchError &&

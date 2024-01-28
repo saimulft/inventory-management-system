@@ -21,7 +21,6 @@ export default function NotificationBox() {
   const [notificationAlertData, setNotificationAlertData] = useState([]);
   const [notificationLoading, setNotificationLoading] = useState();
 
-
   const handleNotificationsData = () => {
     axios
       .get(
@@ -35,15 +34,14 @@ export default function NotificationBox() {
       .catch((error) => console.log(error));
   };
 
+  const checkingRole = user?.role == "Admin" || user?.role == "Admin VA" || user?.role == "Store Manager Admin" || user?.role == "Store Manager VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA"
+
   // generate notification redirect url
   const handleNavigateUrl = (url, notification_search, status) => {
-    setIsNotificationBoxOpen(false);
+    console.log({ url, notification_search, status })
 
-    if (
-      user?.role == "Admin" || user?.role == "Admin VA" ||
-      user?.role == "Store Manager Admin" ||
-      user?.role == "Store Manager VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA" ||
-      (!Array.isArray(url) && notification_search.length < 2)
+    setIsNotificationBoxOpen(false);
+    if (checkingRole || (!Array.isArray(url) && notification_search.length < 2)
     ) {
       const link = url.split("/");
       let generatedLink = "";
@@ -51,11 +49,14 @@ export default function NotificationBox() {
         generatedLink =
           link.join("/") +
           `?notification_search=${notification_search}&missing_arrival_status=${status}`;
-      } else {
+      }
+
+      else {
         generatedLink =
           link.join("/") +
           `?notification_search=${notification_search}&missing_arrival_status=solved`;
       }
+      console.log({ generatedLink })
       navigate(generatedLink);
     }
     if (
@@ -200,7 +201,7 @@ export default function NotificationBox() {
   return (
     <>
       {isNotificationBoxOpen && (
-        <div id="notificationBox" className="  fixed right-[2px] top-[74px] shadow-2xl z-50 bg-white rounded-b-lg h-[600px] w-[400px] py-4">
+        <div id="notificationBox" className="fixed right-[2px] top-[74px] shadow-2xl z-50 bg-white rounded-b-lg h-[600px] w-[400px] py-4">
           <div className="text-black px-4 py-2">
             <div className="flex items-center justify-between">
               <h3 className="text-2xl font-bold">Notifications</h3>
@@ -226,7 +227,7 @@ export default function NotificationBox() {
           </div>
           <div
             onScroll={handleScroll}
-            className="h-[488px]  overflow-y-scroll notifications_box"
+            className="h-[488px] overflow-y-scroll notifications_box"
           >
             <div>
               <div className="flex justify-center">
@@ -234,9 +235,11 @@ export default function NotificationBox() {
                   <p className="h-10 w-10 border-purple-500 border-4 border-dotted rounded-full animate-spin "></p>
                 )}
               </div>
+
               {!notificationLoading && notifications?.map((notification) => {
                 const notification_link = notification?.notification_link;
                 const notification_search = notification?.notification_search;
+                console.log({ notification_link, notification_search })
                 return (
                   <div
                     onClick={
@@ -255,7 +258,7 @@ export default function NotificationBox() {
                     }
                     key={notification?._id}
                     className={`${handleNotificationSeenStyle(
-                      notification.isNotificationSeen
+                      notification?.isNotificationSeen
                     )
                       ? "bg-white"
                       : "bg-gray-100 border-b"
