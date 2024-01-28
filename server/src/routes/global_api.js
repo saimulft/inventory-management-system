@@ -15,22 +15,6 @@ const run = async () => {
     const missing_arrival_collection = db.collection("missing_arrival")
     const asin_upc_collection = db.collection("asin_upc")
 
-    // const collections = [
-    //     'all_stock',
-    //     'pending_arrival',
-    //     'preparing_form_data',
-    //     'ready_to_ship_data',
-    //     'shipped_data',
-    //     'out_of_stock',
-    //     'missing_arrival',
-    //     'asin_upc',
-    // ];
-    // for (const collectionName of collections) {
-    //     const collection = db.collection(collectionName);
-    //     const count = await collection.countDocuments(query);
-    //     counts[collectionName] = count;
-    // }
-
     // Define a route to get document counts for all collections
     router.post('/collections-docs-counts', verifyJWT, async (req, res) => {
         try {
@@ -79,7 +63,7 @@ const run = async () => {
             if (err) {
                 res.status(404).json({ message: 'File not found' });
             }
-        });
+        });    
     });
 
     router.post('/send_support_email', async (req, res) => {
