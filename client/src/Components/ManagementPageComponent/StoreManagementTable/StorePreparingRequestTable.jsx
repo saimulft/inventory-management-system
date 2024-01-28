@@ -50,6 +50,7 @@ export default function StorePreparingRequestTable() {
       key: "selection",
     },
   ]);
+  const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false)
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -557,9 +558,7 @@ export default function StorePreparingRequestTable() {
                                 <li>
                                   <button
                                     onClick={() => {
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal();
+                                      setIsOpenUpdateModal(true)
                                     }}
                                   >
                                     Edit
@@ -635,9 +634,7 @@ export default function StorePreparingRequestTable() {
                                   <li>
                                     <button
                                       onClick={() => {
-                                        document
-                                          .getElementById("my_modal_2")
-                                          .showModal();
+                                        setIsOpenUpdateModal(true)
                                       }}
                                     >
                                       Edit
@@ -719,9 +716,7 @@ export default function StorePreparingRequestTable() {
                               <li>
                                 <button
                                   onClick={() => {
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal();
+                                    setIsOpenUpdateModal(true)
                                   }}
                                 >
                                   Edit
@@ -794,11 +789,9 @@ export default function StorePreparingRequestTable() {
       </div>
 
       {/* modal content  */}
-      <dialog id="my_modal_2" className="modal overflow-hidden">
-        <div
-          style={{ marginLeft, maxWidth: "750px" }}
-          className="modal-box py-10 px-10"
-        >
+      {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
+        <div data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, maxWidth: "750px" }} className=" py-10 px-10 bg-white rounded-lg">
+
           <div className="flex gap-10">
             <div className="w-1/2">
               <div className="flex items-center mb-6 gap-2">
@@ -1009,7 +1002,7 @@ export default function StorePreparingRequestTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
         <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">

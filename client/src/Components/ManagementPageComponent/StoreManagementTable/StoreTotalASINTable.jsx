@@ -40,7 +40,7 @@ export default function InventoryTotalASINTable() {
       key: "selection",
     },
   ]);
-
+  const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false)
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   // Get the value of the 'notification_search' parameter
@@ -528,9 +528,7 @@ export default function InventoryTotalASINTable() {
                                 <li>
                                   <button
                                     onClick={() => {
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal();
+                                      setIsOpenUpdateModal(true)
                                     }}
                                   >
                                     Edit
@@ -591,9 +589,7 @@ export default function InventoryTotalASINTable() {
                                   <li>
                                     <button
                                       onClick={() => {
-                                        document
-                                          .getElementById("my_modal_2")
-                                          .showModal();
+                                        setIsOpenUpdateModal(true)
                                       }}
                                     >
                                       Edit
@@ -661,8 +657,7 @@ export default function InventoryTotalASINTable() {
                               <button
                                 onClick={() => {
                                   document
-                                    .getElementById("my_modal_2")
-                                    .showModal();
+                                  setIsOpenUpdateModal(true)
                                 }}
                               >
                                 Edit
@@ -729,8 +724,8 @@ export default function InventoryTotalASINTable() {
       </div>
 
       {/* modal content  */}
-      <dialog id="my_modal_2" className="modal">
-        <div style={{ marginLeft, maxWidth: "450px" }} className="modal-box">
+      {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
+        <div data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, maxWidth: "750px" }} className=" py-10 px-10 bg-white rounded-lg">
           <div className="flex items-center justify-center">
             <div className="w-full px-4">
               <h3 className="text-2xl font-medium">Update</h3>
@@ -858,7 +853,7 @@ export default function InventoryTotalASINTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
         <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">
