@@ -791,7 +791,7 @@ export default function StorePreparingRequestTable() {
 
       {/* modal content  */}
       {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
-        <div data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, maxWidth: "750px" }} className=" py-10 px-10 bg-white rounded-lg">
+        <div data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, maxWidth: "750px" }} className=" py-10 px-10 bg-white rounded-lg overflow-hidden">
 
           <div className="flex gap-10">
             <div className="w-1/2">
