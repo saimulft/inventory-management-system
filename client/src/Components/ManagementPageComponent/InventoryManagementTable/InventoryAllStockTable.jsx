@@ -130,7 +130,7 @@ export default function InventoryAllStockTable() {
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
         <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm">
+          <table className="table table-sm mb-[80px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Store Name</th>

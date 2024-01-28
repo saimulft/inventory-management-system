@@ -37,7 +37,7 @@ select {
 /* css for pagination */
 /* Pagination.css */
 .pagination {
-    margin-top: 40px;
+    margin-top: -40px;
     display: flex;
     list-style: none;
     padding: 0;
@@ -141,6 +141,6 @@ td {
     background: hsla(0, 0%, 100%, .1);
 }
 
-.rdrDayToday .rdrDayNumber span:after{
+.rdrDayToday .rdrDayNumber span:after {
     background: #8633FF !important;
 }
