@@ -92,7 +92,6 @@ const run = async () => {
             const updatedData = {
                 product_name: req.body.product_name,
                 quantity: req.body.quantity,
-                upin: req.body.upin,
                 notes: req.body.notes,
             }
 

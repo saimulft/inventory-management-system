@@ -48,7 +48,7 @@ export default function InventoryMissingArrivalTable() {
   const { user } = useAuth();
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
-
+  const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false)
   const {
     data = [],
     refetch,
@@ -414,9 +414,7 @@ export default function InventoryMissingArrivalTable() {
                                 <li>
                                   <button
                                     onClick={() =>
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal()
+                                      setIsOpenUpdateModal(true)
                                     }
                                   >
                                     Edit
@@ -474,9 +472,7 @@ export default function InventoryMissingArrivalTable() {
                                   <li>
                                     <button
                                       onClick={() =>
-                                        document
-                                          .getElementById("my_modal_2")
-                                          .showModal()
+                                        setIsOpenUpdateModal(true)
                                       }
                                     >
                                       Edit
@@ -548,9 +544,7 @@ export default function InventoryMissingArrivalTable() {
                             <li>
                               <button
                                 onClick={() =>
-                                  document
-                                    .getElementById("my_modal_2")
-                                    .showModal()
+                                  setIsOpenUpdateModal(true)
                                 }
                               >
                                 Edit
@@ -617,17 +611,16 @@ export default function InventoryMissingArrivalTable() {
       </div>
 
       {/* modal content */}
-      <dialog id="my_modal_2" className="modal">
+      {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
         <div
-          style={{ marginLeft, maxWidth: "450px" }}
-          className="modal-box py-10 px-10"
+          data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, width: "500px" }} className=" py-10 px-10 bg-white rounded-lg"
         >
           <form
             onSubmit={(event) => handleUpdate(event, singleData)}
             className="flex gap-10"
           >
             <div className="w-full">
-              <h3 className="text-2xl font-medium mb-6">Update</h3>
+              <h3 className="text-2xl font-medium mb-4">Update</h3>
               <div>
                 <div className="flex flex-col mt-2">
                   <label className=" font-bold mb-1">Status</label>
@@ -680,7 +673,7 @@ export default function InventoryMissingArrivalTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
     </div>
   );
 }

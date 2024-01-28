@@ -36,6 +36,7 @@ export default function InventoryShippedTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const notificationSearchValue = queryParams.get("notification_search");
+  const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false)
   const [rangeDate, setRangeDate] = useState([
     {
       startDate: new Date(),
@@ -499,9 +500,7 @@ export default function InventoryShippedTable() {
                                 <li>
                                   <button
                                     onClick={() =>
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal()
+                                      setIsOpenUpdateModal(true)
                                     }
                                   >
                                     Edit
@@ -559,9 +558,7 @@ export default function InventoryShippedTable() {
                                 <li>
                                   <button
                                     onClick={() =>
-                                      document
-                                        .getElementById("my_modal_2")
-                                        .showModal()
+                                      setIsOpenUpdateModal(true)
                                     }
                                   >
                                     Edit
@@ -629,9 +626,7 @@ export default function InventoryShippedTable() {
                             <li>
                               <button
                                 onClick={() =>
-                                  document
-                                    .getElementById("my_modal_2")
-                                    .showModal()
+                                  setIsOpenUpdateModal(true)
                                 }
                               >
                                 Edit
@@ -697,10 +692,9 @@ export default function InventoryShippedTable() {
         )}
       </div>
 
-      <dialog id="my_modal_2" className="modal">
+      {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
         <div
-          style={{ marginLeft, maxWidth: "750px" }}
-          className="modal-box py-10 px-10"
+          data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, maxWidth: "750px" }} className=" py-10 px-10 bg-white rounded-lg"
         >
           <form
             onSubmit={(event) => handleUpdate(event, singleData)}
@@ -730,10 +724,7 @@ export default function InventoryShippedTable() {
                 <span className="font-bold">Quantity: </span>
                 <span>{singleData.quantity}</span>
               </p>
-              <p className="mt-2">
-                <span className="font-bold">Shipping Tracking: </span>
-                <span className="text-[#8633FF] cursor-pointer">Click</span>
-              </p>
+              
             </div>
 
             <div className="w-1/2">
@@ -784,7 +775,7 @@ export default function InventoryShippedTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
       {/* date range modal */}
       <dialog id="date_range_modal" className="modal">
         <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">
