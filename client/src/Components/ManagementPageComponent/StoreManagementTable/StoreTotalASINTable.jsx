@@ -55,7 +55,7 @@ export default function InventoryTotalASINTable() {
     queryFn: async () => {
       try {
         const res = await axios.get(
-          `/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}&notification_search=${notificationSearchValue}`
+          `/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`
         );
         if (res.status === 200) {
           return res.data.data;

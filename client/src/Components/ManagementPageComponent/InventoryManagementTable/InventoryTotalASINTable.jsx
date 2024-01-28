@@ -32,24 +32,28 @@ export default function InventoryTotalASINTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const notificationSearchValue = queryParams.get("notification_search");
-  console.log(notificationSearchValue)
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["get_all_asin_upc"],
     queryFn: async () => {
       try {
         const res = await axios.get(
-          `/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}&notification_search=${notificationSearchValue}`
+          `/api/v1/asin_upc_api/get_all_asin_upc?id=${user.admin_id}`
         );
         if (res.status === 200) {
           return res.data.data;
         }
         return [];
       } catch (error) {
+        console.log(error);
         return [];
       }
     },
   });
+
+  const notificationSearchData = data?.find(
+    (d) => d._id == notificationSearchValue
+  );
 
   const handleCustomDateSearch = () => {
     setSearchError("");
@@ -297,11 +301,11 @@ export default function InventoryTotalASINTable() {
               </tr>
             </thead>
             <tbody className="relative">
-              {/* {notificationSearchData == undefined && notificationSearchValue && (
+              {notificationSearchData == undefined && notificationSearchValue && (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                   Data move to the next sequence!
                 </p>
-              )} */}
+              )}
               {searchError ? (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                   {searchError}
@@ -326,24 +330,49 @@ export default function InventoryTotalASINTable() {
                         </tr>
                       );
                     })
+                  ) : !notificationSearchValue ? (
+                    isLoading ? (
+                      <Loading />
+                    ) : (
+                      displayAllData?.map((d, index) => {
+                        return (
+                          <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                            <td>
+                              {d.product_image && (
+                                <ViewImage fileName={d.product_image} />
+                              )}
+                            </td>
+                            <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                            <td>{d.asin_upc_code}</td>
+                            <td className="text-[#8633FF]">{d.product_name}</td>
+                            <td>{d.min_price}</td>
+                            <td>{d.code_type}</td>
+                            <td>{d.store_manager_name}</td>
+                          </tr>
+                        );
+                      })
+                    )
                   ) : (
-                    displayAllData?.map((d, index) => {
-                      return (
-                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                          <td>
-                            {d.product_image && (
-                              <ViewImage fileName={d.product_image} />
-                            )}
-                          </td>
-                          <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                          <td>{d.asin_upc_code}</td>
-                          <td className="text-[#8633FF]">{d.product_name}</td>
-                          <td>{d.min_price}</td>
-                          <td>{d.code_type}</td>
-                          <td>{d.store_manager_name}</td>
-                        </tr>
-                      );
-                    })
+                    (notificationSearchValue && <tr>
+                      <td>
+                        {notificationSearchData?.product_image && (
+                          <ViewImage
+                            fileName={notificationSearchData.product_image}
+                          />
+                        )}
+                      </td>
+                      <th>
+                        {notificationSearchData?.date &&
+                          format(new Date(notificationSearchData.date), "y/MM/d")}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td className="text-[#8633FF]">
+                        {notificationSearchData?.product_name}
+                      </td>
+                      <td>{notificationSearchData?.min_price}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.store_manager_name}</td>
+                    </tr>)
                   )}
                 </>
               )}

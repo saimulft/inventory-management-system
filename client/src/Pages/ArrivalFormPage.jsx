@@ -202,6 +202,7 @@ const ArrivalFormPage = () => {
     try {
       const { status, data } = await mutateAsync(arrivalFormData);
       if (status === 201) {
+        console.log(data)
         const notification_link = "/dashboard/management/store/pending-arrival";
         const notification_search = [data?.result?.insertedId];
         const notificationStatus = "Submit a pending arrival form.";
@@ -237,7 +238,7 @@ const ArrivalFormPage = () => {
           "success"
         );
       }
-      else if (data?.status === 'exceeded'){
+      else if (data?.status === 'exceeded') {
         setInputError(data?.message)
       }
     } catch (error) {
@@ -248,7 +249,7 @@ const ArrivalFormPage = () => {
   const boxShadowStyle = {
     boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.3)",
   };
-  
+
   return (
     <div className="py-20 mx-auto w-[60%] rounded-lg">
       <div

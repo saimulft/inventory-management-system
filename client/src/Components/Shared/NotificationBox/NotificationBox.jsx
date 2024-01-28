@@ -38,7 +38,6 @@ export default function NotificationBox({ notificationsRef }) {
 
   // generate notification redirect url
   const handleNavigateUrl = (url, notification_search, status) => {
-    console.log({ url, notification_search, status })
 
     setIsNotificationBoxOpen(false);
     if (checkingRole || (!Array.isArray(url) && notification_search.length < 2)
@@ -56,7 +55,6 @@ export default function NotificationBox({ notificationsRef }) {
           link.join("/") +
           `?notification_search=${notification_search}&missing_arrival_status=solved`;
       }
-      console.log({ generatedLink })
       navigate(generatedLink);
     }
     if (
@@ -240,7 +238,6 @@ export default function NotificationBox({ notificationsRef }) {
               {!notificationLoading && notifications?.map((notification) => {
                 const notification_link = notification?.notification_link;
                 const notification_search = notification?.notification_search;
-                console.log({ notification_link, notification_search })
                 return (
                   <div
                     onClick={
