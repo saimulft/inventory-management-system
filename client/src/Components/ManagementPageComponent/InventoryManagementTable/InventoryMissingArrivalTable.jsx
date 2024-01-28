@@ -349,8 +349,8 @@ export default function InventoryMissingArrivalTable() {
       </div>
 
       <div className="mt-8 min-h-[calc(100vh-294px)] max-h-full">
-        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
-          <table className="table table-sm mb-[80px]">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading || (notificationSearchData == undefined && notificationSearchValue)) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm mb-[95px]">
             <thead>
               <tr className="bg-gray-200">
                 <th>Date</th>
@@ -384,7 +384,7 @@ export default function InventoryMissingArrivalTable() {
                     displayedDataFilter.map((d, index) => {
                       return (
                         <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                          {/* <th>{format(new Date(d.date), 'yyyy/MM/dd')}</th> */}
+                          {/* <th>{format(new Date(d?.date), 'yyyy/MM/dd')}</th> */}
                           <th className="font-normal">{d.store_name}</th>
                           <td>{d.asin_upc_code}</td>
                           <td>{d.code_type}</td>
