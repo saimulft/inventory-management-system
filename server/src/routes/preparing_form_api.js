@@ -80,7 +80,7 @@ const run = async () => {
             };
 
             const storeData = await all_stores_collection.findOne({ _id: new ObjectId(req.body.storeId) })
-            if (storeData) {
+            if (storeData.subscription_status === 'Active') {
                 if (storeData?.preparing_form_submitted < storeData?.max_form_submission_limit) {
                     const result = await preparing_form_collection.insertOne(data)
                     await all_stores_collection.updateOne(
@@ -94,7 +94,7 @@ const run = async () => {
                 }
             }
             else {
-                res.status(500).json({ message: "Error to submit preparing form" });
+                res.status(403).json({ status: '403', message: "Forbidded access to submit preparing request form" })
             }
         } catch (error) {
             res.status(500).json({ message: "Multer error" });
@@ -153,7 +153,7 @@ const run = async () => {
                 return res.status(200).json({ message: "Preparing form updated", result: id })
             }
             else {
-                return res.status(500).json({ message: "Error to Preparing form " });
+                return res.status(500).json({ message: "Error to Preparing form" });
             }
         } catch (error) {
             console.log(error)

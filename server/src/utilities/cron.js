@@ -5,8 +5,7 @@ const cronJob = CronJob.from({
 	cronTime: '0 0 * * *',
 	onTick: function () {
 		renewMonthlyRequestLimit()
-	},
-	timeZone: 'America/Los_Angeles'
+	}
 });
 
 module.exports = cronJob;

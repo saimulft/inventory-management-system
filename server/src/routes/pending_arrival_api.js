@@ -44,7 +44,7 @@ const run = async () => {
             }
 
             const storeData = await all_stores_collection.findOne({ _id: new ObjectId(req.body.store_id) })
-            if (storeData) {
+            if (storeData.subscription_status === 'Active') {
                 if (storeData?.pending_form_submitted < storeData?.max_form_submission_limit) {
                     const result = await pending_arrival_collection.insertOne(data)
                     await all_stores_collection.updateOne(
@@ -58,7 +58,7 @@ const run = async () => {
                 }
             }
             else {
-                res.status(500).json({ message: "Internal server error while inserting pending arrival data" })
+                res.status(403).json({ status: '403', message: "Forbidded access to submit pending arrival form" })
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
