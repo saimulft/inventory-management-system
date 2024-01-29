@@ -114,8 +114,8 @@ const run = async () => {
             const { store_id } = req.body;
 
             if (store_id) {
-                const asinUpcData = await all_stock_collection.find({store_id: store_id}).project({label: "$asin_upc_code", value: "$asin_upc_code", code_type: "$code_type", _id: 0}).toArray()
-                if(asinUpcData.length){
+                const asinUpcData = await all_stock_collection.find({ store_id: store_id }).project({ label: "$asin_upc_code", value: "$asin_upc_code", code_type: "$code_type", _id: 0 }).toArray()
+                if (asinUpcData.length) {
                     return res.status(200).json({ data: asinUpcData, message: "Successfully get asin_upc" })
                 }
                 else {

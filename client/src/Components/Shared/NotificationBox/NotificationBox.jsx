@@ -38,25 +38,29 @@ export default function NotificationBox() {
 
   // generate notification redirect url
   const handleNavigateUrl = (url, notification_search, status) => {
-    console.log({ url, notification_search, status })
-
     setIsNotificationBoxOpen(false);
+    const link = url.split("/");
+    const checkMissingArrivalLinkOrNot = link[4]
     if (checkingRole || (!Array.isArray(url) && notification_search.length < 2)
     ) {
-      const link = url.split("/");
       let generatedLink = "";
       if (status == "active" && link[4] == "missing-arrival") {
         generatedLink =
           link.join("/") +
           `?notification_search=${notification_search}&missing_arrival_status=${status}`;
       }
-
       else {
-        generatedLink =
-          link.join("/") +
-          `?notification_search=${notification_search}&missing_arrival_status=solved`;
+        if (checkMissingArrivalLinkOrNot == "missing-arrival") {
+          generatedLink =
+            link.join("/") +
+            `?notification_search=${notification_search}&missing_arrival_status=solved`;
+        }
+        else {
+          generatedLink =
+            link.join("/") +
+            `?notification_search=${notification_search}`;
+        }
       }
-      console.log({ generatedLink })
       navigate(generatedLink);
     }
     if (
@@ -68,7 +72,6 @@ export default function NotificationBox() {
       notification_search.length < 2
     ) {
       const link = url.split("/");
-
       const indexToReplace = 3;
       const newValue = "inventory";
       link[indexToReplace] = newValue;
@@ -78,9 +81,16 @@ export default function NotificationBox() {
           link.join("/") +
           `?notification_search=${notification_search}&missing_arrival_status=${status}`;
       } else {
-        generatedLink =
-          link.join("/") +
-          `?notification_search=${notification_search}&missing_arrival_status=solved`;
+        if (checkMissingArrivalLinkOrNot == "missing-arrival") {
+          generatedLink =
+            link.join("/") +
+            `?notification_search=${notification_search}&missing_arrival_status=solved`;
+        }
+        else {
+          generatedLink =
+            link.join("/") +
+            `?notification_search=${notification_search}`;
+        }
       }
       navigate(generatedLink);
       navigate(generatedLink);
@@ -239,7 +249,6 @@ export default function NotificationBox() {
               {!notificationLoading && notifications?.map((notification) => {
                 const notification_link = notification?.notification_link;
                 const notification_search = notification?.notification_search;
-                console.log({ notification_link, notification_search })
                 return (
                   <div
                     onClick={

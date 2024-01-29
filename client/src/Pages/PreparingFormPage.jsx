@@ -208,9 +208,7 @@ const PreparingFormPage = () => {
         },
       })
       .then((res) => {
-        console.log(res)
         if (res.status === 201) {
-          console.log(currentUser);
           const notification_link =
             "/dashboard/management/store/preparing-request";
           const notification_search = [res?.data?.result?.insertedId];
@@ -252,7 +250,7 @@ const PreparingFormPage = () => {
           setInvoiceImageSrc(null);
           setShippingImageSrc(null);
         }
-        else if (res.data?.status === 'exceeded'){
+        else if (res.data?.status === 'exceeded') {
           setFormError(res.data?.message)
         }
         else {

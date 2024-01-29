@@ -161,9 +161,9 @@ export default function InventoryOutOfStockTable() {
       .then((res) => {
         if (res.status === 201) {
           const notification_link =
-            "/dashboard/management/store/preparing-request";
-          const notification_search = [res.data?.result?.insertedId];
-          const status = "Solved out of stock data.";
+            "/dashboard/management/store/out-of-stock";
+          const notification_search = [res.data?.result?.id];
+          const status = "Updated out of stock data.";
           axios
             .post(`/api/v1/notifications_api/send_notification`, {
               currentUser,
@@ -436,7 +436,7 @@ export default function InventoryOutOfStockTable() {
       </div>
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading || (notificationSearchData == undefined && notificationSearchValue)) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
           <table className="table table-sm mb-[95px]">
             <thead>
               <tr className="bg-gray-200">
@@ -457,7 +457,7 @@ export default function InventoryOutOfStockTable() {
               </tr>
             </thead>
             <tbody className="relative">
-              {notificationSearchData == undefined && notificationSearchValue && (
+              {notificationSearchData == undefined && notificationSearchValue && !isLoading && (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                   Data move to the next sequence!
                 </p>

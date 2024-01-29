@@ -368,6 +368,12 @@ export default function StoreMissingArrivalTable() {
                 </p>
               ) : (
                 <>
+                  {notificationSearchData == undefined &&
+                    notificationSearchValue && !isLoading && (
+                      <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                        Data move to the next sequence!
+                      </p>
+                    )}
                   {searchResults.length ? (
                     !notificationSearchValue ? (
                       displayedDataFilter.map((d, index) => {
