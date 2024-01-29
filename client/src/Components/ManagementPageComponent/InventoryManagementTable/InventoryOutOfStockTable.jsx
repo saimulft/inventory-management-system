@@ -591,7 +591,7 @@ export default function InventoryOutOfStockTable() {
                       );
                     })
                   ) : (
-                    (notificationSearchData && <tr>
+                    <tr>
                       <th>
                         {notificationSearchData?.date &&
                           format(new Date(notificationSearchData.date), "y/MM/d")}
@@ -656,7 +656,7 @@ export default function InventoryOutOfStockTable() {
                           </ul>
                         </div>
                       </td>
-                    </tr>)
+                    </tr>
                   )}
                 </>
               )}
