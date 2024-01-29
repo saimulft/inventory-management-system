@@ -6,6 +6,7 @@ const io = new Server(9000, {
   },
 })
 
+
 // add current user with creator email
 let currentUsers = [];
 const addCurrentUser = (currentUserData, socketId) => {
@@ -353,6 +354,6 @@ io.on('connection', (socket) => {
   socket.on("disconnect", () => {
     { otherParticipants && io.to(otherParticipants?.socketId).emit("getTyping", false); }
     removeUser(socket.id);
-    io.emit("getUsers", users);
+    io.emit("getUsers", currentUsers);
   });
 });
