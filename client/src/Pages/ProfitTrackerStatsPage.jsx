@@ -88,7 +88,7 @@ const ProfitTrackerStatsPage = () => {
 
         if (day === "today") {
             startDate = new Date(currentDate);
-            startDate.setHours(0, 0, 0, 0); // Set to midnight
+            startDate.setHours(0, 0, 0, 0);
         }
         else {
             const previousDate = new Date();
