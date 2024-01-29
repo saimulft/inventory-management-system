@@ -363,7 +363,7 @@ export default function InventoryReadyToShipTable() {
               </tr>
             </thead>
             <tbody className="relative">
-              {notificationSearchData == undefined && notificationSearchValue && !isLoading && (
+              {notificationSearchData == undefined && notificationSearchValue && (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                   Data move to the next sequence!
                 </p>
