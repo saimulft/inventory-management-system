@@ -145,7 +145,7 @@ export default function InventoryAllStockTable() {
               </tr>
             </thead>
             <tbody className="relative">
-              {notificationSearchData == undefined && notificationSearchValue && (
+              {notificationSearchData == undefined && notificationSearchValue && !isLoading && (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                   Data move to the next sequence!
                 </p>

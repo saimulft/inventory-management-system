@@ -95,6 +95,8 @@ const run = async () => {
         let storeManagerAdminAndStoreManagerVAQuery = {
           admin_id: currentUser?._id,
         };
+
+        console.log(storeId)
         if (storeId) {
           storeManagerAdminAndStoreManagerVAQuery.store_access_ids = {
             $in: [storeId],
@@ -105,6 +107,7 @@ const run = async () => {
           await store_manager_admin_users_collection
             .find(storeManagerAdminAndStoreManagerVAQuery)
             .toArray();
+
 
         const storeManagerVAAccessUsers =
           await store_manager_va_users_collection

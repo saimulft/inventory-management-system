@@ -38,7 +38,7 @@ const run = async () => {
         }
     });
 
-    router.post('/get_all_shipped_data',verifyJWT, async (req, res) => {
+    router.post('/get_all_shipped_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
             const role = req.role;
@@ -76,7 +76,7 @@ const run = async () => {
             const id = req.query.id;
             const result = await shipped_data_collection.deleteOne({ _id: new ObjectId(id) });
             if (result.deletedCount) {
-                res.status(200).json({ message: "Successfully deleted a shipped data" })
+                res.status(200).json({ message: "Successfully deleted a shipped data", result: { id } })
             }
             else {
                 res.status(500).json({ message: "Error to delete shipped data" })
