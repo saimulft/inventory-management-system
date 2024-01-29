@@ -169,21 +169,12 @@ const run = async () => {
             const id = req.query.id
             const product_image = req.query.product_image
 
-
             const result = await asin_upc_collection.deleteOne({ _id: new ObjectId(id) })
             if (result.deletedCount) {
-
                 if (product_image.startsWith('file')) {
-
                     const filePath = 'public/uploads/' + product_image;
-                    fs.unlink(filePath, (err) => {
-                        if (err) {
-                            console.log(err)
-                            return res.status(500).json({ message: 'error to delete asin upc' });
-                        }
-                    });
+                    fs.unlink(filePath);
                     return res.status(200).json({ message: 'deleted asin upc' });
-
                 }
                 return res.status(200).json({ message: 'deleted asin upc' });
             }
