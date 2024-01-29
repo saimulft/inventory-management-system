@@ -196,8 +196,7 @@ export default function NotificationBox() {
     setNotificationLoading(true);
     axios
       .patch(`/api/v1/notifications_api/notifications/read_all?email=${email}`)
-      .then((res) => {
-        console.log(res.data);
+      .then(() => {
         setSkip(0);
         setNotifications([]);
         setRefetch(!refetch);

@@ -33,8 +33,6 @@ const StoreProvider = ({ children }) => {
         storeOwners, setStoreOwners
     }
 
-    // console.log(storeDetails)
-
     return (
         <StoreContext.Provider value={storeInfo}>
             {children}

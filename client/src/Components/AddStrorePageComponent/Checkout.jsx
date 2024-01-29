@@ -114,7 +114,6 @@ export default function Checkout() {
     axios.post('api/v1/payment_api/create-checkout-session', allData)
       .then(function (response) {
         if (response.status === 201) {
-          // console.log(response.data)
           if (storeDetails.payment_option == 'yourself') {
             window.location.href = response.data.url;
             setIsloading(false)

@@ -84,8 +84,6 @@ export default function StorePreparingRequestTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
-  console.log(notificationSearchData)
-
   const handleDelete = (_id, invoice_file, shipping_file) => {
     const deleteData = {
       id: _id,

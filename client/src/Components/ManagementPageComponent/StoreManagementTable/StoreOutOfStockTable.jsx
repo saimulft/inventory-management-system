@@ -160,7 +160,6 @@ export default function StoreOutOfStockTable() {
         updatedData
       )
       .then((res) => {
-        console.log(res);
         if (res.status === 201) {
           const status = "Updated out of stock data.";
           axios

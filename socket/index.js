@@ -14,7 +14,6 @@ const addCurrentUser = (currentUserData, socketId) => {
     (currentUser) => currentUser?.email == currentUserData?.email
   ) && currentUsers?.push({ ...currentUserData, socketId });
 };
-// console.log(currentUsers)
 
 const removeUser = (socketId) => {
   const remove = currentUsers.filter((user) => user.socketId != socketId);

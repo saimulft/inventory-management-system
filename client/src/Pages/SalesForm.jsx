@@ -55,7 +55,6 @@ const SalesForm = () => {
         setLoading(true)
         axios.put('/api/v1/sales_form_api/update_stock_product', salesData)
             .then(res => {
-                console.log(res)
                 if (res.status === 200) {
                     form.reset()
                     Swal.fire(
