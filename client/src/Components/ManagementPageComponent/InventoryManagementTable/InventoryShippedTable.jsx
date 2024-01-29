@@ -162,7 +162,6 @@ export default function InventoryShippedTable() {
         axios
           .delete(`/api/v1/shipped_api/delete_shipped_data?id=${_id}`)
           .then((res) => {
-            console.log(res)
             const notification_link = "/dashboard/management/store/shipped";
             const notification_search = [];
             const status = "A shipped entry has been deleted.";

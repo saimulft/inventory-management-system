@@ -22,7 +22,6 @@ export default function StorePendingArrivalTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const notificationSearchValue = queryParams.get("notification_search");
-  console.log(notificationSearchValue)
 
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);

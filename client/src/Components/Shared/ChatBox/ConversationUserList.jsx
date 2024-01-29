@@ -351,7 +351,7 @@ export default function ConversationUserList() {
         )}
         {userConversationListSearch(data).length < 1 && !loading && search && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
-            Search data not available!
+            Search data is not available!
           </p>
         )}
       </div>

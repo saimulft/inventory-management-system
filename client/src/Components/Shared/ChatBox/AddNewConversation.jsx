@@ -154,7 +154,7 @@ export default function AddNewConversation() {
         )}
         {addConversationSearchData < 1 && !loading && searchError && (
           <p className="text-center mt-4 text-lg font-medium text-purple-500">
-            Search data not available!
+            Search data is not available!
           </p>
         )}
       </div>

@@ -117,7 +117,6 @@ export default function StorePreparingRequestTable() {
                   warehouseId: singleData?.warehouse_id
                 })
                 .then((res) => {
-                  console.log(res.data);
                   // send real time notification data
                   if (res.data?.finalResult?.acknowledged) {
                     const notificationData = res.data?.notificationData;
@@ -195,7 +194,6 @@ export default function StorePreparingRequestTable() {
               warehouseId: singleData?.warehouse_id
             })
             .then((res) => {
-              console.log(res.data);
               // send real time notification data
               if (res.data?.finalResult?.acknowledged) {
                 const notificationData = res.data?.notificationData;

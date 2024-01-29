@@ -96,7 +96,6 @@ const run = async () => {
           admin_id: currentUser?._id,
         };
 
-        console.log(storeId)
         if (storeId) {
           storeManagerAdminAndStoreManagerVAQuery.store_access_ids = {
             $in: [storeId],
