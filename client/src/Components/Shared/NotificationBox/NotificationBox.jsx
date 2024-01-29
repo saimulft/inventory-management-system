@@ -330,7 +330,7 @@ export default function NotificationBox() {
 
             {!notificationLoading && notifications?.length == 0 && (
               <div className="text-lg font-medium text-center text-purple-500  mt-2">
-                Notifications data not available!
+                No data available at the moment!
               </div>
             )}
           </div>

@@ -505,7 +505,7 @@ export default function StorePreparingRequestTable() {
             <tbody className="relative">
               {notificationSearchData == undefined && notificationSearchValue && !isLoading && (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                  Data move to the next sequence!
+                  Data has already moved to the next sequence!
                 </p>
               )}
               {searchError ? (
@@ -786,7 +786,7 @@ export default function StorePreparingRequestTable() {
           />
         )}
       </div>
-      
+
 
 
       {/* modal content  */}

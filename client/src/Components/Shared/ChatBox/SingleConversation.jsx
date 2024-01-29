@@ -353,7 +353,7 @@ export default function SingleConversation() {
           const agoTime = timeDifference < 60000
             ? "Just now" :
             timeDifference >= 60000 && timeDifference < 86400000
-              ? "Today, " + format(new Date(msg.timestamp), "h:mm a")
+              ? format(new Date(msg.timestamp), "h:mm a")
               : timeDifference >= 86400000 && timeDifference < 31536000000
                 ? format(new Date(msg.timestamp), "MMM d yyyy, h:mm a")
                 : "";

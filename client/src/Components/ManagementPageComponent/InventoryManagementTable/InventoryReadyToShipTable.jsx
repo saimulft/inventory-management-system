@@ -363,9 +363,9 @@ export default function InventoryReadyToShipTable() {
               </tr>
             </thead>
             <tbody className="relative">
-              {notificationSearchData == undefined && notificationSearchValue && (
+              {notificationSearchData == undefined && notificationSearchValue && !isLoading && (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                  Data move to the next sequence!
+                  Data has already moved to the next sequence!
                 </p>
               )}
               {searchError ? (
@@ -481,8 +481,7 @@ export default function InventoryReadyToShipTable() {
                             onClick={() => {
                               handleShipment(notificationSearchData);
                             }}
-                            className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]"
-                          >
+                            className="text-xs border border-[#8633FF] px-2 rounded-[3px] flex items-center gap-1 hover:bg-[#8633FF] transition whitespace-nowrap py-1 hover:text-white text-[#8633FF]">
                             <FiCheckCircle />
                             <p>Complete Shipment</p>
                           </button>
