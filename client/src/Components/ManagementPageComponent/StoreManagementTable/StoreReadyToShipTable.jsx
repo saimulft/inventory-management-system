@@ -54,7 +54,6 @@ export default function StorePreparingRequestTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
-  console.log(notificationSearchData)
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -284,7 +283,7 @@ export default function StorePreparingRequestTable() {
       </div>
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading || (notificationSearchData == undefined && notificationSearchValue)) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
           <table className="table table-sm mb-[95px]">
             <thead>
               <tr className="bg-gray-200">
@@ -302,7 +301,7 @@ export default function StorePreparingRequestTable() {
               </tr>
             </thead>
             <tbody className="relative">
-              {notificationSearchData == undefined && notificationSearchValue && (
+              {notificationSearchData == undefined && notificationSearchValue && !isLoading && (
                 <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                   Data move to the next sequence!
                 </p>

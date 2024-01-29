@@ -21,8 +21,9 @@ import { IoCalendarOutline } from "react-icons/io5";
 export default function StorePendingArrivalTable() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  // Get the value of the 'notification_search' parameter
   const notificationSearchValue = queryParams.get("notification_search");
+  console.log(notificationSearchValue)
+
   const { socket } = useContext(GlobalContext);
   const { currentUser } = useContext(NotificationContext);
 
@@ -466,7 +467,8 @@ export default function StorePendingArrivalTable() {
       </div>
 
       <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading || (notificationSearchData == undefined &&
+          notificationSearchValue)) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
           <table className="table table-sm mb-[95px]">
             <thead>
               <tr className="bg-gray-200">
@@ -493,7 +495,7 @@ export default function StorePendingArrivalTable() {
               ) : (
                 <>
                   {notificationSearchData == undefined &&
-                    notificationSearchValue && (
+                    notificationSearchValue && !isLoading && (
                       <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
                         Data move to the next sequence!
                       </p>
@@ -554,7 +556,7 @@ export default function StorePendingArrivalTable() {
                         </tr>
                       );
                     })
-                  ) : !notificationSearchData ? (
+                  ) : !notificationSearchData && !notificationSearchValue ? (
                     isLoading ? (
                       <Loading />
                     ) : (
