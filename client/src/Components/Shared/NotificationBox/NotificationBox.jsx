@@ -18,14 +18,11 @@ export default function NotificationBox() {
   const [updateNotificationDB, setUpdateNotificationDB] = useState(false);
   const [skip, setSkip] = useState(0);
   const [refetch, setRefetch] = useState(false);
-  const [notificationAlertData, setNotificationAlertData] = useState([]);
+  const [notificationData, setNotificationsData] = useState([]);
   const [notificationLoading, setNotificationLoading] = useState();
 
   const handleNotificationsData = () => {
-    axios
-      .get(
-        `/api/v1/notifications_api/notifications?email=${user?.email}&limit=10&skip=${skip}`
-      )
+    axios.get(`/api/v1/notifications_api/notifications?email=${user?.email}&limit=10&skip=${skip}`)
       .then((res) => {
         setSkip(skip + 10);
         const notificationData = [...notifications, ...res.data];
@@ -35,7 +32,6 @@ export default function NotificationBox() {
   };
 
   const checkingRole = user?.role == "Admin" || user?.role == "Admin VA" || user?.role == "Store Manager Admin" || user?.role == "Store Manager VA" || user?.role == "Warehouse Admin" || user?.role == "Warehouse Manager VA"
-
   // generate notification redirect url
   const handleNavigateUrl = (url, notification_search, status) => {
     setIsNotificationBoxOpen(false);
@@ -150,10 +146,7 @@ export default function NotificationBox() {
 
   // handle notification seen
   const handleNotificationSeen = (id, email) => {
-    axios
-      .patch(
-        `/api/v1/notifications_api/notification_seen?id=${id}&email=${email}`
-      )
+    axios.patch(`/api/v1/notifications_api/notification_seen?id=${id}&email=${email}`)
       .then(() => {
         setSkip(0);
         setNotifications([]);
@@ -171,17 +164,19 @@ export default function NotificationBox() {
   };
 
   useEffect(() => {
+    setNotificationLoading(true);
     axios
       .get(`/api/v1/notifications_api/all_notifications?email=${user?.email}`)
       .then((res) => {
-        setNotificationAlertData(res?.data);
+        setNotificationsData(res?.data);
+        setNotificationLoading(false);
       })
       .catch((error) => console.log(error));
   }, [user.email, refetch, updateNotificationDB]);
 
   const currentUserObjKey = user?.email?.split("@")[0];
-  if (notificationAlertData) {
-    const unreadNotification = notificationAlertData?.find((d) => {
+  if (notificationData) {
+    const unreadNotification = notificationData?.find((d) => {
       if (d?.isNotificationSeen) {
         if (!d.isNotificationSeen[currentUserObjKey]) {
           return true;
@@ -192,9 +187,9 @@ export default function NotificationBox() {
   }
 
   // handle read all
-  const handleReadAll = (email) => {
+  const handleReadAll = async (email) => {
     setNotificationLoading(true);
-    axios
+    await axios
       .patch(`/api/v1/notifications_api/notifications/read_all?email=${email}`)
       .then(() => {
         setSkip(0);
@@ -224,11 +219,10 @@ export default function NotificationBox() {
               </div>
             </div>
             <div className="flex gap-2 mt-3 mb-2">
-              {notifications?.length > 0 && (
+              {(notifications?.length > 0 || notificationLoading) && (
                 <p
                   onClick={() => handleReadAll(user?.email)}
-                  className="bg-purple-100 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-200 transition hover:shadow text-sm"
-                >
+                  className="bg-purple-100 font-medium cursor-pointer px-4 py-1 rounded-full hover:bg-purple-200 transition hover:shadow text-sm">
                   Read all
                 </p>
               )}

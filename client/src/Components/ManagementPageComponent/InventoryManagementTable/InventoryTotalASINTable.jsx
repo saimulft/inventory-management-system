@@ -353,7 +353,7 @@ export default function InventoryTotalASINTable() {
                       })
                     )
                   ) : (
-                    (notificationSearchValue && <tr>
+                    (notificationSearchData && <tr>
                       <td>
                         {notificationSearchData?.product_image && (
                           <ViewImage

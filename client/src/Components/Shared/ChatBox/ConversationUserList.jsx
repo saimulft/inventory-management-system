@@ -322,9 +322,8 @@ export default function ConversationUserList() {
           <div className="flex items-center">
             <button
               onClick={() => setIsChatBoxOpen(false)}
-              className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100"
-            >
-              <AiOutlineClose size={20} />
+              className="p-1 transition rounded-full text-purple-500 bg-purple-50 hover:bg-purple-100">
+              <AiOutlineClose size={22} />
             </button>
           </div>
         </div>

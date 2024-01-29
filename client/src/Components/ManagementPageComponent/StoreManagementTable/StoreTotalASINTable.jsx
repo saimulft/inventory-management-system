@@ -617,7 +617,7 @@ export default function InventoryTotalASINTable() {
                       })
                     )
                   ) : (
-                    <tr>
+                    (notificationSearchData && <tr>
                       <td>
                         {notificationSearchData?.product_image && (
                           <ViewImage
@@ -679,7 +679,7 @@ export default function InventoryTotalASINTable() {
                           </ul>
                         </div>
                       </td>
-                    </tr>
+                    </tr>)
                   )}
                 </>
               )}
