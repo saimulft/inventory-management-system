@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { BiDotsVerticalRounded, BiSolidEdit } from "react-icons/bi";
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
@@ -11,11 +11,12 @@ import { MdErrorOutline } from "react-icons/md";
 import { AiOutlineSearch } from "react-icons/ai";
 import Loading from "../../Shared/Loading";
 import ReactPaginate from "react-paginate";
-import { DateRange } from "react-date-range";
+import { Calendar, DateRange } from "react-date-range";
 import useGlobal from "../../../hooks/useGlobal";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import { NotificationContext } from "../../../Providers/NotificationProvider";
 import { useLocation } from "react-router-dom";
+import { IoCalendarOutline } from "react-icons/io5";
 
 export default function InventoryPendingArrivalTable() {
   const location = useLocation();
@@ -37,6 +38,7 @@ export default function InventoryPendingArrivalTable() {
   const [searchResults, setSearchResults] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [filteredDataPage, setFilteredDataPage] = useState(0);
+  const [isOpenUpdateModal, setIsOpenUpdateModal] = useState(false)
   const [rangeDate, setRangeDate] = useState([
     {
       startDate: new Date(),
@@ -44,9 +46,21 @@ export default function InventoryPendingArrivalTable() {
       key: "selection",
     },
   ]);
+  const [openEdaCalendar, setOpenEdaCalendar] = useState(false)
+  const [eda, setEda] = useState(null)
+  const calendarRef = useRef(null)
 
-  console.log(notificationSearchValue);
-  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (calendarRef.current && !calendarRef?.current?.contains(event.target)) {
+        setOpenEdaCalendar(false)
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [])
 
   const handleKeyDown = (event) => {
     const alphabetKeys = /^[0-9\b]+$/; // regex pattern to match alphabet keys
@@ -81,7 +95,7 @@ export default function InventoryPendingArrivalTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
-    
+
   const handleSearch = (e) => {
     e.preventDefault();
     setSearchError("");
@@ -175,31 +189,31 @@ export default function InventoryPendingArrivalTable() {
           .then((res) => {
             if (res.status === 200) {
               const notification_link =
-              "/dashboard/management/store/pending-arrival";
-            const notification_search = [res.data?.result?.insertedId];
-            const status = "A pending arrival entry has been deleted.";
-            axios
-              .post(`/api/v1/notifications_api/send_notification`, {
-                currentUser,
-                status,
-                notification_link,
-                notification_search,
-                storeId: data?.store_id,
-                warehouseId: data?.warehouse_id
-              })
-              .then((res) => {
-                // send real time notification data
-                if (res.data?.finalResult?.acknowledged) {
-                  const notificationData = res.data?.notificationData;
-                  if (notificationData) {
-                    socket?.current?.emit("sendNotification", {
-                      user,
-                      notificationData,
-                    });
+                "/dashboard/management/store/pending-arrival";
+              const notification_search = [res.data?.result?.insertedId];
+              const status = "A pending arrival entry has been deleted.";
+              axios
+                .post(`/api/v1/notifications_api/send_notification`, {
+                  currentUser,
+                  status,
+                  notification_link,
+                  notification_search,
+                  storeId: data?.store_id,
+                  warehouseId: data?.warehouse_id
+                })
+                .then((res) => {
+                  // send real time notification data
+                  if (res.data?.finalResult?.acknowledged) {
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      });
+                    }
                   }
-                }
-              })
-              .catch((err) => console.log(err));
+                })
+                .catch((err) => console.log(err));
               refetch();
               setCountsRefetch(true);
               Swal.fire(
@@ -223,7 +237,6 @@ export default function InventoryPendingArrivalTable() {
     const form = event.target;
     const productName = form.productName.value;
     const quantity = form.quantity.value;
-    const eda = form.eda.value;
     const receivedQnt = form.receivedQnt.value;
     const remark = form.remark.value;
 
@@ -347,37 +360,35 @@ export default function InventoryPendingArrivalTable() {
       <h3 className="text-center text-2xl font-medium">
         Pending Arrival
         <span className={`${notificationSearchValue && "hidden"}`}>
-          : {data.length}
+          : {searchError ? 0 : searchResults?.length ? searchResults?.length : data?.length}
         </span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            
+
             {!notificationSearchValue && (
               <>
-              <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                <p
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -386,9 +397,8 @@ export default function InventoryPendingArrivalTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -397,9 +407,8 @@ export default function InventoryPendingArrivalTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -408,9 +417,8 @@ export default function InventoryPendingArrivalTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -419,9 +427,8 @@ export default function InventoryPendingArrivalTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -430,9 +437,8 @@ export default function InventoryPendingArrivalTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -478,240 +484,236 @@ export default function InventoryPendingArrivalTable() {
         )}
       </div>
 
-      <div className="overflow-x-auto mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <table className="table table-sm">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Date</th>
-              <th>Store Name</th>
-              <th>ASIN/UPC</th>
-              <th>Code Type</th>
-              <th>Product Name</th>
-              <th>Supplier ID</th>
-              <th>UPIN</th>
-              <th>Unit Price</th>
-              <th>Quantity</th>
-              <th>Courier</th>
-              <th>Supplier Tracking</th>
-              <th>EDA</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Pending arrival notified data not available!
-              </p>
-            )} */}
-            {searchError ? (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                {searchError}
-              </p>
-            ) : (
-              <>
-                {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
-                        <th className="font-normal">{d.store_name}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.supplier_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.unit_price}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.courier ? d.courier : "-"}</td>
-                        <td>
-                          {d.supplier_tracking ? d.supplier_tracking : "-"}
-                        </td>
-                        <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
-                        <td>
-                          <div className="dropdown dropdown-end">
-                            <label tabIndex={0}>
-                              <BiDotsVerticalRounded
-                                onClick={() => setSingleData(d)}
-                                cursor="pointer"
-                              />
-                            </label>
-                            <ul
-                              tabIndex={0}
-                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                            >
-                              <li>
-                                <button
-                                  onClick={() => {
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal();
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                              {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+      <div className="mt-8 min-h-[calc(100vh-288px)] max-h-full">
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading || (notificationSearchData == undefined && notificationSearchValue)) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm mb-[95px]">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Date</th>
+                <th>Store Name</th>
+                <th>ASIN/UPC</th>
+                <th>Code Type</th>
+                <th>Product Name</th>
+                <th>Supplier ID</th>
+                <th>UPIN</th>
+                <th>Unit Price</th>
+                <th>Quantity</th>
+                <th>Courier</th>
+                <th>Supplier Tracking</th>
+                <th>EDA</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody className="relative">
+              {notificationSearchData == undefined && notificationSearchValue && !isLoading && (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  Data move to the next sequence!
+                </p>
+              )}
+              {searchError ? (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  {searchError}
+                </p>
+              ) : (
+                <>
+                  {searchResults.length ? (
+                    displayedDataFilter.map((d, index) => {
+                      return (
+                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                          <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
+                          <th className="font-normal">{d.store_name}</th>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.supplier_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.unit_price}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier ? d.courier : "-"}</td>
+                          <td>
+                            {d.supplier_tracking ? d.supplier_tracking : "-"}
+                          </td>
+                          <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
+                          <td>
+                            <div className="dropdown dropdown-end">
+                              <label tabIndex={0}>
+                                <BiDotsVerticalRounded
+                                  onClick={() => setSingleData(d)}
+                                  cursor="pointer"
+                                />
+                              </label>
+                              <ul
+                                tabIndex={0}
+                                className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                              >
                                 <li>
-                                  <button onClick={() => handleDelete(d._id)}>
-                                    Delete
+                                  <button
+                                    onClick={() => {
+                                      setIsOpenUpdateModal(true)
+                                    }}
+                                  >
+                                    Edit
                                   </button>
                                 </li>
-                              ) : (
-                                ""
-                              )}
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : isLoading ? (
-                  <Loading />
-                ) : !notificationSearchData && !notificationSearchValue? (
-                  displayAllData?.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
-                        <th className="font-normal">{d.store_name}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.product_name}</td>
-                        <td>{d.supplier_id}</td>
-                        <td>{d.upin}</td>
-                        <td>{d.unit_price}</td>
-                        <td>{d.quantity}</td>
-                        <td>{d.courier ? d.courier : "-"}</td>
-                        <td>
-                          {d.supplier_tracking ? d.supplier_tracking : "-"}
-                        </td>
-                        <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
-                        <td>
-                          <div className="dropdown dropdown-end">
-                            <label tabIndex={0}>
-                              <BiDotsVerticalRounded
-                                onClick={() => setSingleData(d)}
-                                cursor="pointer"
-                              />
-                            </label>
-                            <ul
-                              tabIndex={0}
-                              className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                            >
-                              <li>
-                                <button
-                                  onClick={() => {
-                                    document
-                                      .getElementById("my_modal_2")
-                                      .showModal();
-                                  }}
-                                >
-                                  Edit
-                                </button>
-                              </li>
-                              {user.role === "Admin" ||
-                              user.role === "Admin VA" ? (
+                                {user.role === "Admin" ||
+                                  user.role === "Admin VA" ? (
+                                  <li>
+                                    <button onClick={() => handleDelete(d._id)}>
+                                      Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  ""
+                                )}
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : isLoading ? (
+                    <Loading />
+                  ) : !notificationSearchData && !notificationSearchValue ? (
+                    displayAllData?.map((d, index) => {
+                      return (
+                        <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                          <th>{format(new Date(d.date), "yyyy/MM/dd")}</th>
+                          <th className="font-normal">{d.store_name}</th>
+                          <td>{d.asin_upc_code}</td>
+                          <td>{d.code_type}</td>
+                          <td>{d.product_name}</td>
+                          <td>{d.supplier_id}</td>
+                          <td>{d.upin}</td>
+                          <td>{d.unit_price}</td>
+                          <td>{d.quantity}</td>
+                          <td>{d.courier ? d.courier : "-"}</td>
+                          <td>
+                            {d.supplier_tracking ? d.supplier_tracking : "-"}
+                          </td>
+                          <td>{format(new Date(d.eda), "yyyy/MM/dd")}</td>
+                          <td>
+                            <div className="dropdown dropdown-end">
+                              <label tabIndex={0}>
+                                <BiDotsVerticalRounded
+                                  onClick={() => setSingleData(d)}
+                                  cursor="pointer"
+                                />
+                              </label>
+                              <ul
+                                tabIndex={0}
+                                className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                              >
                                 <li>
-                                  <button onClick={() => handleDelete(d._id)}>
-                                    Delete
+                                  <button
+                                    onClick={() => {
+                                      setIsOpenUpdateModal(true)
+                                    }}
+                                  >
+                                    Edit
                                   </button>
                                 </li>
-                              ) : (
-                                ""
-                              )}
-                            </ul>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : (
-                  (notificationSearchData && <tr>
-                    <th>
-                      {notificationSearchData?.date && format(
-                        new Date(notificationSearchData?.date),
-                        "yyyy/MM/dd"
-                      )}
-                    </th>
-                    <th className="font-normal">
-                      {notificationSearchData?.store_name}
-                    </th>
-                    <td>{notificationSearchData?.asin_upc_code}</td>
-                    <td>{notificationSearchData?.code_type}</td>
-                    <td>{notificationSearchData?.product_name}</td>
-                    <td>{notificationSearchData?.supplier_id}</td>
-                    <td>{notificationSearchData?.upin}</td>
-                    <td>{notificationSearchData?.unit_price}</td>
-                    <td>{notificationSearchData?.quantity}</td>
-                    <td>
-                      {notificationSearchData?.courier
-                        ? notificationSearchData?.courier
-                        : "-"}
-                    </td>
-                    <td>
-                      {notificationSearchData?.supplier_tracking
-                        ? notificationSearchData?.supplier_tracking
-                        : "-"}
-                    </td>
-                    <td>
-                      {notificationSearchData?.date && format(
-                        new Date(notificationSearchData?.eda),
-                        "yyyy/MM/dd"
-                      )}
-                    </td>
-                    <td>
-                      <div className="dropdown dropdown-end">
-                        <label tabIndex={0}>
-                          <BiDotsVerticalRounded
-                            onClick={() =>
-                              setSingleData(notificationSearchData)
-                            }
-                            cursor="pointer"
-                          />
-                        </label>
-                        <ul
-                          tabIndex={0}
-                          className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
-                        >
-                          <li>
-                            <button
-                              onClick={() => {
-                                document
-                                  .getElementById("my_modal_2")
-                                  .showModal();
-                              }}
-                            >
-                              Edit
-                            </button>
-                          </li>
-                          {user.role === "Admin" || user.role === "Admin VA" ? (
+                                {user.role === "Admin" ||
+                                  user.role === "Admin VA" ? (
+                                  <li>
+                                    <button onClick={() => handleDelete(d._id)}>
+                                      Delete
+                                    </button>
+                                  </li>
+                                ) : (
+                                  ""
+                                )}
+                              </ul>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  ) : (
+                    (notificationSearchData && <tr>
+                      <th>
+                        {notificationSearchData?.date && format(
+                          new Date(notificationSearchData?.date),
+                          "yyyy/MM/dd"
+                        )}
+                      </th>
+                      <th className="font-normal">
+                        {notificationSearchData?.store_name}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.product_name}</td>
+                      <td>{notificationSearchData?.supplier_id}</td>
+                      <td>{notificationSearchData?.upin}</td>
+                      <td>{notificationSearchData?.unit_price}</td>
+                      <td>{notificationSearchData?.quantity}</td>
+                      <td>
+                        {notificationSearchData?.courier
+                          ? notificationSearchData?.courier
+                          : "-"}
+                      </td>
+                      <td>
+                        {notificationSearchData?.supplier_tracking
+                          ? notificationSearchData?.supplier_tracking
+                          : "-"}
+                      </td>
+                      <td>
+                        {notificationSearchData?.date && format(
+                          new Date(notificationSearchData?.eda),
+                          "yyyy/MM/dd"
+                        )}
+                      </td>
+                      <td>
+                        <div className="dropdown dropdown-end">
+                          <label tabIndex={0}>
+                            <BiDotsVerticalRounded
+                              onClick={() =>
+                                setSingleData(notificationSearchData)
+                              }
+                              cursor="pointer"
+                            />
+                          </label>
+                          <ul
+                            tabIndex={0}
+                            className="mt-3 z-[1] p-3 shadow menu menu-sm dropdown-content bg-base-100 rounded-box w-52 text-black"
+                          >
                             <li>
                               <button
-                                onClick={() =>
-                                  handleDelete(notificationSearchData?._id)
-                                }
+                                onClick={() => {
+                                  setIsOpenUpdateModal(true)
+                                }}
                               >
-                                Delete
+                                Edit
                               </button>
                             </li>
-                          ) : (
-                            ""
-                          )}
-                        </ul>
-                      </div>
-                    </td>
-                  </tr>)
-                )}
-              </>
-            )}
-          </tbody>
-        </table>
+                            {user.role === "Admin" || user.role === "Admin VA" ? (
+                              <li>
+                                <button
+                                  onClick={() =>
+                                    handleDelete(notificationSearchData?._id)
+                                  }
+                                >
+                                  Delete
+                                </button>
+                              </li>
+                            ) : (
+                              ""
+                            )}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>)
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* pagination */}
         {!isLoading && !notificationSearchValue &&
           !searchError &&
           !searchResults.length &&
-          data?.length > 15 && !notificationSearchValue &&(
+          data?.length > 15 && !notificationSearchValue && (
             <div>
               <ReactPaginate
                 pageCount={Math.ceil(data.length / itemsPerPage)}
@@ -727,7 +729,7 @@ export default function InventoryPendingArrivalTable() {
               />
             </div>
           )}
-        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue &&(
+        {!isLoading && !searchError && searchResults.length > 15 && !notificationSearchValue && (
           <ReactPaginate
             pageCount={Math.ceil(searchResults.length / itemsPerPage)}
             pageRangeDisplayed={maxVisiblePages}
@@ -744,10 +746,9 @@ export default function InventoryPendingArrivalTable() {
       </div>
 
       {/* modal content  */}
-      <dialog id="my_modal_2" className="modal">
+      {isOpenUpdateModal && <div onClick={() => setIsOpenUpdateModal(false)} className="flex justify-center items-center overflow-hidden bg-[#00000040] fixed top-0 left-0 right-0 bottom-0 z-[100]">
         <div
-          style={{ marginLeft, maxWidth: "750px" }}
-          className="modal-box py-10 px-10"
+          data-aos="fade-up" onClick={(e) => e.stopPropagation()} style={{ marginLeft, width: "750px" }} className=" py-10 px-10 bg-white rounded-lg"
         >
           <form
             onSubmit={(event) => handleUpdate(event, singleData)}
@@ -757,7 +758,13 @@ export default function InventoryPendingArrivalTable() {
               <div className="flex items-center mb-6 gap-2">
                 {user.role === "Admin" || user.role === "Admin VA" ? (
                   <BiSolidEdit
-                    onClick={() => setIsEditable(!isEditable)}
+                    onClick={() => {
+                      if (isEditable) {
+                        setEda(null)
+                        setOpenEdaCalendar(false)
+                      }
+                      setIsEditable(!isEditable)
+                    }}
                     size={24}
                     className="cursor-pointer"
                   />
@@ -765,67 +772,62 @@ export default function InventoryPendingArrivalTable() {
                 <h3 className="text-2xl font-medium">Details</h3>
               </div>
               <div
-                className={`flex items-center ${
-                  isEditable && "justify-between"
-                }`}
+                className={`flex items-center ${isEditable && "justify-between"
+                  }`}
               >
                 <label className="font-bold">Product Name: </label>
                 <input
                   type="text"
                   defaultValue={singleData.product_name}
-                  className={`${
-                    isEditable
-                      ? "border border-[#8633FF] outline-[#8633FF] mt-1"
-                      : "outline-none"
-                  } py-1 pl-2 rounded`}
+                  className={`${isEditable
+                    ? "border border-[#8633FF] outline-[#8633FF] mt-1"
+                    : "outline-none"
+                    } py-1 pl-2 rounded`}
                   id="productName"
                   name="productName"
                   readOnly={!isEditable}
                 />
               </div>
               <div
-                className={`flex items-center ${
-                  isEditable && "justify-between mt-2"
-                }`}
+                className={`flex items-center ${isEditable && "justify-between mt-2"
+                  }`}
               >
                 <label className="font-bold">Quantity: </label>
                 <input
                   onKeyDown={handleKeyDown}
                   type="text"
                   defaultValue={singleData.quantity}
-                  className={`${
-                    isEditable
-                      ? "border border-[#8633FF] outline-[#8633FF] mt-1"
-                      : "outline-none"
-                  } py-1 pl-2 rounded`}
+                  className={`${isEditable
+                    ? "border border-[#8633FF] outline-[#8633FF] mt-1"
+                    : "outline-none"
+                    } py-1 pl-2 rounded`}
                   id="quantity"
                   name="quantity"
                   readOnly={!isEditable}
                 />
               </div>
-              <div
-                className={`flex items-center ${
-                  isEditable && "justify-between mt-2"
-                }`}
-              >
-                <label className="font-bold">EDA: </label>
-                <input
-                  type={isEditable ? "date" : "text"}
-                  defaultValue={
-                    isEditable
-                      ? ""
-                      : singleData.eda &&
-                        format(new Date(singleData.eda), "yyyy/MM/dd")
-                  }
-                  className={`${
-                    isEditable
-                      ? "border border-[#8633FF] outline-[#8633FF] mt-1"
-                      : "outline-none"
-                  } w-[191px] py-1 pl-2 rounded`}
-                  id="eda"
-                  name="eda"
-                  readOnly={!isEditable}
-                />
+
+              <div className={`relative flex items-center ${isEditable && "justify-between mt-3"}`}>
+                <p className="font-bold">EDA:</p>
+                <div className={`px-2 py-1 w-[191px] rounded ${isEditable && "h-9 border border-[#8633FF] flex justify-between items-center"}`}>
+                  <span>
+                    {(isEditable && eda) ? format(new Date(eda), 'yyyy/MM/dd') : (isEditable && !eda) ? 'YYYY/MM/DD' : singleData.eda &&
+                      format(new Date(singleData.eda), "yyyy/MM/dd")}
+                  </span>
+                  {isEditable && <div ref={calendarRef}>
+                    <span onClick={() => setOpenEdaCalendar(!openEdaCalendar)}><IoCalendarOutline /></span>
+                    {openEdaCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 top-full z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                      <Calendar
+                        color='#8633FF'
+                        date={eda ? eda : null}
+                        onChange={(date) => {
+                          setEda(date)
+                          setOpenEdaCalendar(false)
+                        }}
+                      />
+                    </div>}
+                  </div>}
+                </div>
               </div>
             </div>
 
@@ -882,7 +884,7 @@ export default function InventoryPendingArrivalTable() {
         <form method="dialog" className="modal-backdrop">
           <button>close</button>
         </form>
-      </dialog>
+      </div>}
       {/* Date range modal */}
       <dialog id="date_range_modal" className="modal">
         <div style={{ marginLeft, maxWidth: "750px" }} className="modal-box">

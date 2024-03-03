@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
+const { addMonths } = require('date-fns');
 
 const stripe = require('stripe')('sk_test_51M9AWiKa3gcPGhKTJaOAKnhWZgT7pA0dqch2kQ7uz7M5lXpt6dDckLjHdFIyYs1rgafA64sKm7eGH05O6aWWlo52006GcXLLcN');
 const YOUR_DOMAIN = 'https://revealifydirectory.com';
@@ -23,6 +24,23 @@ const run = async () => {
         if (document) {
             const storeOwners = document.store_owners;
             delete document.store_owners;
+            document.subscription_status = "Active";
+            document.total_order = 0;
+            document.pending_form_submitted = 0;
+            document.preparing_form_submitted = 0;
+        
+            const currentDate = new Date();
+            const renewDate = addMonths(currentDate, 1);
+            const isoRenewDate = renewDate.toISOString();
+            document.renew_date = isoRenewDate;
+
+            if (subscription.amount_total == 149900 || subscription.amount_total == 9900) {
+                document.max_form_submission_limit = 300;
+            }
+            if (subscription.amount_total == 299900 || subscription.amount_total == 19900) {
+                document.max_form_submission_limit = 1000;
+            }
+
             // Insert the document into the destination collection
             const result = await all_stores_collection.insertOne({ ...document, customer: subscription.customer });
             // if there is exist store owners for the store then update store owners info
@@ -54,12 +72,18 @@ const run = async () => {
     const changeSub = async (subscription) => {
         const document = await all_stores_collection.findOne({ customer: subscription.customer });
         if (document) {
+            const currentDate = new Date();
+            const renew_date = addMonths(currentDate, 1);
+            const isoRenewDate = renew_date.toISOString()
+
             if (subscription.plan.amount == 149900 && !subscription.cancellation_details.reason)
                 await all_stores_collection.updateOne({ customer: subscription.customer }, {
                     $set: {
                         subscription_plan: "Basic",
                         subscription_type: "yearly",
-                        store_status: "Active"
+                        subscription_status: "Active",
+                        max_form_submission_limit: 300,
+                        renew_date: isoRenewDate,
                     }
                 })
             if (subscription.plan.amount == 299900 && !subscription.cancellation_details.reason)
@@ -67,7 +91,9 @@ const run = async () => {
                     $set: {
                         subscription_plan: "Pro",
                         subscription_type: "yearly",
-                        store_status: "Active"
+                        subscription_status: "Active",
+                        max_form_submission_limit: 1000,
+                        renew_date: isoRenewDate,
                     }
                 })
             if (subscription.plan.amount == 9900 && !subscription.cancellation_details.reason)
@@ -75,7 +101,9 @@ const run = async () => {
                     $set: {
                         subscription_plan: "Basic",
                         subscription_type: "monthly",
-                        store_status: "Active"
+                        subscription_status: "Active",
+                        max_form_submission_limit: 300,
+                        renew_date: isoRenewDate,
                     }
                 })
             if (subscription.plan.amount == 19900 && !subscription.cancellation_details.reason)
@@ -83,13 +111,15 @@ const run = async () => {
                     $set: {
                         subscription_plan: "Pro",
                         subscription_type: "monthly",
-                        store_status: "Active"
+                        subscription_status: "Active",
+                        max_form_submission_limit: 1000,
+                        renew_date: isoRenewDate,
                     }
                 })
             if (subscription.cancellation_details.reason) {
                 await all_stores_collection.updateOne({ customer: subscription.customer }, {
                     $set: {
-                        store_status: "Inactive"
+                        subscription_status: "Inactive"
                     }
                 })
             }
@@ -257,15 +287,28 @@ const run = async () => {
 
     router.get('/get_all_stores_subscriptions', verifyJWT, async (req, res) => {
         try {
-            const adminId = req.query.adminId;
+            const { admin_id, store_access_ids } = req.query;
 
-            const result = await all_stores_collection.find({ admin_id: adminId }).sort({ date: -1 }).toArray()
+            if (req.role === 'Admin') {
+                const result = await all_stores_collection.find({ admin_id: admin_id }, { projection: { store_name: 1, subscription_plan: 1, subscription_type: 1, session_id: 1 } }).sort({ date: -1 }).toArray()
 
-            if (result.length) {
-                res.status(200).json({ data: result, message: "Successfully get all stores subscriptions" })
+                if (result.length) {
+                    res.status(200).json({ data: result, message: "Successfully get all store subscriptions" })
+                }
+                else {
+                    res.status(204).json({ message: "No data found" })
+                }
             }
-            else {
-                res.status(204).json({ message: "No data found" })
+            if (req.role === 'Store Owner') {
+                const access_ids = store_access_ids.map(id => new ObjectId(id))
+                const result = await all_stores_collection.find({ _id: { $in: access_ids } }, { projection: { store_name: 1, subscription_plan: 1, subscription_type: 1, session_id: 1 } }).sort({ date: -1 }).toArray()
+
+                if (result.length) {
+                    res.status(200).json({ data: result, message: "Successfully get all accessed store subscriptions" })
+                }
+                else {
+                    res.status(204).json({ message: "No data found" })
+                }
             }
         } catch (error) {
             res.status(500).json({ message: 'Internal server error' })

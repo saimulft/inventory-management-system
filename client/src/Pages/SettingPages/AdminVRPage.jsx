@@ -1,5 +1,4 @@
 import useAuth from "../../hooks/useAuth";
-import { v4 as uuidv4 } from 'uuid';
 import axios from "axios";
 import { useMutation } from "@tanstack/react-query";
 import { FaSpinner } from "react-icons/fa";
@@ -27,17 +26,16 @@ export default function AdminVRPage() {
     const email = form.email.value;
     const password = form.password.value;
     const confirmPassword = form.confirmPassword.value;
-    const username = form.username.value;
 
     if (password !== confirmPassword) {
       return setErrorMessage('Password and confirm password must be same!')
     }
 
-    else if(password.length < 6){
+    else if (password.length < 6) {
       return setErrorMessage("Password must be at least 6 characters or longer!")
     }
 
-    const adminVA = { admin_id: user.admin_id, creator_email: user?.email, admin_va_id: uuidv4(), full_name: name, email, username, password, role: 'Admin VA' }
+    const adminVA = { admin_id: user.admin_id, creator_email: user?.email, full_name: name, email, password, role: 'Admin VA' }
 
     try {
       const { status } = await mutateAsync(adminVA)
@@ -62,7 +60,7 @@ export default function AdminVRPage() {
       <form onSubmit={handleCreateAdminVA}>
         <div className="flex gap-4 w-full mt-5">
           <div className="w-1/2">
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="text-slate-500">Name*</label>
               <input
                 type="text"
@@ -73,7 +71,21 @@ export default function AdminVRPage() {
                 required
               />
             </div>
-            <div className="mt-3">
+            <div className="mt-4">
+              <label className="text-slate-500">Password*</label>
+              <input
+                type="password"
+                placeholder="Enter password"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                id="password"
+                name="password"
+                required
+              />
+            </div>
+          </div>
+
+          <div className="w-1/2">
+            <div className="mt-4">
               <label className="text-slate-500">Email*</label>
               <input
                 type="email"
@@ -84,7 +96,7 @@ export default function AdminVRPage() {
                 required
               />
             </div>
-            <div className="mt-3">
+            <div className="mt-4">
               <label className="text-slate-500">Confirm password*</label>
               <input
                 type="password"
@@ -92,31 +104,6 @@ export default function AdminVRPage() {
                 className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="confirmPassword"
                 name="confirmPassword"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="w-1/2">
-            <div className="mt-3">
-              <label className="text-slate-500">Username*</label>
-              <input
-                type="text"
-                placeholder="Enter username"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="username"
-                name="username"
-                required
-              />
-            </div>
-            <div className="mt-3">
-              <label className="text-slate-500">Password*</label>
-              <input
-                type="password"
-                placeholder="Enter password"
-                className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                id="password"
-                name="password"
                 required
               />
             </div>

@@ -186,7 +186,7 @@ const run = async () => {
 
   router.patch("/messages/seen_messages", async (req, res) => {
     const id = req.query.id || {};
-    const messageSeenUser = req.query.email.split("@")[0];
+    const messageSeenUser = req.query.email?.split("@")[0];
     if (id != "undefined") {
       const query = { _id: new ObjectId(id) };
       const updatedData = {
@@ -209,6 +209,27 @@ const run = async () => {
     }
   });
 
+  // router.patch("/messages/delete_message", async (req, res) => {
+  //   const conversationID = req.query.conversation_id;
+  //   const messageID = req.query.message_id;
+  //   const query = { _id: new ObjectId(conversationID) };
+  //   const updatedData = { $pull: { messages: { _id: new ObjectId(messageID) } } };
+
+  //   try {
+  //     const result = await conversationsCollection.updateOne(query, updatedData);
+
+  //     if (result.modifiedCount > 0) {
+  //       res.status(200).json({ success: true, messageData: { messageID }, message: "Message deleted successfully" });
+  //     } else {
+  //       res.status(404).json({ success: false, message: "Message not found" });
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     res.status(500).json({ success: false, message: "Internal server error" });
+  //   }
+  // });
+
+
   router.get("/single_conversation", async (req, res) => {
     try {
       const { sender, receiver, page_no } = req.query || {};
@@ -220,7 +241,6 @@ const run = async () => {
         const totalMessageLength = singleConversationsData.messages.length;
         let start;
         let end;
-        let startFilter;
 
         const sentMsgGroupCount = 15;
         if (page_no) {

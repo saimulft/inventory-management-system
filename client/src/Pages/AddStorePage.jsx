@@ -52,7 +52,7 @@ export default function AddStorePage() {
       return setErrorMessage('Please select store status')
     }
 
-    const data = { store_name: storeName, store_manager_name: storeManagerName, store_type: storeType, store_status: storeStatus }
+    const data = { store_name: storeName, slug: storeName, store_manager_name: storeManagerName, store_type: storeType, store_status: storeStatus }
     setStoreDetails(data)
     setStoreOwners(storeOwnerIDs)
 
@@ -65,19 +65,19 @@ export default function AddStorePage() {
         style={boxShadowStyle}
         className="border border-[#8633FF] shadow-lg h-fit w-fit m-auto rounded-xl flex justify-center items-center"
       >
-        <div className="lg:py-20 lg:px-28 p-10">
+        <div className="lg:py-20 lg:px-28 p-10 max-w-[700px] w-[600px]">
           <form onSubmit={handleNext}>
-            <h4 className="text-xl font-bold">Add New Store</h4>
-            <p className="text-slate-400">
+            <h4 className="text-2xl font-bold">Add New Store</h4>
+            <p className="text-slate-400 mt-2">
               Please fill out the details to add a new store
             </p>
 
-            <div className="flex flex-col mt-4">
+            <div className="flex flex-col mt-6 w-full">
               <label className="text-slate-500">Store name*</label>
               <input
                 type="text"
                 placeholder="Enter store name"
-                className="input input-bordered input-primary w-full max-w-xs mt-2 shadow-lg"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="storeName"
                 name="storeName"
                 defaultValue={storeDetails?.store_name ? storeDetails?.store_name : ''}
@@ -85,12 +85,12 @@ export default function AddStorePage() {
               />
             </div>
 
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col mt-4 w-full">
               <label className="text-slate-500">Store manager name*</label>
               <input
                 type="text"
                 placeholder="Enter store manager name"
-                className="input input-bordered input-primary w-full max-w-xs mt-2 shadow-lg"
+                className="input input-bordered input-primary w-full mt-2 shadow-lg"
                 id="storeManagerName"
                 name="storeManagerName"
                 defaultValue={storeDetails?.store_manager_name ? storeDetails?.store_manager_name : ''}
@@ -98,12 +98,12 @@ export default function AddStorePage() {
               />
             </div>
 
-            <div className="flex flex-col mt-2">
-              <label className="text-slate-500">Store Owner*</label>
+            <div className="flex flex-col mt-4">
+              <label className="text-slate-500">Store owner*</label>
               <SearchDropdown isLoading={storeOwnerLoading} isMulti={true} option={storeOwnerOption} optionData={allStoreOwner} placeholder="Select Store" setOption={setStoreOwnerOption} />
             </div>
 
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col mt-4">
               <label className="text-slate-500">Store type*</label>
               <select
                 className="select select-primary w-full mt-2 shadow-lg"
@@ -123,7 +123,7 @@ export default function AddStorePage() {
               </select>
             </div>
 
-            <div className="flex flex-col mt-2">
+            <div className="flex flex-col mt-4">
               <label className="text-slate-500">Store status*</label>
               <select
                 className="select select-primary w-full mt-2 shadow-lg"

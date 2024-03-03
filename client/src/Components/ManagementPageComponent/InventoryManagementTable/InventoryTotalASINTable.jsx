@@ -4,12 +4,12 @@ import { useContext, useState } from "react";
 import { AiOutlineSearch } from "react-icons/ai";
 import useAuth from "../../../hooks/useAuth";
 import { useQuery } from "@tanstack/react-query";
-import FileDownload from "../../Shared/FileDownload";
 import { GlobalContext } from "../../../Providers/GlobalProviders";
 import Loading from "../../Shared/Loading";
 import { DateRange } from "react-date-range";
 import ReactPaginate from "react-paginate";
 import { useLocation } from "react-router-dom";
+import ViewImage from "../../Shared/ViewImage";
 
 export default function InventoryTotalASINTable() {
   const { user } = useAuth();
@@ -54,7 +54,7 @@ export default function InventoryTotalASINTable() {
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );
-  
+
   const handleCustomDateSearch = () => {
     setSearchError("");
     const startDate = rangeDate[0].startDate;
@@ -161,37 +161,35 @@ export default function InventoryTotalASINTable() {
       <h3 className="text-center text-2xl font-medium">
         Total ASIN/UPC
         <span className={`${notificationSearchValue && "hidden"}`}>
-          : {data.length}
+          : {searchError ? 0 : searchResults?.length ? searchResults?.length : data?.length}
         </span>
       </h3>
 
       <div className="relative flex justify-between items-center mt-4">
         <div>
           <div className="flex gap-4 text-sm items-center">
-            
+
             {!notificationSearchValue && (
               <>
-              <p
-              onClick={() => {
-                setSearchResults([]);
-                setSearchText("");
-                setSearchError("");
-                setFilterDays("all");
-              }}
-              className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                filterDays === "all" && "bg-[#8633FF] text-white"
-              }`}
-            >
-              All
-            </p>
+                <p
+                  onClick={() => {
+                    setSearchResults([]);
+                    setSearchText("");
+                    setSearchError("");
+                    setFilterDays("all");
+                  }}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "all" && "bg-[#8633FF] text-white"
+                    }`}
+                >
+                  All
+                </p>
                 <p
                   onClick={() => {
                     handleDateSearch("today");
                     setFilterDays("today");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "today" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "today" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Today
                 </p>
@@ -200,9 +198,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(7);
                     setFilterDays(7);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 7 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 7 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   7 Days
                 </p>
@@ -211,9 +208,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(15);
                     setFilterDays(15);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 15 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 15 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   15 Days
                 </p>
@@ -222,9 +218,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(30);
                     setFilterDays(1);
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === 1 && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === 1 && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   1 Month
                 </p>
@@ -233,9 +228,8 @@ export default function InventoryTotalASINTable() {
                     handleDateSearch(365);
                     setFilterDays("year");
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "year" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "year" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Year
                 </p>
@@ -244,9 +238,8 @@ export default function InventoryTotalASINTable() {
                     setFilterDays("custom");
                     document.getElementById("date_range_modal").showModal();
                   }}
-                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${
-                    filterDays === "custom" && "bg-[#8633FF] text-white"
-                  }`}
+                  className={`border border-gray-300 cursor-pointer hover:bg-[#8633FF] hover:text-white transition-all  py-1 px-6 rounded ${filterDays === "custom" && "bg-[#8633FF] text-white"
+                    }`}
                 >
                   Custom
                 </p>
@@ -294,98 +287,98 @@ export default function InventoryTotalASINTable() {
       </div>
 
       <div className="overflow-x-auto  mt-8 min-h-[calc(100vh-288px)] max-h-full">
-        <table className="table table-sm">
-          <thead>
-            <tr className="bg-gray-200">
-              <th>Date</th>
-              <th>ASIN/UPC</th>
-              <th>Product Name</th>
-              <th>Min Price</th>
-              <th>Code Type</th>
-              <th>Store Manager</th>
-              <th>Product Image</th>
-            </tr>
-          </thead>
-          <tbody className="relative">
-            {/* {notificationSearchData == undefined && notificationSearchValue && (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                Pending arrival notified data not available!
-              </p>
-            )} */}
-            {searchError ? (
-              <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
-                {searchError}
-              </p>
-            ) : (
-              <>
-                {searchResults.length ? (
-                  displayedDataFilter.map((d, index) => {
-                    return (
-                      <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                        <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
-                        <td>{d.asin_upc_code}</td>
-                        <td className="text-[#8633FF]">{d.product_name}</td>
-                        <td>{d.min_price}</td>
-                        <td>{d.code_type}</td>
-                        <td>{d.store_manager_name}</td>
-                        <td>
-                          {d.product_image && (
-                            <FileDownload fileName={d.product_image} />
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })
-                ) : !notificationSearchValue ? (
-                  isLoading ? (
-                    <Loading />
-                  ) : (
-                    displayAllData?.map((d, index) => {
+        <div className={`overflow-x-auto overflow-y-hidden ${(searchError || isLoading || (notificationSearchData == undefined && notificationSearchValue)) ? 'h-[calc(100vh-288px)]' : 'h-full'}`}>
+          <table className="table table-sm mb-[95px]">
+            <thead>
+              <tr className="bg-gray-200">
+                <th>Product Image</th>
+                <th>Date</th>
+                <th>ASIN/UPC</th>
+                <th>Product Name</th>
+                <th>Min Price</th>
+                <th>Code Type</th>
+                <th>Store Manager</th>
+              </tr>
+            </thead>
+            <tbody className="relative">
+              {notificationSearchData == undefined && notificationSearchValue && !isLoading && (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  Data move to the next sequence!
+                </p>
+              )}
+              {searchError ? (
+                <p className="absolute top-[260px] flex items-center justify-center w-full text-rose-500 text-xl font-medium">
+                  {searchError}
+                </p>
+              ) : (
+                <>
+                  {searchResults.length ? (
+                    displayedDataFilter.map((d, index) => {
                       return (
                         <tr className={`${index % 2 == 1 && ""}`} key={index}>
-                          <th>
-                            {d.date && format(new Date(d.date), "y/MM/d")}
-                          </th>
+                          <td>
+                            {d.product_image && (
+                              <ViewImage fileName={d.product_image} />
+                            )}
+                          </td>
+                          <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
                           <td>{d.asin_upc_code}</td>
                           <td className="text-[#8633FF]">{d.product_name}</td>
                           <td>{d.min_price}</td>
                           <td>{d.code_type}</td>
                           <td>{d.store_manager_name}</td>
-                          <td>
-                            {d.product_image && (
-                              <FileDownload fileName={d.product_image} />
-                            )}
-                          </td>
                         </tr>
                       );
                     })
-                  )
-                ) : (
-                  (notificationSearchValue && <tr>
-                    <th>
-                      {notificationSearchData?.date &&
-                        format(new Date(notificationSearchData.date), "y/MM/d")}
-                    </th>
-                    <td>{notificationSearchData?.asin_upc_code}</td>
-                    <td className="text-[#8633FF]">
-                      {notificationSearchData?.product_name}
-                    </td>
-                    <td>{notificationSearchData?.min_price}</td>
-                    <td>{notificationSearchData?.code_type}</td>
-                    <td>{notificationSearchData?.store_manager_name}</td>
-                    <td>
-                      {notificationSearchData?.product_image && (
-                        <FileDownload
-                          fileName={notificationSearchData.product_image}
-                        />
-                      )}
-                    </td>
-                  </tr>)
-                )}
-              </>
-            )}
-          </tbody>
-        </table>
+                  ) : !notificationSearchValue ? (
+                    isLoading ? (
+                      <Loading />
+                    ) : (
+                      displayAllData?.map((d, index) => {
+                        return (
+                          <tr className={`${index % 2 == 1 && ""}`} key={index}>
+                            <td>
+                              {d.product_image && (
+                                <ViewImage fileName={d.product_image} />
+                              )}
+                            </td>
+                            <th>{d.date && format(new Date(d.date), "y/MM/d")}</th>
+                            <td>{d.asin_upc_code}</td>
+                            <td className="text-[#8633FF]">{d.product_name}</td>
+                            <td>{d.min_price}</td>
+                            <td>{d.code_type}</td>
+                            <td>{d.store_manager_name}</td>
+                          </tr>
+                        );
+                      })
+                    )
+                  ) : (
+                    (notificationSearchValue && <tr>
+                      <td>
+                        {notificationSearchData?.product_image && (
+                          <ViewImage
+                            fileName={notificationSearchData.product_image}
+                          />
+                        )}
+                      </td>
+                      <th>
+                        {notificationSearchData?.date &&
+                          format(new Date(notificationSearchData.date), "y/MM/d")}
+                      </th>
+                      <td>{notificationSearchData?.asin_upc_code}</td>
+                      <td className="text-[#8633FF]">
+                        {notificationSearchData?.product_name}
+                      </td>
+                      <td>{notificationSearchData?.min_price}</td>
+                      <td>{notificationSearchData?.code_type}</td>
+                      <td>{notificationSearchData?.store_manager_name}</td>
+                    </tr>)
+                  )}
+                </>
+              )}
+            </tbody>
+          </table>
+        </div>
 
         {/* pagination */}
         {!isLoading &&

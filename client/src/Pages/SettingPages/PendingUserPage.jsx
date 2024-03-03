@@ -129,7 +129,7 @@ export default function PendingUsersPage() {
   });
 
   return (
-    <div className="overflow-x-auto py-10">
+    <div className=" py-10">
       <table className="table table-md">
         <thead>
           <tr className="bg-gray-100">

@@ -6,7 +6,7 @@ import AddNewConversation from "./AddNewConversation";
 import "./chatBox.css"
 
 export default function ChatBox() {
-  const { isChatBoxOpen, singleConversationShow, addNewConversation, boxCloseRef } =
+  const { isChatBoxOpen, singleConversationShow, addNewConversation } =
     useContext(ChatContext);
   return (
     <div>

@@ -9,6 +9,7 @@ import Compressor from "compressorjs";
 import useGlobal from "../hooks/useGlobal";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import { NotificationContext } from "../Providers/NotificationProvider";
+import handlePriceKeyDown from "../Utilities/handlePriceKeyDown";
 
 const AddASINForm = () => {
   const { socket } = useContext(GlobalContext);
@@ -58,6 +59,30 @@ const AddASINForm = () => {
           .post("/api/v1/asin_upc_api/insert_asin_upc", asinInfo)
           .then((res) => {
             if (res.status === 201) {
+              const notification_link = "/dashboard/management/store/total-asin";
+              const notification_search = [res?.data?.result?.insertedId];
+              const status = "Submit a ASIN/UPC form.";
+              axios
+                .post(`/api/v1/notifications_api/send_notification`, {
+                  currentUser,
+                  status,
+                  notification_link,
+                  notification_search
+                })
+                .then((res) => {
+                  if (res.data?.finalResult?.acknowledged) {
+                    // send real time notification data
+                    const notificationData = res.data?.notificationData;
+                    if (notificationData) {
+                      socket?.current?.emit("sendNotification", {
+                        user,
+                        notificationData,
+                      });
+                    }
+                  }
+                })
+                .catch((err) => console.log(err));
+
               setCountsRefetch(true);
               setImageSrc(null);
               setImageFile(null);
@@ -296,8 +321,9 @@ const AddASINForm = () => {
                 <div className="mt-4">
                   <label className="text-slate-500">Min Price</label>
                   <input
+                    onKeyDown={handlePriceKeyDown}
                     required
-                    type="number"
+                    type="text"
                     placeholder="Enter min price"
                     className="input input-bordered input-primary w-full mt-2 shadow-lg"
                     id="minPrice"

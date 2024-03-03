@@ -37,7 +37,7 @@ const run = async () => {
     })
 
     //get out of stock data
-    router.post('/get_all_OOS_data',verifyJWT, async (req, res) => {
+    router.post('/get_all_OOS_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user
             const role = req.role
@@ -74,7 +74,7 @@ const run = async () => {
 
             const result = await out_of_stock_collection.deleteOne({ _id: new ObjectId(id) });
             if (result.deletedCount) {
-                res.status(200).json({ message: "Successfully deleted an out of stock data" })
+                res.status(200).json({ message: "Successfully deleted an out of stock data", result: { id } })
             }
             else {
                 res.status(500).json({ message: "Error to delete out of stock data" })
@@ -92,7 +92,6 @@ const run = async () => {
             const updatedData = {
                 product_name: req.body.product_name,
                 quantity: req.body.quantity,
-                upin: req.body.upin,
                 notes: req.body.notes,
             }
 
@@ -138,9 +137,8 @@ const run = async () => {
                     { $set: updatedDataStore },
                     { upsert: true }
                 );
-
                 if (result.modifiedCount) {
-                    return res.status(201).json({ status: 'success', message: 'Data update successful' });
+                    return res.status(201).json({ status: 'success', message: 'Data update successful', result: { id } });
                 }
                 else {
                     return res.status(203).json({ message: 'Error to modify out of stock data' });
@@ -162,7 +160,7 @@ const run = async () => {
 
 
                 if (result.modifiedCount) {
-                    return res.status(201).json({ status: 'success', message: 'Data update successful' });
+                    return res.status(201).json({ status: 'success', message: 'Data update successful', result: { id } });
                 }
                 else {
                     return res.status(203).json({ message: 'Error to modify out of stock data' });

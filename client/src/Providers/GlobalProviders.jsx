@@ -1,9 +1,12 @@
+import axios from "axios";
 import { createContext, useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import useAuth from "../hooks/useAuth";
 
 export const GlobalContext = createContext();
-
 export const GlobalProvider = ({ children }) => {
+  const { user } = useAuth();
+
   // socket install
   const socket = useRef();
 
@@ -11,28 +14,48 @@ export const GlobalProvider = ({ children }) => {
     socket.current = io("wss://api-socket.revealifydirectory.com");
   }, []);
 
+  const [currentUser, setCurrentUser] = useState({});
+  const [currentUserLoading, setCurrentUserLoading] = useState(false);
+
+  useEffect(() => {
+    setCurrentUserLoading(true);
+    axios
+      .get(
+        `/api/v1/notifications_api/current_user?email=${user?.email}&user_role=${user?.role}`
+      )
+      .then((res) => {
+        setCurrentUser(res.data);
+        setCurrentUserLoading(false);
+      })
+      .catch((error) => {
+        console.log(error);
+        setCurrentUserLoading(false);
+      });
+  }, [user?.email, user?.role]);
+
+  // send current user into socket server
+  useEffect(() => {
+    if (currentUser) {
+      socket.current?.emit("addCurrentUser", { currentUser });
+    }
+  }, [currentUser, socket]);
+
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isActiveSetting, setIsActiveSetting] = useState("profile");
   const [countsRefetch, setCountsRefetch] = useState(false)
   const [storeRefetch, setStoreRefetch] = useState(false)
-
   const modalMarginLeft = isSidebarOpen ? "18.5%" : "6%";
-  const [pageName, setPageName] = useState(null)
 
   // global info
   const GlobalInfo = {
-    pageName,
-    setPageName,
     isSidebarOpen,
     setIsSidebarOpen,
-    isActiveSetting,
-    setIsActiveSetting,
     modalMarginLeft,
     countsRefetch,
     setCountsRefetch,
     storeRefetch,
     setStoreRefetch,
-    socket
+    socket,
+    currentUser
   };
 
   return (

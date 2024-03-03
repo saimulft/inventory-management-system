@@ -11,6 +11,7 @@ const run = async () => {
     const db = await connectDatabase()
     const preparing_form_collection = db.collection("preparing_form_data")
     const all_stock_collection = db.collection("all_stock")
+    const all_stores_collection = db.collection("all_stores")
 
     // upload asin upc image 
     const storage = multer.diskStorage({
@@ -78,12 +79,22 @@ const run = async () => {
                 warehouse_id: req.body.warehouseId,
             };
 
-            const result = await preparing_form_collection.insertOne(data)
-            if (result.acknowledged) {
-                res.status(201).json({ message: "Preparing form inserted", result })
+            const storeData = await all_stores_collection.findOne({ _id: new ObjectId(req.body.storeId) })
+            if (storeData.subscription_status === 'Active') {
+                if (storeData?.preparing_form_submitted < storeData?.max_form_submission_limit) {
+                    const result = await preparing_form_collection.insertOne(data)
+                    await all_stores_collection.updateOne(
+                        { _id: new ObjectId(req.body.storeId) },
+                        { $set: { preparing_form_submitted: storeData?.preparing_form_submitted + 1, total_order: storeData?.total_order + 1 } }
+                    )
+                    res.status(201).json({ message: "Preparing form inserted", result })
+                }
+                else {
+                    res.json({ status: 'exceeded', message: `Your preparing request limit for ${storeData.store_name} store has exceeded!` })
+                }
             }
             else {
-                res.status(500).json({ message: "Error to Preparing form " });
+                res.status(403).json({ status: '403', message: "Forbidded access to submit preparing request form" })
             }
         } catch (error) {
             res.status(500).json({ message: "Multer error" });
@@ -142,7 +153,7 @@ const run = async () => {
                 return res.status(200).json({ message: "Preparing form updated", result: id })
             }
             else {
-                return res.status(500).json({ message: "Error to Preparing form " });
+                return res.status(500).json({ message: "Error to Preparing form" });
             }
         } catch (error) {
             console.log(error)
@@ -152,7 +163,7 @@ const run = async () => {
 
 
     // get all preparing request data
-    router.post('/get_all_preparing_request_data',verifyJWT,async (req, res) => {
+    router.post('/get_all_preparing_request_data', verifyJWT, async (req, res) => {
         try {
             const user = req.body.user;
             const role = req.role;

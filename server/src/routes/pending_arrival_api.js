@@ -9,6 +9,7 @@ const run = async () => {
     const pending_arrival_collection = db.collection("pending_arrival")
     const missing_arrival_collection = db.collection("missing_arrival")
     const all_stock_collection = db.collection("all_stock")
+    const all_stores_collection = db.collection("all_stores")
 
     // insert pending arrival data
     router.post('/insert_pending_arrival_form_data', async (req, res) => {
@@ -42,15 +43,23 @@ const run = async () => {
                 order_number: "N/A",
             }
 
-            const result = await pending_arrival_collection.insertOne(data)
-
-            if (result.acknowledged) {
-                res.status(201).json({ message: "Successfully inserted pending arrival data", result })
+            const storeData = await all_stores_collection.findOne({ _id: new ObjectId(req.body.store_id) })
+            if (storeData.subscription_status === 'Active') {
+                if (storeData?.pending_form_submitted < storeData?.max_form_submission_limit) {
+                    const result = await pending_arrival_collection.insertOne(data)
+                    await all_stores_collection.updateOne(
+                        { _id: new ObjectId(req.body.storeId) },
+                        { $set: { pending_form_submitted: storeData?.pending_form_submitted + 1 } }
+                    )
+                    res.status(201).json({ message: "Successfully inserted pending arrival data", result })
+                }
+                else {
+                    res.json({ status: 'exceeded', message: `Your pending arrival request limit for ${storeData.store_name} store has exceeded!` })
+                }
             }
             else {
-                res.status(500).json({ message: "Internal server error while inserting pending arrival data" })
+                res.status(403).json({ status: '403', message: "Forbidded access to submit pending arrival form" })
             }
-
         } catch (error) {
             res.status(500).json({ message: 'Internal Server Error' });
         }

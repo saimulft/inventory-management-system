@@ -7,6 +7,7 @@ const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
     const db = await connectDatabase()
     const all_stores_collection = db.collection("all_stores")
+    const all_stock_collection = db.collection("all_stock")
 
     // add new store
     router.post('/add_new_store', async (req, res) => {
@@ -50,6 +51,10 @@ const run = async () => {
                     store_status: req.body.storeStatus !== "Select Status" ? req.body.storeStatus : existData.store_status,
                 }
                 const updateResult = await all_stores_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData })
+
+                if (req.body.storeName) {
+                    await all_stock_collection.updateMany({ store_id: id }, { $set: { store_name: req.body.storeName } })
+                }
 
                 if (updateResult.modifiedCount) {
                     return res.status(200).json({ message: "Store data updated" })
@@ -206,7 +211,7 @@ const run = async () => {
 
             if (allStores) {
                 const data = allStores.map(item => {
-                    return { data: allStores, value: item._id, label: item.store_name }
+                    return { data: allStores, value: item?._id, label: item?.store_name, slug: item?.slug }
                 })
                 res.status(200).json({ data: data, message: "successfully stores data" })
             }

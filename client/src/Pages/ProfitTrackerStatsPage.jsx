@@ -22,6 +22,7 @@ const ProfitTrackerStatsPage = () => {
     const [searchError, setSearchError] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const { id } = useParams()
+    const [totalOrder, setTotalOrder] = useState(null)
 
     useEffect(() => {
         setInitialLoading(true)
@@ -31,6 +32,7 @@ const ProfitTrackerStatsPage = () => {
                 if (res.status === 200) {
                     setInitialLoading(false)
                     setStoreName(res.data.store_name)
+                    setTotalOrder(res.data.total_order)
                     if (res.data.data) {
                         setStoreData(res.data.data)
                     }
@@ -229,7 +231,7 @@ const ProfitTrackerStatsPage = () => {
                                 <div className="h-8 w-8 flex justify-center items-center rounded-full bg-purple-400 text-white">
                                     <BiSolidFoodMenu />
                                 </div>
-                                <h6 className="mt-2 text-xl font-medium">0</h6>
+                                <h6 className="mt-2 text-xl font-medium">{totalOrder ? totalOrder : "0"}</h6>
                                 <p className="my-1 text-sm">Total Order</p>
                             </div>
 
@@ -242,8 +244,8 @@ const ProfitTrackerStatsPage = () => {
                             </div>
                         </div>}
 
-                        {view === "Table" && <div className="mt-12">
-                            <div className="overflow-x-auto mt-8 min-h-[calc(100vh-335px)] max-h-full">
+                        {view === "Table" && <div className="mt-12 overflow-x-scroll overflow-y-hidden">
+                            <div className=" mt-8 min-h-[calc(100vh-335px)] max-h-full">
                                 <table className="table table-sm border border-gray-300 border-collapse">
                                     <thead>
                                         <tr className="bg-gray-200 text-black">
