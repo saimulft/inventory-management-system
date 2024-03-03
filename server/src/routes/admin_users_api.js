@@ -59,7 +59,7 @@ const run = async () => {
                         html: `
                         <div class="container">
                             <h2>Please verify your email before login to your account</h2>
-                            <p>To verify your email <a href="https://revealifydirectory.com/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
+                            <p>To verify your email <a href="https://inventory.entwicklernetz.com/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
                         </div>`
                     }
 
@@ -124,7 +124,7 @@ const run = async () => {
                 query = { creator_email: req.body.user.email };
             }
 
-            const result = await all_users_collection.find(query, {projection: {password: 0}}).toArray()
+            const result = await all_users_collection.find(query, { projection: { password: 0 } }).toArray()
 
             if (result.length) {
                 res.status(200).json(result);
@@ -305,7 +305,7 @@ const run = async () => {
     })
 
     router.get('/get_ware_house_user_details', verifyJWT, async (req, res) => {
- 
+
         try {
             const email = req.query.email
             const role = req.query.role

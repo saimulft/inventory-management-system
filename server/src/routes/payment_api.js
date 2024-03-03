@@ -4,7 +4,7 @@ const connectDatabase = require('../config/connectDatabase')
 const { addMonths } = require('date-fns');
 
 const stripe = require('stripe')('sk_test_51M9AWiKa3gcPGhKTJaOAKnhWZgT7pA0dqch2kQ7uz7M5lXpt6dDckLjHdFIyYs1rgafA64sKm7eGH05O6aWWlo52006GcXLLcN');
-const YOUR_DOMAIN = 'https://revealifydirectory.com';
+const YOUR_DOMAIN = 'https://inventory.entwicklernetz.com';
 
 const sendEmail = require("../utilities/send_email");
 const verifyJWT = require("../middlewares/verifyJWT");
@@ -28,7 +28,7 @@ const run = async () => {
             document.total_order = 0;
             document.pending_form_submitted = 0;
             document.preparing_form_submitted = 0;
-        
+
             const currentDate = new Date();
             const renewDate = addMonths(currentDate, 1);
             const isoRenewDate = renewDate.toISOString();

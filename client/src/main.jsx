@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 import NotificationProvider from "./Providers/NotificationProvider.jsx";
 const queryClient = new QueryClient()
 import CryptoJS from "crypto-js"
-axios.defaults.baseURL = "https://api.revealifydirectory.com"
+axios.defaults.baseURL = "https://backend.entwicklernetz.com"
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 AOS.init();

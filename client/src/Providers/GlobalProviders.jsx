@@ -11,7 +11,7 @@ export const GlobalProvider = ({ children }) => {
   const socket = useRef();
 
   useEffect(() => {
-    socket.current = io("wss://api-socket.revealifydirectory.com");
+    socket.current = io("wss://socket.entwicklernetz.com");
   }, []);
 
   const [currentUser, setCurrentUser] = useState({});
