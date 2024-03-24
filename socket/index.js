@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 
 const io = new Server(9000, {
   cors: {
-    origin: ['https://inventory.entwicklernetz.com'],
+    origin: ['http://165.22.44.108:3000'],
   },
 })
 

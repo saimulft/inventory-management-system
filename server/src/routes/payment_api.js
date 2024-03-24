@@ -4,7 +4,7 @@ const connectDatabase = require('../config/connectDatabase')
 const { addMonths } = require('date-fns');
 
 const stripe = require('stripe')('sk_test_51M9AWiKa3gcPGhKTJaOAKnhWZgT7pA0dqch2kQ7uz7M5lXpt6dDckLjHdFIyYs1rgafA64sKm7eGH05O6aWWlo52006GcXLLcN');
-const YOUR_DOMAIN = 'https://inventory.entwicklernetz.com';
+const YOUR_DOMAIN = 'http://165.22.44.108:3000';
 
 const sendEmail = require("../utilities/send_email");
 const verifyJWT = require("../middlewares/verifyJWT");

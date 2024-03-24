@@ -61,7 +61,7 @@ const run = async () => {
                             </div>
                             <hr />
                             <h2>Please verify your email before login to your account</h2>
-                            <p>To verify your email <a href="https://inventory.entwicklernetz.com/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
+                            <p>To verify your email <a href="http://165.22.44.108:3000/verify_email?id=${result.insertedId.toString()}">Click here</a></p>
                         </div>`
                     }
 
