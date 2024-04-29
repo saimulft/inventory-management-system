@@ -8,7 +8,7 @@ app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true, limit: '5mb' }))
 
 app.use(cors({
-    origin: "https://ims.nabilnewaz.com",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 }))
 

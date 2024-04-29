@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 import NotificationProvider from "./Providers/NotificationProvider.jsx";
 const queryClient = new QueryClient()
 import CryptoJS from "crypto-js"
-axios.defaults.baseURL = "https://ims-backend.nabilnewaz.com"
+axios.defaults.baseURL = "http://localhost:5000/"
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 AOS.init();
