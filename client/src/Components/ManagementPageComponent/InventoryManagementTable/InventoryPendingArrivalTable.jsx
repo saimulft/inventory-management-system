@@ -270,7 +270,6 @@ export default function InventoryPendingArrivalTable() {
         updatedData
       )
       .then((res) => {
-        console.log(res);
 
         if (res.status === 201) {
           const status = "Update pending arrival request.";

@@ -252,6 +252,7 @@ export default function StoreEditPage() {
           </div>
         </div>
       </div>
+
       {/* add information  */}
       <div id="store_parent_div">
         {Array(addSupplier).fill().map((a, index) => {
@@ -301,10 +302,12 @@ export default function StoreEditPage() {
           );
         })}
       </div>
+      
       {/* next btn  */}
       <button disabled={loading} onClick={handleNext} className="flex items-center justify-center border border-[#8633FF]  w-80 mx-auto mt-12 py-[10px] rounded-md text-[#8633FF] hover:bg-[#8633FF] hover:text-white transition font-medium">
         <p className="flex items-center gap-1"><span>Update</span><span className={loading ? "loading loading-spinner loading-xs" : 'hidden'}></span></p>
       </button>
+
       <dialog id="update_modal" className="modal">
         <div style={{ marginLeft, maxWidth: '500px' }} className="modal-box py-10 px-10">
           <form onSubmit={handleUpdate} className="flex justify-center flex-col">
