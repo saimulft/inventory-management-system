@@ -3947,8 +3947,6 @@ export default function DashboardPage() {
                                 <h6 className="mt-2 text-xl font-medium">{totalSold ? totalSold : 0}</h6>
                                 <p className="my-1 text-sm">Product Sold</p>
                             </div>
-
-                            <a rel="noreferrer" href="https://sellercentral.amazon.com.mx/apps/authorize/consent?application_id=amzn1.sp.solution.9e7e8d8a-e2a8-45ae-aa19-21a7e5cb7ce3&state=forceenter&version=beta" target="_blank" className="bg-purple-500 text-white py-1 px-3">Connect amazon</a>
                         </div>
 
                     </div>

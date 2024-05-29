@@ -18,6 +18,7 @@ const run = async () => {
     const warehouse_admin_users_collection = db.collection("warehouse_admin_users")
     const store_manager_va_users_collection = db.collection("store_manager_va_users")
     const warehouse_manager_va_users_collection = db.collection("warehouse_manager_va_users")
+    const store_collection = db.collection("all_stores")
 
 
     // user login
@@ -278,6 +279,42 @@ const run = async () => {
             return res.status(500).json({ message: 'Internal server error' });
         }
     });
+
+    router.get('/authenticate_amazon_store', async (req, res) => {
+        try {
+
+            const { spapi_oauth_code, state } = req.query
+            const storeId = state?.split("-")[0]
+            const marketplaceId = state.split("-")[1]
+
+            fetch(`https://api.amazon.com/auth/o2/token?grant_type=authorization_code&code=${spapi_oauth_code}&client_id=${process.env.AMAZON_CLIENT_ID}&client_secret=${process.env.AMAZON_CLIENT_SECRET}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+                .then(response => response.json())
+                .then(async (data) => {
+                    // save refresh token to database and store id
+                    try {
+                        await store_collection.updateOne({ _id: new ObjectId(storeId) }, { $set: { refresh_token: data.refresh_token, marketplace_id: marketplaceId } }, { upsert: true })
+                        console.log(data);
+                        return res.redirect(`${process.env.CLIENT_URL}/dashboard/all-stores?status=success`)
+                    } catch (error) {
+                        console.log(error);
+                        return res.redirect(`${process.env.CLIENT_URL}/dashboard/all-stores?status=success`)
+                    }
+
+                })
+                .catch((error) => {
+                    console.log(error);
+                    return res.redirect(`${process.env.CLIENT_URL}/dashboard/all-stores?status=failed`)
+                })
+        } catch (error) {
+            console.log(error);
+            res.redirect(`${process.env.CLIENT_URL}/dashboard/all-stores?status=failed`)
+        }
+    })
 }
 run()
 module.exports = router;
