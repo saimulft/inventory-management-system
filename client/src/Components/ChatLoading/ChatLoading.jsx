@@ -1,5 +1,5 @@
 
-import './chatLoading.css';
+import './ChatLoading.css';
 
 export default function ChatLoading() {
 
