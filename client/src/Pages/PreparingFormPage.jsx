@@ -412,12 +412,12 @@ const PreparingFormPage = () => {
 
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">Store name</label>
+                  <label className="text-slate-500">Store Name</label>
                   <SearchDropdown isLoading={storeLoading} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500">Code type</label>
+                  <label className="text-slate-500">Code Type</label>
                   <input type="text" readOnly value={asinUpcOption?.code_type} placeholder="Enter product name" className="input input-bordered input-primary w-full mt-2 shadow-lg" id="code" name="code" />
                 </div>
 

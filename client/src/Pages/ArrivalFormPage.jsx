@@ -331,7 +331,7 @@ const ArrivalFormPage = () => {
 
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">Store name</label>
+                  <label className="text-slate-500">Store Name</label>
                   <SearchDropdown
                     isLoading={storeLoading}
                     isMulti={false}
@@ -343,7 +343,7 @@ const ArrivalFormPage = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500">Code type</label>
+                  <label className="text-slate-500">Code Type</label>
                   <input
                     type="text"
                     readOnly

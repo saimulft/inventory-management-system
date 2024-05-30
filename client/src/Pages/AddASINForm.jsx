@@ -248,7 +248,7 @@ const AddASINForm = () => {
             <div className="flex gap-7">
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">Code type</label>
+                  <label className="text-slate-500">Code Type</label>
                   <select
                     className="select select-primary w-full mt-2 shadow-lg"
                     name="codeType"

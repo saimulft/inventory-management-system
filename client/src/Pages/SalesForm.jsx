@@ -7,19 +7,39 @@ import ToastMessage from "../Components/Shared/ToastMessage";
 import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
 import handlePriceKeyDown from "../Utilities/handlePriceKeyDown";
-
+import Select from 'react-select'
 
 const SalesForm = () => {
     const { user } = useAuth()
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [errorMessage, setErrorMessage] = useState('')
     const [loading, setLoading] = useState(false)
+    const [storeOption, setStoreOption] = useState(null)
 
-    const { data: allStockData = [], isLoading } = useQuery({
-        queryKey: ['all_stock_drop_data'],
+    const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
+        queryKey: ["get_all_stores_data"],
         queryFn: async () => {
             try {
-                const res = await axios.post('/api/v1/all_stock_api/get_all_stock_dropdown_data', { user })
+                const res = await axios.post(
+                    "/api/v1/store_api/get_stores_dropdown_data",
+                    { user }
+                );
+                if (res.status === 200) {
+                    return res.data.data;
+                }
+                return [];
+            } catch (error) {
+                console.log(error);
+                return [];
+            }
+        },
+    });
+
+    const { data: allStockData = [], isLoading } = useQuery({
+        queryKey: ['all_stock_drop_data', storeOption?.value],
+        queryFn: async () => {
+            try {
+                const res = await axios.post('/api/v1/all_stock_api/get_all_stock_by_store_id', { user, store_id: storeOption?.value })
                 if (res.status === 200) {
                     return res.data.data;
                 }
@@ -98,10 +118,20 @@ const SalesForm = () => {
                     <form onSubmit={handleSalesData} className="w-[100%]" >
                         <div className="flex gap-7">
                             <div className="w-full">
-
-
-
                                 {/* left side new input fields */}
+                                <div className="mt-4">
+                                    <label className="text-slate-500">Store Name</label>
+                                    {/* <SearchDropdown isLoading={storeLoading} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} /> */}
+                                    <Select
+                                        className='shadow-lg'
+                                        options={allStoreData}
+                                        value={storeOption}
+                                        onChange={(e) => {setStoreOption(e), setSelectedProduct(null)}}
+                                        placeholder="Select Store"
+                                        isLoading={storeLoading}
+                                    />
+                                </div>
+
                                 <div className="mt-4">
                                     <label className="text-slate-500">Amazon Quantity</label>
                                     <input required
@@ -111,17 +141,6 @@ const SalesForm = () => {
                                         className="input input-bordered input-primary w-full mt-2 shadow-lg"
                                         id="amazonQuantity"
                                         name="amazonQuantity"
-                                    />
-                                </div>
-                                <div className="mt-4">
-                                    <label className="text-slate-500">Walmart Quantity</label>
-                                    <input required
-                                        onKeyDown={handleKeyDown}
-                                        type="text"
-                                        placeholder="Enter amazon quantity"
-                                        className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                        id="walmartQuantity"
-                                        name="walmartQuantity"
                                     />
                                 </div>
 
@@ -174,11 +193,22 @@ const SalesForm = () => {
                             </div>
 
                             <div className="w-full">
-
                                 {/* right side new input fields */}
                                 <div className="mt-4">
                                     <label className="text-slate-500">Select Product</label>
                                     <SearchDropdown isLoading={isLoading} option={selectedProduct} placeholder="Select Product" optionData={allStockData} setOption={setSelectedProduct} />
+                                </div>
+
+                                <div className="mt-4">
+                                    <label className="text-slate-500">Walmart Quantity</label>
+                                    <input required
+                                        onKeyDown={handleKeyDown}
+                                        type="text"
+                                        placeholder="Enter amazon quantity"
+                                        className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                                        id="walmartQuantity"
+                                        name="walmartQuantity"
+                                    />
                                 </div>
 
                                 <div className="mt-4">
