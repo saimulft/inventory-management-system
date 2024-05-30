@@ -3,6 +3,7 @@ require("dotenv").config()
 const PORT = process.env.PORT || 5000
 const app = express()
 const cors = require("cors")
+var cron = require('node-cron');
 
 app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true, limit: '5mb' }))
@@ -11,7 +12,10 @@ app.use(cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 }))
-
+cron.schedule('0 0 * * *', () => {
+    console.log('Running a task every day at 12 AM');
+    // Add your task logic here
+  });
 const global_api = require("./src/routes/global_api")
 const authentication_api = require("./src/routes/authentication_api")
 const admin_users_api = require("./src/routes/admin_users_api")

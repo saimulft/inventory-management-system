@@ -3,7 +3,7 @@ const router = express.Router()
 const connectDatabase = require('../config/connectDatabase')
 const { ObjectId } = require("mongodb")
 const verifyJWT = require("../middlewares/verifyJWT")
-
+const axios = require('axios')
 const run = async () => {
     const db = await connectDatabase()
     const all_stock_collection = db.collection("all_stock")
@@ -13,17 +13,64 @@ const run = async () => {
     router.get('/single_store_data', verifyJWT, async (req, res) => {
         try {
             const storeId = req.query.storeId
-
             const store = await all_stores_collection.findOne({ _id: new ObjectId(storeId) })
 
             const storeResult = await all_stock_collection.find({ store_id: storeId }).toArray()
 
+
+
             if (store) {
-                if (storeResult.length) {
-                    return res.status(200).json({ data: storeResult, store_name: store.store_name, total_order: store.total_order, message: "Data successfully get" })
+                if (store?.refresh_token) {
+                    axios.post(`https://api.amazon.com/auth/o2/token?grant_type=refresh_token&refresh_token=${store.refresh_token}&client_id=${process.env.AMAZON_CLIENT_ID}&client_secret=${process.env.AMAZON_CLIENT_SECRET}`)
+                        .then((response) => {
+                            const accessToken = response.data.access_token
+                            axios.get(`https://sellingpartnerapi-na.amazon.com/orders/v0/orders?MarketplaceIds=${store.marketplace_id}&CreatedAfter=2024-02-02T16:40:42.811Z`, {
+                                headers: {
+                                    'x-amz-access-token': accessToken
+                                }
+                            })
+                                .then((response) => {
+                                    // get single order item by order id
+                                    const orderData = []
+
+                                    const allOrderIds = response.data.payload.Orders.map(order => order.AmazonOrderId)
+                                    allOrderIds.forEach(orderId => {
+                                        axios.get(`https://sellingpartnerapi-na.amazon.com/orders/v0/orders/${orderId}/orderItems`, {
+                                            headers: {
+                                                'x-amz-access-token': accessToken
+                                            }
+                                        })
+                                            .then((response) => {
+                                               
+                                                console.log('hi');
+                                            })
+                                            .catch((error) => {
+                                                console.error(error)
+                                            })
+                                    })
+
+                                    if (storeResult.length) {
+                                        return res.status(200).json({ data: storeResult, store_name: store.store_name, total_order: store.total_order, amazon_orders: orderData })
+                                    }
+                                    else {
+                                        return res.status(200).json({ store_name: store.store_name, amazon_orders: response.data.payload.Orders, message: "Data got successfully" })
+                                    }
+                                })
+                                .catch((error) => {
+                                    console.error(error)
+                                })
+                        })
+                        .catch((error) => {
+                            console.error(error)
+                        })
                 }
                 else {
-                    return res.status(200).json({ store_name: store.store_name, message: "Data got successfully" })
+                    if (storeResult.length) {
+                        return res.status(200).json({ data: storeResult, store_name: store.store_name, total_order: store.total_order, amazon_orders: [] })
+                    }
+                    else {
+                        return res.status(200).json({ store_name: store.store_name, amazon_orders: [], message: "Data got successfully" })
+                    }
                 }
             }
             else {
@@ -41,7 +88,7 @@ const run = async () => {
             const adminId = req.query.adminId;
 
             const stockData = await all_stock_collection.find({ admin_id: adminId }).toArray()
-            const totalStore = await all_stores_collection.find({admin_id: adminId}).toArray()
+            const totalStore = await all_stores_collection.find({ admin_id: adminId }).toArray()
             const totalOrder = totalStore.reduce((sum, store) => sum + parseFloat(store?.total_order), 0);
 
             if (stockData.length) {

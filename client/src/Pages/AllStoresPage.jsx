@@ -79,9 +79,22 @@ export default function AllStoresPage() {
   const marginLeft = isSidebarOpen ? "18.5%" : "6%";
 
   const handleAmazonAuthModal = () => {
-    document.getElementById("amazon_auth_modal").showModal()
-  }
 
+    document.getElementById("amazon_auth_modal").showModal()
+
+    // <a rel="noreferrer" href="" target="_blank" >Connect</a>
+  }
+  const handleConnectAmazon = async (event) => {
+    event.preventDefault()
+    const form = event.target
+    const marketplaceId = form.marketplaceId.value
+    const storeId = form.storeId.value
+    if (!marketplaceId || !storeId) {
+      return
+    }
+    window.location.href = `https://sellercentral.amazon.com.mx/apps/authorize/consent?application_id=amzn1.sp.solution.9e7e8d8a-e2a8-45ae-aa19-21a7e5cb7ce3&state=${storeId}-${marketplaceId}&version=beta`
+
+  }
   return (
     <>
       <div className="p-10">
@@ -212,56 +225,68 @@ export default function AllStoresPage() {
           </div>
         </div>
       </div>
-      
+
       {/* amazon authentication modal  */}
       <dialog id="amazon_auth_modal" className="modal">
         <div style={{ marginLeft, maxWidth: '500px' }} className="modal-box py-10 px-10">
-          <form onSubmit={handleAmazonAuthModal} className="flex justify-center flex-col">
-            <label className="text-slate-500 font-bold mb-1">New store name</label>
-            <input
-              className="border bg-white shadow-md border-[#8633FF] outline-none w-full py-3 rounded-md px-2 text-sm"
-              placeholder="Store name"
-              name="storeName"
-              type="text"
-            />
-            <label className=" text-slate-500 mt-4 font-bold mb-1">New store manager name</label>
-            <input
-              className="border bg-white shadow-md border-[#8633FF] outline-none w-full py-3 rounded-md px-2 text-sm"
-              placeholder="Store name"
-              name="storeManagername"
-              type="text"
-            />
-            <label className="font-bold text-slate-500 mt-4">Store type*</label>
+          <form onSubmit={handleConnectAmazon} className="flex justify-center flex-col">
+            <h1 className="text-xl text-slate-500 font-bold mb-5">Connect your amazon store!</h1>
+            <label className="font-bold text-slate-500 mt-4">Select Marketplace*</label>
             <select
               className="select select-primary w-full mt-2"
-              name="storeType"
-              id="storeType"
-              required
+              name="marketplaceId"
+              id="marketplaceId"
             >
-              <option defaultValue="Pick Store Type">
-                Pick Store Type
+              <option value="">
+                Select Marketplace*
               </option>
-              <option value="Amazon">Amazon</option>
-              <option value="Walmart">Walmart</option>
-              <option value="Ebay">Ebay</option>
-              <option value="Shopify">Shopify</option>
-              <option value="Ali Express">Ali Express</option>
+              <option value="A2EUQ1WTGCTBG2">Canada</option>
+              <option value="ATVPDKIKX0DER">United States of America</option>
+              <option value="A1AM78C64UM0Y8">Mexico</option>
+              <option value="A2Q3Y263D00KWC">Brazil</option>
+              <option value="A1RKKUPIHCS9HS">Spain</option>
+              <option value="A1F83G8C2ARO7P">United Kingdom</option>
+              <option value="A13V1IB3VIYZZH">France</option>
+              <option value="AMEN7PMS3EDWL">Belgium</option>
+              <option value="A1805IZSGTT6HS">Netherlands</option>
+              <option value="A1PA6795UKMFR9">Germany</option>
+              <option value="APJ6JRA9NG5V4">Italy</option>
+              <option value="A2NODRKZP88ZB9">Sweden</option>
+              <option value="AE08WJ6YKNBMC">South Africa</option>
+              <option value="A1C3SOZRARQ6R3">Poland</option>
+              <option value="ARBP9OOSHTCHU">Egypt</option>
+              <option value="A33AVAJ2PDY3EV">Turkey</option>
+              <option value="A17E79C6D8DWNP">Saudi Arabia</option>
+              <option value="A2VIGQ35RCS4UG">United Arab Emirates</option>
+              <option value="A21TJRUUN4KGV">India</option>
+              <option value="A19VAU5U5O7RUS">Singapore</option>
+              <option value="A39IBJ37TRP1C6">Australia</option>
+              <option value="A1VC38T7YXB528">Japan</option>
             </select>
-            <label className="font-bold text-slate-500 mt-4">Store status*</label>
+            <label className="font-bold text-slate-500 mt-4">Select Store*</label>
             <select
               className="select select-primary w-full mt-2"
-              name="storeStatus"
-              id="storeStatus"
-              required
+              name="storeId"
+              id="storeId"
+
             >
-              <option defaultValue="Select Status">
-                Select Status
+              <option value="">
+                Select Store
               </option>
-              <option value="Active">Active</option>
-              <option value="Inactive">Inactive</option>
+              {allStoreData.map((store, index) => {
+                // only type amazon 
+                if (store.store_type !== 'Amazon') {
+                  return;
+                }
+                return (
+                  <option key={index} value={store._id}>
+                    {store.store_name}
+                  </option>
+                );
+              })}
             </select>
             <button type="submit" disabled={loading} className="bg-[#8633FF] mt-4 flex gap-2 py-2 justify-center items-center text-white rounded-lg w-full">
-              Update
+              Connect
             </button>
           </form>
         </div>
