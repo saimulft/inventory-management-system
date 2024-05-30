@@ -35,6 +35,7 @@ const ProfitTrackerStatsPage = () => {
                     setTotalOrder(res.data.total_order)
                     if (res.data.data) {
                         setStoreData(res.data.data)
+                        console.log(res.data);
                     }
                 }
                 if (res.status === 204) {

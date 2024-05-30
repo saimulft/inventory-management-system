@@ -86,16 +86,12 @@ export default function AllStoresPage() {
   }
   const handleConnectAmazon = async (event) => {
     event.preventDefault()
-    setLoading(true)
     const form = event.target
     const marketplaceId = form.marketplaceId.value
     const storeId = form.storeId.value
-
-    const data = {
-      marketplaceId,
-      storeId,
+    if (!marketplaceId || !storeId) {
+      return
     }
-    console.log(data);
     window.location.href = `https://sellercentral.amazon.com.mx/apps/authorize/consent?application_id=amzn1.sp.solution.9e7e8d8a-e2a8-45ae-aa19-21a7e5cb7ce3&state=${storeId}-${marketplaceId}&version=beta`
 
   }
@@ -240,9 +236,8 @@ export default function AllStoresPage() {
               className="select select-primary w-full mt-2"
               name="marketplaceId"
               id="marketplaceId"
-              required
             >
-              <option defaultValue="Pick Store Type">
+              <option value="">
                 Select Marketplace*
               </option>
               <option value="A2EUQ1WTGCTBG2">Canada</option>
@@ -273,9 +268,9 @@ export default function AllStoresPage() {
               className="select select-primary w-full mt-2"
               name="storeId"
               id="storeId"
-              required
+
             >
-              <option defaultValue="Select Status">
+              <option value="">
                 Select Store
               </option>
               {allStoreData.map((store, index) => {
@@ -288,7 +283,6 @@ export default function AllStoresPage() {
                     {store.store_name}
                   </option>
                 );
-
               })}
             </select>
             <button type="submit" disabled={loading} className="bg-[#8633FF] mt-4 flex gap-2 py-2 justify-center items-center text-white rounded-lg w-full">
