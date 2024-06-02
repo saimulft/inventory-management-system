@@ -4,73 +4,84 @@ const connectDatabase = require('../config/connectDatabase')
 const { ObjectId } = require("mongodb")
 const verifyJWT = require("../middlewares/verifyJWT")
 const axios = require('axios')
+const cron = require('node-cron');
+
 const run = async () => {
     const db = await connectDatabase()
     const all_stock_collection = db.collection("all_stock")
     const all_stores_collection = db.collection("all_stores")
+    const amazon_stock_collection = db.collection("amazon_stock")
+
+    cron.schedule('*/20 * * * * *', async () => {
+
+        const stores = await all_stores_collection.find().toArray()
+        const amazonStore = stores.filter(store => store.refresh_token)
+
+        amazonStore.forEach(async (store) => {
+
+            axios.post(`https://api.amazon.com/auth/o2/token?grant_type=refresh_token&refresh_token=${store.refresh_token}&client_id=${process.env.AMAZON_CLIENT_ID}&client_secret=${process.env.AMAZON_CLIENT_SECRET}`)
+                .then((response) => {
+                    const accessToken = response.data.access_token
+                 const last30Days = new Date();
+                 last30Days.setDate(last30Days.getDate() - 30);
+                 const isoDate = last30Days.toISOString()
+                    axios.get(`https://sellingpartnerapi-na.amazon.com/orders/v0/orders?MarketplaceIds=${store.marketplace_id}&CreatedAfter=${isoDate}`, {
+
+                        headers: {
+                            'x-amz-access-token': accessToken
+                        }
+                    })
+                        .then(async (res) => {
+                            const allOrderIds = res.data.payload.Orders.map(order => order.AmazonOrderId);
+                            allOrderIds.forEach(async (orderId) => {
+                                setTimeout(async () => {
+                                    try {
+                                        const order = await axios.get(`https://sellingpartnerapi-na.amazon.com/orders/v0/orders/${orderId}/orderItems`, {
+                                            headers: {
+                                                'x-amz-access-token': accessToken
+                                            }
+                                        })
+                                        const orderItems = order.data.payload.OrderItems;
+                                        const flattenedOrderItems = orderItems.map((orderItem) => {
+                                            return {
+
+                                                amazon_asin: orderItem.ASIN,
+                                                amazon_title: orderItem.Title,
+
+                                            };
+                                        });
+
+                                        await amazon_stock_collection.insertMany(flattenedOrderItems);
+                                        console.log('Order items have been saved to the database successfully');
+                                    } catch (error) {
+                                        console.log('Error fetching order items or saving to the database', error);
+                                    }
+                                }, 2000)
+                            })
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                })
+                .catch((error) => {
+                    console.error(error)
+                })
+        })
+    });
 
     // get specific store data for profit tracker
     router.get('/single_store_data', verifyJWT, async (req, res) => {
         try {
             const storeId = req.query.storeId
             const store = await all_stores_collection.findOne({ _id: new ObjectId(storeId) })
-
             const storeResult = await all_stock_collection.find({ store_id: storeId }).toArray()
-
-
-
             if (store) {
-                if (store?.refresh_token) {
-                    axios.post(`https://api.amazon.com/auth/o2/token?grant_type=refresh_token&refresh_token=${store.refresh_token}&client_id=${process.env.AMAZON_CLIENT_ID}&client_secret=${process.env.AMAZON_CLIENT_SECRET}`)
-                        .then((response) => {
-                            const accessToken = response.data.access_token
-                            axios.get(`https://sellingpartnerapi-na.amazon.com/orders/v0/orders?MarketplaceIds=${store.marketplace_id}&CreatedAfter=2024-02-02T16:40:42.811Z`, {
-                                headers: {
-                                    'x-amz-access-token': accessToken
-                                }
-                            })
-                                .then((response) => {
-                                    // get single order item by order id
-                                    const orderData = []
 
-                                    const allOrderIds = response.data.payload.Orders.map(order => order.AmazonOrderId)
-                                    allOrderIds.forEach(orderId => {
-                                        axios.get(`https://sellingpartnerapi-na.amazon.com/orders/v0/orders/${orderId}/orderItems`, {
-                                            headers: {
-                                                'x-amz-access-token': accessToken
-                                            }
-                                        })
-                                            .then((response) => {
-                                               
-                                                console.log('hi');
-                                            })
-                                            .catch((error) => {
-                                                console.error(error)
-                                            })
-                                    })
-
-                                    if (storeResult.length) {
-                                        return res.status(200).json({ data: storeResult, store_name: store.store_name, total_order: store.total_order, amazon_orders: orderData })
-                                    }
-                                    else {
-                                        return res.status(200).json({ store_name: store.store_name, amazon_orders: response.data.payload.Orders, message: "Data got successfully" })
-                                    }
-                                })
-                                .catch((error) => {
-                                    console.error(error)
-                                })
-                        })
-                        .catch((error) => {
-                            console.error(error)
-                        })
+                if (storeResult.length) {
+                    return res.status(200).json({ data: storeResult, store_name: store.store_name, total_order: store.total_order, amazon_orders: [] })
                 }
                 else {
-                    if (storeResult.length) {
-                        return res.status(200).json({ data: storeResult, store_name: store.store_name, total_order: store.total_order, amazon_orders: [] })
-                    }
-                    else {
-                        return res.status(200).json({ store_name: store.store_name, amazon_orders: [], message: "Data got successfully" })
-                    }
+                    return res.status(200).json({ store_name: store.store_name, amazon_orders: [], message: "Data got successfully" })
                 }
             }
             else {
