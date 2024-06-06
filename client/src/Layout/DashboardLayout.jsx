@@ -9,7 +9,7 @@ import NotificationBox from "../Components/Shared/NotificationBox/NotificationBo
 
 export default function DashboardLayout() {
   const { isSidebarOpen } = useContext(GlobalContext);
-  
+
   return (
     <div className="flex bg-[#fafbfc]">
       <div
@@ -19,7 +19,7 @@ export default function DashboardLayout() {
         <Sidebar />
       </div>
       <div className={`transition-all ease-out duration-300 delay-0 ${isSidebarOpen ? "w-[81.5%]" : "w-[94%]"}`}>
-        <Container> 
+        <Container>
           <div className="sticky top-0 z-50">
             <Navbar />
           </div>
@@ -27,10 +27,12 @@ export default function DashboardLayout() {
             <Outlet />
             {/* message box  */}
             <ChatBox />
-            <NotificationBox />
-          </div>
-        </Container>
+            <NavLink to={menu.link} className={({ isActive }) => isActive ? "text-blue-500 border-b-blue-500" : "flex items-center justify-center lg:px-4 lg:py-3 pl-3 pr-4 text-gray-700 md:p-0 md:w-auto transition duration-150 border-b-[3px] border-white hover:text-blue-500 hover:border-b-blue-500"}>{menu.name}</NavLink>
+          </li>
+          <NotificationBox />
       </div>
-    </div>
+    </Container>
+      </div >
+    </div >
   );
 }
