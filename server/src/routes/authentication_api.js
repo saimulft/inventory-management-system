@@ -297,8 +297,7 @@ const run = async () => {
                 .then(async (data) => {
                     // save refresh token to database and store id
                     try {
-                        await store_collection.updateOne({ _id: new ObjectId(storeId) }, { $set: { refresh_token: data.refresh_token, marketplace_id: marketplaceId } }, { upsert: true })
-                        console.log(data);
+                        await store_collection.updateOne({ _id: new ObjectId(storeId) }, { $set: { refresh_token: data.refresh_token, marketplace_id: marketplaceId, sync_date: true } }, { upsert: true })
                         return res.redirect(`${process.env.CLIENT_URL}/dashboard/all-stores?status=success`)
                     } catch (error) {
                         console.log(error);
