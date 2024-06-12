@@ -2,7 +2,7 @@ import { Server } from "socket.io";
 
 const io = new Server(9000, {
   cors: {
-    origin: ['https://ims.nabilnewaz.com'],
+    origin: ['http://localhost:5173'],
   },
 })
 
@@ -14,7 +14,6 @@ const addCurrentUser = (currentUserData, socketId) => {
     (currentUser) => currentUser?.email == currentUserData?.email
   ) && currentUsers?.push({ ...currentUserData, socketId });
 };
-// console.log(currentUsers)
 
 const removeUser = (socketId) => {
   const remove = currentUsers.filter((user) => user.socketId != socketId);

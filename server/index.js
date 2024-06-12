@@ -8,10 +8,9 @@ app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true, limit: '5mb' }))
 
 app.use(cors({
-    origin: "https://ims.nabilnewaz.com",
+    origin: "*",
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
 }))
-
 const global_api = require("./src/routes/global_api")
 const authentication_api = require("./src/routes/authentication_api")
 const admin_users_api = require("./src/routes/admin_users_api")

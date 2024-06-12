@@ -79,7 +79,7 @@ const run = async () => {
         try {
             const user = req.body.user;
 
-            const allStockData = await all_stock_collection.find({ admin_id: user.admin_id }).project({ "value": "$upin", "label": "$upin", "_id": 0 }).sort({ date: -1 }).toArray()
+            const allStockData = await all_stock_collection.find({ admin_id: user.admin_id }).project({ "value": "$upin", "label": "$upin", "_id": 0,"store_id":1 }).sort({ date: -1 }).toArray()
             if (allStockData.length) {
 
                 res.status(200).json({ data: allStockData, message: "successfully get asin_upc" })

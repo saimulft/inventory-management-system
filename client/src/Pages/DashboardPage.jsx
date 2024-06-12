@@ -72,7 +72,6 @@ export default function DashboardPage() {
 
     const totalSales = data?.data?.reduce((sum, d) => sum + parseFloat(d?.sold_price), 0);
     const totalSold = data?.data?.reduce((sum, d) => sum + parseFloat(d?.total_sold), 0);
-
     return (
         <div className={`${initialLoading ? 'p-0' : 'p-10'} relative`}>
             {loading && <div className="absolute left-0 top-5 w-full items-center justify-center"><div className="text-center text-xs font-medium text-[#8533ff] bg-purple-100 border border-[#8533ff] py-2 px-3 rounded flex gap-2 w-fit mx-auto"><FaSpinner className="animate-spin text-[#8633FF]" size={16} />Prepering Graph Data</div></div>}
@@ -155,7 +154,6 @@ export default function DashboardPage() {
                         </div>
 
                     </div>
-
 
                     <div className="relative">
                         {isLoading ? <Loading2 contentHeight="470px" /> : <>

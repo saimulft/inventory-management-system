@@ -12,6 +12,8 @@
   "dependencies": {
     "@sp-api-sdk/auth": "^2.0.4",
     "@sp-api-sdk/listings-items-api-2021-08-01": "^2.1.0",
+    "axios": "^1.7.2",
+    "axios-retry": "^4.3.0",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -22,6 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.1.0",
     "multer": "^1.4.5-lts.1",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.6",
     "nodemon": "^3.0.1",
     "stripe": "^14.3.0"

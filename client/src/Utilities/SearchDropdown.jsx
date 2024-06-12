@@ -1,6 +1,6 @@
 import Select from 'react-select'
 
-const SearchDropdown = ({ setOption, option, optionData, placeholder, isMulti, isLoading }) => {
+const SearchDropdown = ({ setOption, option, optionData, placeholder, isMulti, isLoading, Customkey }) => {
 
     return (
         <Select
@@ -11,6 +11,7 @@ const SearchDropdown = ({ setOption, option, optionData, placeholder, isMulti, i
             placeholder={placeholder}
             isMulti={isMulti}
             isLoading={isLoading}
+            key={Customkey}
         />
     )
 }

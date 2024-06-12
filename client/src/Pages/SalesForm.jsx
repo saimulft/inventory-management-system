@@ -1,26 +1,36 @@
 import { useQuery } from "@tanstack/react-query";
 import useAuth from "../hooks/useAuth";
 import axios from "axios";
-import SearchDropdown from "../Utilities/SearchDropdown";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ToastMessage from "../Components/Shared/ToastMessage";
 import Swal from "sweetalert2";
 import { FaSpinner } from "react-icons/fa";
 import handlePriceKeyDown from "../Utilities/handlePriceKeyDown";
-
+import Select from 'react-select'
+import { IoCalendarOutline } from "react-icons/io5";
+import { Calendar } from "react-date-range";
+import { format } from "date-fns";
 
 const SalesForm = () => {
     const { user } = useAuth()
     const [selectedProduct, setSelectedProduct] = useState(null)
     const [errorMessage, setErrorMessage] = useState('')
     const [loading, setLoading] = useState(false)
+    const [selectedStore, setSelectedStore] = useState(null)
+    const [totalStockData, setTotalStockData] = useState([])
+    const [allStockData, setAllStockData] = useState([])
+    const [purchaseDate, setPurchaseDate] = useState(null)
+    const [openCalendar, setOpenCalendar] = useState(false)
+    const calendarRef = useRef(null)
 
-    const { data: allStockData = [], isLoading } = useQuery({
+    let { isLoading } = useQuery({
         queryKey: ['all_stock_drop_data'],
         queryFn: async () => {
             try {
                 const res = await axios.post('/api/v1/all_stock_api/get_all_stock_dropdown_data', { user })
                 if (res.status === 200) {
+                    setTotalStockData(res.data.data)
+                    setAllStockData(res.data.data)
                     return res.data.data;
                 }
                 return []
@@ -28,47 +38,91 @@ const SalesForm = () => {
                 console.log(error)
                 return []
             }
-        }
+        },
+        refetchOnWindowFocus: false
     })
+    const filterByStore = (store_id) => {
+        const data = totalStockData.filter(item => item.store_id === store_id)
+        setAllStockData(data)
+    }
+
+    const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
+        queryKey: ["get_all_stores_data"],
+        queryFn: async () => {
+            try {
+                const res = await axios.post(
+                    "/api/v1/store_api/get_stores_dropdown_data",
+                    { user }
+                );
+                if (res.status === 200) {
+                    return res.data.data;
+                }
+                return [];
+            } catch (error) {
+                console.log(error);
+                return [];
+            }
+        },
+    });
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (calendarRef.current && !calendarRef?.current?.contains(event.target)) {
+                setOpenCalendar(false)
+            }
+        };
+        document.addEventListener('click', handleClickOutside);
+        return () => {
+            document.removeEventListener('click', handleClickOutside);
+        };
+    }, [])
 
     const handleSalesData = (e) => {
         e.preventDefault()
         setErrorMessage('')
         const form = e.target
+        const formData = new FormData(form)
+        const quantity = formData.get('quantity')
+        const sourceQuantity = formData.get('sourceQuantity')
+        const customerName = formData.get('customerName')
+        const shippingCost = formData.get('shippingCost')
+        const handlingCost = formData.get('handlingCost')
+        const sellingPrice = formData.get('sellingPrice')
+        const tax = formData.get('tax')
+        const orderNumber = formData.get('orderNumber')
 
-        const amazon_quantity = form.amazonQuantity.value
-        const walmart_quantity = form.walmartQuantity.value
-        const customer_name = form.customerName.value
-        const amazon_shipping = form.amazonShipping.value
-        const shipping_cost = form.shippingCost.value
-        const handling_cost = form.handlingCost.value
-        const amazon_price = form.amazonPrice.value
-        const average_price = form.averagePrice.value
-        const average_tax = form.averageTax.value
-        const order_number = form.orderNumber.value
-        const upin = selectedProduct?.value
-
-        if (!selectedProduct) {
-            return setErrorMessage("Product is missing")
+        if (!selectedProduct || !selectedStore || !purchaseDate) {
+            return setErrorMessage('Please fill all required fields')
         }
-        const salesData = { admin_id: user.admin_id, upin, amazon_quantity, walmart_quantity, customer_name, amazon_price, shipping_cost, amazon_shipping, handling_cost, average_price, average_tax, order_number }
+        const salesData = {
+            admin_id: user.admin_id,
+            upin: selectedProduct.value,
+            store_id: selectedStore.value,
+            quantity: parseFloat(quantity),
+            source_quantity: parseFloat(sourceQuantity),
+            customer_name: customerName,
+            shipping_cost: parseFloat(shippingCost),
+            handling_cost: parseFloat(handlingCost),
+            selling_price: parseFloat(sellingPrice),
+            tax: parseFloat(tax),
+            order_number: orderNumber,
+            purchase_date: new Date(purchaseDate).toISOString()
+        }
         setLoading(true)
-        axios.put('/api/v1/sales_form_api/update_stock_product', salesData)
+        axios.post('/api/v1/sales_form_api/insert_sales_form', salesData)
             .then(res => {
-                console.log(res)
-                if (res.status === 200) {
+                if (res.status === 201) {
                     form.reset()
                     Swal.fire(
-                        "Updated",
+                        "Submitted!",
                         "",
                         "success"
                     )
                 }
                 if (res.status === 204) {
                     Swal.fire(
-                        "Data is up to date",
+                        "Something went wrong!",
                         "",
-                        "warning"
+                        "error"
                     )
                 }
             })
@@ -104,25 +158,25 @@ const SalesForm = () => {
 
                                 {/* left side new input fields */}
                                 <div className="mt-4">
-                                    <label className="text-slate-500">Amazon Quantity</label>
+                                    <label className="text-slate-500">Quantity</label>
                                     <input required
                                         onKeyDown={handleKeyDown}
                                         type="text"
-                                        placeholder="Enter amazon quantity"
+                                        placeholder="Enter quantity"
                                         className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                        id="amazonQuantity"
-                                        name="amazonQuantity"
+                                        id="quantity"
+                                        name="quantity"
                                     />
                                 </div>
                                 <div className="mt-4">
-                                    <label className="text-slate-500">Walmart Quantity</label>
+                                    <label className="text-slate-500">Source Quantity</label>
                                     <input required
                                         onKeyDown={handleKeyDown}
                                         type="text"
-                                        placeholder="Enter amazon quantity"
+                                        placeholder="Enter Source quantity"
                                         className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                        id="walmartQuantity"
-                                        name="walmartQuantity"
+                                        id="sourceQuantity"
+                                        name="sourceQuantity"
                                     />
                                 </div>
 
@@ -134,18 +188,6 @@ const SalesForm = () => {
                                         className="input input-bordered input-primary w-full mt-2 shadow-lg"
                                         id="customerName"
                                         name="customerName"
-                                    />
-                                </div>
-
-                                <div className="mt-4">
-                                    <label className="text-slate-500">Amazon Shipping</label>
-                                    <input required
-                                        onKeyDown={handlePriceKeyDown}
-                                        type="text"
-                                        placeholder="Enter amazon shipping"
-                                        className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                        id="amazonShipping"
-                                        name="amazonShipping"
                                     />
                                 </div>
 
@@ -163,14 +205,27 @@ const SalesForm = () => {
 
                                 <div className="mt-4">
                                     <label className="text-slate-500">Handling Cost</label>
-                                    <input required
-                                        onKeyDown={handlePriceKeyDown}
-                                        type="text"
-                                        placeholder="Enter handling cost"
-                                        className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                        id="handlingCost"
-                                        name="handlingCost"
+                                    <input required onKeyDown={handlePriceKeyDown} type="text" placeholder="Enter handling cost" className="input input-bordered input-primary w-full mt-2 shadow-lg" id="handlingCost" name="handlingCost"
                                     />
+                                </div>
+                                <div className="mt-4 relative">
+                                    <p className="text-slate-500">Purchase Date</p>
+                                    <div className="w-full mt-2 shadow-lg rounded-lg bg-white px-4 h-12 border border-[#8633FF] flex justify-between items-center">
+                                        <span>{purchaseDate ? format(new Date(purchaseDate), 'yyyy/MM/dd') : 'YYYY/MM/DD'}</span>
+                                        <div className="cursor-pointer" ref={calendarRef}>
+                                            <span onClick={() => setOpenCalendar(!openCalendar)}><IoCalendarOutline size={18} /></span>
+                                            {openCalendar && <div style={{ boxShadow: "-1px 3px 8px 0px rgba(0, 0, 0, 0.2)" }} className='absolute bg-white right-0 bottom-[48px] z-[999] border border-gray-300 shadow-lg w-fit rounded-[10px] overflow-hidden'>
+                                                <Calendar
+                                                    color='#8633FF'
+                                                    date={purchaseDate ? purchaseDate : null}
+                                                    onChange={(date) => {
+                                                        setPurchaseDate(date)
+                                                        setOpenCalendar(false)
+                                                    }}
+                                                />
+                                            </div>}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -178,43 +233,54 @@ const SalesForm = () => {
 
                                 {/* right side new input fields */}
                                 <div className="mt-4">
-                                    <label className="text-slate-500">Select Product</label>
-                                    <SearchDropdown isLoading={isLoading} option={selectedProduct} placeholder="Select Product" optionData={allStockData} setOption={setSelectedProduct} />
-                                </div>
+                                    <label className="text-slate-500">Select Store</label>
+                                    <Select
+                                        className='shadow-lg'
+                                        options={allStoreData}
+                                        value={selectedStore}
+                                        onChange={(store) => {
+                                            setSelectedStore(store)
+                                            filterByStore(store.value)
+                                        }}
+                                        placeholder={"Select Store"}
+                                        isLoading={storeLoading}
 
+                                    />
+                                </div>
                                 <div className="mt-4">
-                                    <label className="text-slate-500">Amazon Price</label>
-                                    <input required
-                                        onKeyDown={handlePriceKeyDown}
-                                        type="text"
-                                        placeholder="Enter amazon price"
-                                        className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                        id="amazonPrice"
-                                        name="amazonPrice"
+                                    <label className="text-slate-500">Select Product ( UPIN )</label>
+                                    <Select
+                                        className='shadow-lg'
+                                        options={allStockData}
+                                        value={selectedProduct}
+                                        onChange={setSelectedProduct}
+                                        placeholder={"Select Product"}
+                                        isLoading={isLoading}
+                                        key={selectedStore?.value}
                                     />
                                 </div>
 
                                 <div className="mt-4">
-                                    <label className="text-slate-500">Average Price</label>
+                                    <label className="text-slate-500">Selling Price</label>
                                     <input required
                                         onKeyDown={handlePriceKeyDown}
                                         type="text"
-                                        placeholder="Enter average price"
+                                        placeholder="Enter selling price"
                                         className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                        id="averagePrice"
-                                        name="averagePrice"
+                                        id="sellingPrice"
+                                        name="sellingPrice"
                                     />
                                 </div>
 
                                 <div className="mt-4">
-                                    <label className="text-slate-500">Average Tax</label>
+                                    <label className="text-slate-500">Tax</label>
                                     <input required
                                         onKeyDown={handlePriceKeyDown}
                                         type="text"
-                                        placeholder="Enter average tax"
+                                        placeholder="Enter tax"
                                         className="input input-bordered input-primary w-full mt-2 shadow-lg"
-                                        id="averageTax"
-                                        name="averageTax"
+                                        id="tax"
+                                        name="tax"
                                     />
                                 </div>
 
@@ -235,7 +301,6 @@ const SalesForm = () => {
                         <div className="flex items-center justify-center mt-8">
                             <button disabled={loading} type="submit" className="bg-[#8633FF] flex gap-2 py-3 justify-center items-center text-white  rounded-lg w-full capitalize">
                                 {loading && <FaSpinner size={20} className="animate-spin" />}
-
                                 <p>Submit</p>
                             </button>
                         </div>

@@ -199,7 +199,6 @@ const run = async () => {
         updatedData
       );
       if (result) {
-        //  console.log(result);
         res
           .status(200)
           .send({ data: result, message: "successfully update seen status" });

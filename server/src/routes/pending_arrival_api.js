@@ -31,15 +31,15 @@ const run = async () => {
                 warehouse_name: req.body.warehouse_name,
                 warehouse_id: req.body.warehouse_id,
 
-                amazon_quantity: 0,
+                amazon_quantity: null,
                 customer_name: 'N/A',
-                amazon_shipping: 0,
-                shipping_cost: 0,
-                handling_cost: 0,
-                walmart_quantity: 0,
-                amazon_price: 0,
-                average_price: 0,
-                average_tax: 0,
+                amazon_shipping: null,
+                shipping_cost: null,
+                handling_cost: null,
+                walmart_quantity: null,
+                amazon_price: null,
+                average_price: null,
+                average_tax: null,
                 order_number: "N/A",
             }
 
@@ -209,7 +209,8 @@ const run = async () => {
                                 unit_price: avgUnitPrice.toFixed(2),
                                 stock: stock,
                                 remark: result.remark,
-                                remaining_price: remainingPrice
+                                remaining_price: remainingPrice,
+                                average_price: avgUnitPrice.toFixed(2)
                             }
                             const id = existInStock._id
                             let notificationSearchArray = []
@@ -230,12 +231,14 @@ const run = async () => {
 
                         else {
                             const remainingPrice = parseInt(result.received_quantity) * result.unit_price;
+                            delete result.average_price
                             const allStockData = {
                                 ...result,
                                 stock: result.received_quantity,
                                 total_sold: 0,
                                 sold_price: 0,
-                                remaining_price: remainingPrice
+                                remaining_price: remainingPrice,
+                                average_price: result.unit_price
                             }
                             const allStockIntertResult = await all_stock_collection.insertOne(allStockData)
                             if (allStockIntertResult.insertedId) {
