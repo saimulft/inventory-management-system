@@ -43,7 +43,7 @@ const ProfitTrackerStatsPage = () => {
                     setInitialLoading(false)
                     setAllStockData(res.data.allStockData)
                     setStoreName(res.data.store_name)
-                    if (res.data?.lastSync) {
+                    if (res.data?.last_sync) {
                         const lastSync = res.data.last_sync.replace('Z', '')
                         const formatDate = format(new Date(lastSync), 'y/MM/d')
                         const time = format(new Date(res.data.last_sync), 'h:mm a')
