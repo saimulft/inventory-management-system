@@ -43,10 +43,12 @@ const ProfitTrackerStatsPage = () => {
                     setInitialLoading(false)
                     setAllStockData(res.data.allStockData)
                     setStoreName(res.data.store_name)
-                    const lastSync = res.data.last_sync.replace('Z', '')
-                    const formatDate = format(new Date(lastSync), 'y/MM/d')
-                    const time = format(new Date(res.data.last_sync), 'h:mm a')
-                    setLastSync({ date: formatDate, time: time })
+                    if (res.data?.lastSync) {
+                        const lastSync = res.data.last_sync.replace('Z', '')
+                        const formatDate = format(new Date(lastSync), 'y/MM/d')
+                        const time = format(new Date(res.data.last_sync), 'h:mm a')
+                        setLastSync({ date: formatDate, time: time })
+                    }
                     setTotalOrder(res.data.total_order)
                     if (res.data.profitTrackerData.length) {
                         setLocalData(res.data.profitTrackerData)
@@ -335,7 +337,7 @@ const ProfitTrackerStatsPage = () => {
 
                                     </button>
                                     <p className="text-right text-gray-700">Last sync : <span className="ml-3 text-right">{lastSync && lastSync.date}</span> <span className="ml-3 text-right">at : {lastSync && lastSync.time}</span>  </p>
-                                
+
                                     <div className="mt-4 overflow-x-scroll overflow-y-hidden">
 
                                         <div className=" mt-8 min-h-[calc(100vh-335px)] max-h-full">
