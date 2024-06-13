@@ -106,6 +106,10 @@ const run = async () => {
                                     }
                                     else {
                                         await all_stores_collection.updateOne({ _id: new ObjectId(store._id) }, { $set: { sync_date: false } })
+                                        const last_sync = new Date().toISOString()
+                                        await all_stores_collection.updateOne({ _id: new ObjectId(store._id) }, {
+                                            $set: { last_sync },
+                                        }, { upsert: true })
                                         console.log('All orders successfully processed.');
                                     }
                                 };
@@ -202,10 +206,18 @@ const run = async () => {
                                     if (retryFailed.length > 0) {
                                         apiRes.status(500).json({ message: "Internal server error" })
                                     } else {
+                                        const last_sync = new Date().toISOString()
+                                        await all_stores_collection.updateOne({ _id: new ObjectId(store._id) }, {
+                                            $set: { last_sync },
+                                        }, { upsert: true })
                                         return apiRes.status(200).json({ message: "Data synced successfully" })
                                     }
                                 }
                                 else {
+                                    const last_sync = new Date().toISOString()
+                                    await all_stores_collection.updateOne({ _id: new ObjectId(store._id) }, {
+                                        $set: { last_sync },
+                                    }, { upsert: true })
                                     return apiRes.status(200).json({ message: "Data synced successfully" })
                                 }
                             };
@@ -237,7 +249,7 @@ const run = async () => {
             if (store) {
 
                 if (storeResult.length) {
-                    return res.status(200).json({ allStockData: storeResult, profitTrackerData, store_name: store.store_name, total_order: store.total_order, amazon_orders: [] })
+                    return res.status(200).json({ allStockData: storeResult, profitTrackerData, store_name: store.store_name, total_order: store.total_order, last_sync: store?.last_sync, amazon_orders: [] })
                 }
                 else {
                     return res.status(200).json({ store_name: store.store_name, amazon_orders: [], message: "Data got successfully" })
