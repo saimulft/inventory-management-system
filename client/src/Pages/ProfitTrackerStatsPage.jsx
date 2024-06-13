@@ -336,7 +336,7 @@ const ProfitTrackerStatsPage = () => {
                                         syncLoading ? <FaSpinner className="animate-spin" size={16} /> : "Live Sync"}
 
                                     </button>
-                                    <p className="text-right text-gray-700">Last sync : <span className="ml-3 text-right">{lastSync && lastSync.date}</span> <span className="ml-3 text-right">at : {lastSync && lastSync.time}</span>  </p>
+                                    {lastSync && <p className="text-right text-gray-700">Last sync : <span className="ml-3 text-right">{lastSync && lastSync.date}</span> <span className="ml-3 text-right">at : {lastSync && lastSync.time}</span>  </p>}
 
                                     <div className="mt-4 overflow-x-scroll overflow-y-hidden">
 
