@@ -27,12 +27,10 @@ export default function DashboardLayout() {
             <Outlet />
             {/* message box  */}
             <ChatBox />
-            <NavLink to={menu.link} className={({ isActive }) => isActive ? "text-blue-500 border-b-blue-500" : "flex items-center justify-center lg:px-4 lg:py-3 pl-3 pr-4 text-gray-700 md:p-0 md:w-auto transition duration-150 border-b-[3px] border-white hover:text-blue-500 hover:border-b-blue-500"}>{menu.name}</NavLink>
-          </li>
-          <NotificationBox />
+            <NotificationBox />
+          </div>
+        </Container>
       </div>
-    </Container>
-      </div >
-    </div >
+    </div>
   );
 }
