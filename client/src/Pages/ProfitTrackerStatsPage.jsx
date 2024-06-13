@@ -33,6 +33,7 @@ const ProfitTrackerStatsPage = () => {
     const [localData, setLocalData] = useState([])
     const [allStockData, setAllStockData] = useState([])
     const [currentPage, setCurrentPage] = useState(0);
+    const [lastSync, setLastSync] = useState(null)
 
     useEffect(() => {
         setInitialLoading(true)
@@ -42,6 +43,12 @@ const ProfitTrackerStatsPage = () => {
                     setInitialLoading(false)
                     setAllStockData(res.data.allStockData)
                     setStoreName(res.data.store_name)
+                    if (res.data?.lastSync) {
+                        const lastSync = res.data.last_sync.replace('Z', '')
+                        const formatDate = format(new Date(lastSync), 'y/MM/d')
+                        const time = format(new Date(res.data.last_sync), 'h:mm a')
+                        setLastSync({ date: formatDate, time: time })
+                    }
                     setTotalOrder(res.data.total_order)
                     if (res.data.profitTrackerData.length) {
                         setLocalData(res.data.profitTrackerData)
@@ -199,6 +206,8 @@ const ProfitTrackerStatsPage = () => {
     const itemsPerPage = 15;
     const offset = currentPage * itemsPerPage;
     const currentPageData = storeData?.slice(offset, offset + itemsPerPage) || [];
+
+    console.log(lastSync);
     return (
         <>
             <div className={`${initialLoading ? 'p-0' : 'p-10'} relative`}>
@@ -325,7 +334,10 @@ const ProfitTrackerStatsPage = () => {
                                 <div>
                                     <button disabled={syncLoading} onClick={handleLiveSync} className="bg-[#8633FF] px-5 text-sm my-5 block ml-auto py-2 text-white rounded">{
                                         syncLoading ? <FaSpinner className="animate-spin" size={16} /> : "Live Sync"}
+
                                     </button>
+                                    {lastSync && <p className="text-right text-gray-700">Last sync : <span className="ml-3 text-right">{lastSync && lastSync.date}</span> <span className="ml-3 text-right">at : {lastSync && lastSync.time}</span>  </p>}
+
                                     <div className="mt-4 overflow-x-scroll overflow-y-hidden">
 
                                         <div className=" mt-8 min-h-[calc(100vh-335px)] max-h-full">
