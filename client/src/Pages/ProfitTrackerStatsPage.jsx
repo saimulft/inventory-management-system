@@ -406,7 +406,7 @@ const ProfitTrackerStatsPage = () => {
                                                                 else quantity = `${quantity}`
                                                                 if (isNaN(handling_cost) || !handling_cost) handling_cost = '-'
                                                                 else handling_cost = `$${handling_cost}`
-                                                                if (isNaN(supplier_id) || !supplier_id) supplier_id = '-'
+                                                                if (!supplier_id) supplier_id = '-'
                                                                 else supplier_id = `${supplier_id}`
                                                                 if (isNaN(selling_price) || !selling_price) selling_price = '-'
                                                                 else selling_price = `$${selling_price}`
