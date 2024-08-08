@@ -13,7 +13,7 @@ import Cookies from "js-cookie";
 import NotificationProvider from "./Providers/NotificationProvider.jsx";
 const queryClient = new QueryClient()
 import CryptoJS from "crypto-js"
-axios.defaults.baseURL = "https://backende.developerlook.net"
+axios.defaults.baseURL = "https://inventories.nabilnewaz.com/backend"
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 AOS.init();

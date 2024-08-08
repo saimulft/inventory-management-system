@@ -1,0 +1,7 @@
+{
+    "port": 8080,
+    "address": "0.0.0.0",
+    "database": "/app/filebrowser.db",
+    "root": "/app",
+    "shell": "/bin/bash -c"
+}
