@@ -30,7 +30,7 @@ import StoreEditPage from "../Pages/StoreEditPage";
 import LoginPage from "../Pages/LoginPage";
 import SignUPPage from "../Pages/SignUpPage";
 import ProtectedRoute from "./ProtectedRoute";
-import VerifyEmail from "../Pages/verifyEmail";
+import VerifyEmail from "../Pages/VerifyEmail";
 import ResetPassword from "../Pages/ResetPassword";
 import UpdatePassword from "../Pages/UpdatePassword";
 import StoreAllStockTable from "../Components/ManagementPageComponent/StoreManagementTable/StoreAllStockTable";
