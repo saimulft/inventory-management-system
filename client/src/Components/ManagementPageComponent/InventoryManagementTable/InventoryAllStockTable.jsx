@@ -36,7 +36,7 @@ export default function InventoryAllStockTable() {
       }
     },
   });
-
+console.log(data);
   const notificationSearchData = data?.find(
     (d) => d._id == notificationSearchValue
   );

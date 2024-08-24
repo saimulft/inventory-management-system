@@ -66,8 +66,6 @@ export default function InventoryPreparingRequestTable() {
   );
 
   const handleRTS = async (_id, quantity, upin, data) => {
-    console.log(data);
-
     try {
       setLoading(true);
       const res = await axios.post(

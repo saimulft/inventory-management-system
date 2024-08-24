@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "client": "cd client && npm i && npm run dev",
-    "server": "cd server && npm i && npm start",
-    "socket": "cd socket && npm i && npm start",
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm start",
+    "socket": "cd socket && npm start",
     "start": "concurrently \"npm run server\" \"npm run client\" \"npm run socket\""
   },
   "dependencies": {
