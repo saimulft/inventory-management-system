@@ -23,6 +23,7 @@ const SalesForm = () => {
     const [openCalendar, setOpenCalendar] = useState(false)
     const calendarRef = useRef(null)
 
+    
     let { isLoading } = useQuery({
         queryKey: ['all_stock_drop_data'],
         queryFn: async () => {
