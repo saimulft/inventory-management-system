@@ -72,7 +72,6 @@ export default function ProfitTrackerPage() {
       setSearchResults(filteredData)
     }, 200);
   }
-
   return (
     // w-[90%] mx-auto my-14
     <div className="p-10">
@@ -127,7 +126,8 @@ export default function ProfitTrackerPage() {
                         style={shadowStyle}
                         key={index}
                       >
-                        <div className="flex items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
+                        <div className="flex relative items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
+                        {singleStore.refresh_token && <p className="absolute right-5 top-2 bg-[#8633FF] text-white px-2 py-1 rounded text-sm">Connected</p>}
                           <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
                             <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
                               {singleStore.store_type === 'Amazon' && <FaAmazon size={24} />}
@@ -151,7 +151,8 @@ export default function ProfitTrackerPage() {
                         style={shadowStyle}
                         key={index}
                       >
-                        <div className="flex items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
+                        <div className="flex relative items-center px-5 py-8 cursor-pointer gap-4 border-2 border-[#8633FF]  rounded-lg">
+                        {singleStore.refresh_token && <p className="absolute right-5 top-2 bg-[#8633FF] text-white px-2 py-1 rounded text-sm">Connected</p>}
                           <div className="border border-[#8633FF] w-14 h-14 rounded-full flex justify-center items-center shadow-lg">
                             <div className="bg-[#8633FF] w-12 h-12 rounded-full text-white flex justify-center items-center">
                               {singleStore.store_type === 'Amazon' && <FaAmazon size={24} />}

@@ -75,25 +75,20 @@ const run = async () => {
         }
     })
 
-    router.post('/get_all_stock_by_store_id', async (req, res) => {
+    router.post('/get_all_stock_dropdown_data', async (req, res) => { 
         try {
             const user = req.body.user;
-            const store_id = req.body.store_id;
 
-            if (store_id) {
-                const allStockData = await all_stock_collection.find({ admin_id: user.admin_id, store_id: store_id }).project({ "value": "$upin", "label": "$upin", "_id": 0 }).sort({ date: -1 }).toArray()
-                if (allStockData.length) {
-                    res.status(200).json({ data: allStockData, message: "successfully upin data" })
-                }
-                else {
-                    res.status(204).json({ message: "No content" })
-                }
+            const allStockData = await all_stock_collection.find({ admin_id: user.admin_id }).project({ "value": "$upin", "label": "$upin", "_id": 0,"store_id":1 }).sort({ date: -1 }).toArray()
+            if (allStockData.length) {
+
+                res.status(200).json({ data: allStockData, message: "successfully get asin_upc" })
             }
-            else{
+            else {
                 res.status(204).json({ message: "No content" })
             }
         } catch (error) {
-            res.status(500).json({ message: 'Internal Server Error' });
+            res.status(500).json({ message: 'Internal Server Error in asin_upc' });
         }
     });
 }
