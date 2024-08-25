@@ -63,19 +63,21 @@ const run = async () => {
 
     // insert a new asin or upc
     router.post('/insert_asin_upc', async (req, res) => {
-
-        const data = {
-            admin_id: req.body.adminId,
-            date: req.body.date,
-            creator_email: req.body.creatorEmail,
-            asin_upc_code: req.body.asinUpc,
-            store_manager_name: req.body.storeManagerName,
-            product_name: req.body.productName,
-            product_image: req.body.productImage,
-            min_price: req.body.minPrice,
-            code_type: req.body.codeType
-        }
         try {
+            const data = {
+                admin_id: req.body.adminId,
+                date: req.body.date,
+                creator_email: req.body.creatorEmail,
+                asin_upc_code: req.body.asinUpc,
+                store_id: req.body.storeId,
+                store_name: req.body.storeName,
+                store_manager_name: req.body.storeManagerName,
+                product_name: req.body.productName,
+                product_image: req.body.productImage,
+                min_price: req.body.minPrice,
+                code_type: req.body.codeType
+            }
+
             const result = await asin_upc_collection.insertOne(data)
 
             if (result.acknowledged) {
@@ -88,8 +90,6 @@ const run = async () => {
         } catch (error) {
             res.status(500).json({ message: 'SInternal Server Error' });
         }
-
-
     })
 
     // get all asin or upc by email for dropdown

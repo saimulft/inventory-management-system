@@ -179,18 +179,18 @@ export default function AllUsersPage() {
                   <td>
                     <div className="flex  gap-x-2">
 
-                      <button onClick={() => handleDeleteUser(user)} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-red-500 hover:text-white transition-all duration-150">
+                      <button onClick={() => handleDeleteUser(user)} className="w-[76px] flex gap-1 justify-center items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-red-500 hover:text-white transition-all duration-150">
                         <FiTrash />
                         Delete
                       </button>
-                      {(user.role === 'Store Owner' || user.role === 'Store Manager Admin' || user.role === 'Store Manager VA') && <button onClick={() => handleEdit(user)} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
+                      {(user.role === 'Store Owner' || user.role === 'Store Manager Admin' || user.role === 'Store Manager VA') && <button onClick={() => handleEdit(user)} className="w-[76px] flex gap-1 justify-center items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
                         <FaRegEdit />
                         Edit
                       </button>}
                       {(user.role === 'Warehouse Admin' || user.role === 'Warehouse Manager VA') && <button onClick={() => {
                         handleView(user)
                         setSingleUser(user)
-                      }} className="flex gap-1 items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
+                      }} className="w-[76px] flex gap-1 justify-center items-center border border-gray-400 py-[2px] px-2 rounded-[4px] hover:bg-[#8633FF] hover:text-white transition-all duration-150">
                         <HiOutlineEye />
                         View
                       </button>}

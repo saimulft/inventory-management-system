@@ -103,17 +103,16 @@ const run = async () => {
         }
     })
 
-
-    // get all warehouse admin
-    router.get('/get_all_warehouse_admin', verifyJWT, async (req, res) => {
+    // get all warehouses
+    router.get('/get_all_warehouses', verifyJWT, async (req, res) => {
         try {
             const admin_id = req.query.id;
 
-            const result = await warehouse_admin_users_collection.find({ admin_id: admin_id }).toArray()
+            const result = await warehouses_collection.find({ admin_id: admin_id }).toArray()
 
             if (result.length) {
                 const data = result.map(item => {
-                    return { warehouse_admin_id: item.warehouse_admin_id, value: item.warehouse_id, label: item.full_name }
+                    return { label: item.warehouse_name, value: item._id, warehouse_admin_id: item.warehouse_admin_id }
                 })
                 return res.status(200).json({ data: data, message: 'Successfully got all warehouse admin' })
             }

@@ -7,7 +7,7 @@ const verifyJWT = require("../middlewares/verifyJWT")
 const run = async () => {
     const db = await connectDatabase()
     const all_stores_collection = db.collection("all_stores")
-    const all_stock_collection = db.collection("all_stock")
+    const asin_upc_collection = db.collection("asin_upc")
 
     // add new store
     router.post('/add_new_store', async (req, res) => {
@@ -38,38 +38,78 @@ const run = async () => {
         }
     })
 
-    // update store details 
+    // update store details by id
     router.post("/update_store_details", async (req, res) => {
         try {
-            const id = req.query.id
-            const existData = await all_stores_collection.findOne({ _id: new ObjectId(id) })
+            const id = req.query.id;
+            const existData = await all_stores_collection.findOne({ _id: new ObjectId(id) });
+
             if (existData) {
                 const updateData = {
                     store_name: req.body.storeName ? req.body.storeName : existData.store_name,
+                    slug: req.body.storeName ? req.body.storeName : existData.slug,
                     store_manager_name: req.body.storeManagername ? req.body.storeManagername : existData.store_manager_name,
                     store_type: req.body.storeType !== "Pick Store Type" ? req.body.storeType : existData.store_type,
                     store_status: req.body.storeStatus !== "Select Status" ? req.body.storeStatus : existData.store_status,
+                };
+                const asinUpcData = {
+                    store_name: req.body.storeName ? req.body.storeName : existData.store_name,
+                    store_manager_name: req.body.storeManagername ? req.body.storeManagername : existData.store_manager_name
                 }
-                const updateResult = await all_stores_collection.updateOne({ _id: new ObjectId(id) }, { $set: updateData })
+
+                const updateResult = await all_stores_collection.updateOne(
+                    { _id: new ObjectId(id) },
+                    { $set: updateData }
+                );
 
                 if (req.body.storeName) {
-                    await all_stock_collection.updateMany({ store_id: id }, { $set: { store_name: req.body.storeName } })
+                    const updateStoreDataInCollection = async (collectionName, storeName, storeId) => {
+                        await db.collection(collectionName).aggregate([
+                            { $match: { store_id: storeId } }, // Match documents with the store ID
+                            {
+                                $set: {
+                                    store_name: storeName,
+                                    upin: { $concat: [storeName.replace(/ /g, "_"), "_", "$asin_upc_code"]}
+                                }
+                            },
+                            {
+                                $merge: {
+                                    into: collectionName, // Dynamic collection name
+                                    whenMatched: "merge", // Update the documents
+                                    whenNotMatched: "discard" // Discard documents that don't match
+                                }
+                            }
+                        ]).toArray();
+                    }
+                    // Array of collections to update
+                    const collectionsToUpdate = [
+                        "all_stock", "pending_arrival", "preparing_form_data", "ready_to_ship_data", "shipped_data", "out_of_stock", "missing_arrival"
+                    ];
+
+                    // Apply the same aggregation logic to all collections
+                    for (const collectionName of collectionsToUpdate) {
+                        await updateStoreDataInCollection(collectionName, req.body.storeName, id);
+                    }
+                }
+                if (req.body.storeName || req.body.storeManagername) {
+                    await asin_upc_collection.updateMany(
+                        { store_id: id },
+                        { $set: asinUpcData }
+                    );
                 }
 
                 if (updateResult.modifiedCount) {
-                    return res.status(200).json({ message: "Store data updated" })
+                    return res.status(200).json({ message: "Store data updated" });
+                } else {
+                    res.status(204).json({ message: "No data found" });
                 }
-                else {
-                    res.status(204).json({ message: "No data found" })
-                }
-            }
-            else {
-                res.status(204).json({ message: "No data found" })
+            } else {
+                res.status(204).json({ message: "No data found" });
             }
         } catch (error) {
-            res.status(500).json({ message: "Internal server error" })
+            res.status(500).json({ message: "Internal server error" });
         }
-    })
+    });
 
     router.post("/update_store_suppliers_details", async (req, res) => {
         try {

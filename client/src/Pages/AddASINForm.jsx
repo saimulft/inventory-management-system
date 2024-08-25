@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import axios from "axios";
 import { FaSpinner } from "react-icons/fa";
@@ -10,6 +10,8 @@ import useGlobal from "../hooks/useGlobal";
 import { GlobalContext } from "../Providers/GlobalProviders";
 import { NotificationContext } from "../Providers/NotificationProvider";
 import handlePriceKeyDown from "../Utilities/handlePriceKeyDown";
+import { useQuery } from "@tanstack/react-query";
+import SearchDropdown from "../Utilities/SearchDropdown";
 
 const AddASINForm = () => {
   const { socket } = useContext(GlobalContext);
@@ -23,9 +25,40 @@ const AddASINForm = () => {
   const [imageError, setImageError] = useState("");
   const [loading, setLoding] = useState(false);
   const [inputError, setInputError] = useState("");
+  const [storeOption, setStoreOption] = useState(null);
+  const [storeManagerName, setStoreManagerName] = useState("");
 
   const { user } = useAuth();
   const { setCountsRefetch } = useGlobal();
+
+  const { data: allStoreData = [], isLoading: storeLoading } = useQuery({
+    queryKey: ["get_all_stores_data"],
+    queryFn: async () => {
+      try {
+        const res = await axios.post(
+          "/api/v1/store_api/get_stores_dropdown_data",
+          { user }
+        );
+        if (res.status === 200) {
+          return res.data.data;
+        }
+        return [];
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    },
+  });
+
+  useEffect(() => {
+    if(storeOption){
+      const storeData = storeOption?.data?.find((item) => item._id === storeOption?.value);
+      setStoreManagerName(storeData?.store_manager_name);
+    }
+    else{
+      setStoreManagerName("");
+    }
+  }, [storeOption])
 
   // handler function for adding ASIN or UPC
   const handleAsinUpcForm = async (event) => {
@@ -49,6 +82,8 @@ const AddASINForm = () => {
           creatorEmail: user?.email,
           date,
           asinUpc,
+          storeId: storeOption?.value,
+          storeName: storeOption?.slug,
           storeManagerName,
           productName,
           productImage: url,
@@ -89,6 +124,8 @@ const AddASINForm = () => {
               form.reset();
               setLoding(false);
               setInputError("");
+              setStoreOption(null);
+              setStoreManagerName("");
               Swal.fire("Added", "ASIN or UPC has been added.", "success");
             }
           })
@@ -263,12 +300,26 @@ const AddASINForm = () => {
                 </div>
 
                 <div className="mt-4">
+                  <label className="text-slate-500">Store Name</label>
+                  <SearchDropdown
+                    isLoading={storeLoading}
+                    isMulti={false}
+                    option={storeOption}
+                    optionData={allStoreData}
+                    placeholder="Select Store"
+                    setOption={setStoreOption}
+                  />
+                </div>
+
+                <div className="mt-4">
                   <label className="text-slate-500">Store Manager Name</label>
                   <input
                     required
+                    readOnly
+                    value={storeManagerName}
                     type="text"
                     placeholder="Enter your store manager name"
-                    className="input input-bordered input-primary w-full mt-2 shadow-lg"
+                    className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed"
                     id="storeManagerName"
                     name="storeManagerName"
                   />
