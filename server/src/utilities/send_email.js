@@ -16,7 +16,7 @@ const sendEmail = async (transporter_data) => {
             })
 
         const mailOption = {
-            from: "alert@developerlook.net",
+            from: "alert@saimul-islam.com",
             to: email,
             subject: subject,
             html: html
@@ -26,7 +26,8 @@ const sendEmail = async (transporter_data) => {
 
     }
     catch (error) {
-        res.status(500).json({ message: 'Nodemailer error' });
+        console.log(error)
+        throw new Error('Nodemailer error');
     }
 }
 
