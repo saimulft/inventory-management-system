@@ -44,12 +44,12 @@ const ArrivalFormPage = () => {
 
   useEffect(() => {
     if (storeOption?.slug && asinUpcOption) {
-      const upin = `${storeOption?.slug}_${asinUpcOption.label}`;
+      const upin = `${storeOption?.slug?.replace(/ /g, "_")}_${asinUpcOption.label}`;
       setProductNameLoading(true)
       axios
         .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
         .then((res) => {
-
+          console.log(res)
           if (res.status === 200) {
             setProductName(res.data.data.product_name);
           }
@@ -302,7 +302,7 @@ const ArrivalFormPage = () => {
                   <input
                     value={
                       asinUpcOption && storeOption?.slug
-                        ? `${storeOption?.slug}_${asinUpcOption.label}`
+                        ? `${storeOption?.slug?.replace(/ /g, "_")}_${asinUpcOption.label}`
                         : ""
                     }
                     type="text"
@@ -331,7 +331,7 @@ const ArrivalFormPage = () => {
 
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">Store name</label>
+                  <label className="text-slate-500">Store Name</label>
                   <SearchDropdown
                     isLoading={storeLoading}
                     isMulti={false}
@@ -343,7 +343,7 @@ const ArrivalFormPage = () => {
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500">Code type</label>
+                  <label className="text-slate-500">Code Type</label>
                   <input
                     type="text"
                     readOnly

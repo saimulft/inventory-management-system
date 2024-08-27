@@ -54,7 +54,7 @@ const PreparingFormPage = () => {
 
   useEffect(() => {
     if (storeOption?.slug && asinUpcOption) {
-      const upin = `${storeOption?.slug}_${asinUpcOption?.label}`;
+      const upin = `${storeOption?.slug?.replace(/ /g, "_")}_${asinUpcOption?.label}`;
       setProductNameLoading(true)
       axios
         .post(`/api/v1/all_stock_api/all_stock_by_upin?upin=${upin}`, { user })
@@ -143,7 +143,7 @@ const PreparingFormPage = () => {
     const createdAt = new Date().toISOString();
     const orderID = form.orderID.value;
     const courier = form.courier.value;
-    const upin = `${storeOption?.slug}_${asinUpcOption?.label}`;
+    const upin = `${storeOption?.slug?.replace(/ /g, "_")}_${asinUpcOption?.label}`;
     const quantity = form.quantity.value;
     const trackingNumber = form.trackingNumber.value;
 
@@ -152,7 +152,7 @@ const PreparingFormPage = () => {
       return;
     }
     if (!storeOption?.slug) {
-      setFormError("Select  Store");
+      setFormError("Select Store");
       return;
     }
     if (!productName) {
@@ -412,12 +412,12 @@ const PreparingFormPage = () => {
 
               <div className="w-full">
                 <div>
-                  <label className="text-slate-500">Store name</label>
+                  <label className="text-slate-500">Store Name</label>
                   <SearchDropdown isLoading={storeLoading} option={storeOption} optionData={allStoreData} placeholder="Select Store" setOption={setStoreOption} />
                 </div>
 
                 <div className="mt-4">
-                  <label className="text-slate-500">Code type</label>
+                  <label className="text-slate-500">Code Type</label>
                   <input type="text" readOnly value={asinUpcOption?.code_type} placeholder="Enter product name" className="input input-bordered input-primary w-full mt-2 shadow-lg" id="code" name="code" />
                 </div>
 
@@ -427,7 +427,7 @@ const PreparingFormPage = () => {
                     value={
                       storeOption?.slug &&
                       asinUpcOption &&
-                      `${storeOption?.label}_${asinUpcOption.label}`
+                      `${storeOption?.slug?.replace(/ /g, "_")}_${asinUpcOption.label}`
                     } type="text" placeholder="Enter UPIN" className="input input-bordered input-primary w-full mt-2 shadow-lg cursor-not-allowed" id="upin" name="upin"
                   />
                 </div>

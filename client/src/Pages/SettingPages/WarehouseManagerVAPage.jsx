@@ -13,10 +13,10 @@ const WarehouseManagerVAPage = () => {
     const [warehouseAdminOption, setWarehouseAdminOption] = useState(null)
 
     const { data: allWarehouseAdmin = [], isLoading: warehouseAdminLoading } = useQuery({
-        queryKey: ['get_all_warehouse_admin'],
+        queryKey: ['get_all_warehouses'],
         queryFn: async () => {
             try {
-                const res = await axios.get(`/api/v1/warehouse_admin_api/get_all_warehouse_admin?id=${user.admin_id}`)
+                const res = await axios.get(`/api/v1/warehouse_admin_api/get_all_warehouses?id=${user.admin_id}`)
                 if (res.status === 200) {
                     return res.data.data;
                 }
@@ -115,8 +115,8 @@ const WarehouseManagerVAPage = () => {
 
                             {
                                 user.role === 'Admin' || user.role === 'Admin VA' ? <div className="mt-3">
-                                    <label className="text-slate-500">Warehouse Admin</label>
-                                    <SearchDropdown isLoading={warehouseAdminLoading} isMulti={false} option={warehouseAdminOption} optionData={allWarehouseAdmin} placeholder="Select warehouse admin" setOption={setWarehouseAdminOption} />
+                                    <label className="text-slate-500">Warehouse</label>
+                                    <SearchDropdown isLoading={warehouseAdminLoading} isMulti={false} option={warehouseAdminOption} optionData={allWarehouseAdmin} placeholder="Select warehouse" setOption={setWarehouseAdminOption} />
                                 </div> : ''
                             }
                         </div>

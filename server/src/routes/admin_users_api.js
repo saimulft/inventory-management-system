@@ -110,7 +110,6 @@ const run = async () => {
         }
     })
 
-
     router.post('/get_all_users_list', verifyJWT, async (req, res) => {
         try {
             const role = req.role;
@@ -208,7 +207,6 @@ const run = async () => {
                     return res.status(204).json({ data: result, status: 'user not found' })
                 }
             }
-
         } catch (error) {
             res.status(500).json({ message: "internal server error" })
         }
@@ -240,9 +238,7 @@ const run = async () => {
     })
 
     router.get('/get_user_access_data', verifyJWT, async (req, res) => {
-
         try {
-
             const email = req.query.email
             const role = req.query.role
 
@@ -275,7 +271,6 @@ const run = async () => {
 
     router.post('/update_user_access_data', verifyJWT, async (req, res) => {
         try {
-
             const email = req.query.email
             const role = req.query.role
             let collection;
@@ -305,7 +300,6 @@ const run = async () => {
     })
 
     router.get('/get_ware_house_user_details', verifyJWT, async (req, res) => {
-
         try {
             const email = req.query.email
             const role = req.query.role

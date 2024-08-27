@@ -13,7 +13,6 @@ const run = async () => {
             const allWarehouseData = await warehouses_collection.find({ admin_id: admin_id }).project({ "value": { $toString: "$_id" }, "label": "$warehouse_name", "_id": 0 })
                 .sort({ date: -1 }).toArray()
             if (allWarehouseData) {
-
                 res.status(200).json({ data: allWarehouseData, message: "successfully warehouse data" })
             }
             else {
